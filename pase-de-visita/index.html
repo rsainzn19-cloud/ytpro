@@ -1,0 +1,1468 @@
+<title>Pase de Visita</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: columna única tipo app (máx. 720px) sobre papel de ECG; tira de monitor de signos vitales fija arriba (rango, XP, racha, estrellas); barra de secciones abajo */
+:root{
+  --paper:#FBF8F7;
+  --grid-minor:rgba(206,72,86,.065);
+  --grid-major:rgba(206,72,86,.13);
+  --ink:#18214A;
+  --ink-soft:#545C80;
+  --rule:#E5DCDD;
+  --sheet:#FFFFFF;
+  --sheet-2:#F3EEEE;
+  --trace:#D3263F;
+  --ok:#0B7F62;
+  --ok-bg:#E2F3EC;
+  --bad:#BF243A;
+  --bad-bg:#FBE6E9;
+  --gold:#C98A00;
+  --focus:#2F5BFF;
+  --monitor:#0B1422;
+  --monitor-line:#1D2A3E;
+  --m-green:#45E09A;
+  --m-cyan:#5FD0F2;
+  --m-yellow:#FFD166;
+  --m-red:#FF5D73;
+  --m-dim:#7383A0;
+  --f-display:'Archivo','Arial Narrow',system-ui,sans-serif;
+  --f-body:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1420;--grid-minor:rgba(95,208,242,.035);--grid-major:rgba(95,208,242,.075);
+    --ink:#E6EAF5;--ink-soft:#9AA3BF;--rule:#26314A;--sheet:#151D2C;--sheet-2:#1C2537;
+    --trace:#FF5D73;--ok:#3CD49B;--ok-bg:rgba(60,212,155,.13);--bad:#FF6B7F;--bad-bg:rgba(255,107,127,.13);
+    --gold:#F3C044;--focus:#8EAEFF;--monitor:#070C15;--monitor-line:#18233A;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1420;--grid-minor:rgba(95,208,242,.035);--grid-major:rgba(95,208,242,.075);
+  --ink:#E6EAF5;--ink-soft:#9AA3BF;--rule:#26314A;--sheet:#151D2C;--sheet-2:#1C2537;
+  --trace:#FF5D73;--ok:#3CD49B;--ok-bg:rgba(60,212,155,.13);--bad:#FF6B7F;--bad-bg:rgba(255,107,127,.13);
+  --gold:#F3C044;--focus:#8EAEFF;--monitor:#070C15;--monitor-line:#18233A;color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;color:var(--ink);font:16px/1.55 var(--f-body);
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--grid-major) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-major) 1px,transparent 1px),
+    linear-gradient(var(--grid-minor) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-minor) 1px,transparent 1px);
+  background-size:30px 30px,30px 30px,6px 6px,6px 6px;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--monitor)}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+button{font:inherit;color:inherit}
+
+/* Monitor */
+.monitor{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--monitor);color:#fff;border-bottom:1px solid var(--monitor-line)}
+.mon-row{display:flex;align-items:flex-end;gap:14px;padding-block:10px 2px}
+.vital{display:flex;flex-direction:column;gap:3px;min-width:0}
+.v-lab{font:600 10px/1.2 var(--f-mono);letter-spacing:.09em;text-transform:uppercase;color:var(--m-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v-big{font:600 26px/1 var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.v-big small{font-size:12px;color:var(--m-dim);margin-left:1px;font-weight:500}
+.v-rank .v-big{color:var(--m-green)}
+.v-xp{flex:1}
+.xpbar{height:7px;background:var(--monitor-line);border-radius:2px;overflow:hidden}
+.xpbar i{display:block;height:100%;background:var(--m-green)}
+.v-small{font:500 11px/1 var(--f-mono);color:var(--m-green);font-variant-numeric:tabular-nums}
+.v-streak .v-big{color:var(--m-yellow)}
+.v-stars .v-big{color:var(--m-cyan)}
+.ecg{display:block;width:100%;height:26px}
+.ecg path{fill:none;stroke-linejoin:round;stroke-linecap:round}
+.ecg .base{stroke:var(--m-green);opacity:.26;stroke-width:1.4}
+.ecg .pulse{stroke:var(--m-green);stroke-width:2.2;stroke-dasharray:7 200;stroke-dashoffset:7;opacity:0;filter:drop-shadow(0 0 3px var(--m-green))}
+
+/* Shell */
+main{padding-block:20px calc(100px + env(safe-area-inset-bottom,0px))}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--sheet);border-top:1px solid var(--rule);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs .wrap{display:grid;grid-template-columns:repeat(4,1fr)}
+.tab{appearance:none;background:none;border:0;color:var(--ink-soft);font:700 12px/1.1 var(--f-body);padding:9px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;position:relative}
+.tab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tab[aria-current="page"]{color:var(--trace)}
+.tab .count{position:absolute;top:5px;left:calc(50% + 7px);background:var(--trace);color:#fff;font:600 10px/1 var(--f-mono);padding:3px 5px;border-radius:9px}
+
+/* Type */
+.eyebrow{font:600 11px/1.3 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--trace);margin:0}
+h1{font-family:var(--f-display);font-weight:850;font-stretch:120%;font-size:clamp(36px,9vw,56px);line-height:.95;letter-spacing:-.015em;margin:.18em 0 .3em;text-wrap:balance}
+h1.h-sm{font-size:clamp(26px,6.4vw,38px);font-stretch:112%;line-height:1.02}
+h2,h3{text-wrap:balance}
+.lede{max-width:62ch;color:var(--ink-soft);margin:0}
+.kicker{font:600 11px/1.3 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 8px}
+.foot{font-size:12.5px;color:var(--ink-soft);margin-top:36px;max-width:65ch}
+
+/* Buttons */
+.btn{appearance:none;border:1.5px solid var(--ink);background:var(--ink);color:var(--paper);font:700 15px/1.25 var(--f-body);padding:12px 16px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:10px;text-align:left;text-decoration:none}
+.btn small{display:block;font:600 10.5px/1.3 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:2px}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.red{background:var(--trace);border-color:var(--trace);color:#fff}
+.btn[disabled]{opacity:.38;cursor:default}
+.btn:not([disabled]):active{transform:translateY(1px)}
+.row-btns{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.row-btns .btn{flex:1 1 150px;justify-content:center;text-align:center}
+
+/* Home */
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.cta .btn:first-child{flex:1 1 280px;justify-content:space-between}
+.labs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);margin-top:26px}
+.labs > div{padding:10px 8px 10px 0;display:flex;flex-direction:column;gap:3px;min-width:0}
+.labs > div + div{padding-left:12px;border-left:1px solid var(--rule)}
+.labs span{font:600 10.5px/1.25 var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft)}
+.labs b{font:600 24px/1.1 var(--f-mono);font-variant-numeric:tabular-nums}
+.labs b small{font-size:13px;color:var(--ink-soft);font-weight:500}
+.world{margin-top:30px}
+.world-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin-bottom:10px}
+.world-h h2{font-family:var(--f-display);font-stretch:110%;font-weight:800;font-size:20px;line-height:1.15;margin:0}
+.world-h .code{font:600 12px var(--f-mono);color:var(--trace);margin-right:8px;letter-spacing:.05em}
+.world-h .prog{font:500 12px var(--f-mono);color:var(--ink-soft);white-space:nowrap}
+.topics{display:grid;gap:8px;grid-template-columns:1fr}
+@media (min-width:620px){.topics{grid-template-columns:1fr 1fr}}
+.trow{appearance:none;width:100%;text-align:left;background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;row-gap:2px;cursor:pointer;color:var(--ink)}
+.trow:hover{border-color:var(--ink-soft)}
+.trow .tcode{font:600 11px var(--f-mono);color:var(--ink-soft);letter-spacing:.06em}
+.trow .ttitle{font-weight:700;font-size:16px;line-height:1.25}
+.trow .tsub{font-size:13px;color:var(--ink-soft);line-height:1.35}
+.trow .stars{grid-column:2;grid-row:1 / span 3;align-self:center}
+.stars{white-space:nowrap;font-size:16px;letter-spacing:1px}
+.stars i{font-style:normal;color:var(--rule)}
+.stars i.on{color:var(--gold)}
+
+/* Topic */
+.back{appearance:none;background:none;border:0;color:var(--ink-soft);font:700 14px var(--f-body);padding:4px 0 10px;cursor:pointer}
+.thead .stars{font-size:20px}
+.seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--sheet-2);padding:4px;border-radius:12px;margin:16px 0 18px}
+.seg button{appearance:none;border:0;background:transparent;color:var(--ink-soft);font:700 14px/1.2 var(--f-body);padding:9px 2px;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;min-width:0}
+.seg button[aria-current="page"]{background:var(--sheet);color:var(--ink);box-shadow:0 1px 3px rgba(10,20,40,.14)}
+.seg .n{font:600 11px var(--f-mono);color:var(--trace)}
+.seg .chk{color:var(--ok)}
+@media (max-width:400px){.seg button{font-size:13px}}
+.sheet{background:var(--sheet);border:1px solid var(--rule);border-radius:12px;padding:20px}
+.dots{display:flex;gap:4px;margin-bottom:12px}
+.dots i{flex:1;height:4px;border-radius:2px;background:var(--rule)}
+.dots i.on{background:var(--trace)}
+.lesson h3{font-family:var(--f-display);font-stretch:108%;font-weight:760;font-size:23px;line-height:1.15;margin:0 0 10px}
+.lesson p{margin:8px 0}
+.lesson ul,.lesson ol{padding-left:20px;margin:8px 0}
+.lesson li{margin:7px 0}
+.lesson li::marker{color:var(--trace)}
+.stamp{display:inline-block;border:2px solid var(--trace);color:var(--trace);font:700 12px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;padding:6px 10px;border-radius:4px;transform:rotate(-3deg);margin:4px 0 14px}
+.perla{font-family:var(--f-display);font-stretch:104%;font-weight:650;font-size:21px;line-height:1.35;margin:0}
+
+/* Quiz */
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:10px;font:600 12px var(--f-mono);color:var(--ink-soft);letter-spacing:.04em;margin:0}
+.combo{color:var(--trace)}
+.qtext{font-size:18px;font-weight:700;line-height:1.42;margin:10px 0 14px}
+.opts{display:grid;gap:8px}
+.opt{appearance:none;text-align:left;width:100%;display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start;background:var(--sheet);border:1.5px solid var(--rule);border-radius:10px;padding:12px;color:var(--ink);cursor:pointer;line-height:1.4}
+.opt .k{font:600 13px/1 var(--f-mono);border:1.5px solid var(--rule);border-radius:6px;width:26px;height:26px;display:grid;place-items:center;color:var(--ink-soft)}
+.opt:hover:not([disabled]){border-color:var(--ink-soft)}
+.opt[disabled]{cursor:default}
+.opt.ok{border-color:var(--ok);background:var(--ok-bg)}
+.opt.ok .k{border-color:var(--ok);background:var(--ok);color:#fff}
+.opt.bad{border-color:var(--bad);background:var(--bad-bg)}
+.opt.bad .k{border-color:var(--bad);background:var(--bad);color:#fff}
+.explain{scroll-margin-bottom:96px;scroll-margin-top:96px;margin-top:12px;padding:14px 16px;border-radius:10px;background:var(--sheet-2);border:1px solid var(--rule)}
+.explain p{margin:0 0 8px}
+.verdict{font:700 13px var(--f-mono);letter-spacing:.08em;text-transform:uppercase}
+.verdict.ok{color:var(--ok)}
+.verdict.bad{color:var(--bad)}
+.explain .btn{margin-top:6px}
+.result{text-align:center}
+.score{font:600 60px/1 var(--f-mono);margin:6px 0 10px;font-variant-numeric:tabular-nums}
+.score small{font-size:24px;color:var(--ink-soft)}
+.hearts{display:inline-flex;gap:3px;vertical-align:middle}
+.hearts svg{width:20px;height:20px}
+.hearts .full{fill:var(--trace)}
+.hearts .empty{fill:none;stroke:var(--ink-soft);stroke-width:1.6}
+
+/* Case */
+.chart p{margin:0 0 12px}
+.vitals{display:flex;flex-wrap:wrap;gap:6px}
+.vitals span{font:500 13px/1.3 var(--f-mono);background:var(--sheet-2);border:1px solid var(--rule);padding:3px 8px;border-radius:6px;font-variant-numeric:tabular-nums}
+.step{margin-top:18px}
+.step.current,.case-done{scroll-margin-top:84px}
+.step .qtext{margin-top:6px}
+.past{padding:12px 14px;border:1px dashed var(--rule);border-radius:10px;margin-top:12px}
+.past p{margin:4px 0}
+.past .ans{font-weight:700;color:var(--ok)}
+.ev{font-size:15px;color:var(--ink-soft)}
+.ev b{color:var(--ink)}
+
+/* Flashcards */
+.flip{perspective:1200px;margin-top:10px}
+.card3d{appearance:none;display:grid;width:100%;background:none;border:0;padding:0;cursor:pointer;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.3,.7,.2,1);text-align:left}
+.card3d.flipped{transform:rotateY(180deg)}
+.face{grid-area:1 / 1;min-height:230px;background:var(--sheet);border:1px solid var(--rule);border-radius:14px;padding:22px;display:flex;flex-direction:column;justify-content:center;gap:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.face.back{transform:rotateY(180deg);border-color:var(--ink-soft)}
+.face .side{font:600 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--trace)}
+.face .txt{font-family:var(--f-display);font-stretch:104%;font-weight:720;font-size:21px;line-height:1.3;color:var(--ink)}
+.face.back .txt{font-family:var(--f-body);font-weight:400;font-size:18px;line-height:1.5}
+.face .hint{font-size:13px;color:var(--ink-soft)}
+
+/* Panels */
+.panel{display:grid;gap:12px;margin-top:18px}
+.panel .sheet h3{font-family:var(--f-display);font-stretch:108%;font-weight:780;font-size:21px;margin:0 0 6px}
+.panel .sheet p{margin:0 0 12px;color:var(--ink-soft)}
+.toggle{display:flex;align-items:center;gap:10px;font-weight:700;margin:4px 0 14px;cursor:pointer}
+.toggle input{width:20px;height:20px;accent-color:var(--trace)}
+.note{font-size:14px;color:var(--ink-soft);margin-top:14px;max-width:62ch}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:16px}
+.badge{background:var(--sheet);border:1px solid var(--rule);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.seal{width:42px;height:42px;border-radius:50%;border:2px solid var(--gold);display:grid;place-items:center;font:700 13px var(--f-mono);color:var(--gold);margin-bottom:6px}
+.badge b{font-size:15px;line-height:1.25}
+.badge span{font-size:13px;color:var(--ink-soft);line-height:1.35}
+.badge.locked{opacity:.55}
+.badge.locked .seal{border-style:dashed;border-color:var(--ink-soft);color:var(--ink-soft)}
+.danger{margin-top:28px;border-top:1px solid var(--rule);padding-top:16px}
+
+/* Toasts & modal */
+.toasts{position:fixed;left:0;right:0;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:40;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;padding-inline:16px}
+.toast{background:var(--monitor);color:var(--m-green);font:600 14px/1.3 var(--f-mono);padding:8px 14px;border-radius:8px;border:1px solid var(--monitor-line);box-shadow:0 6px 18px rgba(0,0,0,.25);transition:opacity .3s,transform .3s;max-width:100%}
+.toast.badge-t{color:var(--m-yellow)}
+.toast.out{opacity:0;transform:translateY(6px)}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(4,8,16,.62);display:grid;place-items:center;padding:16px}
+.modal .box{background:var(--monitor);color:#fff;border:1px solid var(--monitor-line);border-radius:16px;padding:26px 22px;width:100%;max-width:380px;text-align:center}
+.m-rank{font:600 64px/1 var(--f-mono);color:var(--m-green);margin:6px 0 4px}
+.modal h2{font-family:var(--f-display);font-stretch:112%;font-weight:800;font-size:24px;margin:0 0 6px}
+.modal p{color:#C6D0E2;margin:8px 0 16px}
+.modal svg{width:100%;height:60px;display:block}
+.modal svg path{fill:none;stroke:var(--m-green);stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.6s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+  .modal svg path{stroke-dashoffset:0}
+}
+</style>
+
+<header class="monitor" id="mon">
+  <div class="wrap"><div class="mon-row" id="monRow"></div></div>
+  <svg class="ecg" id="ecg" aria-hidden="true"><path class="base" id="ecgBase"/><path class="pulse" id="pulse" pathLength="100"/></svg>
+</header>
+<main class="wrap" id="view"></main>
+<nav class="tabs" id="tabs" aria-label="Secciones"></nav>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div id="modal"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ====================== CONTENIDO ====================== */
+const WORLDS=[
+  {id:'car',code:'CAR',name:'Cardiología'},
+  {id:'neu',code:'NEU',name:'Neumología'},
+  {id:'inf',code:'INF',name:'Infectología'},
+  {id:'end',code:'END',name:'Endocrinología'},
+  {id:'ren',code:'REN',name:'Nefrología y medio interno'},
+  {id:'gas',code:'GAS',name:'Gastroenterología y hepatología'},
+  {id:'hn',code:'H·N',name:'Hematología y neurología'}
+];
+
+const TOPICS=[
+/* ---------- CARDIOLOGÍA ---------- */
+{id:'hta',w:'car',title:'HTA y crisis hipertensiva',sub:'Primera línea, urgencia vs emergencia, metas de descenso',
+L:[
+['Cómo se diagnostica',`<p>HTA = <b>≥140/90 mmHg</b> en consultorio (GPC mexicana y ESC). La AHA usa ≥130/80.</p><ul><li>Mide bien: 5 min en reposo, espalda apoyada, brazo a la altura del corazón, 2 tomas.</li><li>Confirma fuera del consultorio con MAPA o automedición (≥135/85).</li><li>Busca daño a órgano blanco: creatinina y TFG, albuminuria, ECG (HVI), fondo de ojo, glucosa y lípidos.</li></ul>`],
+['Tratamiento crónico',`<ul><li>Base para todos: sal &lt;5 g/día, ejercicio, bajar de peso, menos alcohol, dejar de fumar.</li><li>Primera línea: <b>IECA o ARA II</b>, <b>calcioantagonista dihidropiridínico</b> (amlodipino) y <b>diurético tiazídico</b> o tipo tiazida (clortalidona).</li><li>En la mayoría inicia con <b>combinación de 2 fármacos</b> a dosis bajas, idealmente en una sola pastilla.</li><li>Nunca combines IECA + ARA II.</li><li>Meta: <b>&lt;130/80</b> si se tolera.</li></ul>`],
+['Situaciones especiales',`<ul><li><b>DM con albuminuria o ERC</b>: IECA o ARA II a dosis máxima tolerada.</li><li><b>IC con FEr</b>: ARNI/IECA + betabloqueador + ARM + iSGLT2.</li><li><b>Embarazo</b>: metildopa, labetalol o nifedipino. IECA y ARA II están contraindicados.</li><li><b>Cardiopatía isquémica</b>: betabloqueador + IECA.</li></ul>`],
+['Urgencia vs emergencia',`<p>Lo que las separa es el <b>daño agudo a órgano blanco</b>, no la cifra (ambas suelen estar ≥180/120).</p><ul><li><b>Urgencia</b>: sin daño agudo. Ajusta o reinicia fármacos orales y baja en 24–48 h. Cita en 1–3 días.</li><li><b>Emergencia</b>: encefalopatía, EVC, SCA, edema agudo pulmonar, disección aórtica, eclampsia, LRA. Va a UCI con fármaco IV.</li><li>Meta en emergencia: bajar la <b>PAM máximo 25% en la 1ª hora</b>, luego a 160/100 en 2–6 h y a cifras normales en 24–48 h.</li></ul>`],
+['Excepciones y fármacos IV',`<ul><li><b>Disección aórtica</b>: PAS &lt;120 y FC &lt;60 en 20 min. Primero betabloqueador IV (esmolol, labetalol), luego vasodilatador.</li><li><b>EVC isquémico</b>: si vas a trombolizar, &lt;185/110 antes y &lt;180/105 las siguientes 24 h. Si no, trata solo si &gt;220/120.</li><li><b>Edema agudo pulmonar o SCA</b>: nitroglicerina IV.</li><li><b>Eclampsia o preeclampsia grave</b>: sulfato de magnesio + labetalol IV, hidralazina o nifedipino VO.</li><li>Otros IV: nicardipino, clevidipino, nitroprusiato.</li></ul>`]
+],
+perla:'No uses nifedipino sublingual: la caída brusca de la presión puede causar isquemia cerebral o miocárdica.',
+Q:[
+{q:'Hombre de 58 años, PA 190/115 mmHg, asintomático. ECG, creatinina y fondo de ojo sin cambios agudos. ¿Qué es y qué haces?',o:['Urgencia hipertensiva: ajustar antihipertensivos orales y revalorar en 24–72 h','Emergencia hipertensiva: nitroprusiato IV en UCI','Nifedipino sublingual para bajarla en minutos','Bajarla a 120/80 en la primera hora con labetalol IV'],e:'Sin daño agudo a órgano blanco es urgencia. Se baja de forma gradual con medicamentos orales; bajarla rápido no aporta beneficio y puede causar isquemia.'},
+{q:'En una emergencia hipertensiva sin disección aórtica ni EVC, ¿cuál es la meta de la primera hora?',o:['Bajar la PAM no más de 25%','Normalizar la PA (<130/80)','Bajar la PAS a menos de 120 mmHg','No bajarla hasta tener TC de cráneo'],e:'La autorregulación de los órganos está desplazada; bajar más de 25% en la primera hora puede provocar hipoperfusión cerebral, coronaria o renal.'},
+{q:'Dolor torácico desgarrante irradiado a la espalda, PA 200/110, FC 105. Sospechas disección aórtica. ¿Primer fármaco?',o:['Betabloqueador IV (esmolol o labetalol)','Nitroprusiato IV solo','Hidralazina IV','Furosemida IV'],e:'Primero se controla la FC (<60) para reducir el estrés sobre la pared aórtica. Un vasodilatador solo provoca taquicardia refleja. Meta: PAS <120 en 20 minutos.'},
+{q:'Paciente con DM2, PA 150/95 y albúmina/creatinina urinaria de 220 mg/g. ¿Antihipertensivo de elección?',o:['IECA o ARA II','Amlodipino','Hidroclorotiazida','Metoprolol'],e:'IECA y ARA II reducen la albuminuria y retrasan la progresión de la enfermedad renal diabética.'},
+{q:'¿Cuál de estos está CONTRAINDICADO para la HTA en el embarazo?',o:['Enalapril','Metildopa','Labetalol','Nifedipino'],e:'IECA y ARA II son teratogénicos (displasia renal, oligohidramnios). Metildopa, labetalol y nifedipino son los de elección.'}
+],
+K:{pres:'Hombre de 64 años con HTA sin tratamiento. Llega con cefalea intensa, vómito y confusión progresiva desde hace 6 horas. Fondo de ojo con papiledema.',vit:['TA 220/130','FC 92','FR 18','T 36.8 °C','SatO2 96%','Glasgow 13'],
+steps:[
+{q:'¿Qué estudio pides primero?',o:['TC de cráneo simple','Ecocardiograma','Punción lumbar','Ninguno: tratas y observas'],f:['Bien. Necesitas descartar hemorragia o EVC antes de definir metas de PA.','No explica la confusión ni cambia la meta de PA ahora.','Sin imagen previa es peligrosa y no es el primer paso.','La confusión obliga a descartar hemorragia; el manejo cambia según la TC.'],ev:'TC sin hemorragia ni infarto. Diagnóstico: encefalopatía hipertensiva (emergencia).'},
+{q:'¿Cómo bajas la presión?',o:['Labetalol o nicardipino IV, bajando la PAM máximo 25% en la 1ª hora','Labetalol IV hasta llegar a 120/80 en la primera hora','Nifedipino sublingual 10 mg','Captopril VO y alta con cita en 1 semana'],f:['Correcto. Fármaco IV titulable en UCI y descenso escalonado.','Bajarla tan rápido puede causar isquemia cerebral.','Descenso brusco e impredecible; no se usa.','Es emergencia: necesita fármaco IV y vigilancia estrecha.'],ev:'A las 6 h: TA 165/100, despierto y orientado.'},
+{q:'¿Cuál es el siguiente paso?',o:['Pasar a antihipertensivos orales y normalizar la PA en 24–48 h','Seguir bajando IV hasta 110/70 hoy mismo','Suspender todo porque ya mejoró','Iniciar trombólisis'],f:['Exacto. Transición a vía oral y descenso gradual; busca causas secundarias si es joven o resistente.','No hay prisa; bajar más rápido arriesga hipoperfusión.','Sin tratamiento volverá a subir.','No hay EVC isquémico; la trombólisis no tiene indicación.']}
+]},
+C:[
+['¿Qué distingue urgencia de emergencia hipertensiva?','El daño agudo a órgano blanco (encefalopatía, EVC, SCA, EAP, disección, LRA, eclampsia), no la cifra de PA.'],
+['Meta de la 1ª hora en emergencia hipertensiva','Bajar la PAM máximo 25%. Luego 160/100 en 2–6 h y normal en 24–48 h.'],
+['Disección aórtica: meta y primer fármaco','PAS <120 y FC <60 en 20 min. Primero betabloqueador IV (esmolol o labetalol).'],
+['EVC isquémico candidato a trombólisis: límite de PA','<185/110 antes de trombolizar; <180/105 durante las siguientes 24 h.'],
+['Antihipertensivos seguros en el embarazo','Metildopa, labetalol y nifedipino. Contraindicados: IECA y ARA II.']
+]},
+
+{id:'ic',w:'car',title:'Insuficiencia cardiaca',sub:'FEVI, los 4 pilares y perfiles de la IC aguda',
+L:[
+['Clasificación',`<ul><li>Por FEVI: <b>FEr ≤40%</b>, <b>FElr 41–49%</b> (levemente reducida), <b>FEp ≥50%</b>.</li><li>NYHA (síntomas): I sin limitación, II con actividad ordinaria, III con actividad menor que la ordinaria, IV en reposo.</li><li>Estadios ACC/AHA: A (en riesgo), B (cardiopatía estructural sin síntomas), C (síntomas), D (avanzada).</li></ul>`],
+['Diagnóstico',`<ul><li>Clínica: disnea, ortopnea, disnea paroxística nocturna, edema, ingurgitación yugular, S3, estertores.</li><li><b>NT-proBNP</b>: &gt;125 pg/mL (ambulatorio) o &gt;300 pg/mL (agudo). BNP: &gt;35 / &gt;100. Valores bajos hacen poco probable la IC.</li><li><b>Ecocardiograma</b>: confirma y mide la FEVI.</li><li>Rx de tórax: cardiomegalia, redistribución, líneas B de Kerley, derrame pleural.</li></ul>`],
+['FEr crónica: los 4 pilares',`<p>Los cuatro reducen mortalidad y se inician pronto, sin esperar a llegar a la dosis máxima de uno para agregar el siguiente:</p><ul><li><b>ARNI</b> (sacubitril/valsartán) o IECA/ARA II.</li><li><b>Betabloqueador</b>: bisoprolol, carvedilol, metoprolol succinato o nebivolol.</li><li><b>ARM</b>: espironolactona o eplerenona (vigila K y creatinina).</li><li><b>iSGLT2</b>: dapagliflozina o empagliflozina.</li></ul><p>Los diuréticos de asa alivian la congestión pero no reducen mortalidad.</p>`],
+['IC aguda: perfiles',`<p>Dos preguntas: ¿está <b>congestionado</b> (húmedo o seco)? ¿está <b>perfundido</b> (caliente o frío)?</p><ul><li><b>Caliente-húmedo</b> (el más común): furosemida IV (1–2 veces su dosis oral diaria; 20–40 mg si no la tomaba) ± nitroglicerina si PAS &gt;110.</li><li><b>Frío-húmedo</b>: inotrópico (dobutamina) ± vasopresor; considera UCI.</li><li><b>Frío-seco</b>: valora volumen con cuidado.</li><li>O2 solo si SatO2 &lt;90%. VMNI si hay edema agudo pulmonar con trabajo respiratorio.</li></ul>`],
+['Busca el precipitante',`<ul><li>Abandono de medicamentos o exceso de sal y líquidos.</li><li>Isquemia (SCA) o arritmia (sobre todo FA).</li><li>Infección, anemia, tiroides, TEP.</li><li>HTA descontrolada.</li><li>Fármacos: <b>AINE</b>, pioglitazona, verapamilo o diltiazem.</li></ul>`]
+],
+perla:'En una descompensación no suspendas el betabloqueador de rutina; solo redúcelo o suspéndelo si hay hipoperfusión o choque.',
+Q:[
+{q:'FEVI 35%, NYHA II. ¿Qué combinación reduce mortalidad?',o:['ARNI (o IECA) + betabloqueador + ARM + iSGLT2','Furosemida + digoxina','Amlodipino + furosemida','Diltiazem + IECA'],e:'Son los 4 pilares de la IC con FEr. Furosemida y digoxina mejoran síntomas u hospitalizaciones, no mortalidad.'},
+{q:'IC aguda con PAS 80, extremidades frías, oliguria y estertores. ¿Perfil y manejo?',o:['Frío-húmedo: inotrópico (dobutamina) ± vasopresor','Caliente-húmedo: nitroglicerina IV a dosis alta','Frío-seco: 2 L de cristaloide rápido','Caliente-seco: subir el betabloqueador'],e:'Hipoperfusión + congestión. Necesita soporte inotrópico; los vasodilatadores empeorarían la hipotensión.'},
+{q:'¿Cuál de estos fármacos debes evitar en IC con FEr?',o:['Diltiazem','Dapagliflozina','Espironolactona','Bisoprolol'],e:'Los calcioantagonistas no dihidropiridínicos (diltiazem, verapamilo) son inotrópicos negativos y empeoran la IC con FEr.'},
+{q:'Disnea en urgencias con NT-proBNP de 150 pg/mL. ¿Qué concluyes?',o:['IC aguda poco probable (alto valor predictivo negativo)','Confirma IC aguda','Indica IC con FEp','Obliga a iniciar furosemida'],e:'Por debajo de 300 pg/mL en el contexto agudo, la IC es poco probable. Busca otra causa de disnea.'},
+{q:'Inicias espironolactona. ¿Qué vigilas?',o:['Potasio y creatinina','Glucosa','Enzimas hepáticas','Ácido úrico'],e:'Riesgo de hiperkalemia y deterioro renal. Revisa K y creatinina a la semana, al mes y luego periódicamente.'}
+],
+K:{pres:'Mujer de 72 años con IC con FEr (FEVI 30%). Llega con disnea en reposo, ortopnea de 3 almohadas y edema hasta rodillas. Estertores bilaterales hasta campos medios. Extremidades calientes, llenado capilar normal.',vit:['TA 150/90','FC 105','FR 28','T 36.6 °C','SatO2 88%'],
+steps:[
+{q:'¿Qué perfil hemodinámico tiene?',o:['Caliente-húmedo','Frío-húmedo','Frío-seco','Caliente-seco'],f:['Bien: congestionada pero bien perfundida (extremidades calientes, PA alta).','Está bien perfundida: extremidades calientes y PA conservada.','Tiene congestión clara.','Tiene edema, estertores y ortopnea: está húmeda.'],ev:'Perfil caliente-húmedo, el más frecuente.'},
+{q:'¿Manejo inicial?',o:['O2 para SatO2 >90%, furosemida IV y nitroglicerina IV (PAS >110)','Dobutamina IV','Hidratación con 1 L de solución salina','Iniciar betabloqueador a dosis alta'],f:['Correcto. Descongestionar y reducir poscarga.','No hay hipoperfusión; el inotrópico no está indicado.','Empeoraría la congestión.','No se titula betabloqueador durante la descompensación.'],ev:'Uresis de 2.8 L en 12 h y mejora la disnea. Al interrogar: hace 2 semanas empezó naproxeno por dolor de rodilla.'},
+{q:'¿Qué haces con el precipitante y al egreso?',o:['Suspender el AINE, usar paracetamol y optimizar los 4 pilares (ARNI, BB, ARM, iSGLT2)','Cambiar naproxeno por diclofenaco','Mantener el naproxeno y subir la furosemida','Egresar solo con furosemida'],f:['Exacto. Los AINE retienen sodio y empeoran la IC; optimizar los 4 pilares reduce reingresos y mortalidad.','Todos los AINE tienen el mismo problema.','El AINE seguirá descompensándola.','Sin los fármacos que reducen mortalidad volverá a ingresar.']}
+]},
+C:[
+['Los 4 pilares de la IC con FEr','ARNI (o IECA/ARA II), betabloqueador, ARM e iSGLT2.'],
+['Cortes de FEVI','FEr ≤40%, FElr 41–49%, FEp ≥50%.'],
+['IC aguda caliente-húmeda: manejo','Diurético de asa IV ± vasodilatador (nitroglicerina si PAS >110).'],
+['IC aguda fría-húmeda: manejo','Inotrópico (dobutamina) ± vasopresor; considerar UCI.'],
+['Betabloqueadores con evidencia en IC','Bisoprolol, carvedilol, metoprolol succinato y nebivolol.']
+]},
+
+{id:'sca',w:'car',title:'Síndrome coronario agudo',sub:'ECG, primeros 10 minutos y reperfusión',
+L:[
+['El espectro',`<ul><li><b>Angina inestable</b>: isquemia con troponina normal.</li><li><b>IAMSEST</b>: troponina elevada sin elevación persistente del ST.</li><li><b>IAMCEST</b>: elevación persistente del ST (o BRIHH nuevo y equivalentes). Es una arteria ocluida: tiempo es miocardio.</li></ul><p>IAM = subida o caída de troponina con al menos un valor &gt;percentil 99 + evidencia de isquemia.</p>`],
+['Leer el ECG',`<ul><li>Elevación del ST: <b>≥1 mm en 2 derivaciones contiguas</b>. En V2–V3: ≥2 mm hombres ≥40 años, ≥2.5 mm hombres &lt;40, ≥1.5 mm mujeres.</li><li>V1–V4: anterior (descendente anterior).</li><li>DII, DIII, aVF: inferior (casi siempre coronaria derecha).</li><li>DI, aVL, V5–V6: lateral (circunfleja).</li><li>En IAM inferior toma <b>V3R–V4R</b>: si hay infarto del VD, evita nitratos y diuréticos y da volumen si hay hipotensión.</li></ul>`],
+['Primeros 10 minutos',`<ul><li><b>ECG en ≤10 min</b> desde la llegada.</li><li><b>Aspirina</b> 150–300 mg masticada.</li><li>Segundo antiagregante: <b>ticagrelor 180 mg</b> o clopidogrel 300–600 mg (prasugrel si va a ICP y sin EVC previo).</li><li>Anticoagulante: enoxaparina o heparina no fraccionada.</li><li><b>Atorvastatina 80 mg</b>.</li><li>Nitroglicerina para el dolor (no en hipotensión, IAM del VD o uso reciente de sildenafil).</li><li>O2 solo si SatO2 &lt;90%.</li></ul>`],
+['Reperfusión en IAMCEST',`<p>Si lleva &lt;12 h de síntomas:</p><ul><li><b>ICP primaria</b> si puede hacerse en <b>≤120 min</b> desde el diagnóstico.</li><li>Si no, <b>fibrinólisis en ≤10 min</b> (tenecteplasa, alteplasa o estreptoquinasa) y traslado para coronariografía en 2–24 h.</li><li>Reperfusión exitosa: el ST baja &gt;50% a los 60–90 min, cede el dolor y aparecen arritmias de reperfusión (RIVA).</li><li>Si falla la fibrinólisis: <b>ICP de rescate</b>.</li></ul>`],
+['No trombolices si…',`<p>Contraindicaciones absolutas:</p><ul><li>Hemorragia intracraneal previa (en cualquier momento).</li><li>EVC isquémico en los últimos 6 meses.</li><li>Tumor, malformación o daño del SNC.</li><li>Trauma, cirugía mayor o TCE en el último mes.</li><li>Sangrado GI en el último mes o sangrado activo.</li><li>Sospecha de disección aórtica.</li><li>Punciones no compresibles en las últimas 24 h.</li></ul>`]
+],
+perla:'IAMSEST de muy alto riesgo (inestable, dolor refractario, arritmias, IC aguda, complicación mecánica): coronariografía inmediata (<2 h). IAMSEST confirmado: en <24 h.',
+Q:[
+{q:'Elevación del ST en DII, DIII y aVF, PA 85/50 y campos pulmonares limpios. V4R con elevación. ¿Qué evitas?',o:['Nitroglicerina y diuréticos','Aspirina','Líquidos IV','Ticagrelor'],e:'El infarto del VD depende de la precarga. Nitratos y diuréticos pueden desplomar la PA; se trata con volumen y reperfusión.'},
+{q:'IAMCEST de 3 h de evolución. Tu hospital no tiene hemodinamia y el traslado a ICP tardaría 3 h. ¿Qué haces?',o:['Fibrinólisis en ≤10 min y luego traslado para coronariografía','Trasladar para ICP primaria aunque tarde 3 h','Anticoagular y esperar 24 h','Solo manejo médico'],e:'Si la ICP no puede hacerse en ≤120 min, la estrategia es farmacoinvasiva: trombolizar ya y trasladar para coronariografía en 2–24 h (o rescate si falla).'},
+{q:'¿Cuál es contraindicación ABSOLUTA de fibrinólisis?',o:['Hemorragia intracraneal hace 5 años','Edad de 78 años','PA 150/90','Diabetes mellitus'],e:'Una hemorragia intracraneal previa contraindica la fibrinólisis sin importar cuándo ocurrió.'},
+{q:'Paciente con SCA y SatO2 de 96%. ¿Le pones oxígeno?',o:['No; solo si SatO2 <90%','Sí, siempre a 4 L/min','Sí, con mascarilla con reservorio','Solo si tiene dolor'],e:'El oxígeno rutinario en normoxemia no aporta beneficio y puede aumentar el daño miocárdico.'},
+{q:'Elevación del ST en V1–V4. ¿Arteria más probable?',o:['Descendente anterior','Coronaria derecha','Circunfleja','Tronco de la coronaria izquierda (siempre)'],e:'V1–V4 corresponde a la pared anterior, irrigada por la descendente anterior.'}
+],
+K:{pres:'Hombre de 55 años, fumador y con DM2. Dolor opresivo retroesternal de 40 minutos irradiado a brazo izquierdo, con diaforesis.',vit:['TA 130/80','FC 95','FR 20','T 36.5 °C','SatO2 96%'],
+steps:[
+{q:'¿Primer paso?',o:['ECG de 12 derivaciones en ≤10 min','Esperar la troponina antes del ECG','Rx de tórax','Ecocardiograma'],f:['Correcto. El ECG decide la ruta (IAMCEST o no).','La troponina tarda y no define la reperfusión.','No es prioritaria.','Puede ayudar después, pero el ECG va primero.'],ev:'ECG: elevación del ST de 3 mm en V1–V4.'},
+{q:'¿Qué le das de inmediato?',o:['Aspirina 300 mg masticada + ticagrelor 180 mg + anticoagulante + atorvastatina 80 mg','Oxígeno a 5 L/min y morfina, y esperar al cardiólogo','Solo aspirina y esperar troponinas','Diltiazem IV'],f:['Exacto: doble antiagregación, anticoagulación y estatina de alta intensidad.','Con SatO2 96% no necesita O2, y el retraso cuesta miocardio.','Es IAMCEST: no se espera la troponina.','No está indicado y puede causar bradicardia e hipotensión.'],ev:'Tu hospital tiene sala de hemodinamia disponible en 60 minutos.'},
+{q:'¿Estrategia de reperfusión?',o:['ICP primaria','Fibrinólisis y esperar','Manejo médico y coronariografía en 1 semana','Revascularización quirúrgica urgente'],f:['Correcto: ICP disponible en ≤120 min es la estrategia de elección.','La ICP primaria es superior si está disponible a tiempo.','Es un IAMCEST: hay que reperfundir ya.','La cirugía queda para anatomías especiales o complicaciones.']}
+]},
+C:[
+['Tiempo puerta-ECG en dolor torácico','≤10 minutos.'],
+['¿Cuándo ICP primaria en IAMCEST?','Si puede hacerse en ≤120 min desde el diagnóstico (con <12 h de síntomas).'],
+['Tiempo diagnóstico-fibrinólisis','≤10 minutos si no hay ICP a tiempo; luego coronariografía en 2–24 h.'],
+['Criterio ECG de reperfusión exitosa','Descenso del ST >50% a los 60–90 minutos.'],
+['IAM inferior: qué derivaciones agregas','V3R–V4R para buscar infarto del VD (volumen, evitar nitratos y diuréticos).']
+]},
+
+{id:'fa',w:'car',title:'Fibrilación auricular',sub:'Inestable o estable, frecuencia vs ritmo, CHA₂DS₂-VASc',
+L:[
+['Reconócela',`<ul><li>ECG: ritmo <b>irregularmente irregular</b>, sin ondas P, ondas f.</li><li><b>Paroxística</b>: cede sola en &lt;7 días.</li><li><b>Persistente</b>: &gt;7 días; de larga duración si &gt;12 meses.</li><li><b>Permanente</b>: se acepta y ya no se busca ritmo sinusal.</li></ul>`],
+['¿Inestable?',`<p>Hipotensión, choque, isquemia, edema pulmonar o síncope: <b>cardioversión eléctrica sincronizada inmediata</b>.</p><p>Si está estable, decides entre controlar frecuencia o ritmo, y <b>siempre</b> evalúas la anticoagulación.</p>`],
+['Control de frecuencia',`<ul><li>FEVI &gt;40%: betabloqueador o <b>diltiazem/verapamilo</b>.</li><li>FEVI ≤40%: <b>betabloqueador y/o digoxina</b> (evita diltiazem y verapamilo).</li><li>Amiodarona en casos agudos seleccionados.</li><li>Meta inicial: FC en reposo &lt;110 lpm.</li></ul>`],
+['Control de ritmo',`<ul><li>Cardioversión eléctrica o farmacológica (amiodarona; flecainida o propafenona si no hay cardiopatía estructural).</li><li>Si la FA lleva <b>≥48 h o no sabes</b> cuánto: anticoagula 3 semanas antes o haz ETE para descartar trombo. (La ESC 2024 ya usa &gt;24 h.)</li><li>Anticoagula al menos 4 semanas después.</li></ul>`],
+['Anticoagulación: CHA₂DS₂-VASc',`<ul><li><b>C</b> IC (1) · <b>H</b> HTA (1) · <b>A₂</b> edad ≥75 (2) · <b>D</b> diabetes (1) · <b>S₂</b> EVC/AIT/embolia (2) · <b>V</b> enfermedad vascular (1) · <b>A</b> 65–74 (1) · <b>Sc</b> sexo femenino (1).</li><li>Anticoagula con <b>≥2 en hombres o ≥3 en mujeres</b>; considéralo con 1 o 2. (La ESC 2024 quitó el sexo: CHA₂DS₂-VA ≥2.)</li><li><b>ACOD</b> (apixabán, rivaroxabán, dabigatrán, edoxabán) sobre warfarina.</li><li><b>Warfarina</b> obligatoria si hay válvula mecánica o estenosis mitral moderada-grave.</li><li>HAS-BLED mide riesgo de sangrado: sirve para corregir factores, no para negar la anticoagulación.</li></ul>`]
+],
+perla:'FA con preexcitación (WPW): evita bloqueadores del nodo AV (adenosina, betabloqueador, calcioantagonista, digoxina, amiodarona IV). Usa procainamida o cardioversión eléctrica.',
+Q:[
+{q:'FA con FC 160, PA 75/40 y confusión. ¿Qué haces?',o:['Cardioversión eléctrica sincronizada','Diltiazem IV','Digoxina IV','Anticoagular 3 semanas y luego cardiovertir'],e:'La FA con inestabilidad hemodinámica se cardiovierte eléctricamente de inmediato.'},
+{q:'Mujer de 70 años con HTA y FA. ¿CHA₂DS₂-VASc y conducta?',o:['3 puntos: anticoagular con ACOD','1 punto: aspirina','2 puntos: no anticoagular','4 puntos: warfarina obligatoria'],e:'Sexo femenino (1) + edad 65–74 (1) + HTA (1) = 3. En mujeres, ≥3 indica anticoagulación; los ACOD son de elección.'},
+{q:'FA en paciente con válvula mitral mecánica. ¿Anticoagulante?',o:['Warfarina','Apixabán','Rivaroxabán','Aspirina + clopidogrel'],e:'Los ACOD están contraindicados con válvulas mecánicas y en estenosis mitral moderada-grave.'},
+{q:'FA estable con FC 130 y FEVI 25%. ¿Control de frecuencia?',o:['Betabloqueador y/o digoxina','Diltiazem','Verapamilo','Flecainida'],e:'Con FEVI reducida, diltiazem y verapamilo empeoran la función ventricular. La flecainida está contraindicada en cardiopatía estructural.'},
+{q:'FA estable de duración desconocida. Quieres cardiovertir. ¿Qué haces antes?',o:['Anticoagular 3 semanas o hacer ETE para descartar trombo','Cardiovertir ya','Dar aspirina 24 h antes','Nada si la FC está controlada'],e:'Si no sabes cuánto lleva, asume ≥48 h: riesgo de embolia al restablecer el ritmo.'}
+],
+K:{pres:'Hombre de 68 años con HTA y DM2. Palpitaciones desde hace 2 días. Sin dolor torácico ni disnea. ECG: FA con respuesta ventricular rápida. Ecocardiograma: FEVI 55%.',vit:['TA 128/76','FC 140 irregular','FR 18','T 36.7 °C','SatO2 97%'],
+steps:[
+{q:'¿Conducta inicial?',o:['Está estable: control de frecuencia con betabloqueador o diltiazem','Cardioversión eléctrica inmediata','Amiodarona IV y cardioversión sin anticoagular','Digoxina como única opción'],f:['Correcto. Estable y con FEVI conservada: betabloqueador o diltiazem.','Está estable; no la necesita de urgencia.','Lleva 48 h: cardiovertir sin anticoagular arriesga una embolia.','La digoxina sola controla mal la FC en pacientes activos; no es la primera opción aquí.'],ev:'La FC baja a 90 lpm con metoprolol.'},
+{q:'¿Anticoagulas?',o:['Sí: CHA₂DS₂-VASc 3 (HTA, DM, edad 65–74), ACOD','No: el puntaje es 1','Solo aspirina','Solo si se cardiovierte'],f:['Exacto. 3 puntos en un hombre = anticoagular.','Suma HTA (1) + DM (1) + edad 65–74 (1) = 3.','La aspirina no previene embolias de forma eficaz en FA.','La indicación depende del riesgo embólico, no de la estrategia de ritmo.'],ev:'El paciente quiere intentar volver a ritmo sinusal.'},
+{q:'¿Cómo planeas la cardioversión?',o:['Anticoagular 3 semanas antes (o ETE) y mantener al menos 4 semanas después','Cardiovertir hoy sin estudios','Cardiovertir y suspender el anticoagulante al día siguiente','No se puede cardiovertir nunca'],f:['Correcto: lleva ≥48 h de evolución.','Riesgo de embolia por trombo en la orejuela.','El riesgo embólico persiste semanas tras la cardioversión.','Sí se puede, con preparación adecuada.']}
+]},
+C:[
+['FA inestable','Cardioversión eléctrica sincronizada inmediata.'],
+['Componentes de CHA₂DS₂-VASc','IC, HTA, edad ≥75 (2), DM, EVC/AIT (2), vascular, edad 65–74, sexo femenino.'],
+['¿Cuándo warfarina y no ACOD en FA?','Válvula mecánica o estenosis mitral moderada-grave.'],
+['FA ≥48 h antes de cardiovertir','3 semanas de anticoagulación o ETE; seguir ≥4 semanas después.'],
+['FA + WPW','Procainamida o cardioversión eléctrica; evitar bloqueadores del nodo AV.']
+]},
+
+/* ---------- NEUMOLOGÍA ---------- */
+{id:'nac',w:'neu',title:'Neumonía adquirida en la comunidad',sub:'CURB-65, esquemas ambulatorio y hospitalario',
+L:[
+['Diagnóstico',`<ul><li>Fiebre, tos, expectoración, disnea, dolor pleurítico y estertores + <b>infiltrado nuevo en la Rx</b>.</li><li>Agente más común: <b><i>S. pneumoniae</i></b>.</li><li>Atípicos: <i>Mycoplasma</i>, <i>Chlamydophila</i>, <i>Legionella</i>. Virus: influenza, SARS-CoV-2.</li></ul>`],
+['¿Dónde se trata? CURB-65',`<ul><li><b>C</b>onfusión · <b>U</b>rea &gt;7 mmol/L (BUN &gt;19 mg/dL) · <b>R</b>espiraciones ≥30 · <b>B</b>aja PA (PAS &lt;90 o PAD ≤60) · edad ≥<b>65</b>.</li><li>0–1: ambulatorio. 2: hospitalizar. ≥3: grave; con 4–5 valora UCI.</li><li>Criterios mayores de NAC grave (ATS/IDSA): choque con vasopresores o ventilación mecánica.</li></ul>`],
+['Tratamiento ambulatorio',`<ul><li>Sano sin comorbilidades: <b>amoxicilina 1 g c/8 h</b> o doxiciclina (macrólido solo si la resistencia local del neumococo es &lt;25%).</li><li>Con comorbilidades: amoxicilina/clavulanato o cefalosporina + macrólido o doxiciclina, o bien quinolona respiratoria sola (levofloxacino, moxifloxacino).</li></ul>`],
+['Tratamiento hospitalario',`<ul><li>Piso: <b>betalactámico (ceftriaxona) + macrólido (azitromicina)</b>, o quinolona respiratoria sola.</li><li>UCI: betalactámico + macrólido (o + quinolona).</li><li>Cubre MRSA o <i>Pseudomonas</i> solo si hay factores de riesgo (aislamiento previo, hospitalización con antibiótico IV en 90 días).</li><li>Duración: <b>mínimo 5 días</b>, afebril 48–72 h y estable.</li><li>NAC grave: la hidrocortisona puede reducir mortalidad.</li></ul>`],
+['Si no mejora en 72 h',`<ul><li>Busca derrame complicado o empiema, absceso, germen no cubierto, TB u otro diagnóstico.</li><li>Derrame con <b>pH &lt;7.2</b>, glucosa &lt;60, pus o Gram positivo: sonda pleural.</li><li>No repitas la Rx antes de 6 semanas si evoluciona bien.</li><li>Prevención: vacunas contra neumococo e influenza.</li></ul>`]
+],
+perla:'La respuesta se evalúa a las 48–72 h. Cambiar el antibiótico antes de ese tiempo en un paciente estable suele ser un error.',
+Q:[
+{q:'Paciente de 70 años, confuso, FR 32, PA 100/70, BUN 25 mg/dL. ¿CURB-65?',o:['4: NAC grave, hospitalizar y valorar UCI','2: hospitalización corta','1: tratamiento ambulatorio','5: solo cuidados paliativos'],e:'Confusión (1) + urea (1) + FR ≥30 (1) + edad ≥65 (1) = 4. La PA 100/70 no suma (PAS ≥90 y PAD >60).'},
+{q:'NAC que requiere hospitalización en piso, sin factores de riesgo para MRSA ni Pseudomonas. ¿Esquema?',o:['Ceftriaxona + azitromicina','Vancomicina + meropenem','Amoxicilina VO','Ciprofloxacino + clindamicina'],e:'Betalactámico + macrólido (o quinolona respiratoria sola). El amplio espectro se reserva para quien tiene factores de riesgo.'},
+{q:'¿Agente etiológico más frecuente de la NAC?',o:['Streptococcus pneumoniae','Haemophilus influenzae','Staphylococcus aureus','Klebsiella pneumoniae'],e:'El neumococo sigue siendo el principal agente en todos los niveles de gravedad.'},
+{q:'Hombre de 25 años, sano, NAC con CURB-65 de 0. ¿Tratamiento?',o:['Amoxicilina 1 g c/8 h VO','Ceftriaxona IV','Levofloxacino IV','Hospitalizar para vigilancia'],e:'Paciente sano sin comorbilidades: amoxicilina (o doxiciclina) ambulatoria.'},
+{q:'Derrame paraneumónico con pH 7.0 y glucosa 40 mg/dL. ¿Conducta?',o:['Colocar sonda pleural (derrame complicado)','Seguir con antibiótico y observar','Toracocentesis evacuadora una sola vez','Esteroides'],e:'pH <7.2 o glucosa <60 definen derrame complicado: requiere drenaje.'}
+],
+K:{pres:'Hombre de 67 años con EPOC. Fiebre de 3 días y tos con esputo purulento. Despierto y orientado. Rx: consolidación en lóbulo inferior derecho. BUN 22 mg/dL.',vit:['TA 110/70','FC 102','FR 26','T 38.9 °C','SatO2 89%'],
+steps:[
+{q:'¿CURB-65 y lugar de manejo?',o:['2: hospitalizar','0: ambulatorio','4: UCI','1: ambulatorio con quinolona'],f:['Correcto: urea (1) + edad (1) = 2. Además está hipoxémico.','Suma la urea y la edad.','No tiene confusión, FR ≥30 ni hipotensión.','Son 2 puntos y tiene SatO2 de 89%.'],ev:'Se hospitaliza en piso con O2.'},
+{q:'¿Antibiótico?',o:['Ceftriaxona + azitromicina','Vancomicina + meropenem','Amoxicilina VO','Solo azitromicina'],f:['Exacto: betalactámico + macrólido.','No tiene factores de riesgo para MRSA ni Pseudomonas.','Está hospitalizado e hipoxémico; necesita IV.','La monoterapia con macrólido no es adecuada en hospitalizados.'],ev:'A las 72 h: afebril 48 h, FC 84, SatO2 94% al aire, tolera la vía oral.'},
+{q:'¿Ahora qué?',o:['Pasar a vía oral y completar al menos 5–7 días en total','Seguir IV 14 días','Repetir Rx de tórax hoy','Agregar vancomicina'],f:['Correcto: la estabilidad clínica permite cambiar a vía oral y egresar.','No hace falta; prolongar la vía IV aumenta riesgos.','La Rx tarda semanas en limpiarse; no cambia el manejo.','Va mejorando: no hay razón para escalar.']}
+]},
+C:[
+['Componentes de CURB-65','Confusión, urea >7 mmol/L, FR ≥30, PAS <90 o PAD ≤60, edad ≥65.'],
+['CURB-65 y lugar de tratamiento','0–1 ambulatorio · 2 hospital · ≥3 grave (4–5 valorar UCI).'],
+['NAC hospitalizada no grave','Betalactámico + macrólido, o quinolona respiratoria sola.'],
+['Duración del antibiótico en NAC','Mínimo 5 días, afebril 48–72 h y clínicamente estable.'],
+['Derrame paraneumónico complicado','pH <7.2, glucosa <60, pus o Gram/cultivo positivo: sonda pleural.']
+]},
+
+{id:'epoc',w:'neu',title:'EPOC y su exacerbación',sub:'Espirometría, oxígeno controlado y VMNI',
+L:[
+['Diagnóstico',`<ul><li>Espirometría post-broncodilatador con <b>FEV1/FVC &lt;0.70</b>.</li><li>Factores: tabaquismo y, muy común en México, <b>humo de leña</b>.</li><li>Gravedad de la obstrucción (GOLD) por FEV1: 1 ≥80% · 2 50–79% · 3 30–49% · 4 &lt;30%.</li></ul>`],
+['EPOC estable',`<ul><li>Grupo A: un broncodilatador (LAMA o LABA).</li><li>Grupo B: <b>LABA + LAMA</b>.</li><li>Grupo E (≥2 exacerbaciones moderadas o ≥1 hospitalización al año): LABA + LAMA; agrega corticoide inhalado si eosinófilos ≥300.</li><li>Dejar de fumar, vacunas y rehabilitación pulmonar.</li><li><b>O2 domiciliario</b> ≥15 h/día si PaO2 ≤55 mmHg o SatO2 ≤88% (o PaO2 56–59 con cor pulmonale o Hto &gt;55%).</li></ul>`],
+['Exacerbación',`<p>Más disnea, más esputo o esputo más purulento. Casi siempre por infección viral o bacteriana (<i>H. influenzae</i>, neumococo, <i>M. catarrhalis</i>).</p><ul><li><b>Salbutamol ± ipratropio</b> nebulizado o en inhalador.</li><li><b>Prednisona 40 mg VO por 5 días</b>.</li><li><b>Antibiótico</b> si el esputo es purulento + más disnea o más volumen, o si necesita ventilación (amoxicilina/clavulanato, doxiciclina o macrólido, 5–7 días).</li></ul>`],
+['Oxígeno y ventilación',`<ul><li>Meta <b>SatO2 88–92%</b> con Venturi o puntas: más oxígeno puede causar hipercapnia.</li><li>Toma gasometría.</li><li><b>VMNI (BiPAP)</b> si pH ≤7.35 con PaCO2 ≥45 mmHg o hay fatiga muscular.</li><li>Intuba si falla la VMNI, hay deterioro neurológico grave, paro o inestabilidad.</li></ul>`],
+['No te quedes en EPOC',`<p>En toda exacerbación hospitalizada pide Rx de tórax y piensa en lo que la imita o la desencadena:</p><ul><li>Neumonía</li><li>TEP</li><li>Insuficiencia cardiaca</li><li>Neumotórax</li><li>Arritmias</li></ul>`]
+],
+perla:'Además de dejar de fumar, lo único que ha demostrado aumentar la supervivencia en EPOC con hipoxemia crónica es el oxígeno ≥15 horas al día.',
+Q:[
+{q:'Meta de saturación en una exacerbación de EPOC:',o:['88–92%','≥98%','94–98%','80–85%'],e:'En retenedores de CO2, el exceso de O2 empeora la hipercapnia y la acidosis respiratoria.'},
+{q:'Exacerbación con pH 7.28 y PaCO2 62 mmHg, despierto y cooperador. ¿Conducta?',o:['Ventilación mecánica no invasiva (BiPAP)','Intubación inmediata','Subir el O2 a mascarilla con reservorio','Bicarbonato IV'],e:'Acidosis respiratoria con paciente cooperador: la VMNI reduce intubación y mortalidad.'},
+{q:'Corticoide en la exacerbación de EPOC:',o:['Prednisona 40 mg VO por 5 días','Metilprednisolona 1 g IV por 3 días','Prednisona 40 mg por 6 semanas','No se usan corticoides'],e:'5 días es igual de eficaz que los esquemas largos y con menos efectos adversos.'},
+{q:'Criterio espirométrico de EPOC:',o:['FEV1/FVC <0.70 post-broncodilatador','FEV1 <80% pre-broncodilatador','Mejoría del FEV1 >12% con salbutamol','FVC <70%'],e:'La relación FEV1/FVC <0.70 después del broncodilatador confirma obstrucción persistente.'},
+{q:'¿Cuándo está indicado el oxígeno domiciliario?',o:['PaO2 ≤55 mmHg o SatO2 ≤88% en reposo','SatO2 <94% al caminar','Siempre que haya disnea','FEV1 <50%'],e:'Hipoxemia crónica en reposo (o PaO2 56–59 con cor pulmonale o policitemia).'}
+],
+K:{pres:'Mujer de 70 años con EPOC. Cocinó con leña por 40 años. Desde hace 3 días tiene más disnea y esputo verde. Usa músculos accesorios.',vit:['TA 135/80','FC 110','FR 28','T 37.6 °C','SatO2 84% aire ambiente'],
+steps:[
+{q:'¿Cómo das el oxígeno?',o:['Venturi titulado a SatO2 88–92%','Mascarilla con reservorio a 15 L/min hasta 100%','No dar O2 para que no retenga CO2','Puntas a 6 L/min sin vigilar'],f:['Correcto: oxígeno controlado.','El exceso de O2 puede causar hipercapnia y narcosis.','La hipoxemia mata más rápido: hay que darlo, pero controlado.','Necesitas una meta y vigilancia.'],ev:'La SatO2 sube a 90%.'},
+{q:'¿Tratamiento farmacológico?',o:['Salbutamol + ipratropio, prednisona 40 mg 5 días y antibiótico','Solo salbutamol','Antibiótico solo, sin broncodilatador','Teofilina IV'],f:['Exacto: tiene esputo purulento + más disnea, así que lleva antibiótico.','Le faltan el corticoide y el antibiótico.','Los broncodilatadores son la base.','Las metilxantinas no se recomiendan en exacerbaciones.'],ev:'Gasometría: pH 7.30, PaCO2 60 mmHg. Despierta y cooperadora.'},
+{q:'¿Siguiente paso?',o:['VMNI (BiPAP)','Intubar de inmediato','Bajar el O2 a 1 L','Bicarbonato IV'],f:['Correcto: acidosis respiratoria en paciente cooperadora.','Primero VMNI; intubas si falla o hay contraindicación.','Dejarías la hipoxemia sin resolver la hipercapnia.','No corrige la causa (hipoventilación).']}
+]},
+C:[
+['Diagnóstico espirométrico de EPOC','FEV1/FVC <0.70 post-broncodilatador.'],
+['Meta de SatO2 en exacerbación de EPOC','88–92%.'],
+['Indicación de VMNI en EPOC','pH ≤7.35 con PaCO2 ≥45 mmHg o fatiga de músculos respiratorios.'],
+['Antibiótico en exacerbación de EPOC','Esputo purulento + más disnea o más volumen, o necesidad de ventilación.'],
+['Oxígeno domiciliario en EPOC','PaO2 ≤55 mmHg o SatO2 ≤88% en reposo, ≥15 h/día.']
+]},
+
+{id:'tep',w:'neu',title:'Tromboembolia pulmonar',sub:'Wells, dímero D, estratificación y anticoagulación',
+L:[
+['Sospecha',`<ul><li>Tríada de Virchow: <b>estasis</b> (cirugía, inmovilización, viajes), <b>hipercoagulabilidad</b> (cáncer, embarazo, estrógenos, trombofilias) y <b>daño endotelial</b>.</li><li>Clínica: disnea súbita, dolor pleurítico, taquicardia, hemoptisis, síncope.</li><li>ECG: lo más común es <b>taquicardia sinusal</b>; el S1Q3T3 es raro.</li></ul>`],
+['Algoritmo diagnóstico',`<ul><li>Calcula la probabilidad (Wells o Ginebra).</li><li>Improbable (Wells ≤4): <b>dímero D</b>; si es negativo, descarta.</li><li>Probable (Wells &gt;4): <b>angioTC directa</b>; el dímero D no sirve aquí.</li><li>Inestable: ecocardiograma a la cabecera; disfunción del VD = trátalo como TEP de alto riesgo.</li><li>Dímero D ajustado por edad (&gt;50 años): edad × 10 µg/L.</li><li>Embarazo, alergia al contraste o ERC: gammagrafía V/Q o Doppler de piernas.</li></ul>`],
+['Estratifica el riesgo',`<ul><li><b>Alto</b>: inestabilidad (PAS &lt;90 por &gt;15 min, vasopresores o paro).</li><li><b>Intermedio-alto</b>: PESI III–IV o sPESI ≥1 + disfunción del VD + troponina elevada.</li><li><b>Intermedio-bajo</b>: uno o ninguno de esos dos.</li><li><b>Bajo</b>: sPESI 0; puede manejarse ambulatorio.</li></ul>`],
+['Tratamiento',`<ul><li><b>Anticoagulación inmediata</b>: HBPM, fondaparinux, HNF o ACOD (apixabán, rivaroxabán).</li><li>Alto riesgo: <b>trombólisis sistémica</b> (alteplasa 100 mg en 2 h) + HNF. Si está contraindicada: embolectomía o terapia por catéter.</li><li>Intermedio-alto: anticoagula, vigila y trombolizas de rescate si se deteriora.</li><li>Filtro de vena cava solo si no puede anticoagularse.</li></ul>`],
+['¿Cuánto tiempo?',`<ul><li>Provocado por un factor transitorio mayor (cirugía): <b>3 meses</b>.</li><li>No provocado o con factor persistente: considera anticoagulación extendida.</li><li>Cáncer: HBPM o ACOD (edoxabán, rivaroxabán, apixabán).</li><li>Embarazo: <b>HBPM</b> (warfarina y ACOD contraindicados).</li><li>Síndrome antifosfolípido: warfarina.</li></ul>`]
+],
+perla:'Si la sospecha es alta y no hay contraindicación, inicia la anticoagulación mientras esperas la angioTC.',
+Q:[
+{q:'Probabilidad clínica baja de TEP y dímero D negativo. ¿Qué concluyes?',o:['Se descarta TEP','Pides angioTC de todos modos','Inicias anticoagulación','Pides gammagrafía V/Q'],e:'Con probabilidad baja o intermedia, un dímero D negativo tiene un valor predictivo negativo muy alto.'},
+{q:'Probabilidad clínica alta de TEP en paciente estable. ¿Siguiente estudio?',o:['AngioTC pulmonar directamente','Dímero D','Rx de tórax y esperar','Ecocardiograma transesofágico'],e:'Con probabilidad alta, un dímero D negativo no descarta: se va directo a la angioTC.'},
+{q:'TEP confirmado con PA 80/50 sostenida. ¿Tratamiento?',o:['Trombólisis sistémica (alteplasa) + heparina no fraccionada','Apixabán VO','Filtro de vena cava','Solo HBPM y observar'],e:'TEP de alto riesgo: la trombólisis reduce la mortalidad. Si está contraindicada, embolectomía o terapia por catéter.'},
+{q:'Embarazada de 28 semanas con TEP confirmado. ¿Anticoagulante?',o:['Heparina de bajo peso molecular','Warfarina','Rivaroxabán','Apixabán'],e:'La HBPM no cruza la placenta. La warfarina es teratogénica y los ACOD no están aprobados en el embarazo.'},
+{q:'¿Hallazgo electrocardiográfico más frecuente en TEP?',o:['Taquicardia sinusal','S1Q3T3','Bloqueo de rama derecha','Fibrilación auricular'],e:'El S1Q3T3 es clásico pero poco frecuente; la taquicardia sinusal es lo más común.'}
+],
+K:{pres:'Mujer de 34 años, a 10 días de una cirugía de cadera. Disnea súbita y dolor pleurítico derecho. Sin signos de TVP. Lo más probable es TEP.',vit:['TA 118/72','FC 118','FR 26','T 37.2 °C','SatO2 90%'],
+steps:[
+{q:'Wells: FC >100 (1.5) + cirugía reciente (1.5) + TEP como diagnóstico más probable (3) = 6. ¿Siguiente paso?',o:['AngioTC pulmonar (TEP probable)','Dímero D','Gammagrafía V/Q primero','Alta con analgésico'],f:['Correcto: Wells >4 = TEP probable; el dímero D no descarta.','Con probabilidad alta el dímero D no sirve.','La angioTC es de elección si no hay contraindicación.','Riesgo alto de muerte si es TEP.'],ev:'La angioTC tardará 1 hora. La paciente no tiene contraindicaciones para anticoagular.'},
+{q:'¿Qué haces mientras esperas?',o:['Iniciar HBPM','Esperar el resultado sin tratar','Trombólisis empírica','Colocar filtro de vena cava'],f:['Exacto: con sospecha alta se anticoagula mientras se confirma.','Perderías tiempo valioso.','No está inestable; la trombólisis no está indicada.','Solo si no se puede anticoagular.'],ev:'AngioTC: TEP segmentario derecho. VD normal, troponina normal, estable.'},
+{q:'¿Plan de tratamiento?',o:['Anticoagulación (p. ej., ACOD) por 3 meses','Trombólisis','Anticoagulación de por vida','Filtro de vena cava + aspirina'],f:['Correcto: TEP provocado por cirugía (factor transitorio mayor) y riesgo bajo.','No hay inestabilidad.','El factor fue transitorio; 3 meses son suficientes.','No hay contraindicación para anticoagular.']}
+]},
+C:[
+['Dímero D ajustado por edad','Edad × 10 µg/L en mayores de 50 años.'],
+['TEP de alto riesgo: definición y tratamiento','PAS <90 por >15 min, vasopresores o paro: trombólisis sistémica + HNF.'],
+['TEP probable (Wells >4)','AngioTC directa, sin dímero D.'],
+['Duración de anticoagulación en TEP provocado por cirugía','3 meses.'],
+['Anticoagulante para TEP en el embarazo','Heparina de bajo peso molecular.']
+]},
+
+/* ---------- INFECTOLOGÍA ---------- */
+{id:'sepsis',w:'inf',title:'Sepsis y choque séptico',sub:'Sepsis-3, paquete de la 1ª hora, vasopresores',
+L:[
+['Definiciones (Sepsis-3)',`<ul><li><b>Sepsis</b>: disfunción orgánica que amenaza la vida por una respuesta desregulada a infección (↑ SOFA ≥2).</li><li><b>qSOFA</b> (FR ≥22, alteración mental, PAS ≤100): ≥2 marca alto riesgo, pero no lo uses como única herramienta de tamizaje; combínalo con NEWS o SIRS.</li><li><b>Choque séptico</b>: vasopresor para PAM ≥65 + lactato &gt;2 mmol/L pese a reanimación adecuada.</li></ul>`],
+['Paquete de la 1ª hora',`<ol><li>Lactato (repítelo si &gt;2).</li><li>Hemocultivos <b>antes</b> del antibiótico, sin retrasarlo.</li><li>Antibiótico de amplio espectro en <b>≤1 h</b> si hay choque o sepsis probable.</li><li><b>Cristaloide 30 mL/kg</b> en las primeras 3 h si hay hipotensión o lactato ≥4.</li><li>Vasopresor si la hipotensión persiste, para PAM ≥65.</li></ol>`],
+['Líquidos con criterio',`<ul><li>Prefiere <b>cristaloides balanceados</b> (Hartmann/Ringer lactato) sobre salina 0.9%.</li><li>Después del bolo inicial, evalúa la respuesta a volumen: elevación pasiva de piernas, llenado capilar, variación de presión de pulso.</li><li>Evita la sobrecarga: más líquido no siempre es mejor.</li></ul>`],
+['Vasopresores',`<ul><li><b>Norepinefrina</b> es la primera línea (puede iniciarse por vía periférica mientras colocas el CVC).</li><li>Agrega <b>vasopresina</b> si la norepinefrina llega a 0.25–0.5 µg/kg/min.</li><li>Disfunción cardiaca con hipoperfusión persistente: agrega dobutamina o cambia a epinefrina.</li><li><b>Hidrocortisona 200 mg/día</b> si necesita norepinefrina ≥0.25 µg/kg/min por ≥4 h.</li></ul>`],
+['Control del foco y lo demás',`<ul><li><b>Controla el foco</b> en 6–12 h: drena abscesos, retira catéteres infectados, desobstruye la vía urinaria.</li><li>Desescala el antibiótico con los cultivos.</li><li>Glucosa: inicia insulina si ≥180, meta 144–180 mg/dL.</li><li>Profilaxis de TVP y, si hay factores de riesgo, de úlceras de estrés.</li></ul>`]
+],
+perla:'Guía la reanimación con el descenso del lactato y el llenado capilar, no solo con la PA.',
+Q:[
+{q:'Vasopresor de primera línea en choque séptico:',o:['Norepinefrina','Dopamina','Epinefrina','Fenilefrina'],e:'La norepinefrina causa menos arritmias y tiene mejor pronóstico que la dopamina.'},
+{q:'Paciente séptico de 70 kg con PA 80/45 y lactato 4.5. ¿Volumen inicial?',o:['≈2.1 L de cristaloide (30 mL/kg) en las primeras 3 h','500 mL y observar','5 L en la primera hora','Albúmina al 20% como primera opción'],e:'30 mL/kg de cristaloide en las primeras 3 h ante hipotensión o lactato ≥4, reevaluando la respuesta.'},
+{q:'¿Qué define el choque séptico?',o:['Vasopresor para PAM ≥65 + lactato >2 tras reanimación adecuada','qSOFA ≥2','Fiebre + leucocitosis + taquicardia','Lactato >4 sin hipotensión'],e:'Es la definición Sepsis-3; tiene mortalidad >40%.'},
+{q:'¿Cuándo tomas hemocultivos?',o:['Antes del antibiótico, sin retrasarlo','Después de la primera dosis de antibiótico','Solo si persiste la fiebre a las 48 h','Solo si hay catéter central'],e:'Aumenta el rendimiento, pero nunca debe retrasar el antibiótico en el paciente grave.'},
+{q:'¿Cuándo agregas hidrocortisona en choque séptico?',o:['Norepinefrina ≥0.25 µg/kg/min por ≥4 h','A todos los pacientes con sepsis','Si el cortisol sérico es bajo','Nunca'],e:'Acelera la resolución del choque en pacientes con requerimiento persistente de vasopresor.'}
+],
+K:{pres:'Hombre de 58 años con lesión medular, vejiga neurógena y cateterismo intermitente. Estuvo hospitalizado hace 1 mes con antibiótico IV. Hoy tiene fiebre y desorientación. Orina turbia.',vit:['TA 85/50','FC 120','FR 26','T 39.5 °C','SatO2 93%'],
+steps:[
+{q:'qSOFA de 3. ¿Qué haces en la primera hora?',o:['Lactato, hemocultivos y urocultivo, antibiótico de amplio espectro y cristaloide 30 mL/kg','Esperar el urocultivo para elegir antibiótico','Solo paracetamol y vigilar','Iniciar dopamina antes de dar líquidos'],f:['Correcto: es el paquete de la 1ª hora.','En sepsis cada hora de retraso del antibiótico aumenta la mortalidad.','Tiene datos de sepsis grave; no es una fiebre simple.','Primero volumen; y la norepinefrina es la de elección.'],ev:'Después de 2 L de Hartmann: PAM 58 mmHg, lactato 4.2.'},
+{q:'¿Siguiente paso?',o:['Iniciar norepinefrina (por vía periférica mientras colocas el CVC)','Otros 4 L de cristaloide rápido','Dopamina','Esperar a tener CVC para iniciar el vasopresor'],f:['Exacto: hipotensión persistente pese a volumen = choque séptico.','Más volumen sin evaluar la respuesta arriesga sobrecarga.','La norepinefrina es superior.','La vía periférica es aceptable para iniciar.'],ev:'PAM 68 con norepinefrina. Recuerda: hospitalización y antibiótico IV recientes.'},
+{q:'¿Antibiótico y control del foco?',o:['Carbapenémico (meropenem) por riesgo de BLEE + cambiar la sonda y USG renal para descartar obstrucción','Nitrofurantoína VO','Ceftriaxona sola sin estudios de imagen','Ciprofloxacino VO y alta'],f:['Correcto: pielonefritis complicada con riesgo de BLEE; hay que descartar y drenar una obstrucción.','No alcanza niveles en riñón ni en sangre.','Con hospitalización y antibiótico recientes el riesgo de BLEE es alto, y falta buscar obstrucción.','Es un choque séptico.']}
+]},
+C:[
+['Definición de choque séptico (Sepsis-3)','Vasopresor para PAM ≥65 + lactato >2 mmol/L pese a reanimación adecuada.'],
+['Componentes de qSOFA','FR ≥22, alteración del estado mental, PAS ≤100.'],
+['Volumen inicial en hipotensión séptica','Cristaloide 30 mL/kg en las primeras 3 h (preferir balanceados).'],
+['Cuándo agregar vasopresina','Norepinefrina en 0.25–0.5 µg/kg/min.'],
+['Meta de glucosa en sepsis','144–180 mg/dL; iniciar insulina si ≥180.']
+]},
+
+{id:'ivu',w:'inf',title:'IVU complicada y pielonefritis',sub:'Cuándo es complicada, urocultivo, BLEE y sondas',
+L:[
+['¿Simple o complicada?',`<ul><li><b>Cistitis no complicada</b>: mujer sana, no embarazada.</li><li><b>Complicada</b>: hombres, embarazo, obstrucción o litiasis, vejiga neurógena, sondas, inmunosupresión, DM descontrolada, ERC.</li><li><b>Pielonefritis</b>: fiebre, dolor en flanco, Giordano positivo, náusea o vómito.</li><li><i>E. coli</i> causa 75–95%. En complicadas: <i>Klebsiella</i>, <i>Proteus</i>, <i>Enterococcus</i>, <i>Pseudomonas</i>.</li></ul>`],
+['Estudios',`<ul><li>EGO: leucocituria, nitritos, bacteriuria; cilindros leucocitarios en pielonefritis.</li><li><b>Urocultivo siempre</b> en pielonefritis o IVU complicada: ≥10⁵ UFC/mL (con sonda ≥10³).</li><li>Hemocultivos si está grave.</li><li>USG o TC si no mejora en 48–72 h, si sospechas obstrucción o absceso, o si hay sepsis.</li></ul>`],
+['Tratamiento',`<ul><li>Cistitis no complicada: <b>nitrofurantoína</b> 100 mg c/12 h por 5 días, <b>fosfomicina</b> 3 g dosis única o TMP-SMX 3 días (si la resistencia es &lt;20%).</li><li>Pielonefritis: en México la resistencia de <i>E. coli</i> a quinolonas es alta; inicia con <b>ceftriaxona</b>.</li><li>Riesgo de <b>BLEE</b> (hospitalización o antibiótico reciente, sondas, IVU recurrente): carbapenémico (ertapenem o meropenem).</li><li>Sospecha de <i>Pseudomonas</i>: piperacilina/tazobactam, cefepime o meropenem.</li><li>Duración: 7–14 días según fármaco y respuesta.</li></ul>`],
+['Pacientes con sonda',`<ul><li>Bacteriuria sin síntomas con sonda: <b>no se trata</b>.</li><li>IVU asociada a sonda: cambia la sonda si lleva &gt;2 semanas y cultiva de la nueva.</li><li>Trata 7 días (10–14 si la respuesta es lenta).</li><li>La mejor prevención es retirar la sonda que ya no se necesita.</li></ul>`],
+['Bacteriuria asintomática',`<p>Solo se trata en:</p><ul><li><b>Embarazo</b>.</li><li>Antes de procedimientos urológicos con sangrado de mucosa.</li></ul><p>No se trata en ancianos, diabéticos ni pacientes con sonda.</p>`]
+],
+perla:'La nitrofurantoína no sirve para pielonefritis: no alcanza concentraciones útiles en el riñón ni en la sangre.',
+Q:[
+{q:'¿En quién SÍ se trata la bacteriuria asintomática?',o:['Embarazada','Mujer de 80 años con DM2','Paciente con sonda Foley','Hombre de 70 años sano'],e:'En el embarazo previene pielonefritis y parto pretérmino. En los demás grupos tratar solo genera resistencia.'},
+{q:'Pielonefritis en paciente hospitalizado hace 3 semanas que recibió antibiótico IV. ¿Esquema empírico?',o:['Carbapenémico (ertapenem o meropenem)','Nitrofurantoína','Amoxicilina','TMP-SMX'],e:'El antecedente de hospitalización y antibiótico reciente eleva el riesgo de enterobacterias productoras de BLEE.'},
+{q:'¿Agente más común de IVU?',o:['Escherichia coli','Proteus mirabilis','Enterococcus faecalis','Staphylococcus saprophyticus'],e:'E. coli uropatógena causa la gran mayoría de las IVU, complicadas y no complicadas.'},
+{q:'Mujer de 25 años con disuria y polaquiuria, sin fiebre ni dolor lumbar. ¿Tratamiento?',o:['Nitrofurantoína 5 días o fosfomicina dosis única','Ceftriaxona IV','Ciprofloxacino 14 días','Hospitalizar'],e:'Cistitis no complicada: esquemas cortos de primera línea.'},
+{q:'Paciente con sonda Foley y urocultivo positivo, sin fiebre ni síntomas. ¿Qué haces?',o:['No tratar; retirar la sonda si ya no es necesaria','Ceftriaxona 7 días','Cambiar la sonda y dar ciprofloxacino','Repetir el urocultivo diario'],e:'La bacteriuria asociada a sonda sin síntomas no se trata.'}
+],
+K:{pres:'Mujer de 35 años con fiebre de 39 °C, dolor lumbar derecho y vómito desde hace 2 días. Puño percusión derecha positiva.',vit:['TA 110/70','FC 108','FR 20','T 39.0 °C','SatO2 98%'],
+steps:[
+{q:'¿Qué estudios pides?',o:['EGO, urocultivo, BH, química y prueba de embarazo (± hemocultivos)','Solo EGO','TC de abdomen de inmediato','Ninguno: tratar empíricamente'],f:['Correcto: el urocultivo es obligatorio en pielonefritis y un embarazo cambiaría el manejo.','Sin urocultivo no podrás ajustar el antibiótico.','La imagen se reserva para mala evolución o sospecha de complicación.','Necesitas cultivo y descartar embarazo.'],ev:'Prueba de embarazo negativa. Vomita todo lo que toma.'},
+{q:'¿Manejo?',o:['Hospitalizar y dar ceftriaxona IV','Nitrofurantoína VO','Fosfomicina dosis única','Ciprofloxacino VO en casa'],f:['Exacto: no tolera la vía oral.','No sirve para pielonefritis.','Es para cistitis no complicada.','No tolera la vía oral y la resistencia local a quinolonas es alta.'],ev:'A las 72 h sigue con fiebre de 38.8 °C y dolor.'},
+{q:'¿Siguiente paso?',o:['USG o TC renal para buscar obstrucción o absceso','Agregar otro antibiótico sin estudios','Esperar 7 días más','Dar de alta'],f:['Correcto: fiebre a las 72 h obliga a buscar complicación; una obstrucción necesita drenaje.','Sin buscar la causa puedes dejar sin tratar una obstrucción o un absceso.','Pierdes tiempo ante una posible complicación.','Sigue febril y con dolor.']}
+]},
+C:[
+['¿Sirve la nitrofurantoína en pielonefritis?','No: no alcanza niveles útiles en riñón ni en sangre.'],
+['Bacteriuria asintomática: ¿cuándo tratar?','Embarazo y antes de procedimientos urológicos con sangrado de mucosa.'],
+['Corte de urocultivo positivo','≥10⁵ UFC/mL; con sonda ≥10³ UFC/mL.'],
+['Riesgo de BLEE en IVU: antibiótico','Carbapenémico (ertapenem o meropenem).'],
+['Pielonefritis que sigue febril a las 72 h','Imagen (USG o TC) para buscar obstrucción o absceso.']
+]},
+
+{id:'tb',w:'inf',title:'Tuberculosis',sub:'Baciloscopia y Xpert, esquema HRZE y efectos adversos',
+L:[
+['Quién y cómo',`<ul><li><i>Mycobacterium tuberculosis</i>, transmisión aérea.</li><li>Factores de riesgo: <b>diabetes</b> (muy importante en México), VIH, desnutrición, alcoholismo, hacinamiento, ERC, inmunosupresión.</li><li>Clínica: tos con flema ≥2 semanas, fiebre vespertina, diaforesis nocturna, pérdida de peso, hemoptisis.</li></ul>`],
+['Diagnóstico',`<ul><li><b>Baciloscopias seriadas</b> (3 muestras de esputo, tinción de Ziehl-Neelsen).</li><li><b>Xpert MTB/RIF</b>: rápido y detecta resistencia a rifampicina.</li><li><b>Cultivo</b>: estándar de oro (y para pruebas de sensibilidad).</li><li>Rx: infiltrados y cavernas en lóbulos superiores (reactivación).</li><li>PPD o IGRA: detectan infección, pero no distinguen latente de activa.</li></ul>`],
+['Tratamiento (NOM-006 / OMS)',`<ul><li>Fase intensiva <b>2 meses HRZE</b> diario: isoniazida, rifampicina, pirazinamida y etambutol.</li><li>Fase de sostén <b>4 meses HR</b>.</li><li>Total: 6 meses, supervisado (<b>TAES</b>).</li><li>Meníngea: 9–12 meses + dexametasona.</li><li>A todo paciente con TB: prueba de VIH y glucosa.</li></ul>`],
+['Efectos adversos',`<ul><li><b>Isoniazida</b>: neuropatía periférica (da piridoxina) y hepatotoxicidad.</li><li><b>Rifampicina</b>: orina y lágrimas naranjas, hepatotoxicidad, inductor del CYP450 (anticonceptivos, warfarina, antirretrovirales).</li><li><b>Pirazinamida</b>: hiperuricemia y gota, hepatotoxicidad (de las más hepatotóxicas).</li><li><b>Etambutol</b>: neuritis óptica (pierde la visión de rojo-verde).</li><li>Suspende si las transaminasas suben &gt;3× con síntomas o &gt;5× sin síntomas.</li></ul>`],
+['Latente, contactos y VIH',`<ul><li>Infección latente: isoniazida 6–9 meses, rifampicina 4 meses o isoniazida + rifapentina semanal por 3 meses.</li><li>Estudia a los contactos.</li><li>VIH: inicia antirretrovirales dentro de las 2 semanas del antifímico (en meníngea, difiere 4–8 semanas).</li><li>Es de notificación obligatoria.</li></ul>`]
+],
+perla:'Diabetes descontrolada + TB = peor respuesta y más recaídas. Controlar la glucosa es parte del tratamiento de la tuberculosis.',
+Q:[
+{q:'Paciente en tratamiento antifímico refiere que ya no distingue el rojo del verde. ¿Fármaco responsable?',o:['Etambutol','Isoniazida','Rifampicina','Pirazinamida'],e:'El etambutol causa neuritis óptica dosis-dependiente; se suspende y se valora en oftalmología.'},
+{q:'¿Con qué antifímico se da piridoxina (B6)?',o:['Isoniazida','Rifampicina','Etambutol','Pirazinamida'],e:'La isoniazida produce déficit de B6 y neuropatía periférica, sobre todo en diabéticos, alcohólicos, VIH y embarazo.'},
+{q:'Esquema para TB pulmonar sensible en el adulto:',o:['2 meses HRZE + 4 meses HR','6 meses HRZE','2 meses HR + 4 meses HRZE','9 meses de isoniazida'],e:'Fase intensiva de 2 meses con cuatro fármacos y fase de sostén de 4 meses con dos.'},
+{q:'Prueba molecular rápida que además detecta resistencia a rifampicina:',o:['Xpert MTB/RIF','Baciloscopia','PPD','Cultivo en Löwenstein-Jensen'],e:'Da resultado en horas; la resistencia a rifampicina es marcador de TB multirresistente.'},
+{q:'Paciente preocupado porque su orina salió anaranjada tras iniciar el tratamiento. ¿Causa?',o:['Rifampicina; es benigno y se le explica','Hepatitis por isoniazida','Hemólisis por pirazinamida','Rabdomiólisis por etambutol'],e:'La rifampicina tiñe orina, sudor y lágrimas; es esperable y no obliga a suspenderla.'}
+],
+K:{pres:'Hombre de 48 años con DM2 descontrolada (HbA1c 11%). Tos con flema de 5 semanas, fiebre vespertina, sudoración nocturna y pérdida de 6 kg. Rx: caverna en lóbulo superior derecho.',vit:['TA 115/70','FC 98','FR 20','T 38.1 °C','SatO2 95%','IMC 19'],
+steps:[
+{q:'¿Qué estudios pides?',o:['Baciloscopias seriadas, Xpert MTB/RIF, cultivo, VIH y control de glucosa','Solo PPD','Broncoscopia de entrada','TC de tórax y esperar'],f:['Correcto: confirma, busca resistencia y evalúa comorbilidades.','El PPD no diagnostica TB activa.','No es el primer paso si puede expectorar.','La imagen no confirma el diagnóstico.'],ev:'Xpert MTB/RIF positivo, sin resistencia a rifampicina. VIH negativo.'},
+{q:'¿Tratamiento?',o:['2 meses HRZE + 4 meses HR supervisado (TAES), piridoxina y control de glucosa','Isoniazida sola 9 meses','HRZE 2 meses y suspender','Esperar el cultivo (6–8 semanas) antes de tratar'],f:['Exacto. Además la DM debe controlarse (suele requerir insulina).','Eso es para TB latente.','Falta la fase de sostén: alto riesgo de recaída.','Con Xpert positivo se inicia de inmediato.'],ev:'Semana 3: ictericia y náusea; ALT 6 veces el límite superior normal.'},
+{q:'¿Conducta?',o:['Suspender los fármacos hepatotóxicos y reintroducirlos uno a uno al normalizarse las pruebas','Continuar igual','Suspender solo el etambutol','Agregar paracetamol para la náusea'],f:['Correcto: hepatotoxicidad con síntomas y ALT >3×. Se reintroduce de forma secuencial y vigilada.','Arriesgas una falla hepática.','El etambutol no es hepatotóxico.','El paracetamol empeora el daño hepático.']}
+]},
+C:[
+['Esquema de TB pulmonar sensible','2 meses HRZE + 4 meses HR (TAES).'],
+['Etambutol: efecto adverso','Neuritis óptica (alteración de la visión rojo-verde).'],
+['Isoniazida: efecto adverso y prevención','Neuropatía periférica: dar piridoxina. También hepatotoxicidad.'],
+['Rifampicina: datos clave','Orina naranja, hepatotoxicidad, inductor del CYP450 (interacciones).'],
+['Cuándo suspender antifímicos por hepatotoxicidad','ALT >3× con síntomas o >5× sin síntomas.']
+]},
+
+/* ---------- ENDOCRINOLOGÍA ---------- */
+{id:'dm2',w:'end',title:'Diabetes tipo 2',sub:'Diagnóstico, metas, iSGLT2/arGLP-1 e insulina',
+L:[
+['Diagnóstico (ADA)',`<ul><li>Glucosa en ayuno <b>≥126 mg/dL</b>.</li><li><b>HbA1c ≥6.5%</b>.</li><li>Glucosa a las 2 h de una carga de 75 g <b>≥200 mg/dL</b>.</li><li>Glucosa al azar ≥200 + síntomas (poliuria, polidipsia, pérdida de peso).</li><li>Sin síntomas, necesitas 2 resultados alterados.</li><li>Prediabetes: ayuno 100–125, HbA1c 5.7–6.4%, carga 140–199.</li></ul>`],
+['Metas',`<ul><li><b>HbA1c &lt;7%</b> (más laxa, &lt;8%, en ancianos frágiles).</li><li>Glucosa preprandial 80–130, posprandial &lt;180.</li><li>PA &lt;130/80.</li><li>LDL &lt;70 (&lt;55 si hay enfermedad cardiovascular).</li></ul>`],
+['Fármacos',`<ul><li>Base: estilo de vida + <b>metformina</b> (contraindicada con TFG &lt;30; no se inicia con 30–45).</li><li>Con enfermedad cardiovascular, IC o ERC: <b>iSGLT2 y/o arGLP-1</b> sin importar la HbA1c.</li><li>iSGLT2 (dapagliflozina, empagliflozina): IC y ERC (TFG ≥20).</li><li>arGLP-1 (semaglutida, liraglutida, dulaglutida): enfermedad aterosclerótica y obesidad.</li><li>Insulina si HbA1c &gt;10%, glucosa ≥300 o síntomas catabólicos.</li></ul>`],
+['Insulina',`<ul><li>Basal: inicia <b>10 U o 0.1–0.2 U/kg/día</b> (glargina o NPH) y sube 2 U cada 3 días hasta la meta en ayuno.</li><li>Hospital: esquema <b>basal-bolo</b>, no solo escala móvil.</li><li>Meta en hospitalizados no críticos: <b>140–180 mg/dL</b>.</li></ul>`],
+['Complicaciones y tamizaje',`<ul><li>Retinopatía: fondo de ojo anual.</li><li>Nefropatía: TFG y <b>albúmina/creatinina urinaria</b> anual (≥30 mg/g es anormal).</li><li>Neuropatía y pie: monofilamento y revisión de pies anual.</li><li><b>Hipoglucemia</b> (&lt;70 mg/dL): regla 15-15 (15 g de azúcar y re-medir en 15 min). Grave: dextrosa IV o glucagón.</li></ul>`]
+],
+perla:'Evita la glibenclamida en ancianos y en ERC: causa hipoglucemias prolongadas.',
+Q:[
+{q:'Paciente asintomático con HbA1c de 6.8% en dos ocasiones. ¿Diagnóstico?',o:['Diabetes mellitus','Prediabetes','Normal','Necesita curva de tolerancia para confirmar'],e:'Dos resultados ≥6.5% confirman diabetes.'},
+{q:'Paciente con DM2 e insuficiencia cardiaca con FEr. ¿Qué agregas a la metformina?',o:['iSGLT2 (dapagliflozina o empagliflozina)','Pioglitazona','Glibenclamida','Saxagliptina'],e:'Los iSGLT2 reducen hospitalizaciones y muerte por IC. La pioglitazona retiene líquidos y empeora la IC.'},
+{q:'¿Con qué TFG está contraindicada la metformina?',o:['<30 mL/min/1.73 m²','<60','<45 siempre','<90'],e:'Con TFG <30 se suspende por riesgo de acidosis láctica; entre 30 y 45 no se inicia y se reduce la dosis.'},
+{q:'Paciente con glucosa capilar de 55 mg/dL, consciente y que puede tragar. ¿Qué haces?',o:['15 g de carbohidrato de absorción rápida y re-medir en 15 min','Dextrosa al 50% IV','Glucagón IM','Esperar a la siguiente comida'],e:'Regla 15-15. La vía IV o el glucagón se reservan para quien no puede tragar o está inconsciente.'},
+{q:'Meta de glucosa en un paciente hospitalizado no crítico:',o:['140–180 mg/dL','80–110 mg/dL','<200 mg/dL','180–250 mg/dL'],e:'Metas más estrictas aumentan las hipoglucemias sin beneficio.'}
+],
+K:{pres:'Hombre de 52 años con obesidad y DM2 de 5 años. Toma metformina 850 mg c/12 h. Tuvo un infarto hace 1 año. HbA1c 8.9%, TFG 70.',vit:['TA 145/90','FC 78','IMC 33','Peso 98 kg'],
+steps:[
+{q:'¿Qué agregas?',o:['arGLP-1 o iSGLT2 con beneficio cardiovascular demostrado','Glibenclamida','Pioglitazona','Duplicar la metformina y esperar'],f:['Correcto: con enfermedad cardiovascular se eligen por su beneficio cardiovascular, no solo por bajar la glucosa.','Hipoglucemia y sin beneficio cardiovascular.','Aumenta peso y retiene líquidos.','Ya tiene una dosis adecuada y la indicación es por su riesgo cardiovascular.'],ev:'Inicias semaglutida semanal.'},
+{q:'¿Qué tamizaje anual le corresponde?',o:['Fondo de ojo, TFG + albúmina/creatinina urinaria, revisión de pies con monofilamento y lípidos','Solo HbA1c','Colonoscopia anual','Ecocardiograma anual'],f:['Exacto: busca las complicaciones microvasculares cada año.','Faltan las complicaciones.','No es parte del tamizaje de la diabetes.','No es tamizaje rutinario.'],ev:'Albúmina/creatinina urinaria: 150 mg/g. TA persistente de 145/90.'},
+{q:'¿Qué ajustas?',o:['IECA o ARA II a dosis máxima tolerada + iSGLT2','Amlodipino solo','Suspender la metformina','Nada: la albuminuria es normal'],f:['Correcto: nefroprotección y control de la PA. La finerenona es otra opción si persiste la albuminuria.','No reduce la albuminuria tanto como IECA o ARA II.','Su TFG lo permite.','≥30 mg/g ya es albuminuria elevada.']}
+]},
+C:[
+['Criterios diagnósticos de DM','Ayuno ≥126, HbA1c ≥6.5%, carga 2 h ≥200, o al azar ≥200 + síntomas.'],
+['Meta general de HbA1c','<7% (individualizar; <8% en ancianos frágiles).'],
+['DM2 con IC o ERC: fármaco a agregar','iSGLT2 (independiente de la HbA1c).'],
+['Inicio de insulina basal','10 U o 0.1–0.2 U/kg/día; subir 2 U cada 3 días según la glucosa en ayuno.'],
+['Regla 15-15','Hipoglucemia: 15 g de azúcar rápida y re-medir en 15 min.']
+]},
+
+{id:'cad',w:'end',title:'Cetoacidosis y estado hiperosmolar',sub:'Líquidos, potasio, insulina y resolución',
+L:[
+['CAD vs EHH',`<ul><li><b>CAD</b>: glucosa &gt;250 (puede ser normal con iSGLT2), <b>pH &lt;7.3, HCO₃ &lt;18</b>, cetonas positivas, anión gap &gt;12. Típica de DM1 y jóvenes.</li><li><b>EHH</b>: glucosa <b>&gt;600</b>, osmolaridad efectiva <b>&gt;320</b>, pH &gt;7.3, HCO₃ &gt;18, cetonas mínimas. Ancianos con DM2 y más alteración neurológica.</li><li>Precipitantes: <b>infección</b> (el más común), omitir insulina, IAM, EVC, pancreatitis, esteroides, iSGLT2.</li></ul><p>Son los cortes clásicos de la ADA; el consenso 2024 los ajustó ligeramente.</p>`],
+['Fórmulas que vas a usar',`<ul><li>Anión gap = Na − (Cl + HCO₃). Normal 8–12.</li><li>Na corregido = Na + 1.6 × (glucosa − 100) / 100.</li><li>Osmolaridad efectiva = 2 × Na + glucosa / 18.</li></ul>`],
+['Primero, líquidos',`<ul><li>Solución salina 0.9%: <b>1–1.5 L la primera hora</b> (15–20 mL/kg).</li><li>Luego según el Na corregido: normal o alto, salina 0.45%; bajo, salina 0.9%.</li><li>Cuando la glucosa baja a <b>&lt;250</b> (CAD) o &lt;300 (EHH): agrega <b>dextrosa al 5%</b> y sigue la insulina hasta que se resuelva la acidosis.</li></ul>`],
+['El potasio manda',`<p>Revisa el K <b>antes</b> de iniciar insulina:</p><ul><li><b>K &lt;3.3</b>: no des insulina; repón K primero (20–40 mEq/h).</li><li><b>K 3.3–5.2</b>: agrega 20–30 mEq de K por litro.</li><li><b>K &gt;5.2</b>: no des K; inicia insulina y mide cada 2 h.</li></ul>`],
+['Insulina y resolución',`<ul><li>Insulina rápida IV: <b>0.1 U/kg/h</b> (± bolo de 0.1 U/kg) o 0.14 U/kg/h sin bolo.</li><li>Meta: que la glucosa baje 50–75 mg/dL por hora.</li><li>Bicarbonato solo si pH &lt;6.9–7.0.</li><li>CAD resuelta: glucosa &lt;200 + dos de: HCO₃ ≥15, pH venoso &gt;7.3, anión gap ≤12.</li><li>Aplica la <b>insulina basal SC 1–2 h antes</b> de suspender la infusión.</li></ul>`]
+],
+perla:'La insulina mete el potasio a la célula. Si la inicias con K bajo, puedes provocar arritmias mortales.',
+Q:[
+{q:'CAD con potasio de 3.0 mEq/L. ¿Qué haces?',o:['Reponer potasio y diferir la insulina hasta K ≥3.3','Iniciar insulina en infusión de inmediato','Dar bicarbonato','Iniciar insulina en bolo y el K después'],e:'La insulina baja más el potasio y puede causar arritmias.'},
+{q:'En CAD, la glucosa baja a 230 mg/dL pero el pH sigue en 7.20. ¿Qué haces?',o:['Agregar dextrosa al 5% y continuar la insulina','Suspender la insulina','Pasar a insulina SC y dar de alta','Duplicar la insulina'],e:'La insulina se mantiene para cerrar el anión gap; la dextrosa evita la hipoglucemia.'},
+{q:'¿Qué apoya el diagnóstico de EHH sobre CAD?',o:['Glucosa >600 y osmolaridad efectiva >320 sin acidosis importante','pH 7.10 con cetonas altas','Anión gap de 25','Paciente de 18 años con DM1'],e:'El EHH se caracteriza por hiperglucemia extrema e hiperosmolaridad, con poca o nula cetosis.'},
+{q:'¿Cuándo aplicas la insulina basal subcutánea al resolverse la CAD?',o:['1–2 h antes de suspender la infusión','Justo al suspender la infusión','24 h después de suspender la infusión','Solo cuando el paciente coma'],e:'El traslape evita la hiperglucemia de rebote y la recaída en cetoacidosis.'},
+{q:'Na 135, Cl 100, HCO₃ 10. ¿Anión gap?',o:['25 (elevado)','10 (normal)','35 (elevado)','5 (bajo)'],e:'135 − (100 + 10) = 25. Mayor de 12 = acidosis con anión gap elevado.'}
+],
+K:{pres:'Mujer de 22 años con DM1. Vómito y dolor abdominal desde ayer; dejó de ponerse insulina. Respiración rápida y profunda (Kussmaul) y aliento afrutado.',vit:['TA 100/60','FC 118','FR 30','Glucosa 480 mg/dL','pH 7.12','HCO₃ 8','K 4.0'],
+steps:[
+{q:'¿Qué haces primero?',o:['Solución salina 0.9%, 1–1.5 L en la primera hora','Bolo de insulina antes de los líquidos','Bicarbonato IV','Solución glucosada al 5%'],f:['Correcto: la deshidratación es el primer problema.','Sin volumen la insulina funciona mal y puede empeorar la hipotensión.','Con pH 7.12 no está indicado.','Primero salina; la dextrosa se agrega cuando la glucosa baja de 250.'],ev:'Tras 1.5 L mejora la PA. K de 4.0.'},
+{q:'¿Y ahora?',o:['Insulina IV 0.1 U/kg/h + 20–30 mEq de K por litro','Insulina IV sin potasio','Solo potasio, sin insulina','Insulina SC cada 6 h'],f:['Exacto: con K entre 3.3 y 5.2 se inicia insulina y se repone K.','El K bajará con la insulina: hay que reponerlo.','Con K de 4.0 ya puedes iniciar insulina.','En CAD moderada o grave la insulina va en infusión IV.'],ev:'8 h después: glucosa 190, pH 7.34, HCO₃ 17, anión gap 11. Tiene hambre.'},
+{q:'¿Siguiente paso?',o:['Aplicar insulina basal SC y suspender la infusión 1–2 h después','Suspender la infusión ya y dar insulina más tarde','Mantener la infusión 24 h más','Alta sin insulina'],f:['Correcto: la CAD está resuelta y hay traslape.','Sin traslape recae en cetoacidosis.','Ya cumple criterios de resolución.','Una persona con DM1 siempre necesita insulina.']}
+]},
+C:[
+['Criterios clásicos de CAD','Glucosa >250, pH <7.3, HCO₃ <18, cetonas positivas, anión gap >12.'],
+['Criterios clásicos de EHH','Glucosa >600, osmolaridad efectiva >320, pH >7.3, HCO₃ >18.'],
+['El K y la insulina en CAD','K <3.3: sin insulina, repón K · 3.3–5.2: insulina + 20–30 mEq/L · >5.2: insulina sin K.'],
+['¿Cuándo agregar dextrosa en CAD?','Cuando la glucosa baja de 250 mg/dL (en EHH, de 300).'],
+['Fórmula del Na corregido','Na + 1.6 × (glucosa − 100) / 100.']
+]},
+
+/* ---------- NEFROLOGÍA Y MEDIO INTERNO ---------- */
+{id:'lra',w:'ren',title:'Lesión renal aguda y ERC',sub:'KDIGO, pre/renal/pos, AEIOU y estadios de ERC',
+L:[
+['Definición KDIGO',`<ul><li>↑ creatinina <b>≥0.3 mg/dL en 48 h</b>, o</li><li>creatinina ≥1.5 veces la basal en 7 días, o</li><li>uresis &lt;0.5 mL/kg/h por 6 h.</li><li>Estadio 3: creatinina ≥3 veces o ≥4.0 mg/dL, diálisis, uresis &lt;0.3 mL/kg/h por 24 h o anuria por 12 h.</li></ul>`],
+['Pre, renal o pos',`<ul><li><b>Prerrenal</b>: hipovolemia, IC, cirrosis, AINE, IECA. FENa &lt;1%, BUN/Cr &gt;20, sedimento sin hallazgos.</li><li><b>Renal</b>: necrosis tubular aguda (isquemia, contraste, aminoglucósidos) con FENa &gt;2% y cilindros granulosos pardos. Nefritis intersticial (betalactámicos, IBP, AINE) con cilindros leucocitarios. Glomerulonefritis con cilindros eritrocitarios y proteinuria.</li><li><b>Posrenal</b>: obstrucción (HPB, litiasis, tumores). USG con hidronefrosis; coloca sonda.</li></ul>`],
+['Manejo',`<ul><li>Corrige el volumen (cristaloides si hay hipovolemia).</li><li><b>Suspende nefrotóxicos</b>: AINE, aminoglucósidos, contraste; pausa IECA o ARA II si hay hipovolemia.</li><li>Ajusta las dosis a la TFG.</li><li>Desobstruye si es posrenal.</li><li>Si usa diuréticos, la FENa falla: usa la FEUrea (&lt;35% = prerrenal).</li></ul>`],
+['Diálisis urgente: AEIOU',`<ul><li><b>A</b>cidosis grave (pH &lt;7.1) refractaria.</li><li><b>E</b>lectrolitos: K &gt;6.5 refractario o con cambios en el ECG.</li><li><b>I</b>ntoxicaciones dializables: litio, metanol, etilenglicol, salicilatos.</li><li>Sobrecarga de volumen (<b>O</b>verload) refractaria a diurético.</li><li><b>U</b>remia: encefalopatía, pericarditis, sangrado urémico.</li></ul>`],
+['Enfermedad renal crónica',`<ul><li>TFG &lt;60 o albuminuria ≥30 mg/g por <b>&gt;3 meses</b>.</li><li>Estadios G1–G5 (G3a 45–59, G3b 30–44, G4 15–29, G5 &lt;15) + A1–A3.</li><li>En México las causas principales son DM y HTA.</li><li>IECA o ARA II si hay albuminuria, <b>iSGLT2</b> si la TFG es ≥20, PA &lt;130/80.</li><li>Maneja anemia, fósforo y PTH, acidosis y potasio. Prepara la terapia de reemplazo en G4.</li></ul>`]
+],
+perla:'Al iniciar un IECA o ARA II es aceptable que la creatinina suba hasta 30%. No lo suspendas por eso.',
+Q:[
+{q:'Creatinina 2.4 (basal 1.0), FENa 0.5% y BUN/Cr 30. ¿Tipo de LRA?',o:['Prerrenal','Necrosis tubular aguda','Posrenal','Glomerulonefritis'],e:'El riñón conserva sodio (FENa <1%) y reabsorbe urea: está respondiendo a hipoperfusión.'},
+{q:'Sedimento con cilindros granulosos pardos ("café lodoso"). ¿Diagnóstico?',o:['Necrosis tubular aguda','LRA prerrenal','Nefritis intersticial','Glomerulonefritis'],e:'Son detritos de células tubulares necróticas.'},
+{q:'K de 7.2 mEq/L con QRS ancho que no responde a calcio, insulina ni salbutamol. ¿Conducta?',o:['Hemodiálisis urgente','Más salbutamol','Solo resinas y repetir en 24 h','Furosemida en dosis bajas'],e:'La hiperkalemia refractaria con cambios en el ECG es indicación de diálisis urgente.'},
+{q:'¿Cuál cumple el criterio KDIGO de LRA?',o:['Aumento de creatinina de 0.3 mg/dL en 48 h','Creatinina de 1.3 mg/dL aislada','TFG de 55 por 4 meses','Uresis de 0.8 mL/kg/h'],e:'Un aumento ≥0.3 mg/dL en 48 h define LRA. Una TFG baja por >3 meses es ERC.'},
+{q:'Hombre de 75 años con HPB, anuria y globo vesical. ¿Primer paso?',o:['Colocar sonda vesical','Furosemida IV','Hemodiálisis','Cristaloides 2 L'],e:'LRA posrenal: desobstruir resuelve el problema.'}
+],
+K:{pres:'Hombre de 70 años con diarrea de 4 días. Toma losartán e ibuprofeno. Mucosas secas y uresis escasa. Creatinina 2.8 mg/dL (basal 1.0), BUN 70, FENa 0.4%.',vit:['TA 100/60','FC 104','FR 18','T 36.9 °C','Uresis 0.3 mL/kg/h'],
+steps:[
+{q:'¿Qué tipo de LRA es?',o:['Prerrenal','Necrosis tubular aguda','Posrenal','Nefritis intersticial'],f:['Correcto: hipovolemia + FENa <1% + BUN/Cr >20.','La FENa baja no apoya NTA.','No hay datos de obstrucción.','No hay datos de hipersensibilidad ni cilindros leucocitarios.'],ev:'Diagnóstico: LRA prerrenal KDIGO 2 por hipovolemia, agravada por el AINE y el ARA II.'},
+{q:'¿Manejo?',o:['Cristaloides IV, suspender ibuprofeno y losartán y ajustar fármacos a la TFG','Furosemida IV para aumentar la uresis','Hemodiálisis de inmediato','Continuar los fármacos y vigilar'],f:['Exacto: repón volumen y retira lo que reduce la perfusión renal.','Empeoraría la hipovolemia.','No tiene indicaciones de diálisis.','El AINE y el ARA II perpetúan la lesión.'],ev:'Día 2: K 6.8 mEq/L con ondas T picudas en el ECG.'},
+{q:'¿Qué haces?',o:['Gluconato de calcio IV + insulina con glucosa + salbutamol, y eliminar K; diálisis si no responde','Solo resinas de intercambio','Repetir el K en 24 h','Bicarbonato como única medida'],f:['Correcto: estabiliza la membrana, mete el K a la célula y elimínalo.','Tardan horas; con cambios en el ECG no basta.','Con cambios en el ECG es urgencia.','Ayuda solo si hay acidosis y no protege al corazón.']}
+]},
+C:[
+['Criterio KDIGO de LRA','↑ Cr ≥0.3 en 48 h, Cr ≥1.5× la basal en 7 días, o uresis <0.5 mL/kg/h por 6 h.'],
+['FENa en LRA prerrenal vs NTA','Prerrenal <1% · NTA >2%.'],
+['Indicaciones de diálisis urgente','AEIOU: acidosis, electrolitos (K), intoxicaciones, sobrecarga, uremia.'],
+['Definición de ERC','TFG <60 o daño renal (albuminuria ≥30 mg/g) por >3 meses.'],
+['Cilindros y su significado','Granulosos pardos: NTA · Leucocitarios: nefritis intersticial o pielonefritis · Eritrocitarios: glomerulonefritis.']
+]},
+
+{id:'elec',w:'ren',title:'Sodio y potasio',sub:'Hiponatremia sin sobrecorregir, hiperkalemia en 3 pasos',
+L:[
+['Hiponatremia: abordaje',`<p>Na &lt;135. Es el trastorno electrolítico más común en hospitalizados.</p><ol><li>Osmolaridad sérica: si es normal o alta, piensa en hiperglucemia o pseudohiponatremia.</li><li>Si es baja (hipotónica), evalúa la volemia.</li></ol><ul><li><b>Hipovolémica</b>: pérdidas GI (Na urinario &lt;20) o diuréticos e insuficiencia suprarrenal (&gt;20).</li><li><b>Euvolémica</b>: SIADH, hipotiroidismo, insuficiencia suprarrenal, potomanía.</li><li><b>Hipervolémica</b>: IC, cirrosis, síndrome nefrótico.</li></ul>`],
+['Hiponatremia: tratamiento',`<ul><li><b>Grave con síntomas</b> (convulsiones, coma, vómito): <b>NaCl 3% 150 mL en 20 min</b>, repetible 2–3 veces hasta subir 5 mmol/L.</li><li><b>Límite</b>: no subir más de <b>10 mmol/L en 24 h</b> (8 en alto riesgo: alcoholismo, desnutrición, hipokalemia, cirrosis).</li><li>Si corriges de más: riesgo de <b>desmielinización osmótica</b> (mielinólisis pontina).</li><li>SIADH: restricción de líquidos, tabletas de sal, urea o tolvaptán.</li><li>Hipovolémica: solución salina 0.9%.</li></ul>`],
+['Hipernatremia',`<ul><li>Na &gt;145: falta agua libre (ancianos sin acceso a agua, diabetes insípida).</li><li>Déficit de agua = agua corporal total × (Na / 140 − 1).</li><li>Corrige lento, ≤10–12 mmol/L en 24 h, con agua VO o por sonda o con soluciones hipotónicas (dextrosa 5%).</li></ul>`],
+['Hiperkalemia',`<ul><li>Causas: LRA o ERC, IECA, ARA II o espironolactona, acidosis, rabdomiólisis. Descarta hemólisis de la muestra.</li><li>ECG: T picudas, luego PR largo y P aplanada, QRS ancho, onda sinusoidal y FV.</li><li>1) <b>Protege el corazón</b>: gluconato de calcio al 10%, 10 mL IV en 2–5 min.</li><li>2) <b>Mete el K a la célula</b>: insulina rápida 10 U + glucosa 25–50 g; salbutamol nebulizado 10–20 mg; bicarbonato si hay acidosis.</li><li>3) <b>Sácalo</b>: diurético de asa, resinas o ciclosilicato de sodio y zirconio, hemodiálisis.</li></ul>`],
+['Hipokalemia',`<ul><li>Causas: diarrea, vómito, diuréticos, hipomagnesemia.</li><li>ECG: ondas U, T aplanada, ST deprimido, QT largo.</li><li>Prefiere la vía oral. IV periférica ≤10 mEq/h (hasta 20 mEq/h por vía central con monitoreo).</li><li><b>Corrige el magnesio</b>: sin eso, la hipokalemia no se corrige.</li></ul>`]
+],
+perla:'El calcio no baja el potasio: solo protege el corazón por 30–60 minutos. Siempre agrega insulina con glucosa.',
+Q:[
+{q:'Velocidad máxima de corrección de una hiponatremia crónica:',o:['≤10 mmol/L en 24 h','≤20 mmol/L en 24 h','≤2 mmol/L en 24 h','Sin límite si hay síntomas'],e:'Corregir más rápido arriesga síndrome de desmielinización osmótica (8 mmol/L en pacientes de alto riesgo).'},
+{q:'Na de 114 con convulsiones. ¿Tratamiento?',o:['NaCl 3% 150 mL en 20 min','Restricción de líquidos','Solución salina 0.9% a 100 mL/h','Tolvaptán VO'],e:'La hiponatremia con síntomas graves es urgencia: solución hipertónica en bolo hasta subir 5 mmol/L.'},
+{q:'K de 7.0 mEq/L con QRS ancho. ¿Primer fármaco?',o:['Gluconato de calcio IV','Resina de intercambio','Furosemida','Bicarbonato'],e:'Primero se estabiliza la membrana del miocardio; después se mete y se elimina el K.'},
+{q:'Hipokalemia que no corrige a pesar de reponer K. ¿Qué revisas?',o:['Magnesio','Calcio','Fósforo','Sodio'],e:'La hipomagnesemia aumenta la pérdida renal de K; hay que corregirla.'},
+{q:'Hiponatremia euvolémica por SIADH, sin síntomas graves. ¿Tratamiento inicial?',o:['Restricción de líquidos','NaCl 3% en bolo','Solución salina 0.9% abundante','Furosemida sola'],e:'En SIADH la salina isotónica puede empeorar el sodio; la base es restringir agua.'}
+],
+K:{pres:'Mujer de 78 años que toma hidroclorotiazida. Náusea y confusión desde hace 2 días; en urgencias presenta una crisis convulsiva tónico-clónica. Na 116 mEq/L.',vit:['TA 130/80','FC 88','FR 18','T 36.5 °C','Glucosa 105 mg/dL'],
+steps:[
+{q:'¿Qué haces?',o:['NaCl 3% 150 mL en 20 min','Solución salina 0.9% a 80 mL/h','Restricción de líquidos','Esperar a que pase la convulsión y repetir el sodio'],f:['Correcto: hiponatremia con síntomas graves.','Demasiado lento para una convulsión.','No sirve en una urgencia neurológica.','Es una urgencia: trata ya.'],ev:'Tras dos bolos: Na 121 y ya no convulsiona.'},
+{q:'¿Y ahora?',o:['Suspender los bolos y no subir más de 10 mmol/L en 24 h (8 si es de alto riesgo)','Seguir con bolos hasta llegar a 135','Iniciar tolvaptán','Dar furosemida'],f:['Exacto: ya subió 5 y cedieron los síntomas; ahora la prioridad es no sobrecorregir.','Riesgo alto de desmielinización osmótica.','Puede corregir demasiado rápido; no es de primera línea aquí.','No está indicada en este contexto.'],ev:'Suspendes la tiazida. 12 h después: uresis abundante y Na de 129 (subió 13 en 12 h).'},
+{q:'¿Qué haces?',o:['Volver a bajar el sodio con agua libre o dextrosa 5% ± desmopresina','Nada; está mejorando','NaCl 3% para mantenerlo','Restringir aún más los líquidos'],f:['Correcto: se pasó del límite. Hay que volver a bajarlo para evitar la desmielinización.','Ya rebasó el límite seguro.','Empeora la sobrecorrección.','Empeora la sobrecorrección.']}
+]},
+C:[
+['Límite de corrección de la hiponatremia','≤10 mmol/L en 24 h (≤8 en alto riesgo).'],
+['Hiponatremia con síntomas graves','NaCl 3% 150 mL en 20 min, hasta 2–3 veces (meta: +5 mmol/L).'],
+['Hiperkalemia: los 3 pasos','Calcio (proteger) → insulina + glucosa o salbutamol (redistribuir) → diurético, resina o diálisis (eliminar).'],
+['ECG en hiperkalemia','T picudas → PR largo y P plana → QRS ancho → onda sinusoidal.'],
+['Hipokalemia refractaria','Corregir el magnesio.']
+]},
+
+{id:'ab',w:'ren',title:'Gasometría y ácido-base',sub:'5 pasos, Winter, anión gap y delta/delta',
+L:[
+['Método en 5 pasos',`<ol><li><b>pH</b>: &lt;7.35 acidemia, &gt;7.45 alcalemia.</li><li><b>Trastorno primario</b>: ¿lo explica el HCO₃ (metabólico) o la PaCO₂ (respiratorio)?</li><li><b>Compensación</b>: ¿es la esperada?</li><li>En acidosis metabólica: <b>anión gap</b>.</li><li>Si el AG está alto: <b>delta/delta</b>.</li></ol><p>Normales: pH 7.35–7.45, PaCO₂ 35–45, HCO₃ 22–26.</p>`],
+['Compensaciones esperadas',`<ul><li>Acidosis metabólica (<b>Winter</b>): PaCO₂ = 1.5 × HCO₃ + 8 (±2). Si la real es mayor, hay acidosis respiratoria agregada; si es menor, alcalosis respiratoria agregada.</li><li>Alcalosis metabólica: PaCO₂ = 0.7 × HCO₃ + 21 (±2).</li><li>Acidosis respiratoria: el HCO₃ sube 1 por cada 10 de PaCO₂ (aguda) o 3.5 (crónica).</li><li>Alcalosis respiratoria: el HCO₃ baja 2 por cada 10 (aguda) o 4–5 (crónica).</li></ul>`],
+['Anión gap',`<ul><li>AG = Na − (Cl + HCO₃). Normal 8–12. Súmale 2.5 por cada 1 g/dL que la albúmina esté por debajo de 4.</li><li><b>AG elevado (GOLDMARK)</b>: glicoles, oxoprolina (paracetamol), L-lactato, D-lactato, metanol, aspirina, falla renal, cetoacidosis.</li><li><b>AG normal (hiperclorémica)</b>: diarrea, acidosis tubular renal, exceso de salina 0.9%, acetazolamida.</li></ul>`],
+['Delta/delta',`<p>(AG − 12) / (24 − HCO₃):</p><ul><li><b>&lt;1</b>: además hay acidosis con AG normal.</li><li><b>1–2</b>: acidosis con AG elevado pura.</li><li><b>&gt;2</b>: además hay alcalosis metabólica.</li></ul>`],
+['Alcalosis metabólica',`<ul><li><b>Sensible a cloro</b> (Cl urinario &lt;20): vómito, sonda nasogástrica, diuréticos previos. Tratamiento: solución salina 0.9% + KCl.</li><li><b>Resistente a cloro</b> (Cl urinario &gt;20): hiperaldosteronismo, Cushing, diurético en uso, Bartter o Gitelman.</li></ul>`]
+],
+perla:'La gasometría venosa sirve para pH y HCO₃ (el pH venoso es ≈0.03 menor), pero no para valorar la oxigenación.',
+Q:[
+{q:'pH 7.29, PaCO₂ 26, HCO₃ 12. ¿Interpretación?',o:['Acidosis metabólica con compensación respiratoria adecuada','Acidosis metabólica + acidosis respiratoria','Acidosis metabólica + alcalosis respiratoria','Alcalosis respiratoria primaria'],e:'Winter: 1.5 × 12 + 8 = 26 (±2). La PaCO₂ real es 26: compensación adecuada.'},
+{q:'Na 140, Cl 104, HCO₃ 10. ¿Anión gap y tipo de acidosis?',o:['26: anión gap elevado','26: anión gap normal','36: anión gap elevado','10: anión gap normal'],e:'140 − (104 + 10) = 26. Busca lactato, cetonas, uremia o tóxicos (GOLDMARK).'},
+{q:'¿Causa de acidosis metabólica con anión gap NORMAL?',o:['Diarrea','Cetoacidosis diabética','Intoxicación por metanol','Acidosis láctica'],e:'La diarrea pierde bicarbonato y el riñón retiene cloro: acidosis hiperclorémica.'},
+{q:'Paciente con vómito persistente, alcalosis metabólica y Cl urinario de 10. ¿Tratamiento?',o:['Solución salina 0.9% + KCl','Acetazolamida','Espironolactona','Ácido clorhídrico IV'],e:'Alcalosis sensible a cloro: reponer volumen y cloro la corrige.'},
+{q:'Paciente con EPOC y PaCO₂ crónica de 60 mmHg. ¿HCO₃ esperado?',o:['≈31 mEq/L','≈26 mEq/L','≈24 mEq/L','≈40 mEq/L'],e:'Crónica: sube 3.5 por cada 10 de PaCO₂ sobre 40, así que 24 + 3.5 × 2 = 31.'}
+],
+K:{pres:'Hombre de 45 años con consumo crónico de alcohol. Vómito y dolor abdominal tras 3 días de beber sin comer. Glucosa 110 mg/dL, cetonas positivas, lactato 1.6.',vit:['pH 7.24','PaCO₂ 22','HCO₃ 9','Na 138','Cl 98'],
+steps:[
+{q:'¿Trastorno primario?',o:['Acidosis metabólica','Acidosis respiratoria','Alcalosis respiratoria','Alcalosis metabólica'],f:['Correcto: pH bajo con HCO₃ bajo.','La PaCO₂ está baja, no alta.','El pH está bajo: hay acidemia.','El HCO₃ está bajo.'],ev:'Acidosis metabólica primaria.'},
+{q:'Winter: 1.5 × 9 + 8 = 21.5 (±2). PaCO₂ real: 22. ¿Compensación?',o:['Adecuada','Hay acidosis respiratoria agregada','Hay alcalosis respiratoria agregada','No se puede calcular'],f:['Exacto: 22 está entre 19.5 y 23.5.','Para eso la PaCO₂ tendría que ser >23.5.','Para eso la PaCO₂ tendría que ser <19.5.','Sí se puede con la fórmula de Winter.'],ev:'Compensación respiratoria adecuada.'},
+{q:'AG = 138 − (98 + 9) = 31. Delta/delta = (31 − 12) / (24 − 9) = 1.27. ¿Conclusión?',o:['Acidosis con AG elevado pura; probable cetoacidosis alcohólica (tiamina, dextrosa y salina)','Acidosis con AG normal agregada','Alcalosis metabólica agregada','Acidosis láctica por sepsis'],f:['Correcto. En la cetoacidosis alcohólica da tiamina antes de la glucosa.','Para eso el delta/delta tendría que ser <1.','Para eso el delta/delta tendría que ser >2.','El lactato es normal; las cetonas explican el AG.']}
+]},
+C:[
+['Fórmula de Winter','PaCO₂ esperada = 1.5 × HCO₃ + 8 (±2).'],
+['Fórmula del anión gap','Na − (Cl + HCO₃). Normal 8–12.'],
+['GOLDMARK','Glicoles, oxoprolina, L-lactato, D-lactato, metanol, aspirina, renal, cetoacidosis.'],
+['Delta/delta: interpretación','<1 AG normal agregada · 1–2 AG elevado puro · >2 alcalosis metabólica agregada.'],
+['Alcalosis metabólica sensible a cloro','Cl urinario <20 (vómito, SNG): salina 0.9% + KCl.']
+]},
+
+/* ---------- GASTRO Y HEPATOLOGÍA ---------- */
+{id:'cirr',w:'gas',title:'Cirrosis y sus complicaciones',sub:'Ascitis, PBE, encefalopatía y várices',
+L:[
+['Gravedad',`<ul><li>Causas en México: alcohol, hígado graso metabólico (MASLD), hepatitis C y B.</li><li><b>Child-Pugh</b>: bilirrubina, albúmina, INR, ascitis, encefalopatía. A 5–6, B 7–9, C 10–15.</li><li><b>MELD</b> (bilirrubina, INR, creatinina, sodio): pronóstico y trasplante; con MELD ≥15 refiere a un centro de trasplante.</li></ul>`],
+['Ascitis',`<ul><li><b>Paracentesis diagnóstica</b> en toda ascitis nueva y en todo cirrótico hospitalizado.</li><li><b>GASA</b> (albúmina sérica − albúmina en ascitis) ≥1.1 g/dL = hipertensión portal.</li><li>Sodio 2 g/día + <b>espironolactona 100 mg + furosemida 40 mg</b> (proporción 100:40).</li><li>Paracentesis evacuadora de &gt;5 L: <b>albúmina 6–8 g por litro</b> extraído.</li></ul>`],
+['Peritonitis bacteriana espontánea',`<ul><li>Sospéchala con fiebre, dolor abdominal, encefalopatía o LRA en un cirrótico con ascitis (puede no dar síntomas).</li><li>Diagnóstico: <b>PMN ≥250/mm³</b> en el líquido de ascitis.</li><li>Tratamiento: <b>cefotaxima o ceftriaxona</b> 5 días + <b>albúmina 1.5 g/kg el día 1 y 1 g/kg el día 3</b>.</li><li>Profilaxis secundaria: norfloxacino, ciprofloxacino o TMP-SMX.</li></ul>`],
+['Encefalopatía hepática',`<ul><li>Grados West Haven I–IV; asterixis.</li><li><b>Busca el precipitante</b>: infección, sangrado GI, estreñimiento, diuréticos o hipokalemia, sedantes.</li><li><b>Lactulosa</b> para lograr 2–3 evacuaciones blandas al día.</li><li><b>Rifaximina</b> para prevenir recurrencias.</li></ul>`],
+['Várices',`<ul><li>Profilaxis primaria: betabloqueador no selectivo (propranolol, carvedilol) o ligadura.</li><li><b>Sangrado variceal</b>: vasoactivo de inmediato (terlipresina u octreotida), <b>ceftriaxona</b> profiláctica hasta 7 días, transfusión restrictiva (Hb 7–8) y <b>endoscopia con ligadura en ≤12 h</b>.</li><li>TIPS temprano si es de alto riesgo (Child C &lt;14 o Child B &gt;7 con sangrado activo).</li><li>Síndrome hepatorrenal: terlipresina + albúmina.</li></ul>`]
+],
+perla:'En el cirrótico evita AINE (LRA, sangrado, resistencia a diuréticos) y aminoglucósidos.',
+Q:[
+{q:'Criterio diagnóstico de peritonitis bacteriana espontánea:',o:['PMN ≥250/mm³ en líquido de ascitis','Leucocitos ≥250/mm³','Proteínas >2.5 g/dL','Cultivo positivo obligatorio'],e:'El conteo de PMN basta para iniciar el tratamiento; el cultivo puede salir negativo.'},
+{q:'GASA de 1.6 g/dL. ¿Qué indica?',o:['Ascitis por hipertensión portal','Carcinomatosis peritoneal','Ascitis tuberculosa','Síndrome nefrótico'],e:'GASA ≥1.1 = hipertensión portal (cirrosis, IC, síndrome de Budd-Chiari).'},
+{q:'Se extraen 7 L en una paracentesis evacuadora. ¿Qué das?',o:['Albúmina 6–8 g por litro extraído (≈42–56 g)','Nada','Solución salina 2 L','Plasma fresco congelado'],e:'Previene la disfunción circulatoria posparacentesis cuando se extraen >5 L.'},
+{q:'Cirrótico confuso con asterixis. Además de buscar el precipitante, ¿tratamiento?',o:['Lactulosa','Benzodiacepina','Restricción estricta de proteínas','Furosemida'],e:'La lactulosa reduce la absorción de amonio. La restricción proteica estricta ya no se recomienda.'},
+{q:'Sangrado por várices esofágicas. Además del vasoactivo y la endoscopia, ¿qué es obligatorio?',o:['Antibiótico profiláctico (ceftriaxona)','Omeprazol en infusión como único fármaco','Transfundir hasta Hb de 12','Betabloqueador IV inmediato'],e:'La profilaxis antibiótica reduce infecciones, resangrado y mortalidad.'}
+],
+K:{pres:'Hombre de 56 años con cirrosis por alcohol y ascitis. Fiebre, dolor abdominal difuso y confusión desde hace 1 día.',vit:['TA 100/60','FC 104','FR 20','T 38.3 °C','Child-Pugh C'],
+steps:[
+{q:'¿Estudio clave?',o:['Paracentesis diagnóstica (conteo celular, cultivo en frasco de hemocultivo, albúmina, proteínas)','TC de abdomen','Endoscopia','Esperar a mañana'],f:['Correcto: en todo cirrótico con ascitis que se deteriora hay que descartar PBE.','No sustituye el análisis del líquido.','No es lo prioritario sin sangrado.','La PBE no espera.'],ev:'Líquido de ascitis: PMN 600/mm³.'},
+{q:'¿Tratamiento?',o:['Ceftriaxona IV + albúmina 1.5 g/kg el día 1 y 1 g/kg el día 3','Ceftriaxona sola','Paracentesis evacuadora total y alta','Esperar el cultivo'],f:['Exacto: la albúmina reduce el síndrome hepatorrenal y la mortalidad.','Sin albúmina aumenta el riesgo de síndrome hepatorrenal.','No trata la infección.','Con PMN ≥250 se trata de inmediato.'],ev:'Sigue confuso, con asterixis.'},
+{q:'¿Qué agregas para la encefalopatía?',o:['Lactulosa (2–3 evacuaciones al día); la PBE es el precipitante','Lorazepam','Restricción total de proteínas','Suspender la lactulosa'],f:['Correcto. Al egreso: profilaxis secundaria de PBE y rifaximina para prevenir recurrencias.','Los sedantes empeoran la encefalopatía.','Empeora la desnutrición; ya no se recomienda.','Es el tratamiento de base.']}
+]},
+C:[
+['Diagnóstico de PBE','PMN ≥250/mm³ en líquido de ascitis.'],
+['Tratamiento de PBE','Cefotaxima o ceftriaxona 5 días + albúmina 1.5 g/kg el día 1 y 1 g/kg el día 3.'],
+['GASA ≥1.1 g/dL','Ascitis por hipertensión portal.'],
+['Diuréticos en ascitis','Espironolactona 100 mg + furosemida 40 mg (proporción 100:40).'],
+['Sangrado variceal: paquete','Vasoactivo + ceftriaxona + meta de Hb 7–8 + ligadura endoscópica en ≤12 h.']
+]},
+
+{id:'hda',w:'gas',title:'Hemorragia digestiva alta',sub:'Reanimación, IBP, Forrest y H. pylori',
+L:[
+['Reconócela',`<ul><li>Hematemesis, melena o "posos de café"; hematoquecia si el sangrado es masivo.</li><li>Causa más común: <b>úlcera péptica</b> (<i>H. pylori</i>, AINE).</li><li>Otras: várices, Mallory-Weiss, esofagitis, cáncer.</li><li>Un BUN desproporcionado (BUN/Cr &gt;30) sugiere origen alto.</li></ul>`],
+['Reanimación',`<ul><li>Dos vías periféricas gruesas, cristaloides, tipar y cruzar.</li><li>Transfusión restrictiva: <b>Hb &lt;7 g/dL</b> (meta 7–9); &lt;8 en cardiopatía isquémica.</li><li><b>Glasgow-Blatchford</b> (antes de la endoscopia): 0–1 permite manejo ambulatorio.</li><li>Rockall (después de la endoscopia): riesgo de resangrado y muerte.</li></ul>`],
+['Antes de la endoscopia',`<ul><li><b>IBP IV</b>: omeprazol o pantoprazol 80 mg en bolo + infusión de 8 mg/h (o bolos c/12 h).</li><li><b>Eritromicina</b> 250 mg IV 30–120 min antes mejora la visión endoscópica.</li><li>Si sospechas várices: agrega vasoactivo y ceftriaxona.</li><li>No uses sonda nasogástrica de rutina.</li></ul>`],
+['Endoscopia y Forrest',`<p>En ≤24 h tras reanimar (antes si está inestable).</p><ul><li><b>Ia</b> chorro · <b>Ib</b> rezumante · <b>IIa</b> vaso visible · <b>IIb</b> coágulo adherido · <b>IIc</b> base pigmentada · <b>III</b> base limpia.</li><li>Ia, Ib y IIa: <b>terapia endoscópica</b> (adrenalina + térmica o clips) + IBP IV 72 h.</li><li>IIb: valorar retirar el coágulo.</li><li>IIc y III: IBP oral y alta temprana.</li></ul>`],
+['Después',`<ul><li>Busca <i>H. pylori</i> (biopsia, antígeno en heces o prueba de aliento; puede dar falsos negativos durante el sangrado) y erradícalo.</li><li>Erradicación: <b>cuádruple con bismuto por 14 días</b> (IBP + bismuto + metronidazol + tetraciclina).</li><li>Suspende los AINE.</li><li>Si resangra: segunda endoscopia; si falla, embolización o cirugía.</li></ul>`]
+],
+perla:'Iniciar el IBP no debe retrasar la endoscopia: reduce los estigmas de alto riesgo, pero no la mortalidad por sí solo.',
+Q:[
+{q:'¿Causa más frecuente de hemorragia digestiva alta?',o:['Úlcera péptica','Várices esofágicas','Síndrome de Mallory-Weiss','Cáncer gástrico'],e:'La úlcera péptica (por H. pylori o AINE) es la causa principal.'},
+{q:'Umbral de transfusión en HDA sin cardiopatía:',o:['Hb <7 g/dL','Hb <10 g/dL','Hb <9 g/dL','Siempre transfundir 2 paquetes'],e:'La transfusión restrictiva reduce el resangrado y la mortalidad frente a la liberal.'},
+{q:'Endoscopia: úlcera con vaso visible no sangrante (Forrest IIa). ¿Conducta?',o:['Terapia endoscópica + IBP IV 72 h','IBP VO y alta','Solo observación','Cirugía de urgencia'],e:'Forrest Ia, Ib y IIa tienen alto riesgo de resangrado: requieren hemostasia endoscópica.'},
+{q:'Endoscopia: úlcera de base limpia (Forrest III). ¿Conducta?',o:['IBP VO y alta temprana','Terapia endoscópica dual','IBP IV en infusión 72 h','Angiografía'],e:'El riesgo de resangrado es muy bajo.'},
+{q:'¿Qué escala previa a la endoscopia identifica a quién puede manejarse de forma ambulatoria?',o:['Glasgow-Blatchford 0–1','Rockall 5','Child-Pugh A','Forrest III'],e:'Glasgow-Blatchford usa BUN, Hb, PA, FC y comorbilidades; 0–1 = muy bajo riesgo.'}
+],
+K:{pres:'Hombre de 60 años con artrosis que toma diclofenaco diario. Melena de 2 días y un episodio de hematemesis hoy.',vit:['TA 95/60','FC 115','FR 20','Hb 7.8 g/dL','BUN 48 mg/dL'],
+steps:[
+{q:'¿Qué haces primero?',o:['Dos vías gruesas, cristaloides, tipar y cruzar; transfundir si Hb <7 o si sigue inestable','Endoscopia inmediata sin reanimar','Transfundir hasta Hb de 12','Sonda nasogástrica para lavado'],f:['Correcto: primero se reanima.','Endoscopiar a un paciente inestable sin reanimar es peligroso.','La transfusión liberal aumenta el resangrado.','No se recomienda de rutina.'],ev:'TA 110/70 y FC 96 después de 1.5 L de cristaloide.'},
+{q:'¿Antes de la endoscopia?',o:['IBP IV (bolo + infusión o bolos c/12 h) y endoscopia en ≤24 h','Ranitidina VO','Octreotida como único fármaco','Esperar 72 h para la endoscopia'],f:['Exacto: el IBP reduce los estigmas de alto riesgo.','Los anti-H2 no sirven en HDA.','Está indicada si sospechas várices; aquí lo probable es una úlcera por AINE.','La endoscopia debe hacerse en ≤24 h.'],ev:'Endoscopia: úlcera duodenal con vaso visible (Forrest IIa).'},
+{q:'¿Conducta?',o:['Terapia endoscópica dual + IBP IV 72 h, buscar H. pylori y suspender el AINE','IBP VO y alta hoy','Cirugía','Continuar el diclofenaco con omeprazol'],f:['Correcto: hemostasia, prevención del resangrado y corrección de la causa.','El riesgo de resangrado es alto.','Solo si fallan dos intentos endoscópicos o la embolización.','El AINE fue la causa; hay que suspenderlo.']}
+]},
+C:[
+['Causa más común de HDA','Úlcera péptica.'],
+['Clasificación de Forrest','Ia chorro · Ib rezumante · IIa vaso visible · IIb coágulo · IIc base pigmentada · III base limpia.'],
+['Forrest que requieren terapia endoscópica','Ia, Ib y IIa (en IIb, valorar retirar el coágulo).'],
+['Umbral de transfusión en HDA','Hb <7 g/dL (<8 en cardiopatía isquémica).'],
+['IBP en HDA por úlcera','80 mg IV en bolo + 8 mg/h (o bolos c/12 h) por 72 h tras la hemostasia.']
+]},
+
+/* ---------- HEMATOLOGÍA Y NEUROLOGÍA ---------- */
+{id:'anemia',w:'hn',title:'Anemias',sub:'VCM, ferropenia, B12 y hemólisis',
+L:[
+['Clasifica',`<ul><li>Anemia (OMS): Hb &lt;13 g/dL en hombres, &lt;12 en mujeres, &lt;11 en embarazadas.</li><li>Por VCM: <b>microcítica &lt;80 fL</b>, normocítica 80–100, <b>macrocítica &gt;100</b>.</li><li>Reticulocitos: bajos = el problema es de producción; altos = hemólisis o sangrado.</li></ul>`],
+['Microcíticas',`<ul><li><b>Ferropenia</b> (la más común): <b>ferritina &lt;30 ng/mL</b> (&lt;100 si hay inflamación), saturación de transferrina &lt;20%, TIBC alta, ADE alto.</li><li><b>Talasemia</b>: índice de Mentzer (VCM / eritrocitos) &lt;13, ferritina normal; electroforesis de Hb.</li><li><b>Enfermedad crónica</b>: ferritina normal o alta, TIBC baja.</li></ul>`],
+['Ferropenia: no solo des hierro',`<ul><li>En hombres y en mujeres posmenopáusicas, la ferropenia es <b>sangrado digestivo hasta demostrar lo contrario</b>: endoscopia alta + colonoscopia.</li><li>Sulfato ferroso VO (60–65 mg de hierro elemental); en <b>días alternos</b> se absorbe mejor.</li><li>Los reticulocitos suben en 7–10 días; la Hb sube 1–2 g/dL en 2–4 semanas.</li><li>Sigue 3 meses después de normalizar la Hb para llenar depósitos.</li><li>Hierro IV si hay intolerancia, malabsorción, ERC o IC.</li></ul>`],
+['Macrocíticas',`<ul><li><b>Megaloblásticas</b> (neutrófilos hipersegmentados): déficit de B12 (anemia perniciosa, metformina, gastrectomía; da <b>síntomas neurológicos</b>) o de folato (alcohol, embarazo, metotrexato).</li><li>No megaloblásticas: alcohol, hepatopatía, hipotiroidismo, síndrome mielodisplásico.</li><li>Repón <b>B12 antes que folato</b>: el folato solo puede empeorar el daño neurológico.</li></ul>`],
+['Hemólisis',`<ul><li>Laboratorio: <b>LDH ↑, bilirrubina indirecta ↑, haptoglobina ↓</b>, reticulocitos ↑.</li><li>Coombs directo positivo: autoinmune (esteroides).</li><li><b>Esquistocitos</b> = microangiopatía: PTT (ADAMTS13 &lt;10%, plasmaféresis urgente), SUH, CID.</li><li>Transfusión: Hb &lt;7 (&lt;8 en cardiopatía). Un paquete globular sube ≈1 g/dL.</li></ul>`]
+],
+perla:'Pancitopenia o blastos en el frotis: llama a hematología el mismo día.',
+Q:[
+{q:'Hb 9, VCM 68 fL, ferritina 8 ng/mL. ¿Diagnóstico?',o:['Anemia ferropénica','Talasemia menor','Anemia de enfermedad crónica','Anemia sideroblástica'],e:'Microcítica con ferritina baja: ferropenia.'},
+{q:'Hombre de 65 años con anemia ferropénica sin causa aparente. ¿Siguiente paso?',o:['Endoscopia alta y colonoscopia','Hierro VO y control en 1 año','Solo sangre oculta en heces','Aspirado de médula ósea'],e:'Hay que descartar sangrado digestivo, incluido el cáncer de colon.'},
+{q:'Anemia macrocítica, neutrófilos hipersegmentados y parestesias en los pies. ¿Déficit?',o:['Vitamina B12','Ácido fólico','Hierro','Vitamina B6'],e:'El déficit de B12 da manifestaciones neurológicas (degeneración combinada subaguda); el de folato no.'},
+{q:'¿Qué patrón de laboratorio sugiere hemólisis?',o:['LDH alta, haptoglobina baja, bilirrubina indirecta alta','LDH baja, haptoglobina alta','Ferritina baja y TIBC alta','Reticulocitos bajos y VCM alto'],e:'La destrucción eritrocitaria libera LDH y hemoglobina, que consume la haptoglobina.'},
+{q:'Fiebre, confusión, trombocitopenia, anemia con esquistocitos y LRA leve. ¿Conducta?',o:['Plasmaféresis urgente (sospecha de PTT)','Transfundir plaquetas','Hierro IV','Esperar el ADAMTS13 antes de tratar'],e:'La PTT sin tratamiento tiene una mortalidad muy alta; la plasmaféresis no espera al resultado.'}
+],
+K:{pres:'Mujer de 58 años, posmenopáusica, con fatiga y disnea de esfuerzo de 3 meses. No toma AINE.',vit:['Hb 8.9 g/dL','VCM 71 fL','Ferritina 6 ng/mL','Reticulocitos 0.8%','Plaquetas 420 mil'],
+steps:[
+{q:'¿Qué tipo de anemia es?',o:['Microcítica por deficiencia de hierro','Macrocítica megaloblástica','Hemolítica','Aplásica'],f:['Correcto: VCM bajo y ferritina baja.','El VCM está bajo.','Los reticulocitos están bajos.','Solo hay una línea afectada y las plaquetas están altas (reactivas).'],ev:'Anemia ferropénica.'},
+{q:'¿Siguiente paso?',o:['Endoscopia alta y colonoscopia','Solo hierro y alta','Transfundir 2 paquetes','Electroforesis de hemoglobina'],f:['Exacto: en una posmenopáusica la ferropenia obliga a buscar sangrado digestivo.','Tratarías el síntoma y no la causa.','Está estable; no la necesita.','La ferritina baja ya explica la anemia.'],ev:'Colonoscopia: pólipo de 2 cm en colon derecho, resecado.'},
+{q:'¿Cómo das el hierro?',o:['Sulfato ferroso VO en días alternos; reticulocitos en 7–10 días y seguir 3 meses tras normalizar','Hierro VO 2 semanas y suspender','Hierro IV de entrada a todos','Ácido fólico solo'],f:['Correcto.','Necesitas llenar los depósitos.','Solo si falla o no tolera la vía oral, o hay malabsorción.','No trata la ferropenia.']}
+]},
+C:[
+['Ferritina que confirma ferropenia','<30 ng/mL (<100 si hay inflamación).'],
+['Ferropenia en hombre o posmenopáusica','Endoscopia alta + colonoscopia.'],
+['Índice de Mentzer','VCM / eritrocitos <13 sugiere talasemia; >13, ferropenia.'],
+['¿B12 o folato primero?','B12: el folato solo puede empeorar el daño neurológico.'],
+['Datos de hemólisis','LDH ↑, bilirrubina indirecta ↑, haptoglobina ↓, reticulocitos ↑.']
+]},
+
+{id:'evc',w:'hn',title:'EVC isquémico',sub:'Código EVC, trombólisis, trombectomía y prevención',
+L:[
+['Código EVC',`<ul><li>Déficit focal súbito: hemiparesia, afasia, desviación facial, hemianopsia, ataxia.</li><li>Lo más importante: la <b>hora de inicio</b> o la última vez que lo vieron bien.</li><li><b>Glucosa capilar</b> de inmediato: la hipoglucemia lo imita.</li><li>NIHSS para medir la gravedad. Tamizaje BE-FAST: equilibrio, ojos, cara, brazo, habla, tiempo.</li></ul>`],
+['Imagen',`<ul><li><b>TC de cráneo simple</b> en ≤20 min desde la llegada: descarta hemorragia.</li><li>AngioTC para buscar oclusión de gran vaso.</li><li>La TC inicial suele ser normal en un EVC isquémico de pocas horas.</li></ul>`],
+['Trombólisis IV (≤4.5 h)',`<ul><li><b>Alteplasa 0.9 mg/kg</b> (máx. 90 mg): 10% en bolo y el resto en 60 min. O tenecteplasa 0.25 mg/kg en bolo.</li><li>No trombolices si hay: hemorragia en la TC, EVC o TCE grave en 3 meses, hemorragia intracraneal previa, PA &gt;185/110 que no baja, plaquetas &lt;100 mil, INR &gt;1.7, glucosa &lt;50, ACOD en las últimas 48 h, cirugía mayor en 14 días o sangrado GI en 21 días.</li></ul>`],
+['Trombectomía mecánica',`<ul><li>Oclusión de gran vaso anterior (carótida interna o M1).</li><li>Hasta <b>6 h</b>; hasta <b>24 h</b> si la imagen de perfusión muestra tejido rescatable.</li><li>Se suma a la trombólisis; no la reemplaza.</li></ul>`],
+['Lo que sigue',`<ul><li>Cabecera a 0–30°, evita fiebre e hiperglucemia (meta 140–180) y evalúa la deglución antes de dar vía oral.</li><li><b>Aspirina</b> 160–325 mg en 24–48 h (si trombolizaste, espera 24 h y la TC de control).</li><li>AIT o EVC menor (NIHSS ≤3): <b>aspirina + clopidogrel por 21 días</b>.</li><li>Estatina de alta intensidad y control de la PA.</li><li>FA: anticoagulación (con ACOD puede iniciarse temprano según la gravedad).</li><li>Estenosis carotídea sintomática de 70–99%: endarterectomía en ≤2 semanas.</li></ul>`]
+],
+perla:'Siempre mide la glucosa capilar antes de activar el código: una hipoglucemia puede verse igual que un EVC.',
+Q:[
+{q:'Ventana para trombólisis IV en EVC isquémico:',o:['4.5 horas','12 horas','24 horas','1 hora'],e:'Hasta 4.5 h desde el inicio o la última vez que lo vieron bien; mientras antes, mejor.'},
+{q:'Primer estudio de imagen ante sospecha de EVC:',o:['TC de cráneo simple','RM con difusión siempre','Doppler carotídeo','Punción lumbar'],e:'Es rápida y está disponible: descarta hemorragia, que cambia todo el manejo.'},
+{q:'¿Hasta qué PA puedes trombolizar?',o:['<185/110 mmHg','<220/120 mmHg','<140/90 mmHg','No importa la PA'],e:'Por arriba de 185/110 aumenta el riesgo de hemorragia; se baja con labetalol o nicardipino antes de trombolizar.'},
+{q:'¿Quién puede recibir trombectomía hasta 24 h después del inicio?',o:['Oclusión de gran vaso anterior con tejido rescatable en la imagen de perfusión','Todo EVC isquémico','EVC lacunar','EVC hemorrágico'],e:'Estudios DAWN y DEFUSE-3: la selección por imagen amplía la ventana.'},
+{q:'AIT de alto riesgo o EVC menor (NIHSS ≤3). ¿Antiagregación?',o:['Aspirina + clopidogrel por 21 días','Aspirina sola de por vida desde el inicio','Warfarina','Nada'],e:'La doble antiagregación corta reduce la recurrencia temprana sin aumentar mucho el sangrado.'}
+],
+K:{pres:'Hombre de 68 años con FA sin anticoagulación. Hemiparesia derecha y afasia desde hace 1.5 h; su esposa lo vio bien antes.',vit:['TA 200/105','FC 96 irregular','Glucosa 112 mg/dL','NIHSS 16'],
+steps:[
+{q:'¿Siguiente paso?',o:['TC de cráneo simple urgente (+ angioTC)','Aspirina 300 mg de inmediato','Bajar la PA a 120/80','RM en 24 h'],f:['Correcto: antes de cualquier antitrombótico hay que descartar hemorragia.','Sin TC podrías darle aspirina a una hemorragia.','Bajarla tanto reduce la perfusión del tejido en riesgo.','Se pierde la ventana.'],ev:'TC sin hemorragia ni infarto establecido.'},
+{q:'Con PA de 200/105, ¿qué haces?',o:['Bajarla a <185/110 con labetalol o nicardipino y trombolizar','Trombolizar con esa PA','No trombolizar por la PA','Nifedipino sublingual'],f:['Exacto: controlas la PA y trombolizas dentro de la ventana.','Riesgo alto de hemorragia.','La PA elevada es tratable; no excluye la trombólisis.','Descenso impredecible; no se usa.'],ev:'AngioTC: oclusión de la M1 izquierda.'},
+{q:'¿Algo más?',o:['Trombectomía mecánica además de la trombólisis','Nada más','Heparina IV a dosis plena','Anticoagular hoy con ACOD'],f:['Correcto: oclusión de gran vaso anterior dentro de 6 h.','La trombólisis sola recanaliza poco una M1.','Aumenta la hemorragia sin beneficio agudo.','En la fase hiperaguda tras trombólisis no; se decide después según el tamaño del infarto.']}
+]},
+C:[
+['Ventana de trombólisis IV','4.5 h desde el inicio o la última vez visto bien.'],
+['Dosis de alteplasa en EVC','0.9 mg/kg (máx. 90 mg): 10% en bolo y el resto en 60 min.'],
+['PA para trombolizar','<185/110 antes; <180/105 durante las siguientes 24 h.'],
+['Ventanas de trombectomía','Hasta 6 h; hasta 24 h con selección por imagen de perfusión (oclusión de gran vaso anterior).'],
+['AIT de alto riesgo o EVC menor','Aspirina + clopidogrel por 21 días.']
+]}
+];
+
+/* ====================== ÍNDICES ====================== */
+const WBYID={};WORLDS.forEach(w=>{WBYID[w.id]=w});
+const TBYID={};
+TOPICS.forEach(t=>{
+  TBYID[t.id]=t;
+  const same=TOPICS.filter(x=>x.w===t.w);
+  t.code=WBYID[t.w].code+'·'+String(same.indexOf(t)+1).padStart(2,'0');
+});
+const QIDX={};
+TOPICS.forEach(t=>t.Q.forEach((q,i)=>{q.id=t.id+'-q'+i;q.t=t.id;QIDX[q.id]=q}));
+const CIDX={};
+TOPICS.forEach(t=>t.C.forEach((c,i)=>{const id=t.id+'-c'+i;CIDX[id]={id:id,t:t.id,f:c[0],b:c[1]}}));
+const NCARDS=Object.keys(CIDX).length;
+const MAXSTARS=TOPICS.length*3;
+
+const RANKS=[
+  {xp:0,code:'MIP',name:'Médico interno de pregrado'},
+  {xp:250,code:'R1',name:'Residente de 1er año'},
+  {xp:700,code:'R2',name:'Residente de 2º año'},
+  {xp:1400,code:'R3',name:'Residente de 3er año'},
+  {xp:2300,code:'JR',name:'Jefe de residentes'},
+  {xp:3500,code:'ADS',name:'Médico adscrito'},
+  {xp:5000,code:'MI',name:'Internista'}
+];
+const INTERVALS=[0,1,2,4,7,15];
+const NEW_PER_DAY=12;
+
+/* ====================== UTILIDADES ====================== */
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const pad=n=>String(n).padStart(2,'0');
+const fmt=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today=()=>fmt(new Date());
+function addDays(ds,n){const p=ds.split('-').map(Number);return fmt(new Date(p[0],p[1]-1,p[2]+n))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t}return a}
+function range(n){return Array.from({length:n},(_,i)=>i)}
+const reduced=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+function rankIdx(xp){let r=0;RANKS.forEach((k,i)=>{if(xp>=k.xp)r=i});return r}
+function rotationWeek(){const start=new Date(2026,8,28);const d=Math.floor((Date.now()-start.getTime())/86400000);if(d<0)return 0;const w=Math.floor(d/7)+1;return w<=13?w:0}
+
+/* ====================== ESTADO ====================== */
+const KEY='pase-de-visita-mi-v1';
+function blank(){return {v:1,xp:0,streak:{last:'',n:0},topics:{},cards:{},newDay:{d:'',n:0},wrong:[],boss:{best:0,runs:0},stats:{ans:0,ok:0,rev:0},badges:{},updatedAt:0}}
+function normalize(o){const b=blank();const s=Object.assign(b,o||{});['streak','newDay','boss','stats'].forEach(k=>{s[k]=Object.assign(blank()[k],s[k]||{})});if(!Array.isArray(s.wrong))s.wrong=[];s.topics=s.topics||{};s.cards=s.cards||{};s.badges=s.badges||{};return s}
+function load(){try{const raw=localStorage.getItem(KEY);if(raw)return normalize(JSON.parse(raw))}catch(e){}return blank()}
+let S=load();
+const EMPTY_T={learn:false,quiz:0,caseDone:false,casePerfect:false};
+function tpv(id){return S.topics[id]||EMPTY_T}
+function tp(id){if(!S.topics[id])S.topics[id]={learn:false,quiz:0,caseDone:false,casePerfect:false};return S.topics[id]}
+function stars(id){const p=tpv(id);return (p.learn?1:0)+(p.quiz>=4?1:0)+(p.caseDone?1:0)}
+function totalStars(){return TOPICS.reduce((a,t)=>a+stars(t.id),0)}
+function streakNow(){const t=today();return (S.streak.last===t||S.streak.last===addDays(t,-1))?S.streak.n:0}
+function persist(){S.updatedAt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}queueRemote()}
+
+/* --- sincronización con la cuenta (capacidad db) --- */
+let syncMode='local',remoteRef=null,writing=false,writeAgain=false,rtimer=null;
+function queueRemote(){if(!remoteRef)return;clearTimeout(rtimer);rtimer=setTimeout(pushRemote,1500)}
+async function pushRemote(){
+  if(!remoteRef)return;
+  if(writing){writeAgain=true;return}
+  writing=true;
+  try{await remoteRef.set(JSON.parse(JSON.stringify(S)));syncMode='cuenta'}
+  catch(e){const c=e&&e.code;if(c==='invalid_argument'||c==='revoked'||c==='not_granted'||c==='capability_disabled'||c==='capability_removed'){remoteRef=null;syncMode='local'}}
+  finally{writing=false;if(writeAgain){writeAgain=false;pushRemote()}}
+}
+async function initRemote(){
+  try{
+    const c=window.claude;
+    if(!c||typeof c.use!=='function')return;
+    const res=await Promise.all([c.use('db'),c.use('user')]);
+    const db=res[0],user=res[1];
+    if(!db||!user)return;
+    const uid=await user.id();
+    if(!uid)return;
+    const ref=db.doc('data/users/'+uid+'/progress');
+    const snap=await ref.get();
+    remoteRef=ref;syncMode='cuenta';
+    const r=snap.exists?(snap.data()||{}):null;
+    if(r&&(r.updatedAt||0)>(S.updatedAt||0)){
+      S=normalize(JSON.parse(JSON.stringify(r)));
+      try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
+    }else if((S.updatedAt||0)>0&&(!r||(r.updatedAt||0)<(S.updatedAt||0))){
+      pushRemote();
+    }
+    render();
+  }catch(e){}
+}
+
+/* ====================== JUEGO ====================== */
+let view={name:'map'};
+let sess={};
+
+function touchStreak(){const t=today();if(S.streak.last===t)return;S.streak.n=(S.streak.last===addDays(t,-1))?S.streak.n+1:1;S.streak.last=t}
+function gain(n,label,quiet){
+  const before=rankIdx(S.xp);
+  S.xp+=n;touchStreak();
+  if(!quiet)toast('+'+n+' XP'+(label?' · '+label:''));
+  beat();
+  const after=rankIdx(S.xp);
+  if(after>before){sess.modal={r:after};renderModal()}
+}
+
+const BADGES=[
+  {id:'primera',seal:'1ª',name:'Primera guardia',desc:'Termina tu primera lección.',test:()=>TOPICS.some(t=>tpv(t.id).learn)},
+  {id:'perfecto',seal:'5/5',name:'Sin errores',desc:'Saca 5 de 5 en un reto.',test:()=>TOPICS.some(t=>tpv(t.id).quiz>=5)},
+  {id:'ojo',seal:'Dx',name:'Ojo clínico',desc:'Resuelve un caso sin equivocarte.',test:()=>TOPICS.some(t=>tpv(t.id).casePerfect)},
+  {id:'sistema',seal:'SIS',name:'Sistema completo',desc:'Todos los temas de un sistema con 3 estrellas.',test:()=>WORLDS.some(w=>TOPICS.filter(t=>t.w===w.id).every(t=>stars(t.id)===3))},
+  {id:'racha3',seal:'3d',name:'Constancia',desc:'Estudia 3 días seguidos.',test:()=>S.streak.n>=3},
+  {id:'racha7',seal:'7d',name:'Semana completa',desc:'Estudia 7 días seguidos.',test:()=>S.streak.n>=7},
+  {id:'jefe',seal:'JR',name:'Le ganaste al jefe',desc:'10 o más en el examen relámpago.',test:()=>S.boss.best>=10},
+  {id:'tarjetas',seal:'50',name:'Memoria de residente',desc:'Repasa 50 tarjetas.',test:()=>S.stats.rev>=50},
+  {id:'mitad',seal:'½',name:'Medio camino',desc:'10 temas con 3 estrellas.',test:()=>TOPICS.filter(t=>stars(t.id)===3).length>=10},
+  {id:'internista',seal:'MI',name:'Internista',desc:'Los 19 temas con 3 estrellas.',test:()=>TOPICS.every(t=>stars(t.id)===3)}
+];
+function checkBadges(){BADGES.forEach(b=>{if(!S.badges[b.id]&&b.test()){S.badges[b.id]=today();toast('Logro: '+b.name,'badge-t')}})}
+
+function nextStep(){
+  const any=Object.keys(S.topics).length>0;
+  for(const t of TOPICS){
+    const p=tpv(t.id);
+    if(stars(t.id)<3){
+      const tab=!p.learn?'learn':(p.quiz<4?'quiz':'case');
+      const lab=!any?'Empieza con':(tab==='learn'?'Siguiente tema':tab==='quiz'?'Te falta el reto de':'Te falta el caso de');
+      return {t:t,tab:tab,label:lab};
+    }
+  }
+  return null;
+}
+
+/* --- tarjetas: repaso espaciado --- */
+function dailyQueue(){
+  const t=today();
+  const due=Object.keys(S.cards).filter(id=>CIDX[id]&&S.cards[id].d<=t);
+  const used=S.newDay.d===t?S.newDay.n:0;
+  const slots=Math.max(0,NEW_PER_DAY-used);
+  const learned=TOPICS.filter(x=>tpv(x.id).learn);
+  const src=learned.length?learned:TOPICS.slice(0,3);
+  const fresh=[];
+  src.forEach(x=>x.C.forEach((_,i)=>{const id=x.id+'-c'+i;if(!S.cards[id])fresh.push(id)}));
+  return due.concat(fresh.slice(0,slots));
+}
+function srsUpdate(id,known){
+  const t=today();
+  if(!S.cards[id]){if(S.newDay.d!==t)S.newDay={d:t,n:0};S.newDay.n++}
+  const c=Object.assign({b:0,d:t},S.cards[id]||{});
+  c.b=known?Math.min(5,c.b+1):1;
+  c.d=known?addDays(t,INTERVALS[c.b]):t;
+  S.cards[id]=c;
+}
+function newCardRun(ids,kind,topicId){return {ids:ids.slice(),i:0,flipped:false,known:0,total:0,requeued:{},kind:kind,topicId:topicId,done:ids.length===0}}
+function curCardRun(){
+  if(view.name==='topic'&&view.tab==='cards')return sess.cards;
+  if(view.name==='review'&&sess.review&&sess.review.kind==='cards')return sess.review.run;
+  return null;
+}
+function rateCard(known){
+  const r=curCardRun();if(!r||r.done||!r.flipped)return;
+  const id=r.ids[r.i];
+  srsUpdate(id,known);
+  S.stats.rev++;r.total++;
+  if(known)r.known++;
+  else if(!r.requeued[id]){r.requeued[id]=1;r.ids.push(id)}
+  gain(2,'',true);
+  r.i++;r.flipped=false;
+  if(r.i>=r.ids.length)r.done=true;
+  checkBadges();persist();render();scrollTop();
+}
+
+/* --- preguntas: reto, errores y jefe --- */
+function newQuizRun(kind,qs,topicId){return {kind:kind,qs:qs,i:0,picked:null,order:shuffle([0,1,2,3]),score:0,combo:0,best:0,lives:3,done:qs.length===0,topicId:topicId,record:false}}
+function curQuizRun(){
+  if(view.name==='topic'&&view.tab==='quiz')return sess.quiz;
+  if(view.name==='review'&&sess.review&&sess.review.kind==='errors')return sess.review.run;
+  if(view.name==='boss')return sess.boss;
+  return null;
+}
+function answer(k){
+  const run=curQuizRun();
+  if(!run||run.done||run.picked!==null)return;
+  run.picked=k;
+  const qid=run.qs[run.i];
+  const ok=run.order[k]===0;
+  S.stats.ans++;
+  if(ok){
+    S.stats.ok++;run.score++;run.combo++;run.best=Math.max(run.best,run.combo);
+    S.wrong=S.wrong.filter(x=>x!==qid);
+    const base=run.kind==='boss'?15:run.kind==='errors'?8:10;
+    const mult=run.combo>=3?2:1;
+    gain(base*mult,mult>1?'racha de '+run.combo:'');
+  }else{
+    run.combo=0;
+    if(S.wrong.indexOf(qid)<0)S.wrong.push(qid);
+    if(run.kind==='boss')run.lives--;
+    touchStreak();
+  }
+  persist();render();
+  const ex=document.querySelector('.explain');
+  if(ex&&ex.scrollIntoView)ex.scrollIntoView({block:'nearest',behavior:reduced?'auto':'smooth'});
+}
+function isLastQ(run){return run.i>=run.qs.length-1||(run.kind==='boss'&&run.lives<=0)}
+function nextQ(){
+  const run=curQuizRun();if(!run||run.picked===null)return;
+  if(isLastQ(run)){run.done=true;finishQuiz(run)}
+  else{run.i++;run.picked=null;run.order=shuffle([0,1,2,3])}
+  render();scrollTop();
+}
+function finishQuiz(run){
+  if(run.kind==='topic'){const p=tp(run.topicId);if(run.score>p.quiz)p.quiz=run.score}
+  if(run.kind==='boss'){S.boss.runs++;if(run.score>S.boss.best){run.record=S.boss.best>0;S.boss.best=run.score}}
+  checkBadges();persist();
+}
+
+/* --- casos --- */
+function newCaseRun(t){return {topicId:t.id,step:0,order:shuffle(range(t.K.steps[0].o.length)),wrong:[],last:null,solved:false,perfect:true,done:false}}
+function casePick(k){
+  const run=sess.case;if(!run||run.done||run.solved)return;
+  const t=TBYID[run.topicId];
+  const oi=run.order[k];
+  run.last=k;
+  if(oi===0){run.solved=true;gain(run.wrong.length?5:15,run.wrong.length?'':'decisión correcta')}
+  else{if(run.wrong.indexOf(k)<0)run.wrong.push(k);run.perfect=false;touchStreak()}
+  persist();render();
+  const ex=document.querySelector('.explain');
+  if(ex&&ex.scrollIntoView)ex.scrollIntoView({block:'nearest',behavior:reduced?'auto':'smooth'});
+}
+function caseNext(){
+  const run=sess.case;if(!run||!run.solved)return;
+  const t=TBYID[run.topicId];
+  run.step++;
+  if(run.step>=t.K.steps.length){
+    run.done=true;
+    const p=tp(t.id);p.caseDone=true;if(run.perfect)p.casePerfect=true;
+    checkBadges();persist();
+  }else{
+    run.order=shuffle(range(t.K.steps[run.step].o.length));run.wrong=[];run.last=null;run.solved=false;
+  }
+  render();
+  const cur=document.querySelector('.step.current')||document.querySelector('.case-done');
+  if(cur&&cur.scrollIntoView)cur.scrollIntoView({block:'start',behavior:reduced?'auto':'smooth'});
+}
+
+/* ====================== RENDER ====================== */
+const $=id=>document.getElementById(id);
+const monRow=$('monRow'),viewEl=$('view'),tabsEl=$('tabs'),toastsEl=$('toasts'),modalEl=$('modal');
+
+function scrollTop(){window.scrollTo(0,0)}
+function starsHTML(n){return '<span class="stars" aria-label="'+n+' de 3 estrellas">'+[0,1,2].map(i=>'<i class="'+(i<n?'on':'')+'">★</i>').join('')+'</span>'}
+
+function renderMonitor(){
+  const r=rankIdx(S.xp),cur=RANKS[r],nxt=RANKS[r+1];
+  const pct=nxt?Math.max(2,Math.round((S.xp-cur.xp)/(nxt.xp-cur.xp)*100)):100;
+  monRow.innerHTML=
+    '<div class="vital v-rank"><span class="v-lab">Nivel</span><span class="v-big">'+cur.code+'</span></div>'+
+    '<div class="vital v-xp"><span class="v-lab">'+(nxt?'XP · siguiente: '+nxt.code:'XP · rango máximo')+'</span><div class="xpbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'" aria-label="Avance al siguiente nivel"><i style="width:'+pct+'%"></i></div><span class="v-small">'+S.xp+(nxt?' / '+nxt.xp:'')+' XP</span></div>'+
+    '<div class="vital v-streak"><span class="v-lab">Racha</span><span class="v-big">'+streakNow()+'<small>d</small></span></div>'+
+    '<div class="vital v-stars"><span class="v-lab">Estrellas</span><span class="v-big">'+totalStars()+'<small>/'+MAXSTARS+'</small></span></div>';
+}
+
+const ICONS={
+  map:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>',
+  review:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="14" height="13" rx="2"/><path d="M7 4h12a2 2 0 0 1 2 2v11"/></svg>',
+  boss:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg>',
+  badges:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="m8.5 14-1.5 8 5-3 5 3-1.5-8"/></svg>'
+};
+function renderTabs(){
+  const due=dailyQueue().length;
+  const cur=view.name==='topic'?'map':view.name;
+  const items=[['map','Mapa'],['review','Repaso'],['boss','Jefe'],['badges','Logros']];
+  tabsEl.innerHTML='<div class="wrap">'+items.map(([k,l])=>'<button class="tab" data-act="go" data-v="'+k+'"'+(cur===k?' aria-current="page"':'')+'>'+ICONS[k]+'<span>'+l+'</span>'+(k==='review'&&due?'<span class="count">'+due+'</span>':'')+'</button>').join('')+'</div>';
+}
+
+function render(){
+  renderMonitor();
+  let html='';
+  if(view.name==='topic'&&TBYID[view.id])html=viewTopic();
+  else if(view.name==='review')html=viewReview();
+  else if(view.name==='boss')html=viewBoss();
+  else if(view.name==='badges')html=viewBadges();
+  else{view={name:'map'};html=viewMap()}
+  viewEl.innerHTML=html;
+  renderTabs();
+}
+
+/* --- Mapa --- */
+function viewMap(){
+  const nx=nextStep();
+  const due=dailyQueue().length;
+  const wk=rotationWeek();
+  const done=TOPICS.filter(t=>stars(t.id)===3).length;
+  const acc=S.stats.ans?Math.round(S.stats.ok/S.stats.ans*100)+'%':'—';
+  const mastered=Object.keys(S.cards).filter(id=>S.cards[id].b>=3).length;
+  let h='<section class="hero">'+
+    '<p class="eyebrow">Medicina Interna'+(wk?' · Semana '+wk+' de la rotación':'')+'</p>'+
+    '<h1>Pase de visita</h1>'+
+    '<p class="lede">Los 19 temas troncales de la rotación, explicados y en modo juego. Cada tema trae una lección corta, un reto de 5 preguntas, un caso clínico y tarjetas de repaso. Con 3 temas al día terminas en una semana.</p>'+
+    '<div class="cta">'+
+    (nx?'<button class="btn" data-act="open" data-id="'+nx.t.id+'" data-tab="'+nx.tab+'"><span><small>'+nx.label+'</small>'+esc(nx.t.title)+'</span><span aria-hidden="true">→</span></button>'
+       :'<button class="btn" data-act="go" data-v="boss"><span><small>Todos los temas completos</small>Reta al jefe</span><span aria-hidden="true">→</span></button>')+
+    '<button class="btn ghost" data-act="go" data-v="review">Repaso de hoy · '+due+' tarjeta'+(due===1?'':'s')+'</button>'+
+    '</div></section>'+
+    '<section class="labs" aria-label="Tu avance">'+
+    '<div><span>Temas completos</span><b>'+done+'<small>/'+TOPICS.length+'</small></b></div>'+
+    '<div><span>Precisión</span><b>'+acc+'</b></div>'+
+    '<div><span>Tarjetas dominadas</span><b>'+mastered+'<small>/'+NCARDS+'</small></b></div>'+
+    '</section>';
+  WORLDS.forEach(w=>{
+    const ts=TOPICS.filter(t=>t.w===w.id);
+    const c=ts.filter(t=>stars(t.id)===3).length;
+    h+='<section class="world"><div class="world-h"><h2><span class="code">'+esc(w.code)+'</span>'+esc(w.name)+'</h2><span class="prog">'+c+'/'+ts.length+' temas</span></div><div class="topics">'+
+      ts.map(t=>'<button class="trow" data-act="open" data-id="'+t.id+'"><span class="tcode">'+esc(t.code)+'</span><span class="ttitle">'+esc(t.title)+'</span><span class="tsub">'+esc(t.sub)+'</span>'+starsHTML(stars(t.id))+'</button>').join('')+
+      '</div></section>';
+  });
+  h+='<p class="foot">Basado en las GPC mexicanas, la NOM-006 y guías internacionales (ESC, AHA/ACC, ADA, KDIGO, GOLD, Surviving Sepsis, AASLD, ACG). Confirma dosis y conductas con tu residente o adscrito.</p>';
+  return h;
+}
+
+/* --- Tema --- */
+function viewTopic(){
+  const t=TBYID[view.id],p=tpv(t.id),tab=view.tab||'learn';
+  const segs=[['learn','1','Aprende',p.learn],['quiz','2','Reto',p.quiz>=4],['case','3','Caso',p.caseDone],['cards','','Tarjetas',false]];
+  let body='';
+  if(tab==='quiz')body=quizTab(t);
+  else if(tab==='case')body=caseTab(t);
+  else if(tab==='cards')body=cardsTab(t);
+  else body=learnTab(t);
+  return '<button class="back" data-act="go" data-v="map">← Mapa</button>'+
+    '<header class="thead"><p class="eyebrow">'+esc(t.code)+' · '+esc(WBYID[t.w].name)+'</p><h1 class="h-sm">'+esc(t.title)+'</h1>'+starsHTML(stars(t.id))+'</header>'+
+    '<nav class="seg" aria-label="Partes del tema">'+segs.map(([k,n,l,ok])=>'<button data-act="tab" data-tab="'+k+'"'+(tab===k?' aria-current="page"':'')+'>'+(n?'<span class="n">'+n+'</span>':'')+l+(ok?'<span class="chk" aria-label="completado">✓</span>':'')+'</button>').join('')+'</nav>'+
+    '<div class="tbody">'+body+'</div>';
+}
+
+function learnTab(t){
+  if(!sess.learn||sess.learn.id!==t.id)sess.learn={id:t.id,i:0};
+  const cards=t.L.map(x=>({h:x[0],b:x[1]})).concat([{perla:t.perla}]);
+  const n=cards.length,i=Math.min(sess.learn.i,n-1),c=cards[i];
+  const p=tpv(t.id);
+  return '<div class="dots" aria-hidden="true">'+cards.map((_,k)=>'<i class="'+(k<=i?'on':'')+'"></i>').join('')+'</div>'+
+    '<article class="sheet lesson">'+
+    (c.perla?'<span class="stamp">Perla clínica</span><p class="perla">'+esc(c.perla)+'</p>'
+            :'<p class="kicker">Tarjeta '+(i+1)+' de '+(n-1)+'</p><h3>'+c.h+'</h3>'+c.b)+
+    '</article>'+
+    '<div class="row-btns"><button class="btn ghost" data-act="lprev"'+(i===0?' disabled':'')+'>← Anterior</button>'+
+    (i<n-1?'<button class="btn" data-act="lnext">Siguiente →</button>'
+          :'<button class="btn red" data-act="lfinish">'+(p.learn?'Ir al reto →':'Terminar lección · +20 XP')+'</button>')+
+    '</div>';
+}
+
+function heartsHTML(l){return '<span class="hearts" aria-label="'+l+' vidas">'+[0,1,2].map(i=>'<svg viewBox="0 0 24 24" class="'+(i<l?'full':'empty')+'" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.9 3.6 4.5 7 4.5c2 0 3.6 1.1 5 2.9 1.4-1.8 3-2.9 5-2.9 3.4 0 5.6 3.4 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2Z"/></svg>').join('')+'</span>'}
+
+function questionHTML(run,left){
+  const q=QIDX[run.qs[run.i]];
+  const answered=run.picked!==null;
+  const correct=answered&&run.order[run.picked]===0;
+  const opts=run.order.map((oi,k)=>{
+    let cls='';
+    if(answered){if(oi===0)cls=' ok';else if(k===run.picked)cls=' bad'}
+    return '<button class="opt'+cls+'" data-act="ans" data-k="'+k+'"'+(answered?' disabled':'')+'><span class="k">'+'ABCD'[k]+'</span><span>'+esc(q.o[oi])+'</span></button>';
+  }).join('');
+  let ex='';
+  if(answered){
+    ex='<div class="explain" role="status"><p class="verdict '+(correct?'ok':'bad')+'">'+(correct?'Correcto':'Incorrecto · era la '+'ABCD'[run.order.indexOf(0)])+'</p><p>'+esc(q.e)+'</p>'+
+      '<button class="btn" data-act="qnext">'+(isLastQ(run)?'Ver resultado':'Siguiente pregunta →')+'</button></div>';
+  }
+  const src=run.kind!=='topic'?'<span>'+esc(TBYID[q.t].title)+'</span>':'';
+  return '<div class="sheet"><p class="qhead"><span>'+left+'</span>'+(run.combo>=2?'<span class="combo">Racha ×'+run.combo+'</span>':src)+'</p>'+
+    '<p class="qtext">'+esc(q.q)+'</p><div class="opts">'+opts+'</div>'+ex+'</div>';
+}
+
+function quizTab(t){
+  if(!sess.quiz||sess.quiz.topicId!==t.id)sess.quiz=newQuizRun('topic',t.Q.map(q=>q.id),t.id);
+  const run=sess.quiz;
+  if(run.done){
+    const won=run.score>=4;
+    return '<div class="sheet result"><p class="kicker">Resultado del reto</p><p class="score">'+run.score+'<small>/'+run.qs.length+'</small></p>'+
+      '<p>'+(won?'Ganaste la estrella del reto.'+(run.score===5?' Sin un solo error.':''):'Necesitas 4 de 5 para la estrella. Repasa la lección y vuelve a intentarlo.')+'</p>'+
+      '<div class="row-btns"><button class="btn ghost" data-act="qretry">Repetir reto</button><button class="btn" data-act="tab" data-tab="case">Ir al caso →</button></div></div>';
+  }
+  return questionHTML(run,'Pregunta '+(run.i+1)+' de '+run.qs.length);
+}
+
+function caseTab(t){
+  if(!sess.case||sess.case.topicId!==t.id)sess.case=newCaseRun(t);
+  const run=sess.case,K=t.K;
+  let h='<article class="sheet chart"><p class="kicker">Caso clínico</p><p>'+esc(K.pres)+'</p><div class="vitals">'+K.vit.map(v=>'<span>'+esc(v)+'</span>').join('')+'</div></article>';
+  for(let s=0;s<run.step&&s<K.steps.length;s++){
+    const st=K.steps[s];
+    h+='<div class="past"><p class="kicker">Decisión '+(s+1)+' de '+K.steps.length+'</p><p>'+esc(st.q)+'</p><p class="ans">✓ '+esc(st.o[0])+'</p>'+(st.ev?'<p class="ev"><b>Evolución:</b> '+esc(st.ev)+'</p>':'')+'</div>';
+  }
+  if(run.done){
+    const i=TOPICS.indexOf(t),nt=TOPICS[i+1];
+    h+='<div class="sheet result case-done" style="margin-top:16px"><p class="kicker">Caso resuelto</p>'+
+      '<p>'+(run.perfect?'Sin errores. Ganaste la estrella del caso y el logro de ojo clínico.':'Ganaste la estrella del caso. Repítelo para sacarlo sin errores.')+'</p>'+
+      '<div class="row-btns"><button class="btn ghost" data-act="cretry">Repetir caso</button>'+
+      (nt?'<button class="btn" data-act="open" data-id="'+nt.id+'" data-tab="learn">Siguiente tema →</button>':'<button class="btn" data-act="go" data-v="boss">Reta al jefe →</button>')+
+      '</div></div>';
+    return h;
+  }
+  const st=K.steps[run.step];
+  const opts=run.order.map((oi,k)=>{
+    let cls='';
+    if(run.wrong.indexOf(k)>=0)cls=' bad';
+    if(run.solved&&oi===0)cls=' ok';
+    const dis=run.solved||run.wrong.indexOf(k)>=0;
+    return '<button class="opt'+cls+'" data-act="pick" data-k="'+k+'"'+(dis?' disabled':'')+'><span class="k">'+'ABCD'[k]+'</span><span>'+esc(st.o[oi])+'</span></button>';
+  }).join('');
+  let ex='';
+  if(run.last!==null){
+    const oi=run.order[run.last],ok=oi===0;
+    ex='<div class="explain" role="status"><p class="verdict '+(ok?'ok':'bad')+'">'+(ok?'Bien decidido':'No es la mejor decisión')+'</p><p>'+esc(st.f[oi])+'</p>'+
+      (ok?(st.ev?'<p class="ev"><b>Evolución:</b> '+esc(st.ev)+'</p>':'')+'<button class="btn" data-act="cnext">'+(run.step===K.steps.length-1?'Terminar caso':'Continuar →')+'</button>':'<p class="ev">Elige otra opción.</p>')+
+      '</div>';
+  }
+  h+='<div class="step current sheet"><p class="kicker">Decisión '+(run.step+1)+' de '+K.steps.length+'</p><p class="qtext">'+esc(st.q)+'</p><div class="opts">'+opts+'</div>'+ex+'</div>';
+  return h;
+}
+
+function cardRunHTML(r,title){
+  if(r.done){
+    return '<div class="sheet result"><p class="kicker">'+esc(title)+'</p><p class="score">'+r.known+'<small>/'+r.total+'</small></p><p>'+(r.total?'Tarjetas que sabías a la primera o al repetirlas. Las que fallaste vuelven pronto.':'No hay tarjetas pendientes por ahora.')+'</p>'+
+      '<div class="row-btns"><button class="btn ghost" data-act="cardsAgain">Otra ronda</button><button class="btn" data-act="go" data-v="map">Volver al mapa</button></div></div>';
+  }
+  const c=CIDX[r.ids[r.i]];
+  return '<p class="qhead"><span>Tarjeta '+(r.i+1)+' de '+r.ids.length+'</span><span>'+esc(TBYID[c.t].title)+'</span></p>'+
+    '<div class="flip"><button class="card3d'+(r.flipped?' flipped':'')+'" data-act="flip" aria-label="'+(r.flipped?'Respuesta: ':'Pregunta: ')+esc(r.flipped?c.b:c.f)+'. Toca para voltear.">'+
+    '<span class="face front"><span class="side">Pregunta</span><span class="txt">'+esc(c.f)+'</span><span class="hint">Toca para ver la respuesta</span></span>'+
+    '<span class="face back"><span class="side">Respuesta</span><span class="txt">'+esc(c.b)+'</span></span></button></div>'+
+    (r.flipped?'<div class="row-btns"><button class="btn ghost" data-act="rate" data-k="0">No lo sabía</button><button class="btn" data-act="rate" data-k="1">Lo sabía</button></div>'
+              :'<div class="row-btns"><button class="btn ghost" data-act="flip">Ver respuesta</button></div>');
+}
+function cardsTab(t){
+  if(!sess.cards||sess.cards.topicId!==t.id)sess.cards=newCardRun(t.C.map((_,i)=>t.id+'-c'+i),'topic',t.id);
+  return cardRunHTML(sess.cards,'Tarjetas del tema');
+}
+
+/* --- Repaso --- */
+function viewReview(){
+  let h='<p class="eyebrow">Repaso espaciado</p><h1 class="h-sm">Repaso</h1>';
+  if(sess.review){
+    const back='<button class="back" data-act="endReview">← Terminar repaso</button>';
+    if(sess.review.kind==='cards')return back+cardRunHTML(sess.review.run,'Repaso de hoy');
+    const run=sess.review.run;
+    if(run.done){
+      return back+'<div class="sheet result"><p class="kicker">Mis errores</p><p class="score">'+run.score+'<small>/'+run.qs.length+'</small></p><p>'+(S.wrong.length?'Te quedan '+S.wrong.length+' preguntas por corregir.':'Ya no tienes errores pendientes.')+'</p>'+
+        '<div class="row-btns"><button class="btn ghost" data-act="endReview">Volver</button>'+(S.wrong.length?'<button class="btn" data-act="startErrors">Otra ronda</button>':'')+'</div></div>';
+    }
+    return back+questionHTML(run,'Error '+(run.i+1)+' de '+run.qs.length);
+  }
+  const q=dailyQueue();
+  const due=q.filter(id=>S.cards[id]).length,fresh=q.length-due;
+  h+='<p class="lede">Las tarjetas que sabes regresan en 1, 2, 4, 7 y 15 días. Las que fallas vuelven a empezar. Así se queda en la memoria de largo plazo.</p>'+
+    '<div class="panel">'+
+    '<div class="sheet"><h3>Tarjetas de hoy</h3><p>'+(q.length?due+' para repasar y '+fresh+' nuevas'+(TOPICS.some(x=>tpv(x.id).learn)?' de los temas que ya estudiaste.':' de los primeros temas.'):'Terminaste el repaso de hoy. Vuelve mañana.')+'</p>'+
+    '<button class="btn" data-act="startReview"'+(q.length?'':' disabled')+'>Empezar repaso · '+q.length+'</button></div>'+
+    '<div class="sheet"><h3>Mis errores</h3><p>'+(S.wrong.length?S.wrong.length+' preguntas que fallaste. Contéstalas bien y salen de la lista.':'No tienes errores pendientes. Las preguntas que falles en retos y en el examen aparecerán aquí.')+'</p>'+
+    '<button class="btn ghost" data-act="startErrors"'+(S.wrong.length?'':' disabled')+'>Corregir errores · '+S.wrong.length+'</button></div>'+
+    '</div>';
+  return h;
+}
+
+/* --- Jefe --- */
+function viewBoss(){
+  const run=sess.boss;
+  let h='<p class="eyebrow">Examen relámpago</p><h1 class="h-sm">El jefe de residentes pregunta</h1>';
+  if(!run){
+    const learned=TOPICS.filter(t=>tpv(t.id).learn).length;
+    const only=!!sess.bossOnly&&learned>0;
+    h+='<p class="lede">15 preguntas al azar de todos los temas. Tienes 3 vidas. Cada acierto vale 15 XP y a partir de 3 seguidas valen el doble.</p>'+
+      '<div class="panel"><div class="sheet">'+
+      '<p class="kicker">Mejor puntaje</p><p class="score" style="text-align:left">'+S.boss.best+'<small>/15</small></p>'+
+      '<label class="toggle"><input type="checkbox" id="bossOnly" data-act="bossToggle"'+(only?' checked':'')+(learned?'':' disabled')+'> Solo temas que ya estudié'+(learned?' ('+learned+')':'')+'</label>'+
+      '<button class="btn red" data-act="bossStart">Empezar examen</button></div></div>';
+    return h;
+  }
+  if(run.done){
+    h+='<div class="sheet result"><p class="kicker">'+(run.lives<=0?'Te quedaste sin vidas':'Examen terminado')+'</p><p class="score">'+run.score+'<small>/15</small></p>'+
+      '<p>'+(run.record?'Nuevo récord personal.':'Mejor puntaje: '+S.boss.best+'/15.')+(run.score>=10?' El jefe está impresionado.':' Repasa tus errores y vuelve a intentarlo.')+'</p>'+
+      '<div class="row-btns"><button class="btn ghost" data-act="bossEnd">Salir</button><button class="btn red" data-act="bossStart">Otra vez</button></div></div>';
+    return h;
+  }
+  return h+questionHTML(run,heartsHTML(run.lives)+' &nbsp;'+(run.i+1)+'/'+run.qs.length+' · '+run.score+' aciertos');
+}
+
+/* --- Logros --- */
+function viewBadges(){
+  const acc=S.stats.ans?Math.round(S.stats.ok/S.stats.ans*100)+'%':'—';
+  let h='<p class="eyebrow">Tu expediente</p><h1 class="h-sm">Logros</h1>'+
+    '<section class="labs" aria-label="Estadísticas">'+
+    '<div><span>Preguntas</span><b>'+S.stats.ans+'</b></div>'+
+    '<div><span>Precisión</span><b>'+acc+'</b></div>'+
+    '<div><span>Tarjetas repasadas</span><b>'+S.stats.rev+'</b></div>'+
+    '</section>'+
+    '<div class="badges">'+BADGES.map(b=>{const on=!!S.badges[b.id];return '<div class="badge'+(on?'':' locked')+'"><span class="seal">'+esc(b.seal)+'</span><b>'+esc(b.name)+'</b><span>'+esc(b.desc)+'</span>'+(on?'<span>Obtenido el '+esc(S.badges[b.id])+'</span>':'')+'</div>'}).join('')+'</div>'+
+    '<p class="note">'+(syncMode==='cuenta'?'Tu progreso se guarda en tu cuenta y te sigue en cualquier dispositivo donde abras esta página.':'Tu progreso se guarda en este navegador.')+'</p>'+
+    '<div class="danger">';
+  if(sess.confirmReset){
+    h+='<p><b>¿Borrar todo tu progreso?</b> Se pierden XP, estrellas, tarjetas y logros. No se puede deshacer.</p><div class="row-btns"><button class="btn ghost" data-act="resetNo">Cancelar</button><button class="btn red" data-act="resetYes">Sí, borrar todo</button></div>';
+  }else{
+    h+='<button class="btn ghost" data-act="resetAsk">Borrar mi progreso</button>';
+  }
+  return h+'</div>';
+}
+
+/* ====================== MODAL, TOAST, ECG ====================== */
+function ecgPath(width,height,beats){
+  const w=width/beats,mid=height*0.62;
+  const pts=[[0,0],[.16,0],[.21,-.16],[.26,0],[.34,0],[.37,.12],[.41,-.88],[.45,.42],[.48,0],[.58,0],[.66,-.26],[.74,0],[1,0]];
+  let d='';
+  for(let b=0;b<beats;b++){
+    pts.forEach((p,i)=>{if(b>0&&i===0)return;d+=(b===0&&i===0?'M':'L')+(b*w+p[0]*w).toFixed(1)+' '+(mid+p[1]*height*0.5).toFixed(1)+' '});
+  }
+  return d;
+}
+function drawECG(){
+  const svg=$('ecg');const W=Math.max(200,Math.round(svg.clientWidth||600)),H=26;
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);
+  const d=ecgPath(W,H,Math.max(3,Math.round(W/120)));
+  $('ecgBase').setAttribute('d',d);$('pulse').setAttribute('d',d);
+}
+function beat(){
+  if(reduced)return;
+  const p=$('pulse');
+  if(!p||!p.animate)return;
+  p.animate([{strokeDashoffset:7,opacity:1},{strokeDashoffset:-100,opacity:1}],{duration:1300,easing:'linear'});
+}
+function toast(msg,cls){
+  const el=document.createElement('div');
+  el.className='toast'+(cls?' '+cls:'');
+  el.textContent=msg;
+  toastsEl.appendChild(el);
+  setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),320)},1700);
+}
+function renderModal(){
+  if(!sess.modal){modalEl.innerHTML='';return}
+  const r=RANKS[sess.modal.r],n=RANKS[sess.modal.r+1];
+  modalEl.innerHTML='<div class="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle"><div class="box">'+
+    '<p class="v-lab">Ascenso</p><p class="m-rank">'+r.code+'</p><h2 id="mtitle">'+esc(r.name)+'</h2>'+
+    '<svg viewBox="0 0 300 60" aria-hidden="true"><path pathLength="1" d="'+ecgPath(300,60,3)+'"/></svg>'+
+    '<p>Llevas '+S.xp+' XP. '+(n?'Siguiente rango: '+esc(n.name)+' a los '+n.xp+' XP.':'Llegaste al rango más alto.')+'</p>'+
+    '<button class="btn red" data-act="closeModal" id="mclose">Seguir estudiando</button></div></div>';
+  const b=$('mclose');if(b)b.focus();
+}
+
+/* ====================== ACCIONES ====================== */
+function nav(v){view=v;sess.confirmReset=false;render();scrollTop()}
+const A={
+  go(d){if(d.v==='boss'&&sess.boss&&sess.boss.done)sess.boss=null;nav({name:d.v})},
+  open(d){nav({name:'topic',id:d.id,tab:d.tab||'learn'})},
+  tab(d){
+    view.tab=d.tab;
+    if(d.tab==='quiz'&&sess.quiz&&sess.quiz.done)sess.quiz=null;
+    if(d.tab==='cards'&&sess.cards&&sess.cards.done)sess.cards=null;
+    render();scrollTop();
+  },
+  lprev(){sess.learn.i=Math.max(0,sess.learn.i-1);render();scrollTop()},
+  lnext(){sess.learn.i++;render();scrollTop()},
+  lfinish(){
+    const p=tp(view.id);
+    if(!p.learn){p.learn=true;gain(20,'lección');checkBadges();persist()}
+    view.tab='quiz';sess.quiz=null;render();scrollTop();
+  },
+  ans(d){answer(+d.k)},
+  qnext(){nextQ()},
+  qretry(){sess.quiz=null;render();scrollTop()},
+  pick(d){casePick(+d.k)},
+  cnext(){caseNext()},
+  cretry(){sess.case=null;render();scrollTop()},
+  flip(){const r=curCardRun();if(r&&!r.done){r.flipped=!r.flipped;render()}},
+  rate(d){rateCard(d.k==='1')},
+  cardsAgain(){
+    if(view.name==='topic'){sess.cards=null}
+    else{sess.review={kind:'cards',run:newCardRun(dailyQueue(),'daily')}}
+    render();scrollTop();
+  },
+  startReview(){sess.review={kind:'cards',run:newCardRun(dailyQueue(),'daily')};render();scrollTop()},
+  startErrors(){if(!S.wrong.length)return;sess.review={kind:'errors',run:newQuizRun('errors',shuffle(S.wrong).slice(0,15))};render();scrollTop()},
+  endReview(){sess.review=null;render();scrollTop()},
+  bossToggle(){sess.bossOnly=!sess.bossOnly;render()},
+  bossStart(){
+    const learned=TOPICS.filter(t=>tpv(t.id).learn);
+    const src=(sess.bossOnly&&learned.length)?learned:TOPICS;
+    const pool=[];src.forEach(t=>t.Q.forEach(q=>pool.push(q.id)));
+    sess.boss=newQuizRun('boss',shuffle(pool).slice(0,15));
+    render();scrollTop();
+  },
+  bossEnd(){sess.boss=null;render();scrollTop()},
+  closeModal(){sess.modal=null;renderModal()},
+  resetAsk(){sess.confirmReset=true;render()},
+  resetNo(){sess.confirmReset=false;render()},
+  resetYes(){S=blank();sess={};persist();render();scrollTop();toast('Progreso borrado')}
+};
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-act]');
+  if(!el||el.disabled)return;
+  const fn=A[el.dataset.act];
+  if(fn)fn(el.dataset,el);
+});
+document.addEventListener('keydown',e=>{
+  if(e.target&&(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'))return;
+  if(e.key==='Escape'&&sess.modal){A.closeModal();return}
+  const k='1234'.indexOf(e.key)>=0?'1234'.indexOf(e.key):'abcd'.indexOf(e.key.toLowerCase());
+  if(k>=0&&e.key.length===1){
+    const b=document.querySelector('.opt[data-k="'+k+'"]:not([disabled])');
+    if(b){e.preventDefault();b.click()}
+  }
+});
+let rz=null;
+window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(drawECG,150)});
+
+/* ====================== ARRANQUE ====================== */
+function boot(data){
+  if(data&&data.view&&data.view.name)view=data.view;
+  drawECG();
+  render();
+  setTimeout(initRemote,0);
+}
+try{const hot=window.claude&&window.claude.hot;if(hot&&typeof hot.snapshot==='function')hot.snapshot(()=>({view:view}))}catch(e){}
+const hot=window.claude&&window.claude.hot;
+if(hot&&typeof hot.ready==='function')hot.ready(boot);
+else boot((hot&&hot.data)||{});
+})();
+</script>
