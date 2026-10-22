@@ -32,6 +32,7 @@ for (const q of C.questions) {
   if (!(q.ans >= 0 && q.ans < q.opts.length)) errs.push(`${q.id}: ans fuera de rango`);
   if (!q.why || q.why.length !== q.opts.length) errs.push(`${q.id}: why tiene ${q.why?.length} y opts ${q.opts.length}`);
   q.why?.forEach((w, i) => { if (i !== q.ans && !w) errs.push(`${q.id}: falta why[${i}]`); });
+  if (q.why && q.why[q.ans]) errs.push(`${q.id}: why[${q.ans}] debe ir vacío (es la correcta); revisa el orden`);
   if (!q.exp || !q.stem || !q.ref) errs.push(`${q.id}: falta stem/exp/ref`);
   if (![1, 2, 3].includes(q.dif)) errs.push(`${q.id}: dif inválida`);
 }
@@ -41,6 +42,11 @@ for (const tid of Object.keys(C.lessons)) {
   for (const cid of L.compare || []) if (!C.compares[cid]) errs.push(`${tid}: comparador ${cid} no existe`);
   if (L.anim && !C.anims[L.anim]) errs.push(`${tid}: animación ${L.anim} no existe`);
 }
+for (const t of C.topics) if (!C.lessons[t.id]) errs.push(`tema ${t.id} sin lección`);
+for (const [tid, L] of Object.entries(C.lessons)) {
+  if (!Array.isArray(L.nn) || typeof L.yt !== 'string' || !L.yt) errs.push(`${tid}: faltan videos (nn/yt)`);
+  for (const k of ['hook', 'sections', 'mnemo', 'pearl', 'trap', 'guide', 'refs']) if (!L[k]) errs.push(`${tid}: falta ${k}`);
+}
 for (const cs of C.cases) {
   if (!topics.has(cs.topic)) errs.push(`${cs.id}: tema no existe`);
   cs.nodes.forEach((n, i) => {
@@ -48,6 +54,12 @@ for (const cs of C.cases) {
     else if (n.A.ok === n.B.ok) errs.push(`${cs.id} nodo ${i}: debe haber exactamente una opción correcta`);
     if (!n.why || !n.q) errs.push(`${cs.id} nodo ${i}: falta q/why`);
   });
+}
+// Cada animación necesita un dibujo por paso en scenes.js
+const SCENES = new Function(read('scenes.js') + '\nreturn SCENES;')();
+for (const [id, a] of Object.entries(C.anims)) {
+  if (!SCENES[id]) errs.push(`animación ${id}: falta SCENES.${id} en scenes.js`);
+  else if (SCENES[id].length !== a.steps.length) errs.push(`animación ${id}: ${a.steps.length} pasos y ${SCENES[id].length} dibujos`);
 }
 const diag = C.questions.filter((q) => q.diag);
 if (diag.length !== 30) errs.push(`el diagnóstico tiene ${diag.length} preguntas, no 30`);

@@ -6,6 +6,8 @@ export default {
   lessons: {
     sca: {
       hook: 'Aquí se decide en minutos: leer el ECG, saber cuándo reperfundir y no caer en las trampas del IAM de VD y de la fibrinólisis en SCASEST.',
+      nn: [['ischemic-heart-disease', 'Coronary Artery Disease'], ['case-study-18-presenting-with-myocardial-infarction', 'Case Study #18: Myocardial Infarction']],
+      yt: 'acute coronary syndrome STEMI NSTEMI',
       anim: 'sca',
       compare: ['stemi-nste'],
       sections: [
@@ -61,7 +63,7 @@ export default {
 <li><b>Temprana (&lt;24 h)</b> si es de alto riesgo: IAMSEST confirmado, cambios dinámicos del ST o la T, elevación transitoria del ST, GRACE &gt;140.</li>
 <li><b>Selectiva</b> en el resto: prueba de isquemia o angio-TC coronaria antes de decidir.</li>
 <li><b>Nunca fibrinólisis</b> en SCASEST.</li>
-<li>Escalas: GRACE (pronóstico; define el &lt;24 h) y TIMI (0–7; riesgo de eventos a 14 días). La calculadora TIMI está en Herramientas.</li>
+<li>Escalas: GRACE (pronóstico; define el &lt;24 h) y TIMI (0–7; riesgo de eventos a 14 días). La calculadora TIMI está en Más → Calculadoras.</li>
 </ul>` },
         { h: 'Antitrombóticos y alta', html: `
 <ul>

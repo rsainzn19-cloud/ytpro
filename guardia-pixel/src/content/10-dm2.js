@@ -6,6 +6,8 @@ export default {
   lessons: {
     dm2: {
       hook: 'Lo que más preguntan: cómo se confirma el diagnóstico, cuál es la meta y qué fármaco eliges según la comorbilidad del paciente.',
+      nn: [['diabetes-mellitus-type-i-and-type-ii-diabetes-mellitus', 'Diabetes Mellitus (Type I and Type II)']],
+      yt: 'type 2 diabetes treatment',
       anim: 'dm2',
       compare: ['sglt2-glp1'],
       sections: [

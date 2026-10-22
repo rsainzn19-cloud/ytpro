@@ -270,18 +270,12 @@ function availFrom(t) {
   if (mn >= 5) return addDays(C.exam.classes[5], 1);
   return null;
 }
-const topicCost = (t) => Math.max(15, Math.round((P_BASE[t.pri] * (1.2 - 0.5 * mastery(t.id))) / 5) * 5);
+const topicCost = (t, f = 1) => Math.max(15, Math.round((f * P_BASE[t.pri] * (1.2 - 0.5 * mastery(t.id))) / 5) * 5);
 const topicScore = (t) => P_W[t.pri] * (1.25 - mastery(t.id)) - t.n * 0.001;
-function buildPlan() {
-  const td = today(), start = C.exam.start, last = addDays(C.exam.date, -1);
-  const from = td > start ? td : start;
-  const keep = ((S.plan && S.plan.days) || []).filter((d) => d.date < from);
-  const done = topicsDone();
-  const firstOn = {};
-  for (const d of keep) for (const b of d.blocks) if (b.k === 'topic' && done.has(b.t) && !firstOn[b.t]) firstOn[b.t] = d.date;
-  for (const tid of done) if (!firstOn[tid]) firstOn[tid] = (S.tp[tid] && S.tp[tid].doneOn) || addDays(from, -1);
-  const pending = C.topics.filter((t) => !done.has(t.id));
-  const sched = new Set(), second = new Set(), days = [];
+// Arma los días desde `from`. Con f < 1 los bloques de tema se acortan para que la primera vuelta
+// de los 30 temas quepa antes del examen; buildPlan prueba de f = 1 hacia abajo.
+function planDays(from, last, firstOn0, pending, f) {
+  const firstOn = { ...firstOn0 }, sched = new Set(), second = new Set(), w6 = new Set(), days = [];
   const after6 = addDays(C.exam.classes[6], 1);
   for (let d = from; d <= last; d = addDays(d, 1)) {
     const type = dayType(d), blocks = [];
@@ -295,40 +289,67 @@ function buildPlan() {
     }
     const isSim = C.exam.sim.includes(d);
     if (!S.diag.done && d === from) add('diag', '', 30);
-    if (isSim) { add('sim', '', 90, d === C.exam.sim[0] ? 'Simulacro 1 · las seis materias' : 'Simulacro 2 · las seis materias'); add('errs', '', 30); }
+    if (isSim) add('sim', '', 90, d === C.exam.sim[0] ? 'Simulacro 1 · las seis materias' : 'Simulacro 2 · las seis materias');
     if (Object.keys(firstOn).length && !isSim) {
+      // El repaso espaciado no se come el día: máximo ~20% del tiempo disponible (mínimo 10 min)
       const due = Object.entries(firstOn).filter(([, fd]) => [2, 6].includes(diffDays(fd, d))).map(([tid]) => tid);
-      add('review', '', Math.min(30, 10 + 5 * due.length), '', due);
+      add('review', '', Math.max(10, Math.min(30, 10 + 5 * due.length, Math.round(S.settings.budget[type] * 0.2 / 5) * 5)), '', due);
     }
-    if (d >= after6) for (const t of C.topics) {
-      if (rem >= 20 && t.weeks.includes(5) && t.weeks.includes(6) && firstOn[t.id] && firstOn[t.id] < after6 && !second.has(t.id)) {
-        add('second', t.id, 20, 'Lo nuevo de la semana 6 (3 nov)'); second.add(t.id);
-      }
-    }
-    while (rem >= 20) {
+    while (rem >= 15) {
       const av = pending.filter((t) => !sched.has(t.id) && (!availFrom(t) || d >= availFrom(t)));
       if (!av.length) break;
       av.sort((a, b) => topicScore(b) - topicScore(a));
-      const t = av[0], cost = topicCost(t);
-      if (cost > rem && rem < cost * 0.6) break;
+      // El de mayor prioridad si cabe al menos el 60% de su tiempo; si no, el siguiente que quepa completo.
+      const t = topicCost(av[0], f) * 0.6 <= rem ? av[0] : av.find((x) => topicCost(x, f) <= rem);
+      if (!t) break;
+      const cost = topicCost(t, f);
       add('topic', t.id, Math.min(cost, rem)); sched.add(t.id); firstOn[t.id] = d;
     }
-    if (isSim) {
-      const weak = C.topics.filter((t) => firstOn[t.id] && !second.has(t.id)).sort((a, b) => mastery(a.id) - mastery(b.id)).slice(0, 6);
-      for (const t of weak) { if (rem < 20) break; add('second', t.id, 20, 'Tema débil según tu práctica'); second.add(t.id); }
+    if (isSim && rem >= 15) add('errs', '', Math.min(30, rem));
+    if (d >= after6) for (const t of C.topics) {
+      if (rem >= 20 && t.weeks.includes(5) && t.weeks.includes(6) && firstOn[t.id] && firstOn[t.id] < after6 && !w6.has(t.id)) {
+        add('second', t.id, 20, 'Lo nuevo de la semana 6 (3 nov)'); w6.add(t.id);
+      }
     }
+    // Tiempo sobrante: segunda vuelta de los temas más débiles (en simulacro, o si ya no hay temas nuevos que quepan)
+    const weak = C.topics.filter((t) => firstOn[t.id] && firstOn[t.id] < d && !second.has(t.id))
+      .sort((a, b) => mastery(a.id) - mastery(b.id) || P_W[b.pri] - P_W[a.pri]);
+    for (const t of weak.slice(0, isSim ? 6 : 3)) { if (rem < 20) break; add('second', t.id, 20, isSim ? 'Tema débil según tu práctica' : 'Segunda vuelta: preguntas falladas y perlas'); second.add(t.id); }
     days.push({ date: d, type, blocks });
   }
-  const left = pending.filter((t) => !sched.has(t.id)).map((t) => t.id);
+  return { days, left: pending.filter((t) => !sched.has(t.id)).map((t) => t.id) };
+}
+function buildPlan() {
+  const td = today(), start = C.exam.start, last = addDays(C.exam.date, -1);
+  const from = td > start ? td : start;
+  const keep = ((S.plan && S.plan.days) || []).filter((d) => d.date < from);
+  const done = topicsDone();
+  const firstOn = {};
+  for (const d of keep) for (const b of d.blocks) if (b.k === 'topic' && done.has(b.t) && !firstOn[b.t]) firstOn[b.t] = d.date;
+  for (const tid of done) if (!firstOn[tid]) firstOn[tid] = (S.tp[tid] && S.tp[tid].doneOn) || addDays(from, -1);
+  const pending = C.topics.filter((t) => !done.has(t.id));
+  let r = null, f = 1;
+  for (f of [1, 0.85, 0.7, 0.55, 0.4]) { r = planDays(from, last, firstOn, pending, f); if (!r.left.length) break; }
+  const { days, left } = r;
+  // Si ni comprimido alcanza (poco tiempo por día), lo que falte entra como perlas rápidas antes del examen.
   const simDay = days.find((x) => x.date === C.exam.sim[1]) || days[days.length - 2] || days[days.length - 1];
   if (simDay) for (const tid of left) simDay.blocks.push({ k: 'quick', t: tid, min: 10, title: '', x: null });
-  S.plan = { built: td, days: [...keep, ...days], left };
+  S.plan = { built: td, days: [...keep, ...days], left, fit: f };
   save();
+}
+function topicParts(tid) {
+  if (!hasContent(tid)) return 'Con tus apuntes';
+  const p = ['Lección'];
+  if (C.lessons[tid].anim) p.push('animación');
+  p.push('preguntas');
+  if (C.cases.some((c) => c.topic === tid)) p.push('guardia');
+  p.push('tarjetas', 'videos');
+  return p.join(', ').replace(/, ([^,]+)$/, ' y $1');
 }
 function blockInfo(b) {
   const t = TOP[b.t];
   switch (b.k) {
-    case 'topic': return { title: `Tema ${t.n} · ${t.title}`, sub: hasContent(t.id) ? 'Lección, preguntas, caso y tarjetas' : `Con tus apuntes · llega a la app en la fase ${t.phase}`, go: ['topic', t.id] };
+    case 'topic': return { title: `Tema ${t.n} · ${t.title}`, sub: topicParts(t.id), go: ['topic', t.id] };
     case 'second': return { title: `2ª vuelta · ${t.title}`, sub: b.title, go: ['topic', t.id] };
     case 'quick': return { title: `Perlas rápidas · ${t.title}`, sub: 'No alcanzó el tiempo para la vuelta completa', go: ['topic', t.id] };
     case 'review': return { title: 'Repaso espaciado', sub: b.x && b.x.length ? 'Toca: ' + b.x.map((id) => TOP[id].title).join(', ') : 'Tarjetas y cuaderno de errores del día', go: ['repaso'] };
@@ -521,7 +542,7 @@ VIEWS.plan = (m) => {
   <h1>Plan hasta el parcial</h1>
   <p class="muted">Ordenado por prioridad y por tus puntos débiles. Los temas de las semanas 5 y 6 aparecen después de su clase (27 oct y 3 nov). El 7 y 8 de noviembre son de simulacro.</p>
   <section class="panel"><h2>¿Cuánto tiempo tienes al día?</h2><div class="budget">${sel('wk', 'Lun, mié a vie (después del hospital)')}${sel('tue', 'Martes académico')}${sel('we', 'Sábado y domingo')}</div><button class="btn" data-act="replan">Rehacer el plan desde hoy</button>${S.diag.done ? '' : '<p class="small muted">Haz el diagnóstico para que el plan use tus temas débiles; por ahora solo usa la prioridad.</p>'}</section>
-  ${left.length ? `<div class="note"><b>Con este tiempo no alcanza la vuelta completa de ${left.length} tema(s)</b>: ${left.map((id) => esc(TOP[id].title)).join(', ')}. Quedaron como “perlas rápidas” el ${fmtDay(C.exam.sim[1])}. Si puedes, sube tu tiempo diario.</div>` : ''}
+  ${left.length ? `<div class="note"><b>Con este tiempo no alcanza la vuelta completa de ${left.length} tema(s)</b>: ${left.map((id) => esc(TOP[id].title)).join(', ')}. Quedaron como “perlas rápidas” el ${fmtDay(C.exam.sim[1])}. Si puedes, sube tu tiempo diario.</div>` : `<div class="note"><b>Los ${C.topics.length} temas entran en el plan antes del examen.</b>${(S.plan.fit || 1) < 1 ? ' Para que quepan, los bloques de tema son más cortos de lo ideal: prioriza preguntas y perlas, y si puedes sube tu tiempo diario.' : ''}</div>`}
   <ol class="days">${days.map((d) => dayCard(d, d.date === td ? 'today' : d.date < td ? 'past' : '')).join('')}</ol>`;
   CHG.budget = (el) => { S.settings.budget[el.dataset.k] = +el.value; buildPlan(); toast('Plan actualizado con tu nuevo tiempo'); render(); };
   ACT.replan = () => { buildPlan(); toast('Plan rehecho desde hoy'); render(); };
@@ -531,7 +552,7 @@ VIEWS.plan = (m) => {
 // ═══════════ Temario y tema
 function topicItem(t) {
   const m = mastery(t.id), kn = known(t.id);
-  return `<li><button class="titem" data-go="topic" data-a="${t.id}"><span class="num">${pad(t.n)}</span><span><span class="tt">${esc(t.title)}</span><span class="meta">${subjChip(t.subj)}<span class="pri ${t.pri}">${t.pri}</span><span class="small muted">Sem ${t.weeks.join('–')}</span>${hasContent(t.id) ? '' : `<span class="locked">${icon('lock', '#8790CC', 1)} Fase ${t.phase}</span>`}</span><span class="mbar"><span class="seg ${kn ? (m < 0.45 ? 'bad' : m < 0.7 ? '' : 'ok') : ''}" style="--p:${kn ? m : 0}"><i></i></span><span>${kn ? pct(m) + '%' : 'sin datos'}</span></span></span></button></li>`;
+  return `<li><button class="titem" data-go="topic" data-a="${t.id}"><span class="num">${pad(t.n)}</span><span><span class="tt">${esc(t.title)}</span><span class="meta">${subjChip(t.subj)}<span class="pri ${t.pri}">${t.pri}</span><span class="small muted">Sem ${t.weeks.join('–')}</span>${hasContent(t.id) ? '' : `<span class="locked">${icon('lock', '#8790CC', 1)} Sin lección</span>`}</span><span class="mbar"><span class="seg ${kn ? (m < 0.45 ? 'bad' : m < 0.7 ? '' : 'ok') : ''}" style="--p:${kn ? m : 0}"><i></i></span><span>${kn ? pct(m) + '%' : 'sin datos'}</span></span></span></button></li>`;
 }
 VIEWS.temario = (m) => {
   const f = route.a && route.a !== 'all' ? route.a : 'all';
@@ -554,14 +575,25 @@ VIEWS.topic = (m) => {
   <div class="meter" style="grid-template-columns:72px 1fr auto"><span>Dominio</span><div class="seg ${kn ? (mm < 0.45 ? 'bad' : mm < 0.7 ? '' : 'ok') : ''}" style="--p:${kn ? mm : 0}"><i></i></div><span>${kn ? pct(mm) + '%' : '—'}</span></div></div>`;
   if (!L) {
     const dq = DIAG.filter((q) => q.topic === t.id), pd = planDateOf(t.id);
-    m.innerHTML = `${head}<section class="panel"><p class="row" style="gap:8px">${icon('lock', '#F2C14E', 2)}<b>Este tema llega a la app en la fase ${t.phase}.</b></p><p>Mientras, estúdialo con tus apuntes y la clase de ${esc(s.name)}.${pd ? ` Tu plan lo tiene el <b>${fmtLong(pd)}</b>.` : ''}</p><p class="small muted">Qué entra: ${esc(t.sub)}.</p></section>
+    m.innerHTML = `${head}<section class="panel"><p class="row" style="gap:8px">${icon('lock', '#F2C14E', 2)}<b>Este tema todavía no tiene lección en la app.</b></p><p>Estúdialo con tus apuntes y la clase de ${esc(s.name)}.${pd ? ` Tu plan lo tiene el <b>${fmtLong(pd)}</b>.` : ''}</p><p class="small muted">Qué entra: ${esc(t.sub)}.</p></section>
     ${dq.length ? `<section class="panel"><h2>Tu pregunta del diagnóstico</h2>${dq.map((q) => `<div class="stack"><p>${esc(q.stem)}</p><p><b>Correcta:</b> ${esc(q.opts[q.ans])} ${q.id in S.diag.ans ? (S.diag.ans[q.id] ? '<span class="chip" style="--sc:var(--ok)">La acertaste</span>' : '<span class="chip" style="--sc:var(--bad)">La fallaste</span>') : ''}</p><p class="muted">${esc(q.exp)}</p><p class="ref">${esc(q.ref)}</p></div>`).join('')}</section>` : ''}`;
     return;
   }
-  const tabs = [['leccion', 'Lección'], ['anim', 'Animación'], ['preguntas', 'Preguntas'], ['guardia', 'Guardia'], ['tarjetas', 'Tarjetas'], ['jefe', 'Jefe']];
+  const hasCase = C.cases.some((c) => c.topic === t.id);
+  const tabs = [['leccion', 'Lección'], ['anim', 'Animación'], ['preguntas', 'Preguntas'], ['guardia', 'Guardia'], ['tarjetas', 'Tarjetas'], ['jefe', 'Jefe']]
+    .filter(([k]) => (k !== 'anim' || L.anim) && (k !== 'guardia' || hasCase));
   m.innerHTML = `${head}<div class="ttabs" role="tablist" aria-label="Secciones del tema">${tabs.map(([k, l]) => `<button class="ttab" role="tab" aria-selected="${tab === k}" data-go="topic" data-a="${t.id}" data-b="${k}">${l}</button>`).join('')}</div><div id="tbody" class="stack"></div>`;
-  (TOPIC_TABS[tab] || TOPIC_TABS.leccion)($('#tbody'), t, L);
+  (tabs.some(([k]) => k === tab) ? TOPIC_TABS[tab] : TOPIC_TABS.leccion)($('#tbody'), t, L);
 };
+const NN_URL = 'https://www.ninjanerd.org/lecture/';
+const YT_URL = 'https://www.youtube.com/results?search_query=';
+function videosHTML(L) {
+  const a = (href, src, color, title, sub) => `<li><a class="vid" href="${esc(href)}" target="_blank" rel="noopener noreferrer"><span class="src" style="--sc:${color}">${src}</span><span class="vt">${esc(title)}<small>${esc(sub)}</small></span><span class="go" aria-hidden="true">↗</span></a></li>`;
+  const nn = (L.nn || []).map(([slug, title]) => a(NN_URL + slug, 'Ninja Nerd', '#62E3FF', title, 'Clase completa en ninjanerd.org'));
+  nn.push(a(YT_URL + encodeURIComponent('Ninja Nerd ' + L.yt), 'Ninja Nerd', '#62E3FF', `Buscar “${L.yt}”`, 'En YouTube · elige el video del canal Ninja Nerd'));
+  const dm = a(YT_URL + encodeURIComponent('Dirty Medicine ' + L.yt), 'Dirty Medicine', '#FF9B3D', `Buscar “${L.yt}”`, 'En YouTube · repasos cortos con mnemotecnias');
+  return `<section class="lsec"><h3>Videos para repasar</h3><p class="small muted">En inglés. Se abren en otra pestaña o en la app de YouTube. Úsalos después de la lección para reforzar, no en lugar de ella.</p><ul class="vids">${nn.join('')}${dm}</ul></section>`;
+}
 function compareHTML(cid) {
   const c = C.compares[cid];
   return `<div class="cmp"><div class="cmp-h"><span class="a">${esc(c.a)}</span><span class="x">×</span><span class="b">${esc(c.b)}</span></div>${c.rows.map(([k, a, b]) => `<div class="cmp-r"><span class="k">${esc(k)}</span><div class="v"><span>${esc(a)}</span><span>${esc(b)}</span></div></div>`).join('')}</div>`;
@@ -569,13 +601,14 @@ function compareHTML(cid) {
 TOPIC_TABS.leccion = (el, t, L) => {
   const read = S.tp[t.id] && S.tp[t.id].read;
   el.innerHTML = `<p class="hook">${esc(L.hook)}</p>
-  <div class="row"><button class="btn small" data-go="topic" data-a="${t.id}" data-b="anim">Ver la animación</button><button class="btn small" data-go="topic" data-a="${t.id}" data-b="preguntas">Ir a las preguntas</button></div>
+  <div class="row">${L.anim ? `<button class="btn small" data-go="topic" data-a="${t.id}" data-b="anim">Ver la animación</button>` : ''}<button class="btn small" data-go="topic" data-a="${t.id}" data-b="preguntas">Ir a las preguntas</button></div>
   ${L.sections.map((s) => `<section class="lsec"><h3>${esc(s.h)}</h3>${s.html}</section>`).join('')}
   ${(L.compare || []).map((cid) => `<section class="lsec"><h3>Comparador</h3>${compareHTML(cid)}</section>`).join('')}
   <div class="box mnemo gold">${GEMS}<span class="lab">Mnemotecnia</span><span class="big">${esc(L.mnemo.t)}</span><p>${esc(L.mnemo.d)}</p></div>
   <div class="box pearl"><span class="lab">Perla de examen</span><p>${esc(L.pearl)}</p></div>
   <div class="box trap"><span class="lab">Trampa típica</span><p>${esc(L.trap)}</p></div>
   <div class="box guide"><span class="lab">⚠️ Depende de la guía</span><ul>${L.guide.map((g) => `<li>${esc(g)}</li>`).join('')}</ul></div>
+  ${videosHTML(L)}
   <details class="refs"><summary>Referencias</summary><ol>${L.refs.map((r) => `<li>${esc(r)}</li>`).join('')}</ol></details>
   <button class="btn ${read ? '' : 'gold-btn'} big" data-act="readDone" ${read ? 'disabled' : ''}>${read ? 'Lección leída ✓' : 'Marcar como leída · +30 XP'}</button>`;
   ACT.readDone = () => {
@@ -776,8 +809,7 @@ function caseCard(c) {
 }
 const patientSpr = (p, sc = 3) => svgSpr(SPR.patient, { H: p.hair, S: p.skin, K: '#1A1020', M: '#8A3B3B', B: p.gown, W: '#FFFFFF' }, sc, `${p.name}, ${p.age} años`);
 VIEWS.guardia = (m) => {
-  m.innerHTML = `<h1>Modo guardia</h1><p class="muted">Casos con monitor: cada decisión cambia los signos vitales y el desenlace. Tienes 3 vidas y un reloj por decisión (se ajusta en Más → Ajustes).</p>${C.cases.map(caseCard).join('')}
-  <section class="panel tight"><p class="small muted">Próximas guardias: HTA, ERC, síndrome nefrótico y nefrítico, anemias, STDA, pancreatitis, artritis reumatoide y gota, conforme salgan sus fases.</p></section>`;
+  m.innerHTML = `<h1>Modo guardia</h1><p class="muted">Casos con monitor: cada decisión cambia los signos vitales y el desenlace. Tienes 3 vidas y un reloj por decisión (se ajusta en Más → Ajustes).</p>${C.cases.map(caseCard).join('')}`;
   ACT.startCase = (b) => startCase(b.dataset.id);
 };
 function startCase(id) {
@@ -924,7 +956,7 @@ VIEWS.errores = (m) => {
 };
 VIEWS.perlas = (m) => {
   const ls = C.topics.filter((t) => hasContent(t.id));
-  m.innerHTML = `<button class="btn small ghost" data-go="repaso" style="align-self:flex-start">← Repaso</button><h1>Perlas para el final</h1><p class="muted">Lo que más se olvida y lo que más preguntan, tema por tema. ${ls.length} de ${C.topics.length} temas disponibles en esta fase.</p>
+  m.innerHTML = `<button class="btn small ghost" data-go="repaso" style="align-self:flex-start">← Repaso</button><h1>Perlas para el final</h1><p class="muted">Lo que más se olvida y lo que más preguntan, tema por tema: los ${ls.length} temas del parcial.</p>
   ${ls.map((t) => { const L = C.lessons[t.id]; return `<section class="panel"><div class="row">${subjChip(t.subj)}<span class="small muted">Tema ${t.n}</span></div><h2>${esc(t.title)}</h2>
   <div class="box mnemo"><span class="lab">Mnemotecnia</span><span class="big">${esc(L.mnemo.t)}</span><p>${esc(L.mnemo.d)}</p></div>
   <div class="box pearl"><span class="lab">Perla</span><p>${esc(L.pearl)}</p></div><div class="box trap"><span class="lab">Trampa</span><p>${esc(L.trap)}</p></div></section>`; }).join('')}`;
@@ -942,10 +974,9 @@ VIEWS.mas = (m) => {
   m.innerHTML = `<h1>Más</h1><div class="tools">${tiles.map(([v, t, d]) => `<button class="tile" data-go="${v}"><span class="t">${t}</span><span class="d">${esc(d)}</span></button>`).join('')}</div>`;
 };
 VIEWS.comp = (m) => {
-  const avail = Object.keys(C.compares);
+  const avail = Object.keys(C.compares).sort((a, b) => TOP[C.compares[a].topic].n - TOP[C.compares[b].topic].n);
   m.innerHTML = `<button class="btn small ghost" data-go="mas" style="align-self:flex-start">← Más</button><h1>Comparadores</h1><p class="muted">Las parejas que más se confunden en el examen, lado a lado.</p>
-  ${avail.map((cid) => `<section class="stack"><p class="small muted">Tema ${TOP[C.compares[cid].topic].n} · ${esc(TOP[C.compares[cid].topic].title)}</p>${compareHTML(cid)}</section>`).join('')}
-  <section class="panel"><h2>Próximamente</h2><ul class="blks">${C.comparesLocked.map((c) => `<li class="blk"><span class="blk-t">${esc(c.a)} × ${esc(c.b)}<small>Tema ${TOP[c.topic].n} · fase ${TOP[c.topic].phase}</small></span>${icon('lock', '#8790CC', 2)}</li>`).join('')}</ul></section>`;
+  ${avail.map((cid) => `<section class="stack"><p class="small muted">Tema ${TOP[C.compares[cid].topic].n} · ${esc(TOP[C.compares[cid].topic].title)}</p>${compareHTML(cid)}</section>`).join('')}`;
 };
 VIEWS.logros = (m) => {
   const ri = rankIdx(S.xp);
@@ -982,7 +1013,7 @@ VIEWS.sim = (m) => {
   const pool = C.questions.length, lens = [...new Set([20, 40, pool].filter((v) => v <= pool))];
   m.innerHTML = `<button class="btn small ghost" data-go="mas" style="align-self:flex-start">← Más</button><h1>Simulacro</h1>
   <p class="muted">Como el examen: sin explicaciones hasta el final, con reloj (75 s por pregunta) y resultados por materia. Las que falles entran a tu cuaderno de errores.</p>
-  <div class="note">En esta fase el banco tiene ${pool} preguntas (diagnóstico + 3 temas completos). Crece con cada fase.</div>
+  <div class="note">El banco tiene ${pool} preguntas de los 30 temas. El simulacro las mezcla al azar; el de ${pool} es el banco completo.</div>
   <div class="stack">${lens.map((n) => `<button class="btn ${n === 40 ? 'gold-btn ' : ''}big" data-act="simgo" data-n="${n}">${n} preguntas · ${Math.round((n * 75) / 60)} min</button>`).join('')}</div>
   ${S.sims.length ? `<section class="panel"><h2>Tus simulacros</h2><ul class="blks">${S.sims.slice().reverse().map((s) => `<li class="blk"><span class="blk-t">${fmtDay(s.date)} · ${s.n} preguntas</span><span class="blk-m">${pct(s.ok / s.n)}%</span></li>`).join('')}</ul></section>` : ''}`;
   ACT.simgo = (b) => { const n = +b.dataset.n; startQuiz({ mode: 'sim', title: `Simulacro de ${n}`, qids: shuffle(C.questions.map((q) => q.id)).slice(0, n), tab: 'mas', back: 'sim', deadline: Date.now() + n * 75000 }); };
@@ -1053,6 +1084,8 @@ VIEWS.ruleta = (m) => {
 
 // ═══════════ Calculadoras
 const TIMI_ITEMS = ['Edad ≥65 años', '≥3 factores de riesgo coronario (HTA, DM, dislipidemia, tabaquismo, historia familiar)', 'Enfermedad coronaria conocida (estenosis ≥50%)', 'Aspirina en los últimos 7 días', 'Angina grave reciente (≥2 episodios en 24 h)', 'Desviación del ST ≥0.5 mm', 'Marcador cardiaco positivo'];
+const WELLS = [['Signos clínicos de TVP', 3], ['El TEP es el diagnóstico más probable', 3], ['FC >100 lpm', 1.5], ['Inmovilización ≥3 días o cirugía en las últimas 4 semanas', 1.5], ['TVP o TEP previos', 1.5], ['Hemoptisis', 1], ['Cáncer activo', 1]];
+const SPESI = ['Edad >80 años', 'Cáncer', 'Insuficiencia cardiaca o enfermedad pulmonar crónica', 'FC ≥110 lpm', 'PAS <100 mmHg', 'SpO2 <90%'];
 const num = (id) => { const v = parseFloat(($('#' + id) || {}).value); return Number.isFinite(v) ? v : null; };
 const fx = (v, d = 1) => (Math.round(v * 10 ** d) / 10 ** d).toFixed(d);
 const CALCS = [
@@ -1105,14 +1138,96 @@ const CALCS = [
       const b = w / Math.pow(h / 100, 2);
       const cl = b < 18.5 ? 'Bajo peso' : b < 25 ? 'Normal' : b < 30 ? 'Sobrepeso' : b < 35 ? 'Obesidad grado I' : b < 40 ? 'Obesidad grado II' : 'Obesidad grado III';
       return `<span class="lab">IMC</span><span class="big">${fx(b)} <small>kg/m²</small></span><p><b>${cl}</b>.</p><p class="small">${b >= 25 ? 'Con IMC ≥25 y algún factor de riesgo, la ADA indica tamizaje de diabetes a cualquier edad (en todos, desde los 35 años).' : 'Tamizaje de diabetes en todos desde los 35 años.'}${b >= 30 ? ' Si tiene DM2 y el peso es prioridad: semaglutida o tirzepatida.' : ''}</p>`;
+    } },
+  { id: 'smet', name: 'Criterios de síndrome metabólico', topic: 'smdl',
+    form: () => `<div class="fgrid"><div class="field"><label for="c-sm-sex">Sexo</label><select id="c-sm-sex" data-chg="calc"><option value="h">Hombre</option><option value="m" selected>Mujer</option></select></div><div class="field"><label for="c-sm-cut">Corte de cintura</label><select id="c-sm-cut" data-chg="calc"><option value="idf">IDF Latinoamérica (90/80)</option><option value="atp">ATP III (102/88)</option></select></div><div class="field"><label for="c-sm-w">Cintura (cm)</label><input id="c-sm-w" type="number" inputmode="decimal" value="92" data-inp="calc"></div><div class="field"><label for="c-sm-tg">Triglicéridos (mg/dL)</label><input id="c-sm-tg" type="number" inputmode="decimal" value="168" data-inp="calc"></div><div class="field"><label for="c-sm-hdl">HDL (mg/dL)</label><input id="c-sm-hdl" type="number" inputmode="decimal" value="46" data-inp="calc"></div><div class="field"><label for="c-sm-glu">Glucosa en ayuno (mg/dL)</label><input id="c-sm-glu" type="number" inputmode="decimal" value="96" data-inp="calc"></div><div class="field"><label for="c-sm-pas">PAS (mmHg)</label><input id="c-sm-pas" type="number" inputmode="decimal" value="124" data-inp="calc"></div><div class="field"><label for="c-sm-pad">PAD (mmHg)</label><input id="c-sm-pad" type="number" inputmode="decimal" value="78" data-inp="calc"></div></div>
+    <div class="checks"><label><input type="checkbox" id="c-sm-ttg" data-inp="calc"><span>Toma fármaco para TG o HDL (fibrato, niacina)</span></label><label><input type="checkbox" id="c-sm-tha" data-inp="calc"><span>Toma antihipertensivo</span></label><label><input type="checkbox" id="c-sm-tgl" data-inp="calc"><span>Toma fármaco para la glucosa</span></label></div>`,
+    run: () => {
+      const f = $('#c-sm-sex').value === 'm', atp = $('#c-sm-cut').value === 'atp';
+      const w = num('c-sm-w'), tg = num('c-sm-tg'), hdl = num('c-sm-hdl'), glu = num('c-sm-glu'), pas = num('c-sm-pas'), pad = num('c-sm-pad');
+      const tTg = $('#c-sm-ttg').checked, tHa = $('#c-sm-tha').checked, tGl = $('#c-sm-tgl').checked;
+      const wc = atp ? (f ? 88 : 102) : (f ? 80 : 90), hc = f ? 50 : 40;
+      const items = [
+        ['Cintura', w != null && w >= wc, `≥${wc} cm`],
+        ['Triglicéridos', (tg != null && tg >= 150) || tTg, '≥150 mg/dL o tratamiento'],
+        ['HDL bajo', (hdl != null && hdl < hc) || tTg, `<${hc} mg/dL o tratamiento`],
+        ['Presión arterial', (pas != null && pas >= 130) || (pad != null && pad >= 85) || tHa, '≥130/85 mmHg o tratamiento'],
+        ['Glucosa', (glu != null && glu >= 100) || tGl, '≥100 mg/dL o tratamiento']
+      ];
+      const n = items.filter((x) => x[1]).length;
+      return `<span class="lab">Criterios cumplidos</span><span class="big">${n}/5</span><p><b>${n >= 3 ? 'Sí tiene síndrome metabólico' : 'No cumple síndrome metabólico'}</b> (se necesitan 3 de 5, criterios armonizados 2009).</p><ul class="small" style="margin:0;padding-left:18px">${items.map(([k, ok, d]) => `<li>${ok ? '✔' : '✘'} ${k}: ${d}</li>`).join('')}</ul><p class="small muted">${n >= 3 ? 'Tratamiento: bajar 5–10% del peso, ejercicio ≥150 min/semana y tratar cada componente; calcula su riesgo cardiovascular.' : 'Aunque no cumpla, trata cada factor que salga alterado.'} El corte de cintura cambia según la guía y la población.</p>`;
+    } },
+  { id: 'ldl', name: 'Meta de LDL según riesgo (ESC/EAS)', topic: 'smdl',
+    form: () => `<div class="field"><label for="c-ldl-r">Categoría de riesgo</label><select id="c-ldl-r" data-chg="calc"><option value="4">Muy alto: ECV aterosclerótica, DM con daño a órgano o ≥3 FR, TFG &lt;30, SCORE2 muy alto</option><option value="3">Alto: LDL &gt;190, PA ≥180/110, HF, DM ≥10 años, TFG 30–59, SCORE2 alto</option><option value="2">Moderado: DM joven &lt;10 años sin FR, SCORE2 moderado</option><option value="1">Bajo</option></select></div>
+    <div class="fgrid"><div class="field"><label for="c-ldl-b">LDL basal sin tratamiento (mg/dL)</label><input id="c-ldl-b" type="number" inputmode="decimal" value="160" data-inp="calc"></div><div class="field"><label for="c-ldl-a">LDL actual (mg/dL)</label><input id="c-ldl-a" type="number" inputmode="decimal" value="160" data-inp="calc"></div></div>
+    <div class="checks"><label><input type="checkbox" id="c-ldl-2" data-inp="calc"><span>Segundo evento vascular en menos de 2 años con estatina a dosis máxima</span></label></div>`,
+    run: () => {
+      const r = +$('#c-ldl-r').value, b = num('c-ldl-b'), a = num('c-ldl-a'), rec = $('#c-ldl-2').checked;
+      if (!b || !a) return '<p>Escribe el LDL basal y el actual.</p>';
+      const goal = r === 4 ? (rec ? 40 : 55) : r === 3 ? 70 : r === 2 ? 100 : 116;
+      const need50 = r >= 3, target = need50 ? Math.min(goal, b * 0.5) : goal;
+      const ok = a < goal && (!need50 || a <= b * 0.5), drop = a > target ? 1 - target / a : 0;
+      const step = drop <= 0 ? 'Ya está en meta: mantén el tratamiento y revisa el perfil cada 6–12 meses.' : drop <= 0.3 ? 'Estatina de intensidad moderada o, si ya la toma, subir a alta intensidad (o agregar ezetimiba, que baja ~20–25% más).' : drop <= 0.5 ? 'Estatina de alta intensidad (atorvastatina 40–80 mg o rosuvastatina 20–40 mg) baja ~50%.' : drop <= 0.65 ? 'Estatina de alta intensidad + ezetimiba (en conjunto ~65%).' : 'Estatina de alta intensidad + ezetimiba y probablemente un iPCSK9 (este baja ~60% adicional).';
+      return `<span class="lab">Meta de LDL</span><span class="big">&lt;${goal} <small>mg/dL</small></span><p>${need50 ? `Y además reducir ≥50% de la basal: <b>≤${Math.round(b * 0.5)} mg/dL</b>. ` : ''}<b>${ok ? 'En meta' : 'Fuera de meta'}</b>: ${a > target ? `le falta bajar ${pct(drop)}% (a ${Math.round(target)} mg/dL o menos).` : 'cumple.'}</p><p class="small">${step}</p><p class="small muted">${rec ? 'Con segundo evento en menos de 2 años, la ESC/EAS permite considerar &lt;40 mg/dL. ' : ''}Revisa el LDL 4–6 semanas después de cada cambio. La ACC/AHA usa umbrales por grupo, no metas.</p>`;
+    } },
+  { id: 'mentzer', name: 'Índice de Mentzer', topic: 'anemias',
+    form: () => `<div class="fgrid"><div class="field"><label for="c-mz-v">VCM (fL)</label><input id="c-mz-v" type="number" inputmode="decimal" value="64" data-inp="calc"></div><div class="field"><label for="c-mz-r">Eritrocitos (millones/µL)</label><input id="c-mz-r" type="number" inputmode="decimal" step="0.1" value="5.9" data-inp="calc"></div></div>`,
+    run: () => {
+      const v = num('c-mz-v'), r = num('c-mz-r');
+      if (!v || !r) return '<p>Escribe VCM y eritrocitos.</p>';
+      const i = v / r;
+      return `<span class="lab">Índice de Mentzer</span><span class="big">${fx(i)}</span><p><b>${i < 13 ? 'Sugiere rasgo talasémico' : i > 13 ? 'Sugiere ferropenia' : 'Indeterminado (=13)'}</b>.</p><p class="small">${i < 13 ? 'La médula produce muchos eritrocitos pequeños. Confirma con ferritina normal y electroforesis de hemoglobina (HbA2 >3.5% en β-talasemia menor). No des hierro.' : 'La médula produce pocos eritrocitos y pequeños. Confirma con ferritina baja y busca la causa del sangrado.'}</p><p class="small muted">Mentzer = VCM ÷ eritrocitos en millones. Es orientativo; solo aplica a anemia microcítica.</p>`;
+    } },
+  { id: 'gbs', name: 'Glasgow-Blatchford', topic: 'stda',
+    form: () => `<div class="fgrid"><div class="field"><label for="c-gb-sex">Sexo</label><select id="c-gb-sex" data-chg="calc"><option value="h">Hombre</option><option value="m">Mujer</option></select></div><div class="field"><label for="c-gb-bun">BUN (mg/dL)</label><input id="c-gb-bun" type="number" inputmode="decimal" value="32" data-inp="calc"></div><div class="field"><label for="c-gb-hb">Hemoglobina (g/dL)</label><input id="c-gb-hb" type="number" inputmode="decimal" step="0.1" value="10.8" data-inp="calc"></div><div class="field"><label for="c-gb-pas">PAS (mmHg)</label><input id="c-gb-pas" type="number" inputmode="decimal" value="104" data-inp="calc"></div><div class="field"><label for="c-gb-fc">FC (lpm)</label><input id="c-gb-fc" type="number" inputmode="decimal" value="104" data-inp="calc"></div></div>
+    <div class="checks"><label><input type="checkbox" id="c-gb-mel" data-inp="calc" checked><span>Melena</span></label><label><input type="checkbox" id="c-gb-sin" data-inp="calc"><span>Síncope</span></label><label><input type="checkbox" id="c-gb-hep" data-inp="calc"><span>Enfermedad hepática</span></label><label><input type="checkbox" id="c-gb-ic" data-inp="calc"><span>Insuficiencia cardiaca</span></label></div>`,
+    run: () => {
+      const f = $('#c-gb-sex').value === 'm', bun = num('c-gb-bun'), hb = num('c-gb-hb'), pas = num('c-gb-pas'), fc = num('c-gb-fc');
+      if (bun == null || !hb || !pas || !fc) return '<p>Completa BUN, hemoglobina, PAS y FC.</p>';
+      let s = bun >= 70 ? 6 : bun >= 28 ? 4 : bun >= 22.4 ? 3 : bun >= 18.2 ? 2 : 0;
+      s += f ? (hb < 10 ? 6 : hb < 12 ? 1 : 0) : (hb < 10 ? 6 : hb < 12 ? 3 : hb < 13 ? 1 : 0);
+      s += pas < 90 ? 3 : pas < 100 ? 2 : pas < 110 ? 1 : 0;
+      s += fc >= 100 ? 1 : 0;
+      s += ($('#c-gb-mel').checked ? 1 : 0) + ($('#c-gb-sin').checked ? 2 : 0) + ($('#c-gb-hep').checked ? 2 : 0) + ($('#c-gb-ic').checked ? 2 : 0);
+      return `<span class="lab">Glasgow-Blatchford</span><span class="big">${s}</span><p><b>${s <= 1 ? 'Muy bajo riesgo' : s <= 7 ? 'Requiere hospitalización y endoscopia' : 'Alto riesgo de necesitar intervención'}</b>.</p><p class="small">${s <= 1 ? 'Puede egresar con endoscopia ambulatoria (ESGE 2021).' : 'Reanima, IBP IV y endoscopia en las primeras 24 h tras estabilizar. Transfunde con Hb <7 g/dL (<8 si tiene cardiopatía).'}</p><p class="small muted">El puntaje original usa urea en mmol/L; aquí se convirtió a BUN (urea mmol/L × 2.8).</p>`;
+    } },
+  { id: 'bisap', name: 'BISAP (pancreatitis)', topic: 'pancrea',
+    form: () => `<div class="checks"><label><input type="checkbox" id="c-bi-0" data-inp="calc" checked><span>BUN &gt;25 mg/dL</span></label><label><input type="checkbox" id="c-bi-1" data-inp="calc"><span>Alteración del estado mental (Glasgow &lt;15)</span></label><label><input type="checkbox" id="c-bi-2" data-inp="calc" checked><span>SRIS: ≥2 de T &gt;38 o &lt;36 °C, FC &gt;90, FR &gt;20 o PaCO2 &lt;32, leucocitos &gt;12,000 o &lt;4,000</span></label><label><input type="checkbox" id="c-bi-3" data-inp="calc"><span>Edad &gt;60 años</span></label><label><input type="checkbox" id="c-bi-4" data-inp="calc"><span>Derrame pleural en imagen</span></label></div>`,
+    run: () => {
+      const s = [0, 1, 2, 3, 4].filter((i) => $('#c-bi-' + i).checked).length;
+      return `<span class="lab">BISAP</span><span class="big">${s}/5</span><p><b>${s >= 3 ? 'Riesgo alto' : 'Riesgo bajo'}</b> de pancreatitis grave y muerte${s >= 3 ? ' (mortalidad ~5–20%)' : ' (mortalidad &lt;2%)'}.</p><p class="small">${s >= 3 ? 'Vigilancia estrecha (considera UCI), líquidos guiados por metas y busca falla orgánica persistente (&gt;48 h), que define la pancreatitis grave según Atlanta.' : 'Líquidos moderados, analgesia y vía oral temprana cuando tolere.'}</p><p class="small muted">Se calcula en las primeras 24 h. La gravedad definitiva la da Atlanta revisada (falla orgánica transitoria o persistente y complicaciones locales).</p>`;
+    } },
+  { id: 'acr', name: 'ACR/EULAR 2010 (AR)', topic: 'ar',
+    form: () => `<div class="field"><label for="c-ar-j">Articulaciones con sinovitis</label><select id="c-ar-j" data-chg="calc"><option value="0">1 articulación grande (0)</option><option value="1">2–10 grandes (1)</option><option value="2">1–3 pequeñas (2)</option><option value="3" selected>4–10 pequeñas (3)</option><option value="5">&gt;10, al menos una pequeña (5)</option></select></div>
+    <div class="field"><label for="c-ar-s">Serología (FR y anti-CCP)</label><select id="c-ar-s" data-chg="calc"><option value="0">Ambos negativos (0)</option><option value="2" selected>Alguno positivo bajo, ≤3 veces el límite (2)</option><option value="3">Alguno positivo alto, &gt;3 veces el límite (3)</option></select></div>
+    <div class="checks"><label><input type="checkbox" id="c-ar-pcr" data-inp="calc"><span>PCR o VSG elevadas (1)</span></label><label><input type="checkbox" id="c-ar-d" data-inp="calc" checked><span>Síntomas ≥6 semanas (1)</span></label></div>`,
+    run: () => {
+      const s = +$('#c-ar-j').value + +$('#c-ar-s').value + ($('#c-ar-pcr').checked ? 1 : 0) + ($('#c-ar-d').checked ? 1 : 0);
+      return `<span class="lab">Puntaje</span><span class="big">${s}/10</span><p><b>${s >= 6 ? 'Clasifica como artritis reumatoide' : 'No clasifica todavía como AR'}</b> (se necesitan ≥6).</p><p class="small">${s >= 6 ? 'Inicia metotrexato lo antes posible (con ácido fólico) y esteroide puente a dosis baja si hace falta. Meta: remisión o baja actividad.' : 'Revalora con el tiempo: muchos pacientes cumplen después. Si hay erosiones típicas en Rx, se clasifica como AR aunque no sume 6.'}</p><p class="small muted">Requisito: al menos una articulación con sinovitis que no se explique por otra enfermedad. Pequeñas: MCF, IFP, 2ª–5ª MTF, IF del pulgar y muñecas. No cuentan IFD, 1ª CMC ni 1ª MTF.</p>`;
+    } },
+  { id: 'wells', name: 'Wells para TEP', topic: 'tep',
+    form: () => `<div class="checks">${WELLS.map(([t, p], i) => `<label><input type="checkbox" id="c-we-${i}" data-inp="calc"${[0, 2].includes(i) ? ' checked' : ''}><span>${t} (${p})</span></label>`).join('')}</div>
+    <div class="field"><label for="c-we-age">Edad (para el dímero D ajustado)</label><input id="c-we-age" type="number" inputmode="decimal" value="64" data-inp="calc"></div>`,
+    run: () => {
+      const s = WELLS.reduce((a, [, p], i) => a + ($('#c-we-' + i).checked ? p : 0), 0), age = num('c-we-age');
+      const cut = age && age > 50 ? age * 10 : 500;
+      return `<span class="lab">Wells</span><span class="big">${String(s)}</span><p><b>${s > 4 ? 'TEP probable' : 'TEP improbable'}</b> (modelo de 2 niveles) · probabilidad ${s > 6 ? 'alta' : s >= 2 ? 'moderada' : 'baja'} (3 niveles).</p><p class="small">${s > 4 ? 'Angio-TC pulmonar directa; anticoagula mientras si no hay contraindicación. El dímero D no sirve para descartar.' : `Dímero D: si es menor de <b>${cut} µg/L</b>${age && age > 50 ? ' (ajustado por edad: edad × 10)' : ''}, se descarta TEP. Si es positivo, angio-TC.`}</p><p class="small muted">Si el paciente está inestable (choque o PAS &lt;90), no uses Wells: ecocardiograma a la cabecera y trata como TEP de alto riesgo.</p>`;
+    } },
+  { id: 'spesi', name: 'PESI simplificado (sPESI)', topic: 'tep',
+    form: () => `<div class="checks">${SPESI.map((t, i) => `<label><input type="checkbox" id="c-sp-${i}" data-inp="calc"${i === 3 ? ' checked' : ''}><span>${t}</span></label>`).join('')}</div>
+    <div class="checks"><label><input type="checkbox" id="c-sp-vd" data-inp="calc"><span>Disfunción del VD en eco o angio-TC</span></label><label><input type="checkbox" id="c-sp-tn" data-inp="calc"><span>Troponina elevada</span></label><label><input type="checkbox" id="c-sp-sh" data-inp="calc"><span>Choque o PAS &lt;90 mmHg sostenida</span></label></div>`,
+    run: () => {
+      const s = SPESI.filter((_, i) => $('#c-sp-' + i).checked).length, vd = $('#c-sp-vd').checked, tn = $('#c-sp-tn').checked;
+      if ($('#c-sp-sh').checked) return '<span class="lab">Riesgo ESC 2019</span><span class="big">Alto</span><p><b>TEP de alto riesgo</b>: heparina no fraccionada + trombólisis sistémica (o embolectomía si está contraindicada).</p>';
+      const cat = s === 0 ? (vd || tn ? 'Intermedio' : 'Bajo') : vd && tn ? 'Intermedio-alto' : 'Intermedio-bajo';
+      return `<span class="lab">sPESI</span><span class="big">${s}</span><p>${s === 0 ? 'Mortalidad a 30 días ~1%.' : 'Mortalidad a 30 días ~10%.'} <b>Riesgo ESC 2019: ${cat}</b>.</p><p class="small">${cat === 'Bajo' ? 'Apixabán o rivaroxabán; alta temprana o manejo ambulatorio si las condiciones lo permiten.' : cat === 'Intermedio-alto' ? 'Anticoagulación hospitalaria y vigilancia estrecha; trombólisis de rescate solo si se descompensa.' : 'Anticoagulación hospitalaria. La trombólisis no está indicada de rutina.'}</p><p class="small muted">Para riesgo intermedio-alto se necesitan sPESI ≥1 con disfunción del VD y troponina elevada juntas.${s === 0 && (vd || tn) ? ' Con sPESI 0 pero VD o troponina alterados, la ESC 2019 lo deja en riesgo intermedio.' : ''}</p>`;
     } }
 ];
 VIEWS.calc = (m) => {
   const c = CALCS.find((x) => x.id === route.a);
   if (!c) {
     m.innerHTML = `<button class="btn small ghost" data-go="mas" style="align-self:flex-start">← Más</button><h1>Calculadoras</h1><p class="muted">Cada resultado te dice qué significa y qué harías. Vienen con un ejemplo cargado para que veas cómo funcionan.</p>
-    <div class="tools">${CALCS.map((x) => `<button class="tile" data-go="calc" data-a="${x.id}"><span class="t">${esc(x.name)}</span><span class="d">Tema ${TOP[x.topic].n} · ${esc(TOP[x.topic].title)}</span></button>`).join('')}</div>
-    <section class="panel"><h2>Próximamente</h2><ul class="blks">${C.calcsLocked.map((x) => `<li class="blk"><span class="blk-t">${esc(x.name)}<small>Tema ${TOP[x.topic].n} · fase ${TOP[x.topic].phase}</small></span>${icon('lock', '#8790CC', 2)}</li>`).join('')}</ul></section>`;
+    <div class="tools">${CALCS.map((x) => `<button class="tile" data-go="calc" data-a="${x.id}"><span class="t">${esc(x.name)}</span><span class="d">Tema ${TOP[x.topic].n} · ${esc(TOP[x.topic].title)}</span></button>`).join('')}</div>`;
     return;
   }
   m.innerHTML = `<button class="btn small ghost" data-go="calc" style="align-self:flex-start">← Calculadoras</button><h1>${esc(c.name)}</h1><section class="panel calc"><p class="example">Ejemplo cargado: cambia los valores con los de tu caso.</p>${c.form()}<div class="out" id="cout" aria-live="polite"></div></section>`;

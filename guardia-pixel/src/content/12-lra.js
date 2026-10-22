@@ -6,6 +6,8 @@ export default {
   lessons: {
     lra: {
       hook: 'Tres preguntas resuelven casi cualquier caso: ¿cumple criterios y en qué estadio?, ¿dónde está el problema (antes, dentro o después del riñón)? y ¿necesita diálisis ya?',
+      nn: [['acute-kidney-injury', 'Acute Kidney Injury']],
+      yt: 'acute kidney injury',
       anim: 'lra',
       compare: ['pre-nta'],
       sections: [
