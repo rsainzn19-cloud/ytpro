@@ -4,7 +4,7 @@
 export default {
   exam: {
     date: '2026-11-10',
-    start: '2026-10-21',
+    start: '2026-10-22',
     label: 'Parcial regional de Medicina Interna',
     place: 'Aula 3 · Hospital Zambrano Hellion',
     weight: '25% de la calificación teórica',

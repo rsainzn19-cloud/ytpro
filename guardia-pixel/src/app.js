@@ -322,7 +322,7 @@ function planDays(from, last, firstOn0, pending, f) {
 function buildPlan() {
   const td = today(), start = C.exam.start, last = addDays(C.exam.date, -1);
   const from = td > start ? td : start;
-  const keep = ((S.plan && S.plan.days) || []).filter((d) => d.date < from);
+  const keep = ((S.plan && S.plan.days) || []).filter((d) => d.date < from && d.date >= start);
   const done = topicsDone();
   const firstOn = {};
   for (const d of keep) for (const b of d.blocks) if (b.k === 'topic' && done.has(b.t) && !firstOn[b.t]) firstOn[b.t] = d.date;
@@ -334,7 +334,7 @@ function buildPlan() {
   // Si ni comprimido alcanza (poco tiempo por día), lo que falte entra como perlas rápidas antes del examen.
   const simDay = days.find((x) => x.date === C.exam.sim[1]) || days[days.length - 2] || days[days.length - 1];
   if (simDay) for (const tid of left) simDay.blocks.push({ k: 'quick', t: tid, min: 10, title: '', x: null });
-  S.plan = { built: td, days: [...keep, ...days], left, fit: f };
+  S.plan = { built: td, start, days: [...keep, ...days], left, fit: f };
   save();
 }
 function topicParts(tid) {
@@ -447,7 +447,9 @@ function todayBlocks() {
   const td = today();
   if (td >= C.exam.date) return '<p class="muted">El parcial ya pasó. Puedes seguir practicando con todo lo que hay en la app.</p>';
   const d = S.plan && S.plan.days.find((x) => x.date === td);
-  if (!d) return `<p class="muted">Tu plan empieza el ${fmtLong(C.exam.start)}.</p>`;
+  if (!d) return td < C.exam.start
+    ? `<p>Tu plan empieza ${diffDays(td, C.exam.start) === 1 ? 'mañana, ' : 'el '}<b>${fmtLong(C.exam.start)}</b>, con ${S.diag.done ? 'tu primer tema' : 'el diagnóstico de 30 preguntas (~30 min) y tu primer tema'}. Hoy descansa; si te sobran 5 minutos, abre la carta misteriosa.</p>`
+    : `<p class="muted">Tu plan empieza el ${fmtLong(C.exam.start)}.</p>`;
   return `<ul class="blks">${d.blocks.map((b) => blockRow(td, b)).join('')}</ul>`;
 }
 function subjBars() {
@@ -1246,7 +1248,7 @@ function start(data) {
   const r = data && data.route;
   if (r && VIEWS[r.v]) route = r;
   // El plan se reacomoda una vez al día: lo pendiente de días pasados vuelve a entrar desde hoy.
-  if (!S.plan || S.plan.built !== today()) buildPlan();
+  if (!S.plan || S.plan.built !== today() || S.plan.start !== C.exam.start) buildPlan();
   render();
 }
 if (hot && typeof hot.ready === 'function') hot.ready(start); else start((hot && hot.data) || {});
