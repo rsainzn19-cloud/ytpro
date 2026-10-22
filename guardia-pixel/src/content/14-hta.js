@@ -7,6 +7,71 @@ export default {
     hta: {
       hook: 'Tres decisiones que se preguntan siempre: cómo confirmar el diagnóstico, con qué combinación empezar y cómo distinguir una urgencia de una emergencia.',
       anim: 'hta',
+      video: [
+        { ch: 'El asesino silencioso', sc: [
+          { v: { k: 'title', t: 'Hipertensión arterial', s: 'Tema 5 · Nefrología' },
+            say: 'Bienvenido a la guardia. La hipertensión es el factor de riesgo modificable que más muertes causa en el mundo, y casi nunca da síntomas. Hoy vas a aprender a confirmarla, a tratarla por escalones y a distinguir una urgencia de una emergencia.' },
+          { v: { k: 'anim', id: 'hta', step: 0 },
+            say: 'Empecemos por la fisiología. Cuando baja la perfusión del riñón, el aparato yuxtaglomerular libera renina. La renina convierte el angiotensinógeno del hígado en angiotensina uno. Y la enzima convertidora, sobre todo en el pulmón, la transforma en angiotensina dos.' },
+          { v: { k: 'anim', id: 'hta', step: 1 },
+            say: 'La angiotensina dos contrae las arteriolas y estimula a la suprarrenal para liberar aldosterona, que retiene sodio y agua. Más resistencia y más volumen: sube la presión. Muchos antihipertensivos de primera línea bloquean este sistema.' }
+        ] },
+        { ch: 'Medir y confirmar', sc: [
+          { v: { k: 'vs', a: 'ESC 2024', b: 'AHA/ACC 2025', rows: [['Normal / no elevada', '<120/70', '<120/80'], ['Elevada', '120–139 / 70–89', '120–129 / <80'], ['Hipertensión', '≥140/90', 'E1: 130–139/80–89 · E2: ≥140/90']] },
+            say: 'Aquí las guías no coinciden, y eso se pregunta. La guía europea de dos mil veinticuatro llama hipertensión a ciento cuarenta sobre noventa o más, y presión elevada desde ciento veinte sobre setenta. La guía americana de dos mil veinticinco diagnostica estadio uno desde ciento treinta sobre ochenta, y estadio dos desde ciento cuarenta sobre noventa.' },
+          { v: { k: 'list', t: 'Medir bien', items: ['5 min sentado, espalda apoyada, sin hablar', 'Brazalete adecuado, brazo a la altura del corazón', '2–3 mediciones; la 1ª vez, en ambos brazos'] },
+            say: 'Una cifra mal tomada te lleva a un diagnóstico equivocado. El paciente descansa cinco minutos sentado, con la espalda apoyada y sin hablar. Usa un brazalete del tamaño correcto, con el brazo a la altura del corazón. Toma dos o tres mediciones y, la primera vez, en ambos brazos.' },
+          { v: { k: 'big', h: 'Confirma fuera del consultorio', t: '≥135/85', s: 'En casa o MAPA diurno. MAPA de 24 h ≥130/80 · nocturno ≥120/70.' },
+            say: 'Antes de etiquetar a alguien como hipertenso, confirma fuera del consultorio. En casa, o en el monitoreo ambulatorio de día, el umbral es ciento treinta y cinco sobre ochenta y cinco. En veinticuatro horas, ciento treinta sobre ochenta. Y de noche, ciento veinte sobre setenta.' },
+          { v: { k: 'quiz', q: 'PA de 152/96 en consultorio; MAPA de 24 h de 122/76. ¿Diagnóstico?', opts: ['HTA de bata blanca', 'HTA enmascarada'], a: 0 },
+            say: 'Pausa. Mujer con ciento cincuenta y dos sobre noventa y seis en el consultorio, pero su monitoreo de veinticuatro horas promedia ciento veintidós sobre setenta y seis. ¿Qué tiene?',
+            exp: 'Hipertensión de bata blanca: alta en el consultorio y normal fuera. La enmascarada es al revés, normal en el consultorio y alta fuera, y tiene más riesgo porque pasa desapercibida.' },
+          { v: { k: 'list', t: 'Estudios iniciales', items: ['Creatinina y TFG, sodio y potasio', 'Glucosa o A1c y perfil de lípidos', 'EGO y cociente albúmina/creatinina', 'ECG de 12 derivaciones: busca HVI'] },
+            say: 'A todo hipertenso nuevo pídele creatinina con tasa de filtración, electrolitos, glucosa o hemoglobina glucosilada, perfil de lípidos, examen de orina con cociente albúmina creatinina y un electrocardiograma para buscar hipertrofia ventricular. Así buscas daño a órgano blanco y pistas de una causa secundaria.' }
+        ] },
+        { ch: 'Metas y escalones', sc: [
+          { v: { k: 'vs', a: 'ESC 2024', b: 'AHA/ACC 2025', rows: [['Meta general', 'PAS 120–129 si se tolera', '<130/80; animar a PAS <120'], ['Inicio de fármaco', '≥140/90, o 130–139 con riesgo alto', '≥140/90, o ≥130/80 con riesgo alto'], ['Frágil o ≥85 años', 'Tan baja como sea razonable', 'Individualizar']] },
+            say: 'Las metas también cambian según la guía. La europea busca una sistólica de ciento veinte a ciento veintinueve si el paciente la tolera. La americana pide menos de ciento treinta sobre ochenta y anima a acercarse a una sistólica menor de ciento veinte. Las dos tratan antes si el riesgo cardiovascular es alto.' },
+          { v: { k: 'flow', t: 'La escalera del tratamiento', steps: ['Estilo de vida a todos', 'A + C o A + D en 1 pastilla', 'A + C + D', '+ espironolactona'] },
+            say: 'El tratamiento va por escalones. Estilo de vida a todos. Luego, en la mayoría, dos fármacos en una sola pastilla: un IECA o ARA dos, más un calcioantagonista o un diurético tiazídico. Si no se controla, la triple combinación. Y si aun así no se controla, espironolactona.' },
+          { v: { k: 'list', t: 'Estilo de vida que sí baja la PA', items: ['Sodio <2 g/día; sal con potasio si no hay ERC', 'Dieta DASH, rica en potasio', 'Bajar de peso y ejercicio aeróbico', 'Limitar alcohol y dejar de fumar'] },
+            say: 'El estilo de vida no es relleno: baja varios milímetros de mercurio. Sodio menor de dos gramos al día, y si no hay enfermedad renal avanzada, sustituto de sal con potasio. Dieta DASH, bajar de peso, ejercicio aeróbico, limitar el alcohol y dejar de fumar.' },
+          { v: { k: 'anim', id: 'hta', step: 2 },
+            say: 'Ahora los fármacos. Los IECA, los que terminan en pril, bloquean la enzima convertidora. Como esa enzima también degrada la bradicinina, esta se acumula y causa tos seca y, rara vez, angioedema.' },
+          { v: { k: 'anim', id: 'hta', step: 3 },
+            say: 'Los ARA dos, los que terminan en sartán, bloquean el receptor de la angiotensina dos. No acumulan bradicinina, por eso no dan tos. Si un paciente tose con enalapril, cambias a losartán. Pero nunca los combines.' },
+          { v: { k: 'mnemo', t: 'A + C + D', d: 'A = ARA-II o IECA · C = calcioantagonista (amlodipino) · D = diurético tiazídico o tipo tiazida. Si falla con buen apego: espironolactona.' },
+            say: 'Para no olvidarlo: A, más C, más D. A es ARA dos o IECA. C es calcioantagonista, como amlodipino. D es diurético tiazídico o tipo tiazida, como clortalidona. Los betabloqueadores solo entran con otra indicación: infarto previo, insuficiencia cardiaca, fibrilación auricular o angina.' },
+          { v: { k: 'list', t: 'Elige según el paciente', items: ['DM o ERC con albuminuria → IECA o ARA-II', 'IC con FEr → IECA/ARNI + BB + ARM + iSGLT2', 'Embarazo → labetalol, nifedipino, metildopa', 'Gota → evita tiazidas; losartán ayuda'] },
+            say: 'Ajusta según el paciente. Con diabetes o enfermedad renal con albuminuria, el IECA o ARA dos no puede faltar. En insuficiencia cardiaca con fracción reducida, los cuatro pilares. En el embarazo, labetalol, nifedipino o metildopa, porque los IECA y ARA dos están contraindicados. Y con gota, evita las tiazidas.' }
+        ] },
+        { ch: 'Resistente y secundaria', sc: [
+          { v: { k: 'list', t: 'HTA resistente: antes de etiquetarla', items: ['3 fármacos a dosis máxima, uno diurético', 'Descarta técnica mala y bata blanca (MAPA)', 'Revisa apego, AINE, alcohol y sal', 'Busca una causa secundaria'] },
+            say: 'Hablamos de hipertensión resistente cuando no se controla con tres fármacos a dosis máximas, uno de ellos diurético. Antes, descarta la pseudorresistencia: mala técnica, efecto de bata blanca y falta de apego. Busca fármacos como antiinflamatorios o descongestionantes, y una causa secundaria.' },
+          { v: { k: 'anim', id: 'hta', step: 4 },
+            say: 'Si es resistente verdadera, el cuarto fármaco es la espironolactona. Bloquea el receptor de aldosterona en el túbulo colector: se elimina sodio y se retiene potasio. Fue la más eficaz como cuarto fármaco. Vigila el potasio y la creatinina.' },
+          { v: { k: 'case', t: 'HTA de difícil control', p: { name: 'Rubén', age: 52, sex: 'H', skin: '#B97A52', hair: '#1E1A18', gown: '#F2B66D' }, text: 'Con amlodipino, losartán y clortalidona a dosis máximas sigue en 156/96. K 2.9 mEq/L. Niega AINE y regaliz.', vit: { PA: '156/96', K: '2.9' } },
+            say: 'Rubén, de cincuenta y dos años, sigue descontrolado con tres fármacos a dosis máximas, y su potasio es de dos punto nueve. Hipertensión resistente con hipokalemia: piensa en hiperaldosteronismo primario, la causa endocrina más frecuente. El tamizaje es el cociente aldosterona renina.' },
+          { v: { k: 'list', t: 'Pistas de HTA secundaria', items: ['Hipo-K + resistente → aldosterona/renina', 'Ronquido, obesidad → apnea del sueño', 'Mujer joven + soplo → displasia fibromuscular', 'Cefalea, sudor, palpitaciones → metanefrinas', 'PA brazos > piernas → coartación aórtica'] },
+            say: 'Sospecha una causa secundaria si la hipertensión empieza joven, es grave o resistente, o aparece con hipokalemia. Ronquido y obesidad: apnea del sueño. Mujer joven con soplo abdominal: displasia fibromuscular. Crisis de cefalea, sudoración y palpitaciones: feocromocitoma. Presión alta en brazos y baja en piernas: coartación aórtica.' },
+          { v: { k: 'quiz', q: 'Crisis de cefalea, sudoración y PA 220/130. Si es feocromocitoma, ¿qué bloqueas primero?', opts: ['Beta, con propranolol', 'Alfa, con fenoxibenzamina o doxazosina'], a: 1 },
+            say: 'Pausa. Hombre con crisis de cefalea, sudoración y palpitaciones, y presión de doscientos veinte sobre ciento treinta. Si es feocromocitoma, ¿qué bloqueas primero?',
+            exp: 'Primero el bloqueo alfa y después el beta. Un betabloqueador solo deja la estimulación alfa sin oposición y dispara la presión.' }
+        ] },
+        { ch: 'Urgencia o emergencia', sc: [
+          { v: { k: 'list', t: 'Daño agudo = emergencia', items: ['Encefalopatía, EVC o hemorragia cerebral', 'SCA o edema pulmonar agudo', 'Disección aórtica', 'LRA, microangiopatía, retinopatía III–IV', 'Eclampsia o preeclampsia grave'] },
+            say: 'Ahora la decisión que más se pregunta. Lo que separa una urgencia de una emergencia no es la cifra, es el daño agudo a órgano blanco: encefalopatía, evento vascular cerebral, síndrome coronario, edema pulmonar, disección aórtica, lesión renal aguda o eclampsia. Si hay daño agudo, es emergencia.' },
+          { v: { k: 'vs', cmp: 'urg-emerg', rows: [1, 2, 3, 5] },
+            say: 'En la urgencia, sin daño agudo, usas fármacos orales y bajas la presión poco a poco en uno o dos días, muchas veces solo reiniciando su tratamiento. En la emergencia, terapia intensiva y un fármaco intravenoso titulable, como labetalol o nicardipino. Y nunca nifedipino sublingual.' },
+          { v: { k: 'flow', t: 'Emergencia: qué tan rápido', steps: ['1ª hora: PAM ↓ ≤25%', '2–6 h: hasta ~160/100', '24–48 h: a lo normal', 'Disección: PAS <120 en 1 h'] },
+            say: 'En la emergencia, baja la presión arterial media no más de veinticinco por ciento en la primera hora. Luego, a ciento sesenta sobre cien en las siguientes dos a seis horas, y a lo normal en uno o dos días. La excepción es la disección aórtica: sistólica menor de ciento veinte en la primera hora, con betabloqueador primero.' },
+          { v: { k: 'quiz', q: 'PA 210/122, asintomático, sin daño a órgano blanco. ¿Qué haces?', opts: ['Nicardipino IV en terapia intensiva', 'Reiniciar vía oral y cita cercana'], a: 1 },
+            say: 'Pausa. Hombre que se quedó sin sus pastillas. Presión de doscientos diez sobre ciento veintidós, asintomático y sin daño a órgano blanco. ¿Qué haces?',
+            exp: 'Es una urgencia. Reinicias su tratamiento oral, bajas la presión de forma gradual y lo citas pronto. Bajarla rápido no ayuda y puede causar isquemia.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'La cifra no define la emergencia: el daño agudo a órgano blanco sí. 220/130 sin daño = urgencia; 190/110 con edema pulmonar = emergencia.' },
+            say: 'La perla para el examen: la cifra no define la emergencia, el daño agudo a órgano blanco sí. Y si la pregunta dice según qué guía, revisa los umbrales: la europea diagnostica desde ciento cuarenta sobre noventa y la americana desde ciento treinta sobre ochenta. Ahora ve a las preguntas del tema.' }
+        ] }
+      ],
       compare: ['urg-emerg'],
       nn: [['hypertension-updated', 'Hypertension'], ['antihypertensive-drugs', 'Antihypertensive Drugs']],
       yt: 'hypertension antihypertensives',
@@ -28,7 +93,7 @@ export default {
 <ul>
 <li><b>Estilo de vida</b>: sodio &lt;2 g/día, dieta DASH rica en potasio (si no hay ERC avanzada), bajar de peso, ejercicio, limitar alcohol, dejar de fumar.</li>
 <li><b>Primera línea</b>: IECA o ARA-II, calcioantagonista dihidropiridínico (amlodipino) y diurético tiazídico o tipo tiazida (clortalidona, indapamida).</li>
-<li><b>Iniciar con dos fármacos en una sola pastilla</b> (IECA/ARA-II + calcioantagonista o + tiazida) en la mayoría. Monoterapia en PA elevada de bajo riesgo, en adultos muy mayores o frágiles.</li>
+<li><b>Iniciar con dos fármacos en una sola pastilla</b> (IECA/ARA-II + calcioantagonista o + tiazida) en la mayoría. Monoterapia solo en casos seleccionados: PA elevada (130–139/80–89) con riesgo alto que requiere fármaco, ≥85 años, fragilidad o hipotensión ortostática sintomática. Con PA elevada y riesgo bajo no se dan fármacos: estilo de vida.</li>
 <li>Si no se controla: triple combinación <b>A + C + D</b> (ARA-II/IECA + calcioantagonista + diurético).</li>
 <li><b>Betabloqueadores</b> solo con indicación propia: post-IAM, IC con FEr, FA (control de frecuencia), angina.</li>
 <li><b>Nunca</b> combinar IECA + ARA-II (ni con aliskirén): más hiperkalemia y LRA sin beneficio.</li>
@@ -70,6 +135,37 @@ export default {
 <li><b>Excepciones</b>: disección aórtica → PAS &lt;120 y FC &lt;60 en la primera hora (esmolol o labetalol primero, después vasodilatador). EVC isquémico candidato a trombólisis → &lt;185/110 antes y &lt;180/105 después; sin trombólisis, tratar solo si &gt;220/120. Preeclampsia → labetalol, hidralazina o nifedipino + sulfato de magnesio.</li>
 <li>Fármacos: labetalol, nicardipino, clevidipino, esmolol, nitroglicerina (SCA, edema pulmonar), nitroprusiato (toxicidad por cianuro). Cocaína o feocromocitoma: fentolamina; evita el betabloqueador solo.</li>
 <li><b>Urgencia</b> (sin daño agudo): fármacos orales y descenso gradual en 24–48 h, a menudo solo reiniciar su tratamiento y cita cercana. <b>Nunca nifedipino sublingual.</b></li>
+</ul>` },
+        { h: 'Fisiopatología en 1 minuto', html: `
+<ul>
+<li><b>PA = gasto cardiaco × resistencia vascular periférica.</b> En la HTA establecida predomina el aumento de la resistencia.</li>
+<li><b>HTA esencial (90–95%)</b>: mezcla de genética, sal, obesidad, edad, sistema nervioso simpático y SRAA. Solo 5–10% es secundaria, y es más probable en jóvenes, HTA resistente o grave, o con hipokalemia.</li>
+<li><b>Angiotensina II</b> (ver la animación): contrae arteriolas, libera aldosterona (retención de sodio y agua), estimula la sed y remodela corazón y vasos.</li>
+<li><b>Daño a órgano blanco</b>: corazón (HVI, IC con FE preservada, cardiopatía isquémica, FA), cerebro (EVC, demencia vascular), riñón (nefroesclerosis, albuminuria), ojo (retinopatía) y arterias (aneurisma y disección aórtica, enfermedad arterial periférica).</li>
+<li><b>Arteriolosclerosis</b>: hialina en la HTA crónica; hiperplásica (“en piel de cebolla”) con necrosis fibrinoide en la HTA maligna.</li>
+</ul>` },
+        { h: 'Fármacos clave', html: `
+<div class="tablewrap"><table class="mini">
+<tr><th>Fármaco</th><th>Mecanismo</th><th>Efecto adverso clave</th><th>Contraindicación</th></tr>
+<tr><td>IECA (enalapril, lisinopril)</td><td>Bloquean la ECA</td><td>Tos, angioedema, hiperkalemia, Cr ↑ al inicio</td><td>Embarazo, angioedema previo, estenosis bilateral de arteria renal</td></tr>
+<tr><td>ARA-II (losartán, telmisartán)</td><td>Bloquean el receptor AT1</td><td>Hiperkalemia, Cr ↑ al inicio (sin tos)</td><td>Embarazo, estenosis bilateral de arteria renal; nunca con IECA</td></tr>
+<tr><td>Calcioantagonista DHP (amlodipino, nifedipino)</td><td>Vasodilatación arteriolar</td><td>Edema maleolar, cefalea, rubor</td><td>Nifedipino de acción corta o sublingual</td></tr>
+<tr><td>Calcioantagonista no DHP (verapamilo, diltiazem)</td><td>↓ FC y contractilidad</td><td>Bradicardia, estreñimiento (verapamilo)</td><td>IC con FEr, bloqueo AV de 2º–3er grado</td></tr>
+<tr><td>Tiazida o tipo tiazida (clortalidona, indapamida, HCTZ)</td><td>Inhiben el cotransportador Na-Cl del túbulo distal</td><td>Hipo-K, hipo-Na, hiperuricemia, hiperglucemia, hipercalcemia</td><td>Gota, hiponatremia</td></tr>
+<tr><td>Espironolactona</td><td>Antagoniza la aldosterona</td><td>Hiperkalemia, ginecomastia</td><td>K alto; precaución con TFG baja</td></tr>
+<tr><td>Betabloqueador</td><td>Bloquea β1 (↓ FC y gasto)</td><td>Bradicardia, fatiga, broncoespasmo (no selectivos)</td><td>Bloqueo AV avanzado; feocromocitoma o cocaína sin bloqueo alfa</td></tr>
+<tr><td>Doxazosina</td><td>Bloquea α1</td><td>Hipotensión ortostática (primera dosis)</td><td>No es primera línea</td></tr>
+<tr><td>Hidralazina</td><td>Vasodilatador arteriolar directo</td><td>Taquicardia refleja, lupus inducido</td><td>Sola en cardiopatía isquémica o disección</td></tr>
+<tr><td>Clonidina</td><td>Agonista α2 central</td><td>Sedación, rebote al suspenderla</td><td>Mal apego (riesgo de rebote)</td></tr>
+</table></div>` },
+        { h: 'Cómo lo preguntan en el examen', html: `
+<ul>
+<li>“PA 148/92 en una sola consulta, asintomático” → <b>confirma con MAPA o automedición</b> antes de tratar.</li>
+<li>“Tos seca semanas después de iniciar enalapril” → <b>cambia a ARA-II</b> (nunca lo agregues al IECA).</li>
+<li>“HTA resistente con K 3.1 sin diurético” → <b>cociente aldosterona/renina</b>.</li>
+<li>“Adulto mayor fumador: Cr ↑ &gt;30% con IECA y edema pulmonar súbito” → <b>estenosis de arteria renal</b>.</li>
+<li>“Embarazada que toma IECA o ARA-II” → <b>cambiar a labetalol, nifedipino o metildopa</b>.</li>
+<li>“220/130 sin daño agudo” → <b>urgencia</b>: vía oral y cita cercana. “190/110 con edema pulmonar o confusión” → <b>emergencia</b>: IV y PAM ↓ ≤25% en la 1ª hora.</li>
 </ul>` }
       ],
       mnemo: { t: 'A + C + D', d: 'La escalera de casi todo hipertenso: A (ARA-II o IECA) + C (calcioantagonista) + D (diurético tiazídico). Si con A + C + D no se controla y el apego es bueno, la cuarta letra es la espironolactona.' },
@@ -77,7 +173,9 @@ export default {
       trap: 'Bajar la PA a la normalidad en una hora en una emergencia (o con nifedipino sublingual) causa isquemia cerebral, coronaria o renal. Máximo ~25% de la PAM en la primera hora.',
       guide: [
         'Definición y meta: la ESC 2024 diagnostica HTA con ≥140/90 y busca PAS de 120–129 si se tolera. La AHA/ACC 2025 diagnostica estadio 1 desde 130/80 y recomienda meta <130/80 para la mayoría, con sugerencia de acercarse a una PAS <120. ⚠️ Confirma qué guía y qué cifras usa tu profesor.',
-        'Inicio con combinación: ambas guías favorecen dos fármacos de inicio en la mayoría; la ESC lo pide en una sola pastilla.'
+        'Inicio con combinación: ambas guías favorecen dos fármacos de inicio en la mayoría; la ESC lo pide en una sola pastilla.',
+        'Cuándo dar fármaco con 130–139/80–89: la ESC 2024 lo indica si el riesgo CV es alto (SCORE2 ≥10%, ECV, DM, ERC o daño a órgano blanco) y la PA sigue ≥130/80 tras 3 meses de estilo de vida. La AHA/ACC 2025 trata el estadio 1 si hay ECV, DM, ERC o riesgo PREVENT a 10 años ≥7.5%; si el riesgo es bajo, tras 3–6 meses de estilo de vida si sigue ≥130/80. ⚠️ Depende de la guía.',
+        'Nombre de la “urgencia hipertensiva”: documentos recientes de la AHA prefieren llamarla “PA muy elevada sin daño agudo a órgano blanco”. El manejo no cambia: vía oral y descenso gradual.'
       ],
       refs: [
         'McEvoy JW, et al. 2024 ESC Guidelines for the management of elevated blood pressure and hypertension. Eur Heart J 2024.',
@@ -133,7 +231,12 @@ export default {
     ['Tamizaje de feocromocitoma', 'Metanefrinas libres en plasma'],
     ['Emergencia: velocidad de descenso', 'PAM ↓ ≤25% en la 1ª hora, ~160/100 en 2–6 h, normal en 24–48 h'],
     ['Disección aórtica', 'PAS <120 y FC <60 en la primera hora: betabloqueador IV primero'],
-    ['EVC isquémico candidato a trombólisis', 'PA <185/110 antes y <180/105 después']
+    ['EVC isquémico candidato a trombólisis', 'PA <185/110 antes y <180/105 después'],
+    ['Meta de PA según ESC 2024', 'PAS 120–129 si se tolera; si no, tan baja como sea razonable'],
+    ['Meta de PA según AHA/ACC 2025', '<130/80 en la mayoría, animando a PAS <120'],
+    ['Cocaína + HTA', 'Benzodiacepinas; nitroglicerina o fentolamina. Evita el betabloqueador en la intoxicación aguda'],
+    ['EVC isquémico sin trombólisis ni trombectomía', 'Solo tratar si PA ≥220/120 (bajar ≈15% en 24 h)'],
+    ['Edema por amlodipino', 'Por vasodilatación precapilar, no por volumen: bajar la dosis o agregar IECA/ARA-II; el diurético casi no sirve']
   ],
 
   questions: [
@@ -255,7 +358,47 @@ export default {
       ans: 1,
       exp: 'El doble bloqueo del SRAA (IECA + ARA-II o + aliskirén) no reduce eventos y aumenta hiperkalemia, LRA e hipotensión (ONTARGET, VA NEPHRON-D). Nunca se combinan.',
       why: ['Los ARA-II se usan sin problema en adultos mayores.', '', 'No explica la hiperkalemia ni la LRA.', 'No tiene relación.', 'Es un error de prescripción prevenible.'],
-      ref: 'ONTARGET 2008 · ESC 2024' })
+      ref: 'ONTARGET 2008 · ESC 2024' }),
+
+    q({ id: 'hta-16', dif: 2,
+      stem: 'Hombre de 47 años sin comorbilidades. PA promedio en consultorio de 136/86 mmHg en tres visitas, con técnica correcta. ¿Cómo se clasifica según la AHA/ACC 2025 y según la ESC 2024?',
+      opts: ['Normal en ambas guías', 'AHA/ACC: estadio 1 · ESC: presión elevada', 'AHA/ACC: elevada · ESC: hipertensión', 'Hipertensión estadio 2 en ambas', 'AHA/ACC: estadio 1 · ESC: hipertensión'],
+      ans: 1,
+      exp: 'La AHA/ACC 2025 llama estadio 1 a 130–139/80–89 y estadio 2 a ≥140/90. La ESC 2024 reserva “hipertensión” para ≥140/90 y llama “presión elevada” a 120–139/70–89. En ambas, el siguiente paso es confirmar fuera del consultorio y estimar el riesgo cardiovascular para decidir si necesita fármaco.',
+      why: ['Ambas guías lo consideran por arriba de lo normal.', '', 'Para la AHA/ACC, “elevada” es 120–129 con diastólica <80; para la ESC, la hipertensión empieza en 140/90.', 'El estadio 2 empieza en 140/90.', 'Para la ESC, 136/86 todavía no es hipertensión.'],
+      ref: 'ESC 2024 HTA · AHA/ACC 2025 HTA' }),
+
+    q({ id: 'hta-17', dif: 2,
+      stem: 'Hombre de 72 años, fumador, con enfermedad arterial periférica. Inició enalapril hace 10 días y su Cr subió de 1.2 a 2.1 mg/dL. Ha tenido dos episodios de edema pulmonar súbito con FEVI normal. USG: riñón derecho de 8.5 cm e izquierdo de 10.8 cm. ¿Qué sospechas?',
+      opts: ['Nefropatía hipertensiva benigna', 'Estenosis aterosclerótica de arterias renales', 'Glomerulonefritis rápidamente progresiva', 'Nefritis intersticial por enalapril', 'Hiperaldosteronismo primario'],
+      ans: 1,
+      exp: 'Aterosclerosis difusa + Cr que sube >30% con IECA + edema pulmonar súbito (“flash”) + asimetría renal >1.5 cm = estenosis aterosclerótica de arteria renal, probablemente bilateral o de un riñón funcionalmente único. Se confirma con Doppler, angio-TC o angio-RM. El tratamiento de base es médico (estatina, antiagregante, control de PA); la revascularización se reserva para casos como el edema pulmonar recurrente o el deterioro renal rápido.',
+      why: ['No explica el ascenso brusco con el IECA ni el edema pulmonar súbito.', '', 'Daría sedimento activo con hematuria y cilindros eritrocitarios.', 'El cuadro es hemodinámico, no alérgico.', 'Da hipokalemia y HTA resistente, no este patrón.'],
+      ref: 'ESC 2024 HTA · CORAL, N Engl J Med 2014' }),
+
+    q({ id: 'hta-18', dif: 3,
+      stem: 'Mujer de 74 años con EVC isquémico de 9 h de evolución; no es candidata a trombólisis ni a trombectomía. PA 196/104 mmHg, sin otro daño agudo a órgano blanco. ¿Qué haces con la PA?',
+      opts: ['Bajarla a <140/90 en la primera hora con nicardipino', 'No bajarla de forma activa por ahora: tratar solo si llega a ≥220/120', 'Nifedipino sublingual', 'Bajarla a <185/110 de inmediato', 'Labetalol IV para PAS <120'],
+      ans: 1,
+      exp: 'En el EVC isquémico sin reperfusión se tolera la hipertensión para sostener la perfusión de la penumbra. Solo se trata si la PA es ≥220/120, bajándola ≈15% en las primeras 24 h. Si fuera candidata a trombólisis, la meta sería <185/110 antes y <180/105 después.',
+      why: ['Un descenso rápido puede ampliar el infarto.', '', 'Descenso brusco e impredecible; proscrito.', 'Esa meta es solo para candidatos a trombólisis.', 'Esa meta es de la disección aórtica.'],
+      ref: 'AHA/ASA 2019 EVC isquémico agudo' }),
+
+    q({ id: 'hta-19', dif: 2,
+      stem: 'Hombre de 29 años con dolor torácico, agitación, diaforesis y midriasis 1 h después de consumir cocaína. PA 192/116 mmHg, FC 124. ECG sin elevación del ST. ¿Tratamiento inicial?',
+      opts: ['Metoprolol IV', 'Benzodiacepina IV (más nitroglicerina si persiste el dolor)', 'Nifedipino sublingual', 'Haloperidol IM', 'Fibrinólisis'],
+      ans: 1,
+      exp: 'La cocaína produce un estado hiperadrenérgico. Las benzodiacepinas reducen la agitación, la taquicardia y la PA; la nitroglicerina y los calcioantagonistas alivian la vasoconstricción coronaria, y la fentolamina sirve si la hipertensión persiste. En la intoxicación aguda se evita el betabloqueador: deja la estimulación alfa sin oposición.',
+      why: ['Puede empeorar la vasoconstricción coronaria y la hipertensión (alfa sin oposición).', '', 'Proscrito por descensos bruscos e impredecibles.', 'Baja el umbral convulsivo y empeora la hipertermia.', 'No hay elevación del ST.'],
+      ref: 'McCord J, et al. AHA cocaína y dolor torácico, Circulation 2008' }),
+
+    q({ id: 'hta-20', dif: 2,
+      stem: 'Mujer de 58 años con HTA tratada con amlodipino 10 mg. Desde que le subieron la dosis tiene edema maleolar bilateral. Sin disnea ni ingurgitación yugular; albúmina, función renal y TSH normales. ¿Qué haces?',
+      opts: ['Agregar furosemida', 'Bajar el amlodipino y agregar un IECA o ARA-II', 'Ecocardiograma urgente por IC', 'Cambiar a nifedipino', 'Restricción de líquidos'],
+      ans: 1,
+      exp: 'Los calcioantagonistas dihidropiridínicos dilatan la arteriola precapilar pero no la vénula: sube la presión hidrostática del capilar y aparece edema dependiente de la dosis. No hay exceso de volumen, por eso el diurético casi no ayuda. Bajar la dosis y agregar IECA o ARA-II (que también dilatan el lado venoso) lo reduce y mejora el control de la PA.',
+      why: ['El edema no es por volumen: responde poco al diurético y suma efectos adversos.', '', 'No hay datos de IC; el edema es efecto del fármaco.', 'También es dihidropiridínico y da el mismo efecto.', 'No corrige el mecanismo.'],
+      ref: 'ESC 2024 HTA' })
   ],
 
   cases: [

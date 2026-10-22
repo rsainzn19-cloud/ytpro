@@ -6,6 +6,70 @@ export default {
   lessons: {
     erc: {
       hook: 'Clasificar bien (G y A), proteger el riñón con los fármacos correctos y manejar las complicaciones: anemia, mineral óseo, acidosis y potasio.',
+      anim: 'erc',
+      video: [
+        { ch: 'Qué es y cómo se clasifica', sc: [
+          { v: { k: 'title', t: 'Enfermedad renal crónica', s: 'Tema 6 · Nefrología' },
+            say: 'Bienvenido a la guardia. La enfermedad renal crónica avanza en silencio hasta que ya es tarde. Hoy vas a aprender a clasificarla, a frenar su progresión con los fármacos correctos y a manejar sus complicaciones.' },
+          { v: { k: 'case', t: 'Consulta de Medicina Interna', p: { name: 'Pedro', age: 63, sex: 'H', skin: '#BF8A64', hair: '#A6A6B0', gown: '#7FB2E5' }, text: 'DM2 de 18 años e HTA. Toma metformina, glibenclamida y enalapril. TFG 34 en dos mediciones con 4 meses de diferencia.', vit: { PA: '148/84', TFG: '34', 'Alb/Cr': '540' } },
+            say: 'Conoce a don Pedro, de sesenta y tres años, diabético desde hace dieciocho años e hipertenso. Toma metformina, glibenclamida y enalapril. Su tasa de filtración glomerular es de treinta y cuatro en dos mediciones separadas por cuatro meses, y tiene mucha albúmina en la orina.' },
+          { v: { k: 'big', h: 'Definición de ERC', t: '>3 meses', s: 'TFG <60 o daño renal (albuminuria ≥30 mg/g, sedimento, imagen o biopsia) que persiste.' },
+            say: 'La definición tiene una palabra clave: tiempo. Es una tasa de filtración menor de sesenta, o un marcador de daño como albuminuria de treinta o más, que persiste por más de tres meses. Una sola creatinina alta no basta.' },
+          { v: { k: 'list', t: 'Clasifica por causa, G y A', items: ['G1 ≥90 · G2 60–89', 'G3a 45–59 · G3b 30–44', 'G4 15–29 · G5 <15', 'A1 <30 · A2 30–300 · A3 >300 mg/g'] },
+            say: 'Se clasifica por causa, por filtración y por albuminuria. G uno, noventa o más. G dos, de sesenta a ochenta y nueve. G tres a, de cuarenta y cinco a cincuenta y nueve, y G tres b, de treinta a cuarenta y cuatro. G cuatro, de quince a veintinueve, y G cinco, menos de quince. Y la albuminuria: A uno menor de treinta, A dos hasta trescientos y A tres por arriba.' },
+          { v: { k: 'quiz', q: 'Pedro: TFG 34 y albúmina/creatinina de 540 mg/g. ¿Clasificación?', opts: ['G3a A2', 'G3b A3', 'G4 A3'], a: 1 },
+            say: 'Pausa. Pedro tiene filtración de treinta y cuatro y un cociente albúmina creatinina de quinientos cuarenta. ¿Cómo lo clasificas?',
+            exp: 'G tres b, A tres. Treinta y cuatro está entre treinta y cuarenta y cuatro, y quinientos cuarenta supera trescientos. Las causas más frecuentes son la diabetes y la hipertensión.' },
+          { v: { k: 'vs', cmp: 'lra-erc', rows: [0, 1, 4] },
+            say: '¿Aguda o crónica? En la crónica la creatinina ya estaba alta, hay anemia y alteraciones del fósforo y la paratohormona, y los riñones son pequeños y ecogénicos. Ojo: la diabetes, la amiloidosis, la poliquistosis y el VIH dan riñones grandes aunque la enfermedad sea crónica.' }
+        ] },
+        { ch: 'Cómo se pierde el riñón', sc: [
+          { v: { k: 'anim', id: 'erc', step: 0 },
+            say: '¿Por qué la enfermedad avanza aunque controles la causa? Cuando se pierden nefronas, las que quedan trabajan de más. Sus glomérulos se agrandan y cada uno filtra más. Es la hiperfiltración: al principio compensa, pero las desgasta.' },
+          { v: { k: 'anim', id: 'erc', step: 1 },
+            say: 'Esa compensación tiene un precio. Con la aferente dilatada y la eferente contraída, sube la presión dentro del glomérulo. La barrera se daña, deja escapar albúmina a la orina y el glomérulo se cicatriza. La albuminuria marca el daño y además acelera la progresión.' }
+        ] },
+        { ch: 'Nefroprotección', sc: [
+          { v: { k: 'anim', id: 'erc', step: 2 },
+            say: 'Aquí está la clave del tratamiento. El IECA o ARA dos dilata la eferente y deja salir la presión. El inhibidor de SGLT2 hace que llegue más sodio a la mácula densa, que contrae la aferente. Las dos maniobras bajan la presión glomerular y la albuminuria.' },
+          { v: { k: 'list', t: 'Las 4 llaves', items: ['PA: PAS <120 si se tolera (KDIGO)', 'IECA o ARA-II a dosis máxima si hay albuminuria', 'iSGLT2 con TFG ≥20', 'Finerenona: DM2 con albuminuria y K normal', 'Además: arGLP-1 en DM2, estatina, sin AINE'] },
+            say: 'La nefroprotección tiene cuatro llaves. Controla la presión: KDIGO propone una sistólica menor de ciento veinte si se tolera. IECA o ARA dos a dosis máxima si hay albuminuria. Inhibidor de SGLT2 con filtración de veinte o más. Y finerenona si es diabético con albuminuria y potasio normal. Suma semaglutida en diabetes, estatina y nada de antiinflamatorios.' },
+          { v: { k: 'big', h: 'Al iniciar IECA, ARA-II o iSGLT2', t: '≤30%', u: 'de ascenso de Cr', s: 'es esperado: bajó la presión glomerular. Continúa y vigila Cr y K; si sube más, busca la causa.' },
+            say: 'Cuando inicias estos fármacos, la filtración cae un poco. Es lo esperado: bajaste la presión glomerular. Si la creatinina sube treinta por ciento o menos, continúa el fármaco y vigila. Si sube más, revisa volumen, antiinflamatorios y estenosis de arteria renal.' },
+          { v: { k: 'quiz', q: 'Pedro inicia dapagliflozina y su TFG baja de 34 a 30 (≈12%). ¿Qué haces?', opts: ['Suspenderla', 'Continuar y vigilar'], a: 1 },
+            say: 'Pausa. Dos semanas después de iniciar dapagliflozina, la filtración de Pedro baja de treinta y cuatro a treinta. ¿Qué haces?',
+            exp: 'Continuar y vigilar. Es una caída hemodinámica de alrededor de doce por ciento, menor del treinta. A largo plazo, esa misma baja de presión es lo que protege al riñón.' },
+          { v: { k: 'list', t: 'Ajusta los fármacos', items: ['Metformina: TFG 30–44 máx 1 g/día; <30 suspender', 'Glibenclamida: evitar (hipoglucemia)', 'Sin AINE; ajusta antibióticos y enoxaparina', 'Días de enfermedad: pausa IECA/ARA, iSGLT2, metformina'] },
+            say: 'Revisa también la lista de medicamentos. La metformina se limita a mil miligramos al día con filtración de treinta a cuarenta y cuatro, y se suspende por debajo de treinta. La glibenclamida se evita por hipoglucemia prolongada. Y si se deshidrata, pausa por unos días el IECA o ARA dos, el inhibidor de SGLT2 y la metformina.' },
+          { v: { k: 'mnemo', t: 'Las 4 llaves de la nefroprotección', d: 'Presión controlada · IECA o ARA-II si hay albuminuria · iSGLT2 con TFG ≥20 · Finerenona si DM2 con albuminuria. Nunca IECA + ARA-II.' },
+            say: 'Para recordarlo, piensa en cuatro llaves que cierran la puerta a la diálisis: presión controlada, IECA o ARA dos, inhibidor de SGLT2 y finerenona. Y nunca combines un IECA con un ARA dos.' }
+        ] },
+        { ch: 'Lo que el riñón deja de fabricar', sc: [
+          { v: { k: 'anim', id: 'erc', step: 3 },
+            say: 'El riñón también es una glándula. Fabrica eritropoyetina y activa la vitamina D. Al perder nefronas, baja la eritropoyetina y la médula ósea hace menos eritrocitos: anemia normocítica. Y baja el calcitriol, así que el intestino absorbe menos calcio.' },
+          { v: { k: 'list', t: 'Anemia de la ERC', items: ['Normocítica; descarta otras causas', 'Primero hierro: TSAT ≤30% y ferritina ≤500', 'AEE si Hb <10 con hierro repleto', 'Meta Hb ≤11.5 g/dL: no normalizar'] },
+            say: 'La anemia renal es normocítica, pero antes descarta otras causas. Primero repón hierro si la saturación de transferrina es de treinta por ciento o menos y la ferritina de quinientos o menos. Si la hemoglobina sigue menor de diez, agrega un agente estimulante de eritropoyesis, sin pasar de once punto cinco.' },
+          { v: { k: 'quiz', q: 'Hb 9.0 g/dL, ferritina 60 y TSAT 12%. ¿Primer paso?', opts: ['Eritropoyetina con meta Hb 13', 'Hierro, de preferencia IV'], a: 1 },
+            say: 'Pausa. Un año después, Pedro tiene hemoglobina de nueve, ferritina de sesenta y saturación de transferrina de doce por ciento. ¿Qué indicas primero?',
+            exp: 'Hierro, de preferencia intravenoso. Tiene ferropenia y, sin hierro, la eritropoyetina funciona mal. Además, buscar una hemoglobina de trece aumenta los eventos vasculares cerebrales y las trombosis.' }
+        ] },
+        { ch: 'Lo que el riñón deja de eliminar', sc: [
+          { v: { k: 'anim', id: 'erc', step: 4 },
+            say: 'Ahora lo que se acumula. El riñón ya no elimina bien el fósforo, el potasio ni la carga de ácido. El fósforo alto y el calcio bajo estimulan a las paratiroides: sube la paratohormona y saca calcio del hueso.' },
+          { v: { k: 'list', t: 'Mineral óseo', items: ['P ↑, Ca ↓, calcitriol ↓, FGF-23 ↑, PTH ↑', 'Dieta baja en fósforo y quelantes', 'Sevelamer si hay hipercalcemia o calcificación', 'Calcitriol o análogos, cinacalcet', 'Refractario: paratiroidectomía'] },
+            say: 'El patrón mineral es fósforo alto, calcio bajo, calcitriol bajo y paratohormona alta: hiperparatiroidismo secundario. Lleva a enfermedad ósea y a calcificación vascular. Se trata con dieta baja en fósforo y quelantes, prefiriendo sevelamer si hay hipercalcemia o calcificación. Después, calcitriol o análogos, cinacalcet y, si falla, paratiroidectomía.' },
+          { v: { k: 'list', t: 'Potasio, ácido y volumen', items: ['Acidosis: bicarbonato oral si HCO₃ <18', 'Hiper-K: dieta, sin AINE, quelantes', 'Mantén IECA/ARA-II con patiromer o ciclosilicato', 'Volumen: sodio <2 g/día y diurético de asa'] },
+            say: 'La acidosis metabólica se trata con bicarbonato oral cuando el bicarbonato sérico baja de dieciocho, porque desgasta hueso y músculo. Para la hiperkalemia: dieta, suspender antiinflamatorios y quelantes como patiromer o ciclosilicato de zirconio. Así puedes mantener el IECA o ARA dos que protege el riñón.' },
+          { v: { k: 'list', t: 'Uremia: lo más tardío', items: ['Pericarditis y encefalopatía', 'Prurito, náusea y neuropatía', 'Sangrado por plaquetas que no funcionan', 'Primera causa de muerte: cardiovascular'] },
+            say: 'Con filtración muy baja aparece la uremia: pericarditis, encefalopatía, prurito, náusea y neuropatía. El sangrado urémico se debe a plaquetas que no funcionan, aunque su número sea normal, y responde a desmopresina. Pero recuerda: estos pacientes mueren sobre todo por enfermedad cardiovascular.' }
+        ] },
+        { ch: 'Preparar el final', sc: [
+          { v: { k: 'flow', t: 'TFG <30: planea la terapia', steps: ['Referir a Nefrología', 'Educar: HD, DP, trasplante, conservador', 'Fístula AV en brazo no dominante', 'Diálisis por síntomas, no por cifra'] },
+            say: 'Con filtración menor de treinta, o albuminuria de trescientos o más, envía a Nefrología. Explica las opciones: hemodiálisis, diálisis peritoneal, trasplante y manejo conservador. Planea una fístula arteriovenosa en el brazo no dominante con meses de anticipación y protege esas venas. La diálisis se inicia por síntomas o complicaciones, no por una cifra.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Cr ↑ ≤30% al iniciar IECA, ARA-II o iSGLT2 no es motivo para suspenderlos. Y en la anemia: primero hierro, luego eritropoyetina.' },
+            say: 'La perla para el examen: que la creatinina suba hasta treinta por ciento al iniciar un IECA, un ARA dos o un inhibidor de SGLT2 no es motivo para suspenderlos. Y en la anemia, primero hierro y luego eritropoyetina. Ahora ve a las preguntas del tema.' }
+        ] }
+      ],
       compare: ['lra-erc'],
       nn: [['chronic-kidney-disease', 'Chronic Kidney Disease']],
       yt: 'chronic kidney disease',
@@ -26,7 +90,8 @@ export default {
 <li>Causas principales: DM (la primera), HTA, glomerulonefritis, poliquistosis.</li>
 <li>Estima la TFG con CKD-EPI 2021 (sin raza); confirma con cistatina C si hay duda (sarcopenia, amputación).</li>
 <li>Pista de cronicidad: riñones pequeños en el USG. Excepciones con riñones grandes: DM, amiloidosis, poliquistosis, VIH.</li>
-</ul>` },
+</ul>
+<p><b>Mapa de riesgo (G × A)</b>: bajo = G1–G2 A1 · moderado = G1–G2 A2 o G3a A1 · alto = G1–G2 A3, G3a A2 o G3b A1 · muy alto = G3a A3, G3b A2–A3 y cualquier G4–G5. A mayor riesgo, más seguimiento y referencia más temprana.</p>` },
         { h: 'Nefroprotección', html: `
 <ul>
 <li><b>PA</b>: KDIGO propone PAS &lt;120 si se tolera (medición estandarizada).</li>
@@ -52,7 +117,7 @@ export default {
 <ul>
 <li>Metformina: TFG 30–44 máx 1 000 mg/día; &lt;30 suspender.</li>
 <li>Evita AINE, ajusta antibióticos, gabapentina, enoxaparina, digoxina, colchicina.</li>
-<li>Gadolinio: evitar con TFG &lt;30 (fibrosis sistémica nefrogénica); contraste yodado con prevención.</li>
+<li>Gadolinio con TFG &lt;30 o en diálisis: si el estudio es necesario, usa agentes del grupo II (macrocíclicos) a la menor dosis; con ellos el riesgo de fibrosis sistémica nefrogénica es muy bajo. Evita los del grupo I. Contraste yodado con prevención.</li>
 <li>Glibenclamida: evitar (hipoglucemia prolongada).</li>
 </ul>` },
         { h: 'Referencia y preparación para terapia de reemplazo', html: `
@@ -61,6 +126,37 @@ export default {
 <li>Con TFG &lt;30: educar sobre opciones (hemodiálisis, diálisis peritoneal, trasplante preventivo, manejo conservador).</li>
 <li><b>Fístula arteriovenosa</b> (acceso de elección) meses antes de necesitar diálisis; protege las venas del brazo no dominante (sin venopunciones ni catéteres).</li>
 <li>La diálisis se inicia por síntomas o complicaciones (uremia, volumen, potasio, acidosis, desnutrición), no por una cifra aislada de TFG (estudio IDEAL).</li>
+</ul>` },
+        { h: 'Fisiopatología en 1 minuto', html: `
+<ul>
+<li><b>Hiperfiltración</b>: al perder nefronas, las que quedan dilatan su aferente y la angiotensina II contrae su eferente. Cada glomérulo filtra más, pero con presión alta.</li>
+<li>La presión alta daña la barrera: aparece <b>albuminuria</b>, que además inflama el túbulo y el intersticio. Resultado: glomeruloesclerosis y fibrosis, y se pierden más nefronas (círculo vicioso).</li>
+<li><b>Por eso protegen</b> el IECA o ARA-II (dilatan la eferente) y el iSGLT2 (más sodio a la mácula densa → contrae la aferente): los dos bajan la presión glomerular. La TFG cae un poco al inicio y luego se estabiliza.</li>
+<li><b>Lo que deja de fabricar</b>: eritropoyetina (anemia normocítica) y calcitriol (menos absorción intestinal de calcio).</li>
+<li><b>Lo que deja de eliminar</b>: fósforo (↑ FGF-23 y PTH), potasio, ácido (acidosis con brecha aniónica normal en etapas intermedias y elevada en las avanzadas), sodio y agua (HTA, edema) y toxinas urémicas.</li>
+</ul>` },
+        { h: 'Fármacos clave', html: `
+<div class="tablewrap"><table class="mini">
+<tr><th>Fármaco</th><th>Mecanismo</th><th>Efecto adverso clave</th><th>Contraindicación o precaución</th></tr>
+<tr><td>IECA o ARA-II</td><td>Dilatan la eferente: ↓ presión glomerular y albuminuria</td><td>Hiperkalemia; Cr ↑ ≤30% al inicio; tos y angioedema (IECA)</td><td>Embarazo; nunca juntos; pausa en días de enfermedad</td></tr>
+<tr><td>iSGLT2 (dapagliflozina, empagliflozina)</td><td>Más sodio a la mácula densa → contrae la aferente</td><td>Micosis genital, depleción de volumen, cetoacidosis euglucémica (DM)</td><td>Iniciar con TFG ≥20; suspender en enfermedad aguda, ayuno o cirugía</td></tr>
+<tr><td>Finerenona</td><td>Antagonista mineralocorticoide no esteroideo (antiinflamatorio y antifibrótico)</td><td>Hiperkalemia</td><td>No iniciar si K &gt;5.0 o TFG &lt;25</td></tr>
+<tr><td>Semaglutida (arGLP-1)</td><td>Frena la progresión renal y los eventos CV en DM2 con ERC</td><td>Náusea, vómito</td><td>Carcinoma medular de tiroides o MEN2</td></tr>
+<tr><td>Sevelamer</td><td>Quelante de fósforo sin calcio</td><td>Molestias digestivas</td><td>Obstrucción intestinal</td></tr>
+<tr><td>Carbonato o acetato de calcio</td><td>Quelante de fósforo con calcio</td><td>Hipercalcemia, calcificación vascular</td><td>Hipercalcemia o calcificación vascular</td></tr>
+<tr><td>Cinacalcet</td><td>Calcimimético: ↓ PTH</td><td>Hipocalcemia, náusea</td><td>Se usa en diálisis; hipocalcemia</td></tr>
+<tr><td>Agente estimulante de eritropoyesis</td><td>Estimula la médula ósea</td><td>HTA, trombosis del acceso, EVC si se busca Hb alta</td><td>No pasar de Hb 11.5; precaución con cáncer activo o EVC previo</td></tr>
+<tr><td>Patiromer · ciclosilicato de zirconio sódico</td><td>Atrapan potasio en el intestino</td><td>Hipomagnesemia (patiromer); edema (ciclosilicato, aporta sodio)</td><td>Separar el patiromer de otros fármacos orales</td></tr>
+<tr><td>Bicarbonato de sodio</td><td>Corrige la acidosis</td><td>Carga de sodio, edema</td><td>Sobrecarga de volumen</td></tr>
+</table></div>` },
+        { h: 'Cómo lo preguntan en el examen', html: `
+<ul>
+<li>“TFG 55 una sola vez después de una gastroenteritis” → <b>todavía no es ERC</b>: repite en 3 meses.</li>
+<li>“Cr sube 20% dos semanas después de iniciar IECA o iSGLT2” → <b>continúa y vigila</b>.</li>
+<li>“Hb 9, ferritina 60, TSAT 12%” → <b>hierro</b> antes que eritropoyetina.</li>
+<li>“En diálisis con eritropoyetina y Hb 13” → <b>baja o suspende la dosis</b>.</li>
+<li>“Fósforo alto con calcio alto o calcificaciones vasculares” → <b>sevelamer</b>, no quelantes de calcio.</li>
+<li>“DM2 con albuminuria pese a ARA-II + iSGLT2, K normal” → <b>finerenona</b>.</li>
 </ul>` }
       ],
       mnemo: { t: 'Las 4 llaves de la nefroprotección', d: 'Controlar la PA, IECA o ARA-II si hay albuminuria, iSGLT2 con TFG ≥20 y finerenona si es DM2 con albuminuria. Encima: estatina, sin AINE y dosis ajustadas.' },
@@ -68,7 +164,8 @@ export default {
       trap: 'Dar eritropoyetina a un paciente con ERC y ferropenia sin reponer hierro primero, o buscar una Hb de 13: aumenta los EVC y las trombosis sin beneficio.',
       guide: [
         'Meta de PA en ERC: KDIGO 2021 propone PAS <120 si se tolera; la ESC 2024 y la AHA/ACC 2025 usan metas de 120–129 o <130/80. ⚠️ Pregunta cuál usa tu profesor.',
-        'iSGLT2 sin diabetes: KDIGO 2024 los recomienda con TFG ≥20 y albuminuria ≥200 mg/g o IC, y los sugiere con TFG 20–45 aunque la albuminuria sea menor.'
+        'iSGLT2 sin diabetes: KDIGO 2024 los recomienda con TFG ≥20 y albuminuria ≥200 mg/g o IC, y los sugiere con TFG 20–45 aunque la albuminuria sea menor.',
+        'Gadolinio en ERC avanzada: textos antiguos dicen “evitarlo con TFG <30”. El consenso ACR–NKF 2021 indica que con agentes del grupo II el riesgo de fibrosis sistémica nefrogénica es muy bajo y no debe negarse un estudio necesario. ⚠️ Depende de la guía que use tu profesor.'
       ],
       refs: [
         'KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease. Kidney Int 2024.',
@@ -92,6 +189,24 @@ export default {
     }
   },
 
+  anims: {
+    erc: {
+      title: 'El riñón que se apaga',
+      steps: [
+        { cap: '<b>Menos nefronas, más trabajo.</b> Al perderse nefronas, las que quedan agrandan su glomérulo y cada una filtra más: hiperfiltración. Al principio compensa, pero las desgasta.',
+          labels: [[28, 10, 'Hiperfiltra'], [80, 12, 'Nefrona perdida'], [80, 114, 'Glomérulo grande']] },
+        { cap: '<b>Presión alta y albuminuria.</b> Con la aferente dilatada y la eferente contraída sube la presión dentro del glomérulo. La barrera se daña, se escapa albúmina a la orina y el glomérulo se cicatriza.',
+          labels: [[28, 26, 'Aferente dilatada'], [124, 10, 'Eferente contraída'], [74, 24, 'Presión ↑'], [104, 108, 'Albúmina en orina']] },
+        { cap: '<b>Nefroprotección.</b> El IECA o ARA-II dilata la eferente; el iSGLT2 hace que llegue más sodio a la mácula densa, que contrae la aferente. Bajan la presión glomerular y la albuminuria (la TFG cae un poco al inicio: es esperado).',
+          labels: [[28, 28, 'iSGLT2: contrae'], [122, 8, 'IECA/ARA: dilata'], [80, 22, 'Presión ↓'], [26, 88, 'Mácula densa']] },
+        { cap: '<b>Lo que deja de fabricar.</b> Menos eritropoyetina: la médula ósea hace menos eritrocitos (anemia normocítica). Menos calcitriol: el intestino absorbe menos calcio.',
+          labels: [[48, 22, 'EPO ↓'], [124, 6, 'Médula ósea'], [122, 56, 'Anemia'], [50, 98, 'Calcitriol ↓'], [118, 114, 'Absorbe menos Ca']] },
+        { cap: '<b>Lo que deja de eliminar.</b> Se acumulan fósforo, potasio y ácido: hiperfosfatemia, hiperkalemia (T picudas) y acidosis metabólica. El fósforo alto y el calcio bajo suben la PTH, que saca calcio del hueso.',
+          labels: [[80, 21, 'Fósforo, K y ácido ↑'], [83, 46, 'PTH ↑'], [138, 88, 'T picudas'], [30, 46, 'No se eliminan'], [84, 109, 'Hueso: sale Ca']] }
+      ]
+    }
+  },
+
   cards: [
     ['Definición de ERC', 'TFG <60 o marcador de daño (albuminuria ≥30 mg/g…) por >3 meses'],
     ['Categorías G', 'G1 ≥90 · G2 60–89 · G3a 45–59 · G3b 30–44 · G4 15–29 · G5 <15'],
@@ -106,7 +221,12 @@ export default {
     ['Quelante si hay hipercalcemia o calcificación vascular', 'Sevelamer (sin calcio)'],
     ['Sangrado urémico antes de una biopsia', 'Desmopresina'],
     ['Acceso de elección para hemodiálisis', 'Fístula arteriovenosa, meses antes'],
-    ['Bicarbonato oral en ERC', 'Si HCO₃ <18 mEq/L']
+    ['Bicarbonato oral en ERC', 'Si HCO₃ <18 mEq/L'],
+    ['Mecanismo nefroprotector del iSGLT2', 'Más sodio a la mácula densa → contrae la aferente → ↓ presión glomerular y albuminuria'],
+    ['Hiperkalemia con IECA/ARA-II en ERC', 'Bajar el K (dieta, revisar fármacos, diurético, patiromer o ciclosilicato de zirconio) y mantener el bloqueo si se puede'],
+    ['¿Cuándo pedir cistatina C?', 'Si la TFG por creatinina no es confiable: masa muscular muy alta o muy baja, amputación, suplementos de creatina'],
+    ['Mapa de riesgo KDIGO: muy alto', 'G3a A3, G3b A2–A3 y cualquier G4–G5'],
+    ['Pericarditis urémica', 'Indicación de diálisis urgente (con poca o sin heparina); a menudo sin la elevación difusa del ST típica']
   ],
 
   questions: [
@@ -228,7 +348,47 @@ export default {
       ans: 1,
       exp: 'Criterios de referencia: TFG <30, albuminuria ≥300 mg/g, caída rápida de la TFG, hematuria glomerular, HTA refractaria, alteraciones persistentes de potasio, litiasis recurrente o causa hereditaria. Con TFG <30 también empieza la planeación de la terapia de reemplazo.',
       why: ['Riesgo bajo; seguimiento en primer nivel.', '', 'G3a A1 estable puede seguirse en primer nivel.', 'Es normal.', 'G2 A2 estable se sigue en primer nivel.'],
-      ref: 'KDIGO 2024' })
+      ref: 'KDIGO 2024' }),
+
+    q({ id: 'erc-16', dif: 2,
+      stem: 'Hombre de 61 años con DM2 y ERC G3b A3. Toma losartán 100 mg y dapagliflozina. K 5.7 mEq/L en dos mediciones, ECG normal, creatinina estable. ¿Qué haces?',
+      opts: ['Suspender el losartán definitivamente', 'Mantener el losartán y bajar el potasio: dieta, revisar fármacos y quelante (patiromer o ciclosilicato de zirconio)', 'Gluconato de calcio IV', 'Hemodiálisis urgente', 'Cambiar el losartán por espironolactona'],
+      ans: 1,
+      exp: 'KDIGO 2024: la hiperkalemia asociada al bloqueo del SRAA casi siempre se maneja bajando el potasio (dieta guiada, suspender AINE o suplementos, diurético si hay sobrecarga, quelantes intestinales) en vez de suspender el fármaco que protege el riñón. Reducirlo o suspenderlo es el último recurso.',
+      why: ['Pierde la nefroprotección; es el último recurso.', '', 'Sin cambios en el ECG no hace falta estabilizar la membrana.', 'No hay indicación de urgencia.', 'Subiría todavía más el potasio.'],
+      ref: 'KDIGO 2024' }),
+
+    q({ id: 'erc-17', dif: 2,
+      stem: 'Hombre de 32 años, fisicoculturista, que toma suplementos de creatina. Examen de rutina: Cr 1.6 mg/dL (TFG estimada 58), EGO normal y cociente albúmina/creatinina de 8 mg/g. Asintomático. ¿Siguiente paso?',
+      opts: ['Diagnosticar ERC G3a e iniciar IECA', 'Medir cistatina C y estimar la TFG con creatinina y cistatina', 'Biopsia renal', 'Referir para preparar diálisis', 'No hacer nada más'],
+      ans: 1,
+      exp: 'La creatinina depende de la masa muscular y de la ingesta de creatina o carne: en este paciente la TFG estimada con creatinina subestima la real. KDIGO 2024 recomienda usar cistatina C (TFG combinada creatinina–cistatina) cuando la creatinina no es confiable, y medir la TFG si hay que tomar decisiones importantes.',
+      why: ['Una TFG poco confiable no basta para diagnosticar ERC, y no hay albuminuria.', '', 'No hay datos de enfermedad glomerular.', 'No hay ninguna indicación.', 'Hay que aclarar si la TFG baja es real.'],
+      ref: 'KDIGO 2024' }),
+
+    q({ id: 'erc-18', dif: 3,
+      stem: 'Mujer de 66 años con ERC G4 (TFG 22), sin diálisis. PTH de 160 pg/mL (alta) en dos mediciones, Ca 9.0 mg/dL, fósforo 5.2 mg/dL y 25-OH vitamina D de 12 ng/mL. ¿Qué haces primero?',
+      opts: ['Calcitriol oral para suprimir la PTH', 'Corregir lo modificable: menos fósforo (dieta y quelante) y reponer vitamina D nativa (colecalciferol)', 'Cinacalcet', 'Paratiroidectomía', 'Carbonato de calcio a dosis altas para suprimir la PTH'],
+      ans: 1,
+      exp: 'KDIGO 2017: en G3a–G5 sin diálisis con PTH alta, primero se corrigen los factores modificables: hiperfosfatemia, hipocalcemia, ingesta alta de fósforo y deficiencia de vitamina D. El calcitriol y sus análogos no se usan de rutina (hipercalcemia) y se reservan para G4–G5 con hiperparatiroidismo grave y progresivo. El cinacalcet se usa en diálisis.',
+      why: ['No se usa de rutina antes de diálisis: riesgo de hipercalcemia e hiperfosfatemia.', '', 'Su indicación es el hiperparatiroidismo secundario en diálisis.', 'Se reserva para el hiperparatiroidismo grave que no responde al tratamiento médico.', 'Aumenta la carga de calcio y la calcificación vascular.'],
+      ref: 'KDIGO 2017 CKD-MBD' }),
+
+    q({ id: 'erc-19', dif: 1,
+      stem: 'Mujer de 70 años con DM2 y ERC G3b (TFG 38, estable). A1c 7.0%. Toma metformina 850 mg c/8 h y empagliflozina. ¿Qué haces con la metformina?',
+      opts: ['Suspenderla de inmediato', 'Reducirla a un máximo de 1 000 mg/día y vigilar la TFG', 'Continuar igual', 'Cambiarla por glibenclamida', 'Aumentarla para mejorar el control'],
+      ans: 1,
+      exp: 'Con TFG 30–44, la metformina se reduce a un máximo de 1 000 mg/día; con TFG <30 se suspende. Vigila la TFG cada 3–6 meses y suspéndela temporalmente en enfermedad aguda, deshidratación o con contraste. La empagliflozina se mantiene por su beneficio renal y cardiovascular.',
+      why: ['Con TFG 38 puede seguir a dosis reducida.', '', 'Toma 2 550 mg/día: excede el máximo para su TFG.', 'Causa hipoglucemia prolongada en ERC; se evita.', 'Rebasaría la dosis permitida.'],
+      ref: 'KDIGO 2022 DM en ERC · ADA 2026' }),
+
+    q({ id: 'erc-20', dif: 2,
+      stem: 'Hombre de 58 años con ERC G5 (TFG 8) que había rechazado la diálisis. Llega con dolor torácico pleurítico y frote pericárdico. BUN 160 mg/dL. Eco: derrame pericárdico pequeño sin taponamiento. ¿Tratamiento?',
+      opts: ['AINE y colchicina, como una pericarditis viral', 'Iniciar hemodiálisis urgente, con poca o sin heparina', 'Pericardiocentesis inmediata', 'Prednisona oral', 'Anticoagulación plena'],
+      ans: 1,
+      exp: 'La pericarditis urémica es indicación de diálisis urgente (la “U” de AEIOU) y suele mejorar en 1–2 semanas de diálisis intensiva. Se usa poca o ninguna heparina por el riesgo de hemopericardio. A diferencia de la pericarditis viral, a menudo no tiene la elevación difusa del ST. La pericardiocentesis se reserva para el taponamiento.',
+      why: ['No trata la causa, y los AINE dañan la función renal residual.', '', 'Sin taponamiento no está indicada.', 'No trata la causa.', 'Aumenta el riesgo de hemopericardio.'],
+      ref: 'ESC 2015 enfermedades del pericardio · KDIGO 2024' })
   ],
 
   cases: [

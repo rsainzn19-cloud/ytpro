@@ -24,7 +24,7 @@ function hipoChiasm(g, t, cy, hurt) {
     g.line(50, 31 + d, 80, cy - 1 + d, HIPO_NERVE); g.line(80, cy - 1 + d, 110, 43 + d, HIPO_NERVE);
     g.line(50, 43 + d, 80, cy - 1 + d, HIPO_NERVE); g.line(80, cy - 1 + d, 110, 31 + d, HIPO_NERVE);
   }
-  if (hurt > 0 && blink(t, 3)) { g.disk(80, cy, 3 + Math.round(hurt), COL.red); }
+  if (hurt > 0) { g.disk(80, cy, 2, COL.red); if (blink(t, 3)) g.ring(80, cy, 4 + Math.round(hurt), COL.red); }
 }
 function hipoSignals(g, t, cy, blocked) {
   const P1 = [[50, 32], [80, cy], [110, 44]], P2 = [[50, 44], [80, cy], [110, 32]];
@@ -75,7 +75,7 @@ SCENES.hipofisis = [
   },
   // 2. Macroadenoma: crece hacia arriba, aplasta el quiasma y la hipófisis sana
   (g, t) => {
-    const p = clamp01((t % 10) / 6), hurt = clamp01((p - 0.55) / 0.45);
+    const p = clamp01(0.35 + (t % 9) / 2.5), hurt = clamp01((p - 0.55) / 0.45);
     hipoBase(g);
     g.r(61, 92, 38, 4, HIPO_GLAND);
     const top = Math.round(lerp(74, 43, p)), r2 = Math.round(lerp(6, 15, p));
@@ -87,21 +87,20 @@ SCENES.hipofisis = [
   },
   // 3. Prolactinoma: la dopamina frena la PRL; la cabergolina encoge el tumor
   (g, t) => {
-    const ph = (t % 10) / 10, cab = ph >= 0.4 ? clamp01((ph - 0.4) / 0.4) : 0;
+    const cab = clamp01((t % 10) / 5);
     hipoBase(g); hipoGland(g); hipoChiasm(g, t, 38, 0);
     for (let i = 0; i < 5; i++) { const p = (t * 0.5 + i / 5) % 1; g.r(79, Math.round(lerp(20, 68, p)), 2, 2, COL.cyan); }
     const r = Math.round(lerp(9, 4, cab)); g.disk(91, 81, r, HIPO_ADE); g.ring(91, 81, r, HIPO_ADE2);
     const n = Math.round(lerp(10, 2, cab));
     for (let i = 0; i < n; i++) { const p = (t * 0.45 + i / n) % 1, [x, y] = along([[98, 80], [126, 70], [142, 66]], p); g.r(x - 1, y - 1, 2, 2, COL.gold); }
-    if (cab > 0) for (let k = 0; k < 3; k++) {
-      const q = clamp01(cab * 1.8 - k * 0.35), [x, y] = along([[4, 44], [44, 50], [91 - r - 3, 76 + k * 4]], q);
+    for (let k = 0; k < 3; k++) {
+      const q = (t * 0.45 + k / 3) % 1, [x, y] = along([[4, 44], [44, 50], [91 - r - 3, 77 + (k - 1) * 4]], q);
       hipoPill(g, x, y, COL.orange);
     }
     gauge(g, 146, 34, 8, 62, lerp(0.92, 0.2, cab), cab > 0.6 ? COL.green : COL.gold);
   },
   // 4. Acromegalia: GH → hígado → IGF-1; la glucosa no frena la GH
   (g, t) => {
-    const ph = (t % 10) / 10, glu = ph >= 0.35;
     g.clear(COL.bg);
     hipoMini(g, 28, 40, HIPO_GH);
     for (let i = 0; i < 8; i++) { const p = (t * 0.4 + i / 8) % 1, [x, y] = along([[36, 44], [52, 60], [64, 72]], p); g.r(x - 1, y - 1, 3, 2, COL.green); }
@@ -109,17 +108,16 @@ SCENES.hipofisis = [
     for (let i = 0; i < 12; i++) g.r(52 + rnd(i, 93) * 36, 74 + rnd(i, 94) * 20, 2, 2, COL.liverD);
     for (let i = 0; i < 7; i++) { const p = (t * 0.4 + i / 7) % 1, [x, y] = along([[90, 76], [104, 70], [116, 80]], p); g.r(x - 1, y - 1, 2, 2, COL.orange); }
     hipoHand(g, 118, 112, lerp(1, 1.45, clamp01((t % 10) / 8)));
-    if (glu) for (let k = 0; k < 6; k++) {
-      const q = clamp01((ph - 0.35) / 0.35 - k * 0.1), x = lerp(64 + k * 9, 40 + (k % 3) * 4, q), y = lerp(0, 18 + Math.floor(k / 3) * 4, q);
+    for (let k = 0; k < 6; k++) {
+      const q = (t * 0.35 + k / 6) % 1, x = lerp(70 + (k % 3) * 10, 38 + (k % 3) * 4, q), y = lerp(0, 22, q);
       g.r(x, y, 3, 3, COL.white);
     }
     gauge(g, 148, 12, 6, 50, 0.82 + Math.sin(t * 3) * 0.04, COL.green);
     g.r(144, 57, 14, 1, COL.red);
-    if (glu) xMark(g, t, 151, 72, 3);
+    xMark(g, t, 46, 26, 3);
   },
   // 5. Enfermedad de Cushing: ACTH → suprarrenales → cortisol; el cortisol ya no frena al tumor
   (g, t) => {
-    const ph = (t % 10) / 10;
     g.clear(COL.bg);
     hipoMini(g, 28, 40, HIPO_ADE);
     [70, 110].forEach((x) => { kidneyBean(g, x, 102, '#A0405A'); for (let k = 0; k <= 7; k++) g.r(x - k, 84 + k, 2 * k + 1, 1, COL.orange); });
@@ -132,7 +130,7 @@ SCENES.hipofisis = [
       g.r(x - 1, y - 1, 2, 2, COL.gold);
     }
     for (let x = 46; x < 140; x += 6) g.r(x, 24, 3, 1, COL.goldD);
-    if (ph >= 0.4) { const q = clamp01((ph - 0.4) / 0.35); hipoPill(g, lerp(136, 46, q), 22, COL.cyan); }
+    { const q = clamp01(((t * 0.3) % 1) / 0.8); hipoPill(g, lerp(136, 50, q), 22, COL.cyan); }
     xMark(g, t, 46, 28, 3);
     gauge(g, 148, 20, 8, 60, 0.9, COL.gold);
   }

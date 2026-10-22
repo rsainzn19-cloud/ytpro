@@ -10,7 +10,81 @@ export default {
       yt: 'type 2 diabetes treatment',
       anim: 'dm2',
       compare: ['sglt2-glp1'],
+      video: [
+        { ch: 'Qué está fallando', sc: [
+          { v: { k: 'title', t: 'Diabetes tipo 2', s: 'Tema 1 · Endocrinología' },
+            say: 'Bienvenido a la guardia. La diabetes tipo dos es el tema que más pesa en el parcial. En este video vas a confirmar el diagnóstico, fijar la meta y, sobre todo, elegir el fármaco según la comorbilidad del paciente.' },
+          { v: { k: 'case', t: 'Lo mandan del trabajo', p: { name: 'Ramiro', age: 56, sex: 'H', skin: '#C98B62', hair: '#2A1C14', gown: '#5BA7E0' }, text: 'Chofer con obesidad. IAM hace 2 años, con stent en la DA. Asintomático. El laboratorio de la empresa reporta A1c de 6.8%.', vit: { IMC: '33', A1c: '6.8%', PA: '138/86' } },
+            say: 'Imagina a don Ramiro, chofer de cincuenta y seis años, con obesidad y un infarto hace dos años. Lo mandan del trabajo porque le salió alta el azúcar: hemoglobina glucosilada de seis punto ocho por ciento. No tiene síntomas. Lo vamos a acompañar todo el video, pero primero veamos qué está fallando dentro de su cuerpo.' },
+          { v: { k: 'anim', id: 'dm2', step: 0 },
+            say: 'En condiciones normales, la insulina se une a su receptor en el músculo. Esa señal manda los transportadores GLUT cuatro a la membrana, y por ahí entra la glucosa. Así baja la glucosa de la sangre después de comer.' },
+          { v: { k: 'anim', id: 'dm2', step: 1 },
+            say: 'En la diabetes tipo dos, el primer problema es la resistencia a la insulina. La hormona llega, pero la señal se bloquea dentro de la célula. Los transportadores se quedan atrapados y la glucosa se acumula en la sangre. La grasa visceral y el sedentarismo empeoran esa resistencia.' },
+          { v: { k: 'anim', id: 'dm2', step: 2 },
+            say: 'Al principio el páncreas compensa: la célula beta produce más insulina y la glucosa se mantiene normal por años. Pero la célula beta se agota. Cuando ya no alcanza, aparece la hiperglucemia. Por eso la enfermedad es progresiva y casi todos necesitan más fármacos con el tiempo.' }
+        ] },
+        { ch: 'Confirmar el diagnóstico', sc: [
+          { v: { k: 'list', t: 'Diabetes: basta uno', items: ['A1c ≥6.5%', 'Glucosa en ayuno ≥126 mg/dL', 'CTOG 75 g: a las 2 h ≥200 mg/dL', 'Al azar ≥200 + síntomas o crisis'] },
+            say: 'Para diagnosticar diabetes basta uno de estos criterios. Hemoglobina glucosilada de seis punto cinco por ciento o más. Glucosa en ayuno de ciento veintiséis o más. Glucosa de doscientos o más a las dos horas de una carga de setenta y cinco gramos. O glucosa al azar de doscientos o más con síntomas clásicos o crisis hiperglucémica.' },
+          { v: { k: 'quiz', q: 'Ramiro: A1c 6.8%, asintomático y sin glucosa en esa muestra. ¿Ya es diabetes?', opts: ['Sí: ya cumple el criterio', 'Falta una segunda prueba'], a: 1 },
+            say: 'Pausa. Ramiro tiene seis punto ocho por ciento, no tiene síntomas y en esa muestra no se midió glucosa. ¿Ya puedes decir que es diabético?',
+            exp: 'Todavía no. Sin hiperglucemia inequívoca necesitas dos resultados alterados: dos pruebas distintas en la misma muestra, o la misma prueba repetida. A Ramiro le miden glucosa en ayuno: ciento cuarenta y uno. Ahora sí, diabetes confirmada.' },
+          { v: { k: 'tip', kind: 'trap', t: 'La A1c miente si cambia la vida del eritrocito: hemólisis, sangrado, transfusión, embarazo, hemodiálisis, hemoglobinopatías. Usa glucosa.' },
+            say: 'Ojo con esta trampa. La hemoglobina glucosilada depende de cuánto vive el eritrocito. Con hemólisis, sangrado reciente, transfusión, embarazo, hemodiálisis o hemoglobinopatías, la cifra no es confiable. En esos pacientes diagnosticas con glucosa plasmática.' },
+          { v: { k: 'list', t: '¿Seguro que es tipo 2?', items: ['Delgado, falla rápido, anti-GAD + → LADA', 'Joven, 3 generaciones, sin anticuerpos → MODY', 'Glucocorticoides, Cushing, páncreas → secundaria', 'Si dudas: autoanticuerpos y péptido C'] },
+            say: 'Antes de seguir, pregúntate si de verdad es tipo dos. Un adulto delgado que pierde peso y falla rápido a las pastillas, con anticuerpos anti GAD positivos, tiene diabetes autoinmune latente del adulto: necesita insulina. Un joven con diabetes en tres generaciones y sin anticuerpos sugiere diabetes monogénica. Y no olvides las causas secundarias: glucocorticoides, Cushing y enfermedad pancreática.' }
+        ] },
+        { ch: 'Las metas', sc: [
+          { v: { k: 'big', h: 'Meta para la mayoría', t: '<7%', u: 'A1c', s: '<6.5% si es seguro · <8% en adulto mayor con comorbilidades · frágil: solo evitar hipoglucemia' },
+            say: 'La meta de hemoglobina glucosilada para la mayoría de los adultos es menor de siete por ciento. Puede ser más estricta, menor de seis punto cinco, si se logra sin hipoglucemia. Y más laxa, menor de ocho, en el adulto mayor con varias enfermedades. En el muy frágil solo evitas las hipoglucemias y los síntomas.' },
+          { v: { k: 'list', t: 'Las otras metas', items: ['Glucosa antes de comer: 80–130 mg/dL', 'Pico después de comer: <180 mg/dL', 'MCG: tiempo en rango 70–180 >70%', 'PA <130/80 mmHg', 'LDL <70; <55 si ya tiene ECV'] },
+            say: 'Las otras metas también se preguntan. Glucosa capilar antes de comer, de ochenta a ciento treinta. Pico después de comer, menor de ciento ochenta. Con monitoreo continuo, más del setenta por ciento del tiempo entre setenta y ciento ochenta. Presión menor de ciento treinta sobre ochenta. Y colesterol LDL menor de setenta, o menor de cincuenta y cinco si ya tuvo enfermedad cardiovascular.' }
+        ] },
+        { ch: 'Elegir el fármaco', sc: [
+          { v: { k: 'flow', t: 'Elige por la comorbilidad', steps: ['ECV aterosclerótica → arGLP-1 o iSGLT2', 'Insuficiencia cardiaca → iSGLT2', 'ERC → iSGLT2 (+ semaglutida)', 'Obesidad → semaglutida o tirzepatida', 'Ninguna → metformina'] },
+            say: 'Ahora la decisión más preguntada. No eliges por la glucosa, eliges por la comorbilidad. Con enfermedad aterosclerótica, un agonista de GLP uno o un inhibidor de SGLT dos con beneficio probado. Con insuficiencia cardiaca, inhibidor de SGLT dos. Con enfermedad renal, inhibidor de SGLT dos, y semaglutida como adición. Si la prioridad es el peso, semaglutida o tirzepatida. Sin nada de eso, metformina.' },
+          { v: { k: 'anim', id: 'dm2', step: 3 },
+            say: 'La metformina sigue siendo la base cuando no hay comorbilidad cardiorrenal. Frena la producción de glucosa en el hígado. Como no estimula la insulina, sola no causa hipoglucemia. Sus problemas son la diarrea al inicio y el déficit de vitamina B doce a largo plazo. Se suspende con tasa de filtración glomerular menor de treinta.' },
+          { v: { k: 'anim', id: 'dm2', step: 4 },
+            say: 'Los inhibidores de SGLT dos, las flozinas, bloquean la reabsorción de glucosa y sodio en el túbulo proximal. La glucosa se va por la orina. La pérdida de sodio explica que reduzcan las hospitalizaciones por insuficiencia cardiaca y frenen la enfermedad renal. Para proteger el riñón se inician con filtración de veinte o más.' },
+          { v: { k: 'anim', id: 'dm2', step: 5 },
+            say: 'Los agonistas de GLP uno, las glutidas, imitan a la incretina. Liberan insulina solo cuando la glucosa está alta, bajan el glucagón, vacían el estómago más lento y dan saciedad. Por eso bajan mucho la hemoglobina glucosilada y el peso, y reducen el infarto y el evento vascular cerebral.' },
+          { v: { k: 'vs', cmp: 'sglt2-glp1', rows: [6, 8, 9] },
+            say: 'Compáralos. Las flozinas bajan la glucosa de forma moderada, brillan en insuficiencia cardiaca y riñón, y sus efectos adversos clásicos son la micosis genital y la cetoacidosis euglucémica. Las glutidas bajan más la glucosa y el peso, y su problema es la náusea. Están contraindicadas con antecedente personal o familiar de cáncer medular de tiroides o de neoplasia endocrina múltiple tipo dos.' },
+          { v: { k: 'mnemo', t: 'FLOZINA = Falla y Filtrado · GLUTIDA = Grasa y Gordura', d: 'iSGLT2: insuficiencia cardiaca y ERC. arGLP-1: ECV aterosclerótica y obesidad. En ECV aterosclerótica, cualquiera de los dos.' },
+            say: 'Para no confundirlos: flozina, falla y filtrado, es decir, insuficiencia cardiaca y riñón. Glutida, grasa y gordura, es decir, grasa en la arteria y obesidad. Y en la enfermedad aterosclerótica, cualquiera de los dos es correcto.' },
+          { v: { k: 'quiz', q: 'DM2 con IC y FEVI de 30%. Toma metformina. A1c 7.6%. ¿Qué agregas?', opts: ['Pioglitazona', 'Dapagliflozina', 'Saxagliptina'], a: 1 },
+            say: 'Pausa. Paciente con diabetes e insuficiencia cardiaca con fracción de expulsión de treinta por ciento. Toma metformina y tiene siete punto seis. ¿Qué agregas?',
+            exp: 'Dapagliflozina. Los inhibidores de SGLT dos reducen las hospitalizaciones y la muerte en insuficiencia cardiaca. La pioglitazona retiene líquidos y la saxagliptina aumentó las hospitalizaciones por insuficiencia cardiaca: las dos son trampas.' }
+        ] },
+        { ch: 'Cuando no alcanza', sc: [
+          { v: { k: 'list', t: '¿Insulina desde el inicio?', items: ['Pérdida de peso o cetosis (catabolismo)', 'A1c >10%', 'Glucosa ≥300 mg/dL con síntomas', 'Sospecha de DM1 o LADA'] },
+            say: 'Cuándo empiezas con insulina desde el primer día. Cuando hay catabolismo, es decir, pérdida de peso o cetosis. Cuando la hemoglobina glucosilada pasa de diez por ciento, o la glucosa es de trescientos o más con síntomas. Y cuando sospechas diabetes autoinmune. Si la hemoglobina glucosilada está uno punto cinco o más arriba de la meta, considera dos fármacos desde el inicio.' },
+          { v: { k: 'flow', t: 'Si necesita inyectable', steps: ['Primero arGLP-1 (o tirzepatida)', 'Basal: 10 U o 0.1–0.2 U/kg/día', 'Sube 2 U c/3 días según el ayuno', '>0.5 U/kg sin meta: sobrebasalización', 'Agrega arGLP-1 o insulina prandial'] },
+            say: 'Si necesita un inyectable, la Asociación Americana de Diabetes prefiere primero un agonista de GLP uno sobre la insulina. Si llega la insulina basal, inicia con diez unidades, o de cero punto uno a cero punto dos unidades por kilo. Sube dos unidades cada tres días según la glucosa en ayuno. Si pasa de cero punto cinco unidades por kilo sin llegar a la meta, es sobrebasalización: no subas más, agrega un agonista de GLP uno o insulina prandial.' },
+          { v: { k: 'tip', kind: 'trap', t: 'iDPP-4 + arGLP-1 = trampa: actúan en la misma vía y no suman. Si inicias una glutida, suspende la gliptina.' },
+            say: 'Una trampa clásica: nunca combines una gliptina con una glutida. Actúan sobre la misma vía de la incretina y no suman beneficio. Si inicias el agonista de GLP uno, suspende el inhibidor de DPP cuatro.' }
+        ] },
+        { ch: 'Seguridad y complicaciones', sc: [
+          { v: { k: 'list', t: 'Hipoglucemia', items: ['Nivel 1: 54–69 mg/dL', 'Nivel 2: <54 mg/dL', 'Nivel 3: necesita ayuda de otra persona', 'Traga: 15–20 g de glucosa, repetir en 15 min', 'No traga: glucagón o dextrosa IV'] },
+            say: 'La hipoglucemia tiene tres niveles. Nivel uno, de cincuenta y cuatro a sesenta y nueve. Nivel dos, menor de cincuenta y cuatro. Nivel tres, cuando necesita ayuda de otra persona, sin importar la cifra. Si puede tragar, regla de quince: de quince a veinte gramos de glucosa y revalorar en quince minutos. Si no puede, glucagón o dextrosa intravenosa.' },
+          { v: { k: 'list', t: 'Lo que puede salir mal', items: ['Glibenclamida en adulto mayor o ERC: hipoglucemia larga', 'Metformina: TFG 30–44 máx. 1 g/día; <30 suspender', 'iSGLT2: suspender 3 días antes de cirugía', 'iSGLT2 + ayuno: cetoacidosis euglucémica'] },
+            say: 'Y los errores de seguridad que más preguntan. La glibenclamida en adultos mayores o con enfermedad renal causa hipoglucemias prolongadas: evítala. La metformina se limita a mil miligramos con filtración de treinta a cuarenta y cuatro, y se suspende por debajo de treinta. Las flozinas se suspenden tres días antes de una cirugía, porque con ayuno causan cetoacidosis con glucosa casi normal.' },
+          { v: { k: 'list', t: 'Tamizaje desde el diagnóstico', items: ['Fondo de ojo con dilatación', 'Albúmina/creatinina en orina + TFG', 'Pies: monofilamento de 10 g', 'Después, cada año'] },
+            say: 'En la diabetes tipo dos las complicaciones pueden existir desde el diagnóstico, porque la enfermedad estuvo oculta por años. Desde el primer día: fondo de ojo con dilatación, cociente albúmina creatinina en orina con tasa de filtración, y revisión de pies con monofilamento. Después, cada año. En la tipo uno se empieza a los cinco años.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Si el caso dice IAM, EVC, IC o ERC, agrega iSGLT2 o arGLP-1 aunque la A1c ya esté en meta.' },
+            say: 'La perla para el examen: si el caso menciona infarto, evento vascular cerebral, insuficiencia cardiaca o enfermedad renal, la respuesta casi nunca es subir la metformina ni agregar una sulfonilurea. Agrega un inhibidor de SGLT dos o un agonista de GLP uno, aunque la hemoglobina glucosilada ya esté en meta. Ahora ve a las preguntas del tema para fijar lo que viste.' }
+        ] }
+      ],
       sections: [
+        { h: 'Fisiopatología en 1 minuto', html: `
+<ul>
+<li>Dos defectos: <b>resistencia a la insulina</b> (músculo, hígado y tejido adiposo) y <b>falla progresiva de la célula β</b>. La resistencia sola no basta: la DM2 aparece cuando la célula β ya no compensa.</li>
+<li><b>Octeto ominoso</b> (DeFronzo): ↓ secreción de insulina (célula β) · ↑ glucagón (célula α) · ↑ producción hepática de glucosa · ↓ captación muscular · ↑ lipólisis · ↓ efecto incretina · ↑ reabsorción renal de glucosa (SGLT2) · disfunción de neurotransmisores en el cerebro.</li>
+<li>Cada fármaco ataca una pieza: metformina (hígado), pioglitazona (músculo y grasa), sulfonilureas (célula β), arGLP-1 e iDPP-4 (incretinas y glucagón), iSGLT2 (riñón).</li>
+<li><b>Glucotoxicidad y lipotoxicidad</b>: la hiperglucemia sostenida apaga aún más a la célula β. Por eso, con A1c muy alta conviene insulina al inicio, y muchas veces después se puede reducir.</li>
+<li>La célula β pierde función año con año: casi todos necesitan intensificar con el tiempo, y no siempre es “falta de apego”.</li>
+</ul>` },
         { h: 'Diagnóstico', html: `
 <div class="tablewrap"><table class="mini">
 <tr><th>Prueba</th><th>Prediabetes</th><th>Diabetes</th></tr>
@@ -25,6 +99,16 @@ export default {
 <li>La A1c no sirve cuando cambia la vida del eritrocito: anemia ferropénica o hemolítica, hemoglobinopatías, transfusión o sangrado reciente, embarazo, hemodiálisis, eritropoyetina. Ahí usa glucosa.</li>
 <li><b>Tamizaje</b>: a todos desde los 35 años; antes si IMC ≥25 (≥23 en asiáticos) con algún factor de riesgo (familiar de primer grado, HTA, HDL &lt;35 o TG &gt;250, SOP, acantosis, ECV, sedentarismo). Si es normal, repetir cada 3 años; si hay prediabetes, cada año.</li>
 </ul>` },
+        { h: '¿Es realmente tipo 2? Diagnóstico diferencial', html: `
+<div class="tablewrap"><table class="mini">
+<tr><th>Tipo</th><th>Pistas</th><th>Estudio</th><th>Tratamiento</th></tr>
+<tr><td><b>DM1</b></td><td>Joven y delgado, inicio agudo, a veces debuta con CAD</td><td>Autoanticuerpos (GAD65, IA-2, ZnT8, insulina) positivos; péptido C bajo</td><td>Insulina basal-bolo</td></tr>
+<tr><td><b>LADA</b></td><td>Adulto delgado que falla rápido a los orales, pierde peso; otras autoinmunidades</td><td>Anti-GAD positivo; péptido C que cae con los años</td><td>Insulina pronto</td></tr>
+<tr><td><b>MODY</b></td><td>Inicio joven (típicamente &lt;25 años), sin obesidad, diabetes en 3 generaciones, sin cetosis</td><td>Anticuerpos negativos, péptido C conservado; prueba genética</td><td>HNF1A/HNF4A: sulfonilurea a dosis baja · GCK: hiperglucemia leve y estable, casi nunca requiere tratamiento</td></tr>
+<tr><td><b>Secundaria</b></td><td>Glucocorticoides, Cushing, acromegalia, feocromocitoma, pancreatitis crónica, fibrosis quística, hemocromatosis; tiazidas, antipsicóticos atípicos, inhibidores de calcineurina</td><td>Según la sospecha</td><td>Tratar la causa y la glucosa</td></tr>
+<tr><td><b>Gestacional</b></td><td>Aparece en el 2.º o 3.er trimestre sin diabetes previa clara</td><td>CTOG de 75 g a las 24–28 semanas</td><td>Dieta y ejercicio; si no basta, insulina (de elección)</td></tr>
+</table></div>
+<p>Pide autoanticuerpos cuando el cuadro no encaja: peso normal, pérdida de peso, cetosis, falla rápida a los orales o autoinmunidad asociada.</p>` },
         { h: 'Metas', html: `
 <ul>
 <li><b>A1c &lt;7%</b> para la mayoría de los adultos.</li>
@@ -55,6 +139,9 @@ export default {
 <p><span class="if">Sin esas comorbilidades</span><span class="then">Metformina + estilo de vida; agrega según meta, peso, riesgo de hipoglucemia y costo</span></p>
 <p><span class="if">Catabolismo (pérdida de peso, cetosis), A1c &gt;10% o glucosa ≥300 con síntomas</span><span class="then">Insulina desde el inicio</span></p>
 <p><span class="if">A1c ≥1.5% por arriba de la meta</span><span class="then">Considerar combinación de dos fármacos desde el inicio</span></p>
+<p><span class="if">Necesita más potencia o un inyectable, sin catabolismo</span><span class="then">arGLP-1 o tirzepatida antes que insulina (suspende el iDPP-4 si lo tomaba)</span></p>
+<p><span class="if">Insulina basal &gt;0.5 U/kg/día sin llegar a meta, hipoglucemias o gran diferencia noche-mañana</span><span class="then">Sobrebasalización: no subas la basal; agrega arGLP-1 o insulina prandial</span></p>
+<p><span class="if">ERC con albuminuria persistente pese a IECA/ARA-II a dosis máxima (TFG ≥25, K normal)</span><span class="then">Agregar finerenona (además del iSGLT2)</span></p>
 </div>` },
         { h: 'Hipoglucemia', html: `
 <ul>
@@ -70,6 +157,15 @@ export default {
 <li><b>Enfermedad renal</b>: cociente albúmina/creatinina en orina (CAC) y TFG al diagnóstico y cada año.</li>
 <li><b>Neuropatía</b>: monofilamento de 10 g más otra prueba (diapasón de 128 Hz, pinchazo o temperatura) al diagnóstico y cada año. Revisa los pies en cada consulta.</li>
 <li><b>Macrovascular</b>: estatina de intensidad moderada a todos los diabéticos de 40–75 años; alta intensidad si hay ≥1 factor de riesgo o ECV. IECA o ARA-II si hay HTA con albuminuria. Aspirina en prevención secundaria.</li>
+</ul>` },
+        { h: 'Cómo lo preguntan en el examen', html: `
+<ul>
+<li>A1c de 6.7% en un paciente sin síntomas → <b>confirmar con una segunda prueba</b> (no diagnosticar ni tratar todavía).</li>
+<li>Glucosa al azar ≥200 con poliuria, polidipsia y pérdida de peso → <b>ya es diabetes</b>; si hay catabolismo o A1c &gt;10% → <b>insulina</b>.</li>
+<li>DM2 + IAM o EVC previo con A1c “en meta” → <b>agrega arGLP-1 o iSGLT2</b>; DM2 + IC → <b>iSGLT2</b> (pioglitazona y saxagliptina son las trampas).</li>
+<li>DM2 + ERC con albuminuria → <b>iSGLT2 + IECA/ARA-II</b>; si la albuminuria persiste → <b>finerenona</b>.</li>
+<li>Toma flozina, está en ayuno o en el posoperatorio, con acidosis y glucosa &lt;250 → <b>cetoacidosis euglucémica</b>.</li>
+<li>Adulto mayor con glibenclamida y confusión matutina → <b>hipoglucemia</b>: cambia de fármaco y relaja la meta a &lt;8%. Metformina + neuropatía + anemia macrocítica → <b>B12</b>.</li>
 </ul>` }
       ],
       mnemo: { t: 'FLOZINA = Falla y Filtrado · GLUTIDA = Grasa y Gordura', d: 'iSGLT2 (-flozina) para la falla cardiaca y el filtrado renal (ERC). arGLP-1 (-glutida) para la grasa en la arteria (ECV aterosclerótica) y la gordura (obesidad). Ojo: los dos reducen eventos cardiovasculares, así que en ECV aterosclerótica cualquiera de los dos es correcto.' },
@@ -77,10 +173,13 @@ export default {
       trap: 'Una A1c de 6.7% en un paciente sin síntomas todavía no es diagnóstico: hay que confirmarla con una segunda prueba. Y la glucosa al azar ≥200 sin síntomas tampoco basta.',
       guide: [
         'Meta de A1c: la ADA pide <7% para la mayoría; la AACE propone ≤6.5% si se logra sin hipoglucemia. Si la pregunta no da más datos, contesta <7%.',
-        'Primer fármaco: muchas guías y libros anteriores ponen la metformina como primer paso para todos. La ADA actual indica iSGLT2 o arGLP-1 desde el inicio, con o sin metformina, cuando hay ECV, IC o ERC. Si el caso trae una comorbilidad cardiorrenal, contesta con la ADA. ⚠️ Confirma con tu profesor qué versión de la GPC mexicana usa.'
+        'Primer fármaco: muchas guías y libros anteriores ponen la metformina como primer paso para todos. La ADA actual indica iSGLT2 o arGLP-1 desde el inicio, con o sin metformina, cuando hay ECV, IC o ERC. Si el caso trae una comorbilidad cardiorrenal, contesta con la ADA. ⚠️ Confirma con tu profesor qué versión de la GPC mexicana usa.',
+        '⚠️ Depende de la guía: tamizaje. La ADA tamiza a todos los adultos desde los 35 años (antes si hay sobrepeso con algún factor de riesgo); la USPSTF lo recomienda de los 35 a los 70 años solo con sobrepeso u obesidad.'
       ],
       refs: [
         'American Diabetes Association. Standards of Care in Diabetes—2026. Diabetes Care 2026;49(Suppl 1).',
+        'Davies MJ, et al. Management of hyperglycemia in type 2 diabetes, 2022. A consensus report by the ADA and the EASD. Diabetes Care 2022.',
+        'US Preventive Services Task Force. Screening for prediabetes and type 2 diabetes. JAMA 2021.',
         'KDIGO 2022 Clinical Practice Guideline for Diabetes Management in Chronic Kidney Disease.',
         'Samson SL, et al. AACE Consensus Statement: Comprehensive Type 2 Diabetes Management Algorithm, 2023.'
       ]
@@ -97,10 +196,10 @@ export default {
         ['Baja la A1c', 'Moderado (≈0.5–0.8%; menos si TFG <45)', 'Alto (≈1–1.5% o más)'],
         ['Peso', '↓ 2–3 kg', '↓ de moderado a muy alto (semaglutida y tirzepatida, las de mayor efecto)'],
         ['Hipoglucemia', 'No, si se usa solo', 'No, si se usa solo'],
-        ['Beneficio estrella', 'IC (FEr y FEp) y ERC', 'ECV aterosclerótica y obesidad (semaglutida también ERC)'],
+        ['Beneficio estrella', 'IC (FEr y FEp) y ERC', 'ECV aterosclerótica, obesidad; semaglutida: ERC'],
         ['Vía', 'Oral, una vez al día', 'Subcutánea semanal o diaria (semaglutida también oral)'],
         ['Efecto adverso clásico', 'Micosis genital, cetoacidosis euglucémica', 'Náusea y vómito, colelitiasis'],
-        ['Contraindicación clásica', 'TFG <20 para iniciarlo; diálisis', 'Carcinoma medular de tiroides o MEN2, personal o familiar']
+        ['Contraindicación clásica', 'TFG <20 para iniciarlo; diálisis', 'Cáncer medular de tiroides o MEN2 (propio o familiar)']
       ]
     }
   },
@@ -145,7 +244,12 @@ export default {
     ['Niveles de hipoglucemia', '1: 54–69 · 2: <54 · 3: grave, necesita ayuda de otra persona'],
     ['Regla de 15', '15–20 g de glucosa oral, revalorar en 15 min y repetir si sigue <70'],
     ['Sulfonilurea a evitar en adultos mayores y ERC', 'Glibenclamida: hipoglucemia prolongada'],
-    ['Tamizaje de complicaciones en DM2', 'Al diagnóstico: fondo de ojo, CAC + TFG y pies con monofilamento; luego cada año']
+    ['Tamizaje de complicaciones en DM2', 'Al diagnóstico: fondo de ojo, CAC + TFG y pies con monofilamento; luego cada año'],
+    ['Octeto ominoso (DeFronzo)', 'β: ↓ insulina · α: ↑ glucagón · hígado: ↑ glucosa · músculo: ↓ captación · grasa: ↑ lipólisis · intestino: ↓ incretinas · riñón: ↑ reabsorción · cerebro: disfunción'],
+    ['LADA: cómo sospecharla y tratarla', 'Adulto delgado que falla rápido a los orales y pierde peso; anti-GAD positivo y péptido C que cae → insulina'],
+    ['MODY: pistas y tratamiento', 'Inicio joven, 3 generaciones, sin anticuerpos, péptido C conservado. HNF1A: sulfonilurea a dosis baja · GCK: no requiere tratamiento'],
+    ['Sobrebasalización', 'Basal >0.5 U/kg/día sin llegar a meta (o hipoglucemias, gran diferencia noche-mañana) → agrega arGLP-1 o insulina prandial'],
+    ['DM2 + ERC con albuminuria pese a IECA/ARA-II a dosis máxima', 'Finerenona (TFG ≥25 y potasio normal), además del iSGLT2']
   ],
 
   questions: [
@@ -267,7 +371,47 @@ export default {
       ans: 3,
       exp: 'En adultos mayores con varias enfermedades crónicas o deterioro cognitivo leve-moderado, la ADA sugiere A1c <8.0%. Las metas estrictas aumentan hipoglucemias, caídas y mortalidad sin beneficio a corto plazo. En el muy frágil o con expectativa de vida corta no se persigue la A1c: se evitan la hipoglucemia y la hiperglucemia sintomática.',
       why: ['Una meta tan estricta aumenta hipoglucemias y caídas.', 'Igual: demasiado estricta para él.', 'Es la meta para adultos mayores sanos, no para este perfil.', '', 'Sí importa: hay que evitar la hipoglucemia y la hiperglucemia sintomática.'],
-      ref: 'ADA 2026, secc. 13' })
+      ref: 'ADA 2026, secc. 13' }),
+
+    q({ id: 'dm2-16', dif: 2,
+      stem: 'Hombre de 39 años, IMC 22, diagnosticado con DM2 hace 10 meses. Al inicio respondió a metformina y glimepirida, pero hoy tiene A1c 9.8% y bajó 4 kg sin dieta. Tiene vitíligo. Anti-GAD65 positivos y péptido C bajo. ¿Diagnóstico y manejo?',
+      opts: ['DM2 con mal apego; agregar sitagliptina', 'Diabetes autoinmune latente del adulto (LADA); iniciar insulina', 'MODY; subir la glimepirida', 'Diabetes por pancreatitis crónica; enzimas pancreáticas', 'DM2; agregar pioglitazona'],
+      ans: 1,
+      exp: 'LADA: diabetes autoinmune de inicio en el adulto que al principio parece tipo 2. Pistas: peso normal, falla rápida a los orales, pérdida de peso, otra autoinmunidad y anti-GAD positivos con péptido C bajo. La célula β se está destruyendo: necesita insulina pronto.',
+      why: ['El problema no es el apego: los anticuerpos y el péptido C bajo indican destrucción autoinmune de la célula β.', '', 'El MODY tiene anticuerpos negativos y péptido C conservado.', 'No hay antecedente de pancreatitis ni datos de insuficiencia exocrina.', 'Agregar orales solo retrasa la insulina que necesita.'],
+      ref: 'ADA 2026, secc. 2' }),
+
+    q({ id: 'dm2-17', dif: 3,
+      stem: 'Mujer de 63 años, 80 kg, con DM2 en metformina y glargina 72 U/día. Glucosa en ayuno 110–125 mg/dL, pero de 240–280 por la tarde. Tuvo dos hipoglucemias nocturnas este mes. A1c 8.8%. ¿Qué haces?',
+      opts: ['Subir la glargina a 80 U/día', 'No subir la basal: agregar un arGLP-1 (o insulina prandial)', 'Cambiar la glargina por NPH', 'Agregar glibenclamida', 'Suspender la metformina'],
+      ans: 1,
+      exp: 'Basal de 0.9 U/kg/día, ayuno en meta, hiperglucemia después de comer e hipoglucemias nocturnas = sobrebasalización (señal de alerta: basal >0.5 U/kg/día). Subir la basal solo aumenta la hipoglucemia; el problema es la glucosa posprandial. Agrega un arGLP-1 (o una combinación fija con la basal) o insulina prandial antes de la comida principal.',
+      why: ['El ayuno ya está en meta; más basal solo da más hipoglucemia nocturna.', '', 'La NPH tiene pico y causa más hipoglucemia nocturna que la glargina.', 'Sulfonilurea con dosis alta de insulina aumenta la hipoglucemia y el peso.', 'La metformina sigue siendo útil y no causa hipoglucemia.'],
+      ref: 'ADA 2026, secc. 9' }),
+
+    q({ id: 'dm2-18', dif: 3,
+      stem: 'Hombre de 66 años con DM2 y ERC: TFG 48 mL/min/1.73 m², CAC 520 mg/g, K 4.6 mEq/L. Toma losartán 100 mg/día, empagliflozina y metformina. A1c 6.9%, PA 128/78. ¿Qué agregas para frenar la ERC y reducir eventos CV?',
+      opts: ['Lisinopril (doble bloqueo del SRAA)', 'Finerenona', 'Espironolactona a dosis alta', 'Aliskiren', 'Nada: la A1c y la PA están en meta'],
+      ans: 1,
+      exp: 'Con DM2 y albuminuria que persiste pese a IECA o ARA-II a dosis máxima (y un iSGLT2), la ADA y KDIGO recomiendan finerenona, un antagonista mineralocorticoide no esteroideo, si la TFG es ≥25 y el potasio es normal. Redujo la progresión renal y los eventos CV (FIDELIO-DKD, FIGARO-DKD). Vigila el potasio.',
+      why: ['IECA + ARA-II aumenta la hiperkalemia y la lesión renal aguda sin beneficio.', '', 'No tiene la evidencia renal de la finerenona en DM2, y da más hiperkalemia y ginecomastia.', 'Aliskiren con ARA-II en diabetes aumentó los eventos adversos (ALTITUDE).', 'Una albuminuria de 520 mg/g indica riesgo alto aunque la A1c y la PA estén en meta.'],
+      ref: 'ADA 2026, secc. 11 · KDIGO 2022 DM en ERC' }),
+
+    q({ id: 'dm2-19', dif: 2,
+      stem: 'Mujer de 34 años con esferocitosis hereditaria y hemólisis crónica. A1c 5.4%, pero en dos días distintos tuvo glucosa en ayuno de 134 y 141 mg/dL. ¿Cómo lo interpretas?',
+      opts: ['No es diabetes: la A1c es normal', 'Diabetes: dos glucosas en ayuno ≥126 la confirman; la A1c es falsamente baja por la hemólisis', 'Prediabetes; repetir en 3 años', 'Hacer CTOG antes de concluir', 'La A1c es falsamente alta por la anemia'],
+      ans: 1,
+      exp: 'La A1c depende de la vida del eritrocito. Con hemólisis, sangrado o transfusión los eritrocitos viven menos y la A1c sale falsamente baja. Dos glucosas en ayuno ≥126 mg/dL confirman diabetes. En ella, el control se hace con glucosa capilar o monitoreo continuo, no con A1c.',
+      why: ['La A1c no es confiable con hemólisis; las glucosas ya confirman el diagnóstico.', '', 'Dos glucosas en ayuno ≥126 están en rango de diabetes, no de prediabetes.', 'No hace falta: ya tiene dos resultados diagnósticos.', 'La hemólisis acorta la vida del eritrocito y baja la A1c; no la sube.'],
+      ref: 'ADA 2026, secc. 2 y 6' }),
+
+    q({ id: 'dm2-20', dif: 2,
+      stem: 'Hombre de 58 años con DM2, sin ECV, IC ni ERC. Toma metformina 2 g/día y sitagliptina 100 mg/día. A1c 8.4%, IMC 31, sin síntomas catabólicos. ¿Cuál es el siguiente paso más adecuado?',
+      opts: ['Agregar semaglutida y continuar la sitagliptina', 'Cambiar la sitagliptina por un arGLP-1 (semaglutida o dulaglutida)', 'Iniciar insulina basal y continuar todo', 'Agregar glibenclamida', 'Subir la metformina a 3 g/día'],
+      ans: 1,
+      exp: 'Cuando hace falta más potencia, la ADA prefiere un arGLP-1 (o tirzepatida) antes que la insulina, sobre todo con obesidad. Pero los iDPP-4 y los arGLP-1 actúan en la misma vía de la incretina: no se combinan. Al iniciar el arGLP-1 se suspende la sitagliptina.',
+      why: ['iDPP-4 + arGLP-1 no suma beneficio: es la misma vía.', '', 'Sin catabolismo ni A1c >10% se prefiere el arGLP-1: baja más el peso y causa menos hipoglucemia.', 'Causa hipoglucemia y aumenta el peso.', 'Rebasa la dosis máxima y no bajaría 1.4 puntos de A1c.'],
+      ref: 'ADA 2026, secc. 9' })
   ],
 
   cases: [

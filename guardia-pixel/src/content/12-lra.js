@@ -9,6 +9,73 @@ export default {
       nn: [['acute-kidney-injury', 'Acute Kidney Injury']],
       yt: 'acute kidney injury',
       anim: 'lra',
+      video: [
+        { ch: '¿Qué es una lesión renal aguda?', sc: [
+          { v: { k: 'title', t: 'Lesión renal aguda', s: 'Tema 3 · Nefrología' },
+            say: 'Bienvenido a la guardia. Hoy vas a resolver la lesión renal aguda con tres preguntas. ¿Cumple criterios y en qué estadio está? ¿Dónde está el problema: antes, dentro o después del riñón? ¿Y necesita diálisis ya?' },
+          { v: { k: 'case', t: 'Llega a urgencias', p: { name: 'Carmen', age: 74, sex: 'M', skin: '#E2B08A', hair: '#D9D9E3', gown: '#E79AB3' }, text: 'HTA con losartán e hidroclorotiazida. Ibuprofeno por 10 días para la rodilla y 3 días de diarrea. Débil y mareada.', vit: { PA: '96/58', Cr: '2.6', K: '6.9' } },
+            say: 'Conoce a doña Carmen, de setenta y cuatro años. Es hipertensa y toma losartán con hidroclorotiazida. Desde hace diez días toma ibuprofeno por dolor de rodilla y lleva tres días con diarrea. Su creatinina es de dos punto seis. La basal era cero punto nueve.' },
+          { v: { k: 'list', t: 'Criterios KDIGO: basta uno', items: ['Cr ↑ ≥0.3 mg/dL en 48 h', 'Cr ≥1.5 veces la basal en 7 días', 'Uresis <0.5 mL/kg/h por 6 h'] },
+            say: 'Según KDIGO, hay lesión renal aguda si se cumple cualquiera de tres criterios. La creatinina sube cero punto tres o más en cuarenta y ocho horas. O llega a una vez y media su basal en siete días. O la uresis baja de medio mililitro por kilo por hora durante seis horas.' },
+          { v: { k: 'vs', a: 'Creatinina', b: 'Uresis', rows: [['Estadio 1', '1.5–1.9× la basal o ↑ ≥0.3', '<0.5 mL/kg/h por 6–12 h'], ['Estadio 2', '2.0–2.9× la basal', '<0.5 mL/kg/h por ≥12 h'], ['Estadio 3', '≥3×, Cr ≥4.0 o diálisis', '<0.3 por ≥24 h o anuria ≥12 h']] },
+            say: 'Luego, el estadio. Estadio uno: de una punto cinco a una punto nueve veces la basal. Estadio dos: de dos a dos punto nueve veces. Estadio tres: tres veces o más, creatinina de cuatro o más, o inicio de diálisis. Si la creatinina y la uresis no coinciden, te quedas con el estadio más alto.' },
+          { v: { k: 'quiz', q: 'Carmen: Cr basal 0.9 y hoy 2.6. ¿Qué estadio KDIGO tiene?', opts: ['Estadio 2', 'Estadio 3'], a: 0 },
+            say: 'Pausa. La creatinina basal de Carmen era cero punto nueve y hoy es dos punto seis. ¿Qué estadio tiene?',
+            exp: 'Estadio dos. Dos punto seis entre cero punto nueve da dos punto nueve veces la basal. Para el estadio tres necesitaría tres veces o más, una creatinina de cuatro o diálisis.' }
+        ] },
+        { ch: 'Prerrenal: el glomérulo bajo presión', sc: [
+          { v: { k: 'anim', id: 'lra', step: 0 },
+            say: 'Para entender la lesión prerrenal, mira el glomérulo. La sangre entra por la arteriola aferente, se filtra y sale por la eferente. La tasa de filtración glomerular depende de la presión dentro de ese ovillo de capilares.' },
+          { v: { k: 'anim', id: 'lra', step: 1 },
+            say: 'Cuando llega menos sangre, el riñón se defiende. Las prostaglandinas dilatan la aferente para que entre más sangre. La angiotensina dos contrae la eferente para que la presión no se escape. Así la filtración casi no cae.' },
+          { v: { k: 'anim', id: 'lra', step: 2 },
+            say: 'Ahora agrega un antiinflamatorio no esteroideo. Bloquea las prostaglandinas, la aferente se cierra y entra menos sangre al glomérulo. La filtración cae.' },
+          { v: { k: 'anim', id: 'lra', step: 3 },
+            say: 'Con un IECA o un ARA dos pasa lo contrario. Sin angiotensina dos, la eferente se relaja y la presión se escapa. En un paciente bien hidratado se tolera. En uno deshidratado, no.' },
+          { v: { k: 'anim', id: 'lra', step: 4 },
+            say: 'Junta las tres cosas: antiinflamatorio, IECA o ARA dos, y un diurético que quita volumen. Es el triple golpe, la causa clásica de lesión prerrenal en el adulto mayor. Justo lo que tiene Carmen.' }
+        ] },
+        { ch: 'Intrínseca: cuando el túbulo muere', sc: [
+          { v: { k: 'anim', id: 'lra', step: 5 },
+            say: 'En la lesión prerrenal el túbulo está sano y reabsorbe sodio con avidez. Casi no sale sodio en la orina: la fracción excretada de sodio es menor de uno por ciento y la orina sale concentrada.' },
+          { v: { k: 'anim', id: 'lra', step: 6 },
+            say: 'Si la isquemia se prolonga o hay un tóxico, las células tubulares mueren. Es la necrosis tubular aguda, la causa intrínseca más frecuente. Las células se desprenden como cilindros granulosos color café lodoso y el sodio se escapa a la orina.' },
+          { v: { k: 'list', t: 'Intrínseca: 4 lugares', items: ['Túbulo: NTA isquémica o tóxica', 'Intersticio: nefritis por fármacos', 'Glomérulo: glomerulonefritis', 'Vasos: ateroembolia, SHU/PTT, HTA maligna'] },
+            say: 'La lesión intrínseca puede estar en cuatro lugares. En el túbulo, la necrosis tubular, isquémica o por tóxicos como aminoglucósidos, contraste o mioglobina. En el intersticio, la nefritis por fármacos. En el glomérulo, las glomerulonefritis. Y en los vasos, la ateroembolia, la microangiopatía trombótica y la hipertensión maligna.' },
+          { v: { k: 'vs', cmp: 'pre-nta', rows: [1, 2, 3, 4] },
+            say: 'Así las distingues con la orina. En la prerrenal, la fracción excretada de sodio es menor de uno por ciento y la orina está concentrada. En la necrosis tubular es mayor de dos por ciento y la orina queda cerca de trescientos miliosmoles. Si toma diurético, usa la fracción excretada de urea: menor de treinta y cinco por ciento es prerrenal.' },
+          { v: { k: 'list', t: 'El sedimento habla', items: ['Cilindros hialinos → prerrenal', 'Granulosos “café lodoso” → NTA', 'Eritrocitarios → glomerulonefritis', 'Leucocitarios + eosinofilia → nefritis intersticial', 'Tira con sangre sin eritrocitos → mioglobina'] },
+            say: 'El examen general de orina es la biopsia líquida del riñón. Cilindros hialinos: prerrenal. Granulosos color café: necrosis tubular. Eritrocitarios: glomerulonefritis. Leucocitarios con fiebre, exantema y eosinofilia tras un antibiótico: nefritis intersticial. Y tira positiva para sangre sin eritrocitos: mioglobina por rabdomiólisis.' },
+          { v: { k: 'tip', kind: 'trap', t: 'FENa <1% no siempre es prerrenal: contraste, rabdomiólisis, GN aguda y obstrucción temprana también la bajan.' },
+            say: 'Ojo con esta trampa. Una fracción excretada de sodio baja no siempre es prerrenal. El contraste, la rabdomiólisis, la glomerulonefritis aguda y la obstrucción temprana también pueden darla menor de uno por ciento.' }
+        ] },
+        { ch: 'Posrenal: algo tapa la salida', sc: [
+          { v: { k: 'anim', id: 'lra', step: 7 },
+            say: 'La tercera causa es la posrenal. Una próstata grande o un lito frenan la salida de la orina. La presión se transmite hacia atrás hasta la cápsula de Bowman y la filtración se detiene. Para dar lesión, la obstrucción debe ser bilateral o de un riñón único.' },
+          { v: { k: 'flow', t: 'Sospecha de obstrucción', steps: ['Globo vesical o anuria', 'USG renal: ¿hidronefrosis?', 'Baja: sonda vesical', 'Alta: nefrostomía o catéter JJ', 'Vigila poliuria posobstructiva'] },
+            say: 'Si hay globo vesical o anuria, piensa en obstrucción. El ultrasonido renal es el primer estudio de imagen: busca hidronefrosis. Si la obstrucción es baja, sonda vesical. Si es alta, nefrostomía o catéter doble jota. Después vigila la poliuria posobstructiva, con pérdida de agua, sodio y potasio.' }
+        ] },
+        { ch: 'Tratamiento y potasio', sc: [
+          { v: { k: 'list', t: 'Manejo general', items: ['Prerrenal: cristaloide balanceado', 'Suspende AINE, IECA/ARA-II, diurético, metformina', 'Ajusta dosis a la TFG; evita nefrotóxicos', 'Diurético solo si hay sobrecarga', 'A diario: uresis, peso, Cr, K y gasometría'] },
+            say: 'El tratamiento depende de la causa. Si es prerrenal, da volumen con cristaloide, de preferencia balanceado como Hartmann. Suspende antiinflamatorios, IECA o ARA dos, diuréticos y metformina, y ajusta las dosis. El diurético solo sirve para la sobrecarga de volumen: no trata la lesión ni evita la diálisis.' },
+          { v: { k: 'flow', t: 'Hiperkalemia con cambios en el ECG', steps: ['Gluconato de calcio 10% IV', 'Insulina 10 U + glucosa 25 g', 'Salbutamol nebulizado', 'Sacar K: diurético, quelante, diálisis'] },
+            say: 'Carmen tiene potasio de seis punto nueve con ondas T picudas. Primero protege el corazón con gluconato de calcio al diez por ciento intravenoso: no baja el potasio, pero estabiliza la membrana. Luego mételo a la célula con insulina y glucosa, y salbutamol. Al final, sácalo del cuerpo.' },
+          { v: { k: 'quiz', q: 'Carmen ya recibió calcio. K 6.9 y está hipovolémica. ¿Qué sigue?', opts: ['Furosemida 80 mg IV', 'Insulina 10 U + glucosa IV'], a: 1 },
+            say: 'Pausa. Carmen ya recibió calcio, pero sigue con potasio de seis punto nueve y está deshidratada. ¿Qué sigue?',
+            exp: 'Insulina rápida con glucosa, y salbutamol: meten el potasio a la célula en minutos. La furosemida en una paciente deshidratada empeora la perfusión del riñón.' }
+        ] },
+        { ch: 'Diálisis urgente y trampas', sc: [
+          { v: { k: 'mnemo', t: 'AEIOU: las vocales de la diálisis urgente', d: 'Acidosis grave · Electrolitos (K refractario) · Intoxicaciones dializables · Overload (sobrecarga) · Uremia sintomática' },
+            say: 'Para la diálisis urgente recuerda las vocales. A, acidosis grave que no responde. E, hiperkalemia refractaria. I, intoxicaciones dializables como metanol, litio o salicilatos. O, sobrecarga de volumen que no responde a diuréticos. U, uremia sintomática: pericarditis, encefalopatía o sangrado.' },
+          { v: { k: 'quiz', q: 'Cr 6.5 mg/dL, asintomático, K 5.1, sin sobrecarga. ¿Diálisis urgente?', opts: ['Sí, por la creatinina', 'No: no cumple AEIOU'], a: 1 },
+            say: 'Pausa. Paciente con creatinina de seis punto cinco, asintomático, con potasio normal y sin sobrecarga. ¿Lo dializas de urgencia?',
+            exp: 'No. Ninguna cifra aislada de creatinina o de nitrógeno ureico indica diálisis. Lo que decide son las vocales: acidosis, electrolitos, intoxicación, sobrecarga o uremia.' },
+          { v: { k: 'list', t: 'Escenarios clásicos', items: ['Maratón + orina oscura + CK alta → rabdomiólisis', 'Livedo y dedos azules post cateterismo → ateroembolia', 'Cr ↑ a las 24–72 h de un contraste', 'Cirrosis sin respuesta a albúmina → hepatorrenal', 'Quimioterapia + urato, K y P altos → lisis tumoral'] },
+            say: 'Estos escenarios se repiten. Corredor con orina oscura y enzimas musculares muy altas: rabdomiólisis, que se trata con mucho volumen. Livedo y dedos azules semanas después de un cateterismo: ateroembolia. Creatinina que sube uno a tres días después de un contraste. Cirrosis que no responde a albúmina: síndrome hepatorrenal. Y lisis tumoral tras la quimioterapia.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Toma diurético → pide FEUrea. Y ninguna cifra de creatinina por sí sola indica diálisis: busca AEIOU.' },
+            say: 'La perla para el examen. Si el paciente toma diurético, pide la fracción excretada de urea. Y la creatinina sola nunca es indicación de diálisis: busca las vocales. Ahora ve a las preguntas del tema para fijar lo que viste.' }
+        ] }
+      ],
       compare: ['pre-nta'],
       sections: [
         { h: 'Definición y estadios (KDIGO)', html: `
@@ -101,6 +168,36 @@ export default {
 <li><b>Ateroembolia</b>: semanas después de un cateterismo, con livedo, dedos azules con pulsos presentes, eosinofilia y C3 bajo.</li>
 <li><b>Síndrome hepatorrenal</b>: cirrosis con ascitis que no responde a 2 días de albúmina (1 g/kg) y suspensión de diuréticos → terlipresina con albúmina.</li>
 <li><b>Lisis tumoral</b>: después de quimioterapia; ácido úrico, potasio y fósforo altos, calcio bajo.</li>
+</ul>` },
+        { h: 'Fisiopatología en 1 minuto', html: `
+<ul>
+<li><b>Autorregulación</b>: en un rango amplio de presión arterial, el riñón sostiene la TFG dilatando la aferente (prostaglandinas) y contrayendo la eferente (angiotensina II). Si la presión cae por debajo de ese rango, o si un fármaco bloquea esos ajustes, la TFG cae.</li>
+<li><b>Prerrenal y NTA son un continuo</b>: si la hipoperfusión dura, las células tubulares mueren. Las más vulnerables son las del túbulo proximal (segmento S3) y la rama ascendente gruesa, en la médula externa: mucho trabajo de transporte con poco oxígeno.</li>
+<li>Las células muertas se desprenden, forman cilindros que tapan el túbulo y el filtrado se regresa al intersticio. Además, a la mácula densa le llega más sodio y contrae la aferente: la TFG cae todavía más.</li>
+<li><b>Fases de la NTA</b>: inicio (horas a días) → mantenimiento (a menudo oliguria, días a semanas) → recuperación, frecuentemente poliúrica (riesgo de hipokalemia e hipovolemia).</li>
+<li><b>La creatinina es un marcador tardío</b>: sube horas a días después del daño, y mientras no esté estable las fórmulas de TFG estimada no son válidas.</li>
+</ul>` },
+        { h: 'Nefrotóxicos clave', html: `
+<div class="tablewrap"><table class="mini">
+<tr><th>Fármaco</th><th>Mecanismo</th><th>Pista clínica</th><th>Cómo prevenir</th></tr>
+<tr><td>AINE</td><td>Contraen la aferente (sin prostaglandinas); también NIA</td><td>Adulto mayor con IECA/ARA-II o diurético (triple golpe)</td><td>Evitarlos en ERC, IC, cirrosis e hipovolemia; paracetamol o tópicos</td></tr>
+<tr><td>IECA o ARA-II</td><td>Dilatan la eferente</td><td>Cr ↑ con hipovolemia o estenosis bilateral de arteria renal</td><td>Suspenderlos en los “días de enfermedad”</td></tr>
+<tr><td>Aminoglucósidos</td><td>NTA: se acumulan en el túbulo proximal</td><td>No oligúrica a los 5–10 días; Mg y K bajos</td><td>Dosis única diaria, niveles valle, ciclos cortos</td></tr>
+<tr><td>Vancomicina</td><td>NTA (más riesgo junto con piperacilina-tazobactam)</td><td>Niveles altos, tratamientos largos</td><td>Dosificar por niveles y vigilar Cr</td></tr>
+<tr><td>Anfotericina B</td><td>Vasoconstricción y daño tubular</td><td>Hipokalemia, hipomagnesemia, acidosis tubular distal</td><td>Formulación liposomal, carga de salina</td></tr>
+<tr><td>Contraste yodado</td><td>Vasoconstricción y toxicidad tubular</td><td>Cr ↑ a las 24–72 h; la FENa puede ser &lt;1%</td><td>Hidratación isotónica si hay riesgo; menor dosis</td></tr>
+<tr><td>Aciclovir, metotrexato, sulfas, indinavir</td><td>Cristales que tapan el túbulo</td><td>Cristaluria en el sedimento</td><td>Hidratación; ajustar dosis</td></tr>
+<tr><td>Cisplatino</td><td>NTA</td><td>Hipomagnesemia</td><td>Hidratación y magnesio</td></tr>
+<tr><td>Tacrolimus, ciclosporina</td><td>Contraen la aferente</td><td>Trasplantados; también hiperkalemia</td><td>Niveles séricos</td></tr>
+</table></div>` },
+        { h: 'Cómo lo preguntan en el examen', html: `
+<ul>
+<li>“Adulto mayor con losartán, hidroclorotiazida e ibuprofeno; FENa 0.3% y cilindros hialinos” → <b>prerrenal por triple golpe</b>: suspender los tres y dar volumen.</li>
+<li>“Toma furosemida y la FENa es 2.6%” → no la interpretes: pide <b>FEUrea</b> (&lt;35% = prerrenal).</li>
+<li>“K 7.1 con QRS ancho” → <b>gluconato de calcio IV</b> primero; luego insulina con glucosa y salbutamol.</li>
+<li>“Cr 6.8, asintomático, potasio y pH normales, sin sobrecarga” → <b>no hay diálisis urgente</b>: no cumple AEIOU.</li>
+<li>“Anuria, globo vesical e hidronefrosis bilateral en un hombre con HPB” → <b>sonda vesical</b>; después vigila la poliuria posobstructiva.</li>
+<li>“Fiebre, exantema y eosinofilia 10 días después de un betalactámico, con cilindros leucocitarios” → <b>nefritis intersticial</b>: suspender el fármaco.</li>
 </ul>` }
       ],
       mnemo: { t: 'AEIOU: las vocales de la diálisis urgente', d: 'Acidosis · Electrolitos (potasio) · Intoxicaciones · Overload (sobrecarga) · Uremia. Y el “triple golpe” = AINE + IECA o ARA-II + diurético.' },
@@ -181,7 +278,12 @@ export default {
     ['ECG de la hiperkalemia, en orden', 'T picudas → PR largo y P plana → QRS ancho → onda sinusoidal'],
     ['Pista de rabdomiólisis en el EGO', 'Tira positiva para sangre sin eritrocitos en el sedimento'],
     ['Primer estudio de imagen en LRA', 'USG renal: busca hidronefrosis'],
-    ['Ateroembolia renal', 'Después de un cateterismo: livedo, dedos azules con pulsos, eosinofilia, C3 bajo']
+    ['Ateroembolia renal', 'Después de un cateterismo: livedo, dedos azules con pulsos, eosinofilia, C3 bajo'],
+    ['Fases de la NTA', 'Inicio · mantenimiento (oliguria, días a semanas) · recuperación poliúrica (riesgo de hipokalemia e hipovolemia)'],
+    ['NTA por aminoglucósido', 'No oligúrica, a los 5–10 días; hipomagnesemia e hipokalemia. Menos riesgo con dosis única diaria'],
+    ['Lisis tumoral: laboratorio y tratamiento', 'Ácido úrico, K y P altos; Ca bajo → hidratación IV intensa y rasburicasa (no en déficit de G6PD)'],
+    ['Etilenglicol', 'Brecha aniónica y osmolar altas + cristales de oxalato de calcio + LRA → fomepizol ± hemodiálisis'],
+    ['Líquido que se evita en sepsis con LRA', 'Hidroxietilalmidón: más LRA, más diálisis y más mortalidad']
   ],
 
   questions: [
@@ -303,7 +405,47 @@ export default {
       ans: 1,
       exp: 'SHR-LRA: LRA funcional en la cirrosis con ascitis, por vasodilatación esplácnica y vasoconstricción renal intensa. Se diagnostica cuando no responde a 2 días sin diuréticos y con albúmina 1 g/kg, sin choque, nefrotóxicos ni daño estructural. Tratamiento: vasoconstrictor (terlipresina, o norepinefrina en terapia intensiva) con albúmina; el definitivo es el trasplante hepático.',
       why: ['Un sedimento normal con FENa muy baja no es NTA.', '', 'La hipovolemia ya se descartó con la albúmina, y los diuréticos empeoran el cuadro.', 'No hay hematuria ni proteinuria.', 'El USG es normal, sin hidronefrosis.'],
-      ref: 'ICA/ADQI 2015 · AASLD 2021 ascitis y SHR' })
+      ref: 'ICA/ADQI 2015 · AASLD 2021 ascitis y SHR' }),
+
+    q({ id: 'lra-16', dif: 2,
+      stem: 'Hombre de 58 años con neumonía por Pseudomonas tratado con amikacina desde hace 8 días. Uresis conservada (≈1.8 L/día). Cr de 0.9 a 2.1 mg/dL, Mg 1.3 mg/dL, K 3.2 mEq/L. FENa 2.8% y cilindros granulosos en el sedimento. ¿Diagnóstico más probable?',
+      opts: ['LRA prerrenal por sepsis', 'Necrosis tubular aguda por aminoglucósido', 'Nefritis intersticial aguda', 'Glomerulonefritis postinfecciosa', 'Nefropatía obstructiva'],
+      ans: 1,
+      exp: 'Los aminoglucósidos se acumulan en las células del túbulo proximal y causan NTA, típicamente no oligúrica, después de 5–10 días de tratamiento, con pérdida tubular de magnesio y potasio. El riesgo sube con ciclos largos, niveles valle altos, hipovolemia y otros nefrotóxicos (vancomicina, contraste). La dosis única diaria y la vigilancia de niveles lo reducen.',
+      why: ['La FENa >2% y los cilindros granulosos indican daño tubular, no prerrenal.', '', 'No hay exantema, eosinofilia ni cilindros leucocitarios, y los aminoglucósidos no son causa típica.', 'Daría hematuria dismórfica, cilindros eritrocitarios y C3 bajo.', 'La uresis es normal y no hay datos de obstrucción.'],
+      ref: 'KDIGO LRA 2012' }),
+
+    q({ id: 'lra-17', dif: 3,
+      stem: 'Hombre de 24 años con linfoma de Burkitt. 36 h después de iniciar la quimioterapia: uresis 0.3 mL/kg/h, Cr de 0.8 a 2.6 mg/dL, K 6.3 mEq/L, fósforo 8.4 mg/dL, calcio 6.9 mg/dL y ácido úrico 14 mg/dL. ECG sin cambios y sin síntomas de hipocalcemia. ¿Manejo más adecuado?',
+      opts: ['Gluconato de calcio IV para corregir el calcio', 'Hidratación IV intensa y rasburicasa (si no hay déficit de G6PD)', 'Alcalinizar la orina con bicarbonato', 'Alopurinol oral como única medida', 'Furosemida sin hidratación previa'],
+      ans: 1,
+      exp: 'Síndrome de lisis tumoral clínico: ácido úrico, potasio y fósforo altos, calcio bajo y LRA después de la quimioterapia de un tumor de recambio rápido. Se trata con hidratación IV intensa y rasburicasa, que degrada el ácido úrico ya formado (contraindicada en déficit de G6PD por hemólisis y metahemoglobinemia). Vigila el potasio y dializa si hay hiperkalemia, acidosis o sobrecarga refractarias.',
+      why: ['Con fósforo alto, el calcio IV precipita como fosfato de calcio en los tejidos; se reserva para hipocalcemia sintomática o cambios en el ECG.', '', 'Ya no se recomienda: favorece el depósito de fosfato de calcio.', 'Evita formar ácido úrico nuevo, pero no elimina el que ya está alto; sirve más para prevenir.', 'Sin volumen empeora la LRA; solo se usa si hay sobrecarga con buena hidratación.'],
+      ref: 'Cairo MS, Bishop M. Br J Haematol 2004 · Howard SC, et al. N Engl J Med 2011' }),
+
+    q({ id: 'lra-18', dif: 3,
+      stem: 'Hombre de 45 años encontrado confuso junto a un envase de anticongelante. pH 7.12, HCO₃ 8 mEq/L, brecha aniónica 28, brecha osmolar 32. Cr 2.4 mg/dL. Sedimento con cristales en forma de sobre. ¿Tratamiento?',
+      opts: ['Solo bicarbonato IV', 'Fomepizol y hemodiálisis', 'Furosemida IV', 'N-acetilcisteína', 'Carbón activado y observación'],
+      ans: 1,
+      exp: 'Acidosis metabólica con brecha aniónica y osmolar elevadas + cristales de oxalato de calcio + LRA = intoxicación por etilenglicol. El fomepizol inhibe la alcohol deshidrogenasa y frena la formación de metabolitos tóxicos; la hemodiálisis elimina el tóxico y corrige la acidosis (la “I” de AEIOU). Se agregan tiamina y piridoxina.',
+      why: ['Corrige parcialmente el pH, pero no detiene la formación de glicolato y oxalato.', '', 'No elimina el tóxico y empeora el volumen.', 'Es el antídoto del paracetamol.', 'El carbón activado casi no adsorbe alcoholes, y esperar permite más daño.'],
+      ref: 'Barceloux DG, et al. AACT etilenglicol, J Toxicol Clin Toxicol 1999' }),
+
+    q({ id: 'lra-19', dif: 2,
+      stem: 'Mujer de 66 años en choque séptico por colangitis, con LRA KDIGO 2. Necesita reanimación con líquidos. ¿Cuál de estas opciones debes evitar?',
+      opts: ['Cristaloide balanceado (Hartmann o Plasma-Lyte)', 'Solución salina al 0.9%', 'Hidroxietilalmidón', 'Albúmina como complemento si requiere grandes volúmenes de cristaloide', 'Norepinefrina si la hipotensión no responde a líquidos'],
+      ans: 2,
+      exp: 'Los almidones (hidroxietilalmidón) aumentan la LRA, la necesidad de diálisis y la mortalidad en sepsis (6S, CHEST). KDIGO recomienda cristaloides isotónicos sobre coloides para la expansión inicial, y en el paciente crítico se prefieren los balanceados sobre la salina.',
+      why: ['Es la opción preferida.', 'Se puede usar, aunque en volúmenes grandes da acidosis hiperclorémica; se prefieren los balanceados.', '', 'La Surviving Sepsis la sugiere cuando se han necesitado grandes volúmenes de cristaloide.', 'Es el vasopresor de primera línea en el choque séptico.'],
+      ref: 'KDIGO LRA 2012 · Surviving Sepsis Campaign 2021' }),
+
+    q({ id: 'lra-20', dif: 3,
+      stem: 'Hombre de 70 años con IC con FE reducida descompensada: ortopnea, ingurgitación yugular, crepitantes y edema hasta las rodillas. Cr de 1.4 a 2.0 mg/dL en 3 días. PA 118/72 mmHg. ¿Qué es lo más adecuado?',
+      opts: ['Suspender el diurético y dar 1 L de solución salina', 'Descongestionar con diurético de asa IV y vigilar uresis, Cr y K', 'Hemodiálisis urgente por la creatinina', 'Agregar un AINE para el dolor articular', 'Biopsia renal'],
+      ans: 1,
+      exp: 'Síndrome cardiorrenal: en la IC descompensada, la congestión venosa renal es un motor clave de la caída de la TFG. El tratamiento es descongestionar con diurético de asa IV; un ascenso moderado de la creatinina durante una descongestión eficaz no obliga a suspenderlo. Dar volumen empeora la congestión.',
+      why: ['Está congestionado: el volumen empeora el edema y la función renal.', '', 'No hay indicación AEIOU; sería opción si la sobrecarga no responde al diurético.', 'Los AINE empeoran la IC y la función renal.', 'El contexto clínico explica la LRA.'],
+      ref: 'ESC 2021 IC · Mullens W, et al. Eur J Heart Fail 2019' })
   ],
 
   cases: [

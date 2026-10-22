@@ -36,7 +36,7 @@ function ercUnit(g, t, x, y, i, o) {
 const ERC_PATH = [[75, 60], [75, 72], [75, 92], [134, 92]];
 function ercZoom(g, t, o) {
   g.clear(COL.bg);
-  vessel(g, 0, 60, 50, o.aff); vessel(g, 88, 160, 28, o.eff);
+  vessel(g, 0, 60, 50, o.aff); vessel(g, 80, 160, 28, o.eff);
   // túbulo distal que pasa junto a la aferente: la mácula densa
   g.r(0, 70, 52, 9, COL.tub); g.r(0, 72, 52, 5, ERC_TUB); g.r(40, 70, 12, 2, COL.gold);
   // túbulo proximal: baja de la cápsula y gira a la derecha

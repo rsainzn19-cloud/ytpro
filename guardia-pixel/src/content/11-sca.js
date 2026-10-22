@@ -155,7 +155,52 @@ export default {
 <tr><td>Semanas</td><td>Aneurisma ventricular</td><td>Elevación persistente del ST, IC, trombo mural</td></tr>
 <tr><td>Semanas</td><td>Síndrome de Dressler</td><td>Pericarditis autoinmune</td></tr>
 </table></div>
-<p><b>Killip</b>: I sin IC · II estertores basales o S3 · III edema pulmonar · IV choque cardiogénico.</p>` }
+<p><b>Killip</b>: I sin IC · II estertores basales o S3 · III edema pulmonar · IV choque cardiogénico.</p>
+<p><b>Choque cardiogénico</b>: ICP inmediata solo de la arteria culpable (en el mismo procedimiento, tratar las demás lesiones aumentó muerte o diálisis: CULPRIT-SHOCK). El balón de contrapulsación no se usa de rutina (IABP-SHOCK II); sí como puente en complicaciones mecánicas. En pacientes estables con enfermedad multivaso sí se busca la revascularización completa.</p>` },
+        { h: 'Troponina y diagnóstico diferencial', html: `
+<ul>
+<li><b>Troponina de alta sensibilidad</b> a las 0 h y a la 1 h (o 2 h). Lo que define el infarto es la <b>curva</b>: ascenso o descenso con al menos un valor &gt; percentil 99, más evidencia de isquemia.</li>
+<li><b>Descartar</b>: valor muy bajo a las 0 h (si el dolor empezó hace &gt;3 h) o valor bajo sin cambio a la 1 h. <b>Confirmar</b>: valor alto a las 0 h o un cambio significativo a la 1 h. En medio: zona de observación (nueva troponina a las 3 h y ecocardiograma).</li>
+<li>Los puntos de corte dependen del ensayo. Ejemplo con hs-cTnT (Elecsys): descarta &lt;5 ng/L a las 0 h, o &lt;12 ng/L con cambio &lt;3 a la 1 h; confirma ≥52 ng/L a las 0 h o un cambio ≥5 ng/L a la 1 h.</li>
+<li><b>Troponina elevada y estable</b> (sin curva) = lesión miocárdica crónica: ERC, IC crónica, HVI. <b>Elevación aguda sin trombo coronario</b>: IAM tipo 2, miocarditis, TEP, sepsis, taquiarritmia, Takotsubo, contusión, disección aórtica.</li>
+</ul>
+<div class="tablewrap"><table class="mini">
+<tr><th>Diagnóstico</th><th>Pista clínica</th><th>Clave</th></tr>
+<tr><td>Disección aórtica</td><td>Dolor desgarrante que irradia a la espalda, diferencia de PA entre brazos, mediastino ancho</td><td>Angio-TC de aorta antes de antitrombóticos; puede ocluir la CD y dar un IAM inferior</td></tr>
+<tr><td>TEP</td><td>Disnea súbita, taquicardia, hipoxemia, factores de riesgo de TVP</td><td>Wells, dímero D, angio-TC pulmonar</td></tr>
+<tr><td>Pericarditis</td><td>Dolor pleurítico que mejora al inclinarse hacia delante, frote</td><td>Elevación difusa y cóncava del ST con infradesnivel del PR</td></tr>
+<tr><td>Takotsubo</td><td>Mujer posmenopáusica tras estrés emocional o físico</td><td>Abombamiento apical que excede un territorio coronario, sin lesiones obstructivas; se recupera en semanas</td></tr>
+<tr><td>Neumotórax a tensión</td><td>Disnea, hipotensión, ruidos abolidos, desviación traqueal</td><td>Descompresión inmediata</td></tr>
+<tr><td>Ruptura esofágica (Boerhaave)</td><td>Dolor después de vómito intenso, enfisema subcutáneo</td><td>TC o esofagograma con contraste hidrosoluble</td></tr>
+</table></div>
+<p><b>MINOCA</b>: diagnóstico de trabajo cuando hay infarto con coronarias sin obstrucción significativa (&lt;50%). Busca la causa: disección coronaria espontánea, vasoespasmo, embolia coronaria, trombosis por trombofilia; la RM cardiaca separa miocarditis y Takotsubo, que ya no se llaman MINOCA.</p>
+<p><b>SCA por cocaína</b>: benzodiacepinas, nitratos y aspirina. No des betabloqueador durante la intoxicación aguda (deja la vasoconstricción alfa sin oposición).</p>` },
+        { h: 'Fármacos clave', html: `
+<div class="tablewrap"><table class="mini">
+<tr><th>Fármaco</th><th>Mecanismo</th><th>Efecto adverso clave</th><th>Contraindicación</th></tr>
+<tr><td>Aspirina</td><td>Inhibe la COX-1 de forma irreversible (↓ tromboxano A2)</td><td>Sangrado digestivo</td><td>Alergia verdadera, sangrado activo</td></tr>
+<tr><td>Clopidogrel</td><td>Profármaco (CYP2C19); bloqueo irreversible de P2Y12</td><td>Sangrado; respuesta variable en metabolizadores lentos</td><td>Sangrado activo</td></tr>
+<tr><td>Prasugrel</td><td>Bloqueo irreversible de P2Y12, más potente</td><td>Sangrado</td><td>EVC o AIT previo; 5 mg si ≥75 años o &lt;60 kg</td></tr>
+<tr><td>Ticagrelor</td><td>Bloqueo reversible de P2Y12, sin activación hepática</td><td>Disnea, bradiarritmias, sangrado</td><td>Hemorragia intracraneal previa, hepatopatía grave, inhibidores potentes de CYP3A4</td></tr>
+<tr><td>Heparina no fraccionada</td><td>Potencia la antitrombina (↓ IIa y Xa)</td><td>Sangrado, trombocitopenia inducida por heparina (TIH)</td><td>TIH previa; se vigila con TTPa y se revierte con protamina</td></tr>
+<tr><td>Enoxaparina</td><td>HBPM: inhibe más el Xa que la IIa</td><td>Sangrado; se acumula en ERC</td><td>Ajustar dosis si TFG &lt;30</td></tr>
+<tr><td>Fondaparinux</td><td>Inhibidor indirecto del Xa</td><td>Trombosis del catéter si se usa solo en la ICP (dar bolo de HNF)</td><td>TFG &lt;20</td></tr>
+<tr><td>Tenecteplasa</td><td>Convierte plasminógeno en plasmina, específica de fibrina</td><td>Hemorragia intracraneal</td><td>Ver contraindicaciones absolutas</td></tr>
+<tr><td>Nitroglicerina</td><td>Donador de NO: venodilatación (↓ precarga) y vasodilatación coronaria</td><td>Hipotensión, cefalea</td><td>PAS &lt;90, IAM de VD, sildenafil &lt;24 h o tadalafil &lt;48 h</td></tr>
+<tr><td>Betabloqueador oral</td><td>↓ FC, contractilidad y consumo de O₂</td><td>Bradicardia; choque si hay IC aguda</td><td>Killip III–IV, bloqueo AV, hipotensión, intoxicación por cocaína</td></tr>
+<tr><td>Atorvastatina 80 mg o rosuvastatina 20–40 mg</td><td>Inhibe la HMG-CoA reductasa; ↓ LDL y estabiliza la placa</td><td>Mialgias, ↑ transaminasas</td><td>Hepatopatía activa, embarazo</td></tr>
+</table></div>` },
+        { h: 'Cómo lo preguntan en el examen', html: `
+<ul>
+<li>Dolor típico + elevación del ST + hospital con hemodinamia → <b>ICP primaria</b>; nunca esperes la troponina.</li>
+<li>Hospital sin hemodinamia y traslado &gt;120 min → <b>fibrinólisis en ≤10 min</b> y luego traslado (coronariografía en 2–24 h).</li>
+<li>IAM inferior + hipotensión + IY + pulmones limpios → <b>IAM de VD</b>: V4R y volumen; “nitroglicerina” es la trampa.</li>
+<li>Infradesnivel en V1–V3 con R alta → <b>IAM posterior</b>: V7–V9.</li>
+<li>IAMSEST estable con troponina positiva → <b>coronariografía &lt;24 h</b>; “fibrinólisis” siempre es incorrecta.</li>
+<li>Dolor desgarrante a la espalda + IAM inferior → <b>disección aórtica</b>: imagen antes de antiagregar o fibrinolizar.</li>
+<li>Días 2–7 + soplo holosistólico nuevo + edema pulmonar → <b>músculo papilar</b>; con frémito paraesternal y salto oximétrico en el VD → <b>CIV</b>.</li>
+<li>Antecedente de EVC y la opción dice “prasugrel” → incorrecta; elige <b>ticagrelor</b>.</li>
+</ul>` }
       ],
       mnemo: { t: 'MONA se jubiló: solo la A es para todos', d: 'Morfina solo si el dolor es intenso · Oxígeno solo si SatO₂ <90% · Nitratos solo si no hay hipotensión, IAM de VD ni sildenafil · Aspirina a todos, salvo alergia. Y para localizar: “inferior es derecha” (DII, DIII y aVF → coronaria derecha).' },
       pearl: 'En IAMCEST nunca esperes la troponina: el ECG basta para activar la hemodinamia. Y en SCASEST la fibrinólisis siempre es la respuesta incorrecta.',
@@ -163,7 +208,8 @@ export default {
       guide: [
         'Carga de aspirina: la ESC 2023 da 150–300 mg VO y la ACC/AHA 2025 da 162–325 mg. Las dos son correctas: lo importante es darla masticada y rápido.',
         'Pretratamiento con P2Y12 en SCASEST: la ESC 2023 no lo recomienda de rutina si el cateterismo será en <24 h. En muchos hospitales se sigue dando clopidogrel en urgencias. Si la pregunta dice “según la ESC”, no se pretrata.',
-        'Bloqueo de rama izquierda nuevo: libros antiguos lo consideran IAMCEST automático; la ESC 2023 lo maneja como IAMCEST cuando hay síntomas isquémicos persistentes (apóyate en los criterios de Sgarbossa).'
+        'Bloqueo de rama izquierda nuevo: libros antiguos lo consideran IAMCEST automático; la ESC 2023 lo maneja como IAMCEST cuando hay síntomas isquémicos persistentes (apóyate en los criterios de Sgarbossa).',
+        'Duración de la doble antiagregación: la respuesta estándar del examen es 12 meses. La ESC 2023 y la ACC/AHA 2025 permiten acortarla (1–6 meses) y seguir con un solo antiagregante, de preferencia un P2Y12, si hay alto riesgo de sangrado o el paciente está estable; la ACC/AHA 2025 favorece pasar a ticagrelor solo a partir del primer mes en quien lo tolera.'
       ],
       refs: [
         'Byrne RA, et al. 2023 ESC Guidelines for the management of acute coronary syndromes. Eur Heart J 2023.',
@@ -232,7 +278,12 @@ export default {
     ['Ruptura de músculo papilar', 'IAM inferior, días 2–7: insuficiencia mitral aguda con edema pulmonar'],
     ['Elevación del ST que persiste semanas después de un IAM', 'Aneurisma ventricular'],
     ['Clasificación de Killip', 'I sin IC · II estertores o S3 · III edema pulmonar · IV choque'],
-    ['Las 7 variables de TIMI (SCASEST)', 'Edad ≥65 · ≥3 factores de riesgo · coronariopatía conocida ≥50% · aspirina en 7 días · ≥2 anginas en 24 h · desviación del ST ≥0.5 mm · marcador positivo']
+    ['Las 7 variables de TIMI (SCASEST)', 'Edad ≥65 · ≥3 factores de riesgo · coronariopatía conocida ≥50% · aspirina en 7 días · ≥2 anginas en 24 h · desviación del ST ≥0.5 mm · marcador positivo'],
+    ['Troponina elevada pero estable, sin curva (p. ej., ERC)', 'Lesión miocárdica crónica, no IAM: el infarto requiere ascenso o descenso + isquemia'],
+    ['Disección aórtica que imita un IAM inferior', 'Dolor desgarrante a la espalda, diferencia de PA entre brazos, mediastino ancho → angio-TC antes de antitrombóticos o fibrinólisis'],
+    ['Takotsubo', 'Mujer posmenopáusica tras estrés; ST↑ o T invertidas; abombamiento apical sin lesiones coronarias obstructivas; se recupera en semanas'],
+    ['Choque cardiogénico con enfermedad multivaso', 'ICP solo de la arteria culpable en el procedimiento inicial (CULPRIT-SHOCK); balón de contrapulsación no de rutina'],
+    ['SCA por cocaína', 'Benzodiacepinas + nitratos + aspirina; no betabloqueador durante la intoxicación aguda']
   ],
 
   questions: [
@@ -354,7 +405,47 @@ export default {
       ans: 1,
       exp: 'Después de un SCA (muy alto riesgo) la meta es LDL <55 mg/dL y reducción ≥50% de la basal. Si no se alcanza con estatina de alta intensidad a dosis máxima tolerada en 4–6 semanas, se agrega ezetimiba; si aun así no llega, un iPCSK9.',
       why: ['Necesita las dos cosas: reducción ≥50% y LDL <55.', '', 'La simvastatina 80 mg es menos potente y tiene más riesgo de miopatía.', 'Los fibratos no reducen eventos sobre la estatina; se usan para triglicéridos muy altos.', 'Perderías el efecto de la estatina de alta intensidad.'],
-      ref: 'ESC 2023 SCA · ESC/EAS dislipidemias' })
+      ref: 'ESC 2023 SCA · ESC/EAS dislipidemias' }),
+
+    q({ id: 'sca-16', dif: 2,
+      stem: 'Hombre de 58 años con HTA mal controlada y dolor torácico súbito “desgarrante” que se irradia a la espalda. PA 172/90 mmHg en el brazo derecho y 138/80 en el izquierdo. ECG: elevación del ST de 2 mm en DII, DIII y aVF. Radiografía: mediastino ensanchado. ¿Siguiente paso?',
+      opts: ['Fibrinólisis con tenecteplasa', 'Aspirina, ticagrelor y heparina, y activar la hemodinamia', 'Angio-TC de aorta urgente antes de cualquier antitrombótico', 'Nitroglicerina y alta si cede el dolor', 'Prueba de esfuerzo'],
+      ans: 2,
+      exp: 'Dolor desgarrante que irradia a la espalda, diferencia de PA >20 mmHg entre brazos y mediastino ancho = disección aórtica hasta demostrar lo contrario. Una disección tipo A puede ocluir el ostium de la coronaria derecha y dar elevación del ST inferior. Antitrombóticos o fibrinólisis pueden ser mortales: primero la imagen (angio-TC o eco transesofágico) y el control de FC y PA.',
+      why: ['Fibrinolizar una disección puede causar una hemorragia mortal.', 'Antiagregar y anticoagular una disección empeora el sangrado; primero se descarta con imagen.', '', 'Un dolor torácico con datos de alarma no se da de alta.', 'Está contraindicada con dolor activo y sospecha de disección.'],
+      ref: 'ESC 2023 SCA · ESC 2024 aorta' }),
+
+    q({ id: 'sca-17', dif: 2,
+      stem: 'Hombre de 70 años con ERC estadio 4 que acude por disnea leve, sin dolor torácico. ECG sin cambios respecto a uno previo. Troponina de alta sensibilidad por encima del percentil 99 a las 0 h, prácticamente igual a la 1 h y a las 3 h. ¿Cómo interpretas el resultado?',
+      opts: ['IAMSEST: coronariografía en <24 h', 'Lesión miocárdica crónica: no cumple criterios de infarto agudo', 'IAM tipo 2: transfundir', 'Falso positivo del laboratorio: repetir con otro equipo', 'Angina inestable'],
+      ans: 1,
+      exp: 'El infarto requiere una curva de troponina (ascenso o descenso con un valor >p99) más evidencia de isquemia. Una troponina elevada pero estable, sin síntomas ni cambios isquémicos, es lesión miocárdica crónica, frecuente en ERC, IC o HVI. Empeora el pronóstico, pero no se trata como SCA.',
+      why: ['Sin curva y sin isquemia no hay infarto; el cateterismo no aporta.', '', 'El tipo 2 también necesita una curva y un desequilibrio entre aporte y demanda; aquí no hay anemia, hipoxemia ni taquicardia.', 'La elevación es real y frecuente en la ERC; no es un error del ensayo.', 'La angina inestable cursa con síntomas isquémicos y troponina normal.'],
+      ref: '4ª definición universal de IAM · ESC 2023 SCA' }),
+
+    q({ id: 'sca-18', dif: 2,
+      stem: 'Mujer de 67 años que, horas después del funeral de su esposo, presenta dolor torácico y disnea. ECG: elevación del ST en V2–V5. Troponina levemente elevada. La coronariografía urgente no muestra lesiones obstructivas; la ventriculografía muestra acinesia apical con base hipercontráctil. ¿Diagnóstico más probable?',
+      opts: ['IAMCEST anterior con reperfusión espontánea', 'Miocardiopatía de Takotsubo', 'Pericarditis aguda', 'Miocardiopatía hipertrófica apical', 'Disección aórtica'],
+      ans: 1,
+      exp: 'Takotsubo: típico en mujeres posmenopáusicas tras estrés emocional o físico (descarga de catecolaminas). Imita un IAM (ST elevado, troponina), pero las coronarias no tienen lesiones que lo expliquen y la alteración de la movilidad excede un solo territorio (abombamiento apical). Suele recuperarse en semanas; el tratamiento es de soporte y de la IC. Complicaciones: obstrucción del tracto de salida, trombo apical y choque.',
+      why: ['Sin lesión culpable y con una alteración que excede un territorio coronario, no es un IAM tipo 1.', '', 'Da elevación difusa del ST con infradesnivel del PR, sin acinesia apical.', 'Da T negativas gigantes y engrosamiento del ápex, no acinesia aguda.', 'No explica la acinesia apical y daría dolor desgarrante hacia la espalda.'],
+      ref: 'ESC 2023 SCA (MINOCA) · Consenso InterTAK' }),
+
+    q({ id: 'sca-19', dif: 2,
+      stem: 'Hombre de 28 años con dolor torácico opresivo 1 h después de consumir cocaína. Agitado y diaforético; FC 124, PA 176/104 mmHg. ECG: taquicardia sinusal con infradesnivel del ST de 1 mm en V4–V6. ¿Qué fármaco está contraindicado en este momento?',
+      opts: ['Lorazepam IV', 'Nitroglicerina sublingual', 'Aspirina masticada', 'Metoprolol IV'],
+      ans: 3,
+      exp: 'En el SCA por cocaína, el pilar son las benzodiacepinas (bajan la descarga simpática, la FC y la PA), junto con nitratos y aspirina. Un betabloqueador durante la intoxicación aguda deja la estimulación alfa sin oposición: más vasoespasmo coronario e hipertensión. Si aparece elevación persistente del ST, se reperfunde como cualquier IAMCEST.',
+      why: ['Es la primera línea: reduce la descarga simpática, la taquicardia y la hipertensión.', 'Alivia el vasoespasmo y el dolor.', 'Está indicada (salvo alergia): la cocaína también favorece la trombosis.', ''],
+      ref: 'AHA/ACC 2014 SCASEST · Declaración AHA sobre cocaína' }),
+
+    q({ id: 'sca-20', dif: 3,
+      stem: 'Hombre de 66 años con IAMCEST anterior de 3 h, en choque cardiogénico (PA 78/50 mmHg, lactato 5 mmol/L, extremidades frías). La coronariografía muestra oclusión de la DA proximal y estenosis de 80% en la coronaria derecha y en la circunfleja. ¿Qué estrategia eliges en este procedimiento?',
+      opts: ['ICP solo de la arteria culpable (DA) y valorar las demás después', 'ICP inmediata de los tres vasos', 'Fibrinólisis y diferir el cateterismo', 'Balón de contrapulsación de rutina sin ICP', 'Tratamiento médico: ya pasó la ventana de 2 h'],
+      ans: 0,
+      exp: 'En choque cardiogénico se abre de inmediato la arteria culpable, sin importar el tiempo de evolución. Tratar en el mismo procedimiento las lesiones no culpables aumentó la muerte o la necesidad de diálisis a 30 días (CULPRIT-SHOCK). El balón de contrapulsación de rutina no reduce la mortalidad (IABP-SHOCK II). En pacientes estables, en cambio, sí se busca la revascularización completa.',
+      why: ['', 'En choque, la ICP multivaso inmediata empeora el pronóstico.', 'Con hemodinamia disponible, la ICP es superior, y el choque responde mal a la fibrinólisis.', 'No reduce la mortalidad y no sustituye a la reperfusión.', 'La ventana de reperfusión es de 12 h, y en choque se reperfunde incluso más tarde.'],
+      ref: 'ESC 2023 SCA · CULPRIT-SHOCK' })
   ],
 
   cases: [
