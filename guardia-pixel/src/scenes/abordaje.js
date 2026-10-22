@@ -27,7 +27,7 @@ SCENES.abordaje = (() => {
       for (let i = 0; i < 4; i++) { const a = t * 2 + i * 1.57; g.p(px + Math.cos(a) * 12, py + Math.sin(a) * 12, COL.red); }
     } else {
       const tx = px + 3 + Math.sin(th) * 14, ty = py + Math.cos(th) * 14;
-      g.line(px + 4, 26, px + 7, py - 2, COL.gold); g.line(px + 7, py - 2, tx, ty, COL.gold);
+      for (const d of [0, 1]) { g.line(px + 4 + d, 26, px + 7 + d, py - 2, COL.gold); g.line(px + 7 + d, py - 2, tx + d, ty, COL.gold); }
       g.disk(px + 7, py - 4, 2, '#7A5A9A');
       pain = active && deg > 55 && deg < 100;
       if (pain) { g.disk(px + 7, py - 4, 4, blink(t, 4) ? COL.red : '#B32638'); }
@@ -102,7 +102,7 @@ SCENES.abordaje = (() => {
       skel(g, t, 27, [[-6, 80]], 1);
       skel(g, t, 80, [[6, 80], [-6, 99], [-11, 102]], 3);
       const POLI = [[-14, 52], [14, 52], [-14, 56], [14, 56], [-16, 57], [16, 57], [-11, 102], [11, 102]];
-      skel(g, t, 133, POLI, Math.min(POLI.length, 1 + Math.floor((t % 8) * 1.4)));
+      skel(g, t, 133, POLI, Math.min(POLI.length, 5 + Math.floor((t % 8) * 0.6)));
     },
     // 4 · Artrocentesis de rodilla
     (g, t) => {

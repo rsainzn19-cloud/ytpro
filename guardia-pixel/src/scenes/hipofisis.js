@@ -71,7 +71,7 @@ SCENES.hipofisis = [
       const p = (t * 0.35 + i / 8) % 1, sx = i % 2 ? 1 : -1;
       g.r(80 + sx * lerp(10, 40, p), 80 + Math.sin(p * 6 + i) * 4, 2, 2, COL.gold);
     }
-    hipoField(g, 14, 14, -1, 0); hipoField(g, 146, 14, 1, 0);
+    hipoField(g, 14, 27, -1, 0); hipoField(g, 146, 27, 1, 0);
   },
   // 2. Macroadenoma: crece hacia arriba, aplasta el quiasma y la hipófisis sana
   (g, t) => {
@@ -83,7 +83,7 @@ SCENES.hipofisis = [
     for (let i = 0; i < 10; i++) g.p(66 + rnd(i, 91) * 28, Math.max(top + 3, 50) + rnd(i, 92) * (90 - Math.max(top + 3, 50)), HIPO_ADE2);
     const cy = 38 - Math.round(hurt * 3);
     hipoChiasm(g, t, cy, hurt); hipoSignals(g, t, cy, hurt > 0.2);
-    hipoField(g, 14, 14, -1, hurt); hipoField(g, 146, 14, 1, hurt);
+    hipoField(g, 14, 27, -1, hurt); hipoField(g, 146, 27, 1, hurt);
   },
   // 3. Prolactinoma: la dopamina frena la PRL; la cabergolina encoge el tumor
   (g, t) => {

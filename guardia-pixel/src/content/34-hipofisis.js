@@ -174,7 +174,7 @@ export default {
         { cap: '<b>La hipófisis y sus vecinos.</b> Vive en la silla turca, bajo el quiasma óptico y entre los senos cavernosos (carótida y pares III, IV y VI). El hipotálamo la controla por el tallo y sus hormonas salen a la sangre.',
           labels: [[80, 6, 'Hipotálamo'], [104, 30, 'Quiasma óptico'], [80, 80, 'Hipófisis'], [34, 92, 'Seno cavernoso'], [80, 111, 'Seno esfenoidal']] },
         { cap: '<b>Macroadenoma: compresión del quiasma.</b> Al crecer hacia arriba aplasta el centro del quiasma, donde cruzan las fibras nasales: se pierden los dos campos temporales (hemianopsia bitemporal). Además comprime la hipófisis sana: hipopituitarismo.',
-          labels: [[80, 66, 'Macroadenoma'], [80, 26, 'Quiasma'], [14, 30, 'OI'], [146, 30, 'OD'], [80, 99, 'Hipófisis sana']] },
+          labels: [[80, 66, 'Macroadenoma'], [80, 26, 'Quiasma'], [14, 43, 'OI'], [146, 43, 'OD'], [80, 99, 'Hipófisis sana']] },
         { cap: '<b>Prolactinoma y dopamina.</b> La dopamina del hipotálamo frena todo el tiempo a la prolactina. La cabergolina, agonista D2, imita esa señal: baja la PRL y encoge el tumor, aun si es macroadenoma.',
           labels: [[80, 52, 'Dopamina'], [91, 68, 'Prolactinoma'], [24, 38, 'Cabergolina'], [150, 26, 'PRL']] },
         { cap: '<b>Acromegalia: GH → IGF-1.</b> El adenoma secreta GH y el hígado responde con IGF-1, que agranda manos, pies y mandíbula. Normalmente una carga de 75 g de glucosa frena la GH; en la acromegalia no baja de 1 ng/mL.',

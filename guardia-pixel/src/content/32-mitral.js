@@ -9,6 +9,7 @@ export default {
       compare: ['em-im'],
       nn: [['valvular-heart-diseases-overview', 'Valvular Heart Diseases']],
       yt: 'mitral stenosis mitral regurgitation',
+      anim: 'mitral',
       sections: [
         { h: 'Estenosis mitral', html: `
 <ul>
@@ -64,6 +65,24 @@ export default {
         ['Complicación típica', 'FA, embolia, hipertensión pulmonar', 'Disfunción del VI, FA'],
         ['Anticoagulante en FA', 'Warfarina', 'ACOD o warfarina'],
         ['Intervención', 'Valvuloplastia con balón si es favorable', 'Reparación quirúrgica; TEER si alto riesgo']
+      ]
+    }
+  },
+
+  anims: {
+    mitral: {
+      title: 'La válvula mitral: estenosis e insuficiencia',
+      steps: [
+        { cap: '<b>Estenosis mitral.</b> La fiebre reumática fusiona las comisuras y engruesa las valvas: en diástole la sangre pasa a chorro por un orificio estrecho (retumbo con chasquido de apertura). La presión de la AI sube, la AI se dilata y la congestión llega al pulmón.',
+          labels: [[60, 24, 'AI dilatada'], [100, 52, 'Válvula estrecha'], [136, 22, 'Congestión'], [151, 48, 'P AI'], [130, 114, 'Retumbo']] },
+        { cap: '<b>Fibrilación auricular y trombo.</b> La AI dilatada fibrila: se pierde la contracción auricular (y el refuerzo presistólico del soplo), la sangre se estanca en la orejuela y se forma un trombo que puede embolizar al cerebro. Anticoagula con warfarina.',
+          labels: [[34, 35, 'Trombo'], [17, 50, 'Embolia'], [8, 101, 'FA'], [151, 48, 'P AI']] },
+        { cap: '<b>Insuficiencia mitral crónica.</b> En sístole la válvula no cierra y parte de la sangre regresa a la AI (soplo holosistólico que irradia a la axila). La sobrecarga de volumen dilata la AI y el VI; la AI distensible amortigua la presión.',
+          labels: [[60, 22, 'Reflujo'], [60, 78, 'VI dilatado'], [151, 48, 'P AI'], [130, 114, 'Holosistólico']] },
+        { cap: '<b>Ruptura de músculo papilar.</b> Días 2–7 después de un IAM inferior se rompe el papilar posteromedial: la valva queda flácida y regurgita de golpe hacia una AI pequeña y rígida. La presión se dispara: edema pulmonar súbito y choque. Cirugía urgente.',
+          labels: [[98, 84, 'Papilar roto'], [98, 40, 'Valva flácida'], [136, 22, 'Edema pulmonar'], [151, 48, 'P AI']] },
+        { cap: '<b>Tratamiento percutáneo.</b> Por vena femoral y a través del tabique interauricular: en la estenosis, un balón separa las comisuras fusionadas (valvuloplastia); en la insuficiencia, un clip une las valvas por el centro (TEER) y deja dos orificios sin reflujo.',
+          labels: [[46, 88, 'Balón (EM)'], [126, 88, 'Clip TEER (IM)'], [22, 112, 'Vía femoral']] }
       ]
     }
   },

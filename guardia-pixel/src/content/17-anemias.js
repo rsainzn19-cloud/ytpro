@@ -9,6 +9,72 @@ export default {
       compare: ['ferro-inflam', 'b12-folato'],
       nn: [['microcytic-anemia', 'Microcytic Anemia'], ['macrocytic-anemia', 'Macrocytic Anemia'], ['cbc-approach-to-anemia', 'CBC: Approach to Anemia']],
       yt: 'anemia microcytic macrocytic',
+      anim: 'anemias',
+      video: [
+        { ch: 'Dos números ordenan todo', sc: [
+          { v: { k: 'title', t: 'Anemias', s: 'Tema 8 · Hematología' },
+            say: 'Bienvenido a la guardia. En este video vas a aprender a ordenar cualquier anemia con dos números: el volumen corpuscular medio y los reticulocitos. Después veremos la ferropénica, la de inflamación, la talasemia y la megaloblástica.' },
+          { v: { k: 'case', t: 'Consulta de Medicina Interna', p: { name: 'Guadalupe', age: 61, sex: 'M', skin: '#D9A07A', hair: '#C8C8D2', gown: '#E79AB3' }, text: 'Meses de cansancio y disnea al subir escaleras. Toma omeprazol diario y calcio. Hb 8.9 g/dL, VCM 72 fL.', vit: { FC: '96', PA: '118/72', Hb: '8.9' } },
+            say: 'Imagina a doña Guadalupe, de sesenta y un años. Lleva meses cansada y se agita al subir escaleras. Toma omeprazol diario y calcio. Su hemoglobina es de ocho punto nueve y su volumen corpuscular medio de setenta y dos. ¿Por dónde empiezas?' },
+          { v: { k: 'big', h: 'Anemia (OMS)', t: '13 · 12', u: 'g/dL de Hb', s: 'Hb <13 en hombres, <12 en mujeres no embarazadas y <11 en el embarazo.' },
+            say: 'Primero, define anemia. Según la Organización Mundial de la Salud, es una hemoglobina menor de trece gramos por decilitro en hombres, menor de doce en mujeres no embarazadas y menor de once en el embarazo.' },
+          { v: { k: 'list', t: 'Clasifica por VCM', items: ['VCM <80: ferropenia, talasemia, inflamación', '80–100: inflamación, ERC, hemólisis, sangrado', 'VCM >100: B12, folato, alcohol, hígado, SMD', 'Luego: ¿reticulocitos altos o bajos?'] },
+            say: 'Luego clasifica por el volumen corpuscular medio. Menor de ochenta es microcítica: ferropenia, talasemia y, a veces, inflamación. Entre ochenta y cien es normocítica: inflamación, enfermedad renal crónica, hemólisis o sangrado agudo. Mayor de cien es macrocítica: vitamina B doce, folato, alcohol, hepatopatía o síndrome mielodisplásico.' },
+          { v: { k: 'big', h: 'Índice reticulocitario', t: 'IR 2', u: 'el punto de corte', s: '<2: la médula no produce (hipoproliferativa). >2–3: produce bien → busca hemólisis o sangrado.' },
+            say: 'El segundo número son los reticulocitos, corregidos como índice reticulocitario. Menor de dos significa que la médula no está produciendo: una anemia hipoproliferativa. Mayor de dos o tres significa que la médula responde, y entonces buscas hemólisis o sangrado.' }
+        ] },
+        { ch: 'Ferropenia: sigue al hierro', sc: [
+          { v: { k: 'anim', id: 'anemias', step: 0 },
+            say: 'Para entender la microcítica, sigue al hierro. Se absorbe en el duodeno, sale del enterocito por la ferroportina y viaja en la sangre unido a la transferrina hasta la médula ósea. Lo que sobra se guarda como ferritina, y los macrófagos reciclan el hierro de los eritrocitos viejos.' },
+          { v: { k: 'anim', id: 'anemias', step: 2 },
+            say: 'Si falta hierro, la médula fabrica eritrocitos pequeños y pálidos, microcíticos e hipocrómicos, y de tamaños muy distintos. Por eso sube el ancho de distribución eritrocitaria. Los depósitos se vacían primero, así que la ferritina es lo primero que baja.' },
+          { v: { k: 'big', h: 'Ferritina', t: '<30', u: 'ng/mL', s: 'Confirma ferropenia. Con inflamación, hasta <100 puede seguir siendo ferropenia (con saturación <20%).' },
+            say: 'La ferritina es el mejor estudio aislado. Menor de treinta nanogramos por mililitro confirma la ferropenia. Pero es un reactante de fase aguda: con inflamación, una ferritina de hasta cien puede esconder una ferropenia, sobre todo si la saturación de transferrina es menor de veinte por ciento.' },
+          { v: { k: 'list', t: 'Pistas clínicas de ferropenia', items: ['Pica y pagofagia (antojo de hielo)', 'Coiloniquia, queilitis, glositis', 'Piernas inquietas', 'Plummer-Vinson: membranas + disfagia', 'Trombocitosis reactiva'] },
+            say: 'En la clínica busca pica, sobre todo antojo de hielo, uñas en cuchara, queilitis y glositis, y piernas inquietas. Si además hay disfagia por membranas esofágicas, es el síndrome de Plummer-Vinson. Y no te asustes por plaquetas altas: la trombocitosis reactiva es frecuente.' },
+          { v: { k: 'flow', t: 'Tratar la ferropenia', steps: ['Hierro oral 1 vez/día o días alternos', 'Reticulocitos ↑ a los 7–10 días', 'Hb +1–2 g/dL en 3–4 semanas', 'Seguir 3 meses tras normalizar', 'Hierro IV si malabsorción o no responde'] },
+            say: 'El tratamiento es hierro oral una vez al día o en días alternos, lejos del calcio, del té y de los inhibidores de bomba de protones. Repartirlo en varias tomas no ayuda, porque cada dosis sube la hepcidina. Los reticulocitos suben a los siete a diez días y la hemoglobina uno a dos gramos en tres a cuatro semanas. Sigue tres meses después de normalizarla. Si hay malabsorción o no responde, usa hierro intravenoso.' },
+          { v: { k: 'anim', id: 'anemias', step: 4 },
+            say: 'Así se ve una buena respuesta: la médula, ya con materia prima, libera una ola de reticulocitos que llega a su pico en una semana, y después sube la hemoglobina. Si a las cuatro semanas no pasa esto, revisa el apego, la absorción o una pérdida que continúa.' },
+          { v: { k: 'tip', kind: 'trap', t: 'Ferropenia en hombre o mujer posmenopáusica = endoscopia alta + colonoscopia. Dar solo hierro es la respuesta incorrecta.' },
+            say: 'Ojo con esta trampa. Ferropenia en un hombre o en una mujer posmenopáusica significa pérdida digestiva hasta demostrar lo contrario. Pide endoscopia alta y colonoscopia. Dar hierro sin buscar la causa puede dejar pasar un cáncer de colon.' }
+        ] },
+        { ch: 'Inflamación y talasemia', sc: [
+          { v: { k: 'anim', id: 'anemias', step: 1 },
+            say: 'Ahora la anemia de inflamación. La interleucina seis hace que el hígado produzca hepcidina. La hepcidina bloquea la ferroportina, así que el hierro queda atrapado en los enterocitos y en los macrófagos. Hay hierro, pero la médula no lo puede usar.' },
+          { v: { k: 'vs', cmp: 'ferro-inflam', rows: [2, 3, 4, 6] },
+            say: 'Compara las dos. En la ferropenia la ferritina está baja y la transferrina alta. En la inflamación la ferritina está normal o alta y la transferrina baja. La saturación baja en ambas, así que no te sirve para separarlas. Si hay duda, el receptor soluble de transferrina sube solo en la ferropenia.' },
+          { v: { k: 'quiz', q: 'AR activa. Hb 10.4, VCM 84, ferritina 320, TIBC baja, saturación 14%. ¿Qué es?', opts: ['Ferropenia: hierro oral', 'Anemia de inflamación: tratar la AR'], a: 1 },
+            say: 'Pausa. Mujer con artritis reumatoide activa. Hemoglobina de diez punto cuatro, volumen corpuscular de ochenta y cuatro, ferritina de trescientos veinte y capacidad de fijación de hierro baja. ¿Qué tiene?',
+            exp: 'Anemia de inflamación. La ferritina alta con capacidad de fijación baja indica hierro atrapado por la hepcidina. Mejora al controlar la artritis, no con hierro oral.' },
+          { v: { k: 'big', h: 'Índice de Mentzer', t: '<13', u: 'VCM ÷ eritrocitos', s: '<13 sugiere talasemia; >13, ferropenia. β-talasemia menor: HbA2 >3.5% en la electroforesis.' },
+            say: 'Si la microcitosis es muy marcada, pero la hemoglobina es casi normal y los eritrocitos están altos, piensa en talasemia. Divide el volumen corpuscular entre los millones de eritrocitos: es el índice de Mentzer. Menor de trece sugiere talasemia. En la beta talasemia menor, la electroforesis muestra hemoglobina A dos mayor de tres punto cinco por ciento. Y no le des hierro.' },
+          { v: { k: 'mnemo', t: 'Microcítica: “TICS”', d: 'Talasemia · Inflamación · Carencia de hierro · Sideroblástica (y plomo).' },
+            say: 'Para la microcítica recuerda TICS: talasemia, inflamación, carencia de hierro y sideroblástica, donde entra el plomo. La sideroblástica por isoniazida se corrige con piridoxina. El plomo da punteado basófilo, cólico abdominal y muñeca caída.' }
+        ] },
+        { ch: 'Megaloblástica: B12 y folato', sc: [
+          { v: { k: 'anim', id: 'anemias', step: 3 },
+            say: 'Pasemos a la macrocítica. La vitamina B doce y el folato son necesarios para sintetizar el ADN. Sin ellos, el núcleo no puede dividirse mientras el citoplasma sigue creciendo. Aparecen megaloblastos en la médula, macroovalocitos en la sangre y neutrófilos hipersegmentados, con seis lóbulos o más.' },
+          { v: { k: 'list', t: 'Causas de déficit de B12', items: ['Anemia perniciosa (anti-factor intrínseco)', 'Gastrectomía o bypass gástrico', 'Resección ileal o enfermedad de Crohn', 'Metformina e IBP por años', 'Dieta vegana estricta'] },
+            say: 'Las causas de déficit de B doce: anemia perniciosa, con anticuerpos contra el factor intrínseco; gastrectomía o bypass; resección del íleon o enfermedad de Crohn; metformina e inhibidores de bomba de protones por años; y dieta vegana estricta. El folato, en cambio, falta por dieta pobre, alcohol, embarazo y fármacos como el metotrexato.' },
+          { v: { k: 'vs', cmp: 'b12-folato', rows: [0, 1, 2, 3] },
+            say: 'La diferencia clave es neurológica. La B doce da degeneración combinada subaguda: se pierden la vibración y la posición, hay ataxia y Romberg positivo. El folato no da neuropatía. En el laboratorio, el ácido metilmalónico sube solo en el déficit de B doce; la homocisteína sube en ambos.' },
+          { v: { k: 'quiz', q: 'Macrocitosis, ataxia y Romberg +. En la farmacia solo hay ácido fólico. ¿Lo das?', opts: ['Sí, mientras llega la B12', 'No: primero mide o da B12'], a: 1 },
+            say: 'Pausa. Paciente con macrocitosis, ataxia y Romberg positivo. En la farmacia solo hay ácido fólico. ¿Se lo das?',
+            exp: 'No. El folato solo corrige la anemia, pero la neuropatía por falta de B doce sigue avanzando y puede volverse irreversible. Mide la B doce antes, o da ambas vitaminas.' }
+        ] },
+        { ch: 'Integra y no caigas', sc: [
+          { v: { k: 'case', t: 'Un año después', p: { name: 'Guadalupe', age: 62, sex: 'M', skin: '#D9A07A', hair: '#C8C8D2', gown: '#E79AB3' }, text: 'Biopsia: gastritis atrófica autoinmune. Ahora: hormigueo en pies, VCM 98, neutrófilos hipersegmentados, anti-factor intrínseco +.', vit: { Hb: '10.6', VCM: '98' } },
+            say: 'Volvamos con doña Guadalupe. La biopsia mostró gastritis atrófica autoinmune. Un año después tiene hormigueo en los pies, volumen corpuscular de noventa y ocho y neutrófilos hipersegmentados. Sin ácido absorbió poco hierro, y sin factor intrínseco ahora le falta B doce. La mezcla dio un volumen normal. Necesita B doce intramuscular.' },
+          { v: { k: 'list', t: 'Transfusión: umbral restrictivo', items: ['Hb <7 g/dL en el paciente estable', '≈8 con enfermedad cardiovascular', 'Cada unidad sube ~1 g/dL', 'Choque o sangrado activo: no esperes un número'] },
+            say: 'Sobre la transfusión: el umbral es restrictivo. Transfunde con hemoglobina menor de siete en el paciente estable, y alrededor de ocho si tiene enfermedad cardiovascular. Cada unidad sube cerca de un gramo. Si está en choque o sangrando activamente, no esperes un número.' },
+          { v: { k: 'quiz', q: 'Hematemesis hace 1 h, FC 124, PA 86/54. Hb 13.4. ¿Qué te dice la Hb?', opts: ['Que no perdió mucha sangre', 'Nada aún: la hemodilución tarda horas'], a: 1 },
+            say: 'Pausa. Hombre con hematemesis desde hace una hora, frecuencia cardiaca de ciento veinticuatro y presión de ochenta y seis sobre cincuenta y cuatro. Su hemoglobina es de trece punto cuatro. ¿Qué te dice?',
+            exp: 'Casi nada todavía. En el sangrado agudo se pierde sangre completa, y la hemoglobina baja hasta que el líquido diluye la sangre, en las siguientes veinticuatro a setenta y dos horas. Guíate por la hemodinámica.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Un VCM normal no descarta una carencia: ferropenia + déficit de B12 se compensan. Mira el ADE y el frotis.' },
+            say: 'La perla final: un volumen corpuscular normal no descarta una carencia. Ferropenia y déficit de B doce juntos se compensan, pero el ancho de distribución eritrocitaria sale alto. Ahora ve a las preguntas del tema para fijar lo que viste.' }
+        ] }
+      ],
       sections: [
         { h: 'Abordaje', html: `
 <ul>
@@ -34,7 +100,16 @@ export default {
 <li><b>β-talasemia menor (rasgo)</b>: microcitosis marcada (VCM ~60–70) con Hb casi normal y eritrocitos normales o aumentados; <b>índice de Mentzer (VCM ÷ eritrocitos en millones) &lt;13</b>; ferritina normal; células en diana y punteado basófilo. Electroforesis: HbA2 &gt;3.5%. No requiere hierro.</li>
 <li><b>α-talasemia rasgo</b>: electroforesis normal en adultos; diagnóstico genético o por exclusión.</li>
 <li><b>β-talasemia mayor</b>: anemia grave desde los 6 meses, hepatoesplenomegalia, cambios óseos; transfusiones con quelación de hierro.</li>
-</ul>` },
+</ul>
+<p><b>Diagnóstico diferencial de la microcítica</b></p>
+<div class="tablewrap"><table class="mini">
+<tr><th></th><th>Ferropenia</th><th>Inflamación</th><th>Talasemia menor</th><th>Sideroblástica</th></tr>
+<tr><td>Ferritina</td><td>↓</td><td>Normal o ↑</td><td>Normal</td><td>↑</td></tr>
+<tr><td>TIBC</td><td>↑</td><td>↓</td><td>Normal</td><td>Normal o ↓</td></tr>
+<tr><td>Saturación</td><td>↓</td><td>↓</td><td>Normal</td><td>↑</td></tr>
+<tr><td>ADE</td><td>↑</td><td>Normal</td><td>Normal o levemente ↑</td><td>↑ (población dimórfica)</td></tr>
+<tr><td>Clave</td><td>Responde al hierro</td><td>Enfermedad de base, PCR ↑</td><td>Mentzer &lt;13; HbA2 &gt;3.5% en la β</td><td>Sideroblastos en anillo</td></tr>
+</table></div>` },
         { h: 'Megaloblástica: B12 y folato', html: `
 <ul>
 <li><b>B12</b>: anemia perniciosa (anticuerpos anti-factor intrínseco y anti-células parietales; gastritis atrófica autoinmune, más riesgo de cáncer gástrico), gastrectomía o bypass, resección ileal o Crohn, metformina, IBP crónicos, dieta vegana.</li>
@@ -49,13 +124,41 @@ export default {
 <li><b>Plomo</b>: microcítica con punteado basófilo, dolor abdominal, neuropatía (muñeca caída), línea de Burton en encías. En México: loza de barro vidriado, reciclaje de baterías.</li>
 <li><b>Alcohol</b>: macrocitosis sin hipersegmentación, GGT alta.</li>
 <li><b>Transfusión</b>: umbral restrictivo Hb &lt;7 g/dL (≈8 con enfermedad cardiovascular o cirugía cardiaca u ortopédica). Cada unidad sube ~1 g/dL.</li>
+</ul>` },
+        { h: 'Fisiopatología en 1 minuto', html: `
+<ul>
+<li><b>Hierro</b>: se absorbe como Fe²⁺ en el duodeno, sale del enterocito por la <b>ferroportina</b> y viaja unido a la <b>transferrina</b> hasta la médula. Se guarda como <b>ferritina</b> en hígado y macrófagos. Casi todo el hierro que se usa cada día viene del reciclaje de eritrocitos viejos por los macrófagos; la dieta solo repone 1–2 mg/día.</li>
+<li><b>Hepcidina</b> (hígado): bloquea la ferroportina. Sube con la inflamación (IL-6) y después de cada dosis de hierro oral; baja con la ferropenia y con la eritropoyesis activa.</li>
+<li><b>Orden de la ferropenia</b>: primero se vacían los depósitos (ferritina ↓), luego baja el hierro circulante (saturación ↓) y al final aparece la anemia microcítica e hipocrómica.</li>
+<li><b>B12 y folato</b>: cofactores de la síntesis de timidina (ADN). Sin ellos el núcleo madura más lento que el citoplasma (asincronía): megaloblastos, macroovalocitos, neutrófilos hipersegmentados y hemólisis intramedular (LDH ↑). La B12 también es cofactor de la metilmalonil-CoA mutasa: por eso sube el ácido metilmalónico solo en su déficit.</li>
+<li><b>Reticulocitos</b>: eritrocitos jóvenes. Si la anemia es grave, corrige el porcentaje por el Hto y divídelo entre el factor de maduración (Hto 45% → 1 · 35% → 1.5 · 25% → 2 · 15% → 2.5).</li>
+</ul>` },
+        { h: 'Fármacos clave', html: `
+<div class="tablewrap"><table class="mini">
+<tr><th>Fármaco</th><th>Mecanismo</th><th>Efecto adverso clave</th><th>Contraindicación / cuidado</th></tr>
+<tr><td>Sulfato ferroso oral</td><td>Repone hierro por vía duodenal</td><td>Náusea, estreñimiento, heces negras</td><td>Sobrecarga de hierro (talasemia sin ferropenia, hemocromatosis)</td></tr>
+<tr><td>Hierro IV (carboximaltosa férrica, hierro sacarosa)</td><td>Llena los depósitos sin pasar por el intestino</td><td>Reacciones de hipersensibilidad (raras); hipofosfatemia con carboximaltosa</td><td>Primer trimestre del embarazo, bacteriemia activa, sobrecarga de hierro</td></tr>
+<tr><td>Vitamina B12 IM (ciano- o hidroxocobalamina)</td><td>Repone B12 sin depender del factor intrínseco</td><td>Hipokalemia en las primeras 48–72 h si la anemia es grave</td><td>Vigila el potasio; en anemia perniciosa es de por vida</td></tr>
+<tr><td>Ácido fólico oral</td><td>Repone folato</td><td>Bien tolerado; puede enmascarar un déficit de B12</td><td>No darlo solo si hay déficit de B12 sin tratar</td></tr>
+<tr><td>Piridoxina (B6)</td><td>Cofactor de la ALA sintasa (síntesis del hem)</td><td>Neuropatía sensitiva a dosis muy altas</td><td>Profilaxis con isoniazida</td></tr>
+<tr><td>Concentrado eritrocitario</td><td>Sube ~1 g/dL de Hb por unidad</td><td>Sobrecarga circulatoria, TRALI, reacción hemolítica</td><td>No en anemia crónica estable por arriba del umbral restrictivo</td></tr>
+</table></div>` },
+        { h: 'Cómo lo preguntan en el examen', html: `
+<ul>
+<li>Hombre o mujer posmenopáusica con ferropenia → <b>endoscopia alta y colonoscopia</b>, no solo hierro.</li>
+<li>Microcitosis marcada, eritrocitos altos, Hb casi normal y ferritina normal → <b>rasgo talasémico</b> (Mentzer &lt;13); HbA2 &gt;3.5% = β; electroforesis normal = probable α.</li>
+<li>Enfermedad inflamatoria + ferritina alta + TIBC baja → <b>anemia de inflamación</b>: trata la causa.</li>
+<li>Macrocitosis + ataxia o Romberg + autoinmunidad (vitíligo, tiroiditis) → <b>anemia perniciosa</b>: B12 IM.</li>
+<li>Metotrexato, alcohol o embarazo + macrocitosis sin neuropatía y ácido metilmalónico normal → <b>déficit de folato</b>.</li>
+<li>Sin respuesta al hierro oral con buen apego → <b>malabsorción</b> (celiaca, H. pylori, gastritis atrófica, bypass, IBP) o pérdida continua; considera hierro IV.</li>
 </ul>` }
       ],
       mnemo: { t: 'Microcítica: “TICS”', d: 'Talasemia · Inflamación (enfermedad crónica) · Carencia de hierro (ferropenia) · Sideroblástica (y plomo). Para separar ferropenia de talasemia: Mentzer <13 = talasemia.' },
       pearl: 'La ferritina es el mejor estudio aislado para ferropenia: <30 ng/mL la confirma. Pero es reactante de fase aguda: con inflamación, hasta 100 puede seguir siendo ferropenia.',
       trap: 'Dar folato a un paciente con déficit de B12: la Hb mejora y la neuropatía sigue avanzando, a veces de forma irreversible. Mide B12 antes o da ambas.',
       guide: [
-        'Hierro oral en días alternos: estudios recientes muestran mejor absorción que dar varias dosis al día (la hepcidina sube tras cada dosis). Algunas guías siguen indicando una dosis diaria; ambas son correctas, lo que no conviene es repartirlo en 2–3 tomas.'
+        'Hierro oral en días alternos: estudios recientes muestran mejor absorción que dar varias dosis al día (la hepcidina sube tras cada dosis). Algunas guías siguen indicando una dosis diaria; ambas son correctas, lo que no conviene es repartirlo en 2–3 tomas.',
+        'Corte de ferritina para ferropenia: la OMS 2020 usa <15 ng/mL en adultos sanos y <70 con infección o inflamación; la AGA 2020 usa <45 ng/mL para decidir el estudio digestivo; muchos textos usan <30. En el examen, <30 confirma ferropenia y, con inflamación, hasta ~100 puede serlo.'
       ],
       refs: [
         'Ko CW, et al. AGA Clinical Practice Guidelines on the Gastrointestinal Evaluation of Iron Deficiency Anemia. Gastroenterology 2020.',
@@ -92,6 +195,24 @@ export default {
     }
   },
 
+  anims: {
+    anemias: {
+      title: 'Hierro, B12 y la médula',
+      steps: [
+        { cap: '<b>El ciclo del hierro.</b> Se absorbe en el duodeno, sale del enterocito por la ferroportina y viaja unido a la transferrina hasta la médula. El sobrante se guarda como ferritina y los macrófagos reciclan el hierro de los eritrocitos viejos.',
+          labels: [[29, 28, 'Enterocito'], [128, 8, 'Ferritina (hígado)'], [80, 60, 'Transferrina'], [30, 113, 'Macrófago'], [132, 113, 'Médula']] },
+        { cap: '<b>Inflamación: la hepcidina cierra la puerta.</b> La IL-6 hace que el hígado produzca hepcidina, que bloquea la ferroportina. El hierro queda atrapado en enterocitos y macrófagos: ferritina alta, transferrina vacía y médula sin hierro.',
+          labels: [[29, 28, 'Hierro atrapado'], [128, 8, 'Hepcidina ↑'], [80, 60, 'Transferrina vacía'], [30, 113, 'Macrófago lleno'], [132, 113, 'Médula sin hierro']] },
+        { cap: '<b>Ferropenia.</b> Sin hierro, la médula fabrica eritrocitos pequeños y pálidos (microcíticos e hipocrómicos) de tamaños distintos (ADE alta). Los depósitos se vacían primero: la ferritina baja antes que la Hb.',
+          labels: [[40, 8, 'Normal'], [120, 8, 'Ferropenia'], [40, 113, 'Ferritina normal'], [120, 113, 'Ferritina <30']] },
+        { cap: '<b>Déficit de B12 o folato.</b> Sin ellos no se sintetiza ADN: el núcleo se queda inmaduro mientras el citoplasma crece. Resultado: megaloblastos, macroovalocitos (VCM >100) y neutrófilos hipersegmentados.',
+          labels: [[32, 28, 'Megaloblasto'], [80, 80, 'ADN sin B12/folato'], [130, 26, 'Neutrófilo ≥6 lóbulos'], [80, 113, 'Macroovalocitos']] },
+        { cap: '<b>Respuesta reticulocitaria.</b> Al reponer lo que falta, la médula libera una ola de reticulocitos con pico a los 7–10 días; después sube la Hb. Si no hay respuesta, revisa apego, absorción o pérdidas.',
+          labels: [[30, 8, 'Hierro o B12'], [30, 108, 'Médula'], [91, 42, 'Reticulocitos'], [136, 102, 'Ret'], [152, 102, 'Hb']] }
+      ]
+    }
+  },
+
   cards: [
     ['Anemia según la OMS', 'Hb <13 hombres · <12 mujeres · <11 embarazo'],
     ['Índice reticulocitario <2', 'Hipoproliferativa: la médula no produce'],
@@ -106,7 +227,12 @@ export default {
     ['Error a evitar en la anemia megaloblástica', 'Dar solo folato si hay déficit de B12'],
     ['Punteado basófilo + dolor abdominal + muñeca caída', 'Intoxicación por plomo'],
     ['Isoniazida y anemia', 'Sideroblástica por déficit de B6 → piridoxina'],
-    ['Umbral de transfusión', 'Hb <7 g/dL (≈8 con enfermedad cardiovascular)']
+    ['Umbral de transfusión', 'Hb <7 g/dL (≈8 con enfermedad cardiovascular)'],
+    ['Hepcidina: qué hace', 'La produce el hígado (sube con IL-6); bloquea la ferroportina y atrapa el hierro en enterocitos y macrófagos'],
+    ['Factor de maduración del índice reticulocitario', 'Hto 45% → 1 · 35% → 1.5 · 25% → 2 · 15% → 2.5'],
+    ['Metformina por años + macrocitosis o neuropatía', 'Mide B12: la metformina reduce su absorción (ADA)'],
+    ['Riesgo al iniciar B12 en anemia megaloblástica grave', 'Hipokalemia en 48–72 h (las células nuevas captan potasio)'],
+    ['Hb normal en un sangrado agudo con choque', 'Aún no hay hemodilución (tarda 24–72 h): guíate por la hemodinámica']
   ],
 
   questions: [
@@ -228,7 +354,47 @@ export default {
       ans: 1,
       exp: 'La ferritina sube con la inflamación. Con inflamación, una ferritina de 30–100 ng/mL con saturación <20% sugiere ferropenia coexistente. El receptor soluble de transferrina ayuda a distinguir.',
       why: ['La inflamación la eleva.', '', 'No con inflamación.', 'Baja en la ferropenia.', 'Es el mejor estudio aislado para ferropenia.'],
-      ref: 'AGA 2020 · Camaschella C, NEJM 2015' })
+      ref: 'AGA 2020 · Camaschella C, NEJM 2015' }),
+
+    q({ id: 'ane-16', dif: 3,
+      stem: 'Mujer de 40 años con anemia. Hto 25% y reticulocitos 4%. Para un Hto de 25% el factor de maduración es 2. ¿Cómo interpretas la respuesta de la médula?',
+      opts: ['Adecuada: reticulocitos >2% indican hemólisis', 'Índice reticulocitario ≈1.1: respuesta insuficiente (hipoproliferativa)', 'Índice reticulocitario ≈4: hemólisis', 'Índice reticulocitario ≈2.2: sangrado agudo compensado', 'No se puede interpretar sin biopsia de médula'],
+      ans: 1,
+      exp: 'Reticulocitos corregidos = 4 × (25 ÷ 45) ≈ 2.2%. Índice reticulocitario = 2.2 ÷ 2 ≈ 1.1. Menor de 2 = la médula no responde lo suficiente para el grado de anemia: busca ferropenia, inflamación, ERC, déficit de B12 o folato, o falla medular.',
+      why: ['El porcentaje crudo sobrestima la producción cuando el Hto está bajo; hay que corregirlo.', '', 'Es el porcentaje sin corregir; no refleja la producción real.', 'Falta dividir entre el factor de maduración: los reticulocitos “de estrés” circulan más días.', 'El índice se calcula con la BH; no requiere biopsia.'],
+      ref: 'Harrison 21e · abordaje de la anemia' }),
+
+    q({ id: 'ane-17', dif: 2,
+      stem: 'Hombre de 72 años con anemia perniciosa grave (Hb 5.6 g/dL, VCM 121). Inicia B12 IM diaria. A las 48 h refiere debilidad y en el monitor aparecen extrasístoles. ¿Qué alteración buscas primero?',
+      opts: ['Hipercalcemia', 'Hipokalemia', 'Hiponatremia', 'Hiperkalemia por lisis celular', 'Hipermagnesemia'],
+      ans: 1,
+      exp: 'Al reponer B12 en una anemia megaloblástica grave, la eritropoyesis se reactiva de golpe y las células nuevas captan potasio del plasma: puede aparecer hipokalemia en las primeras 48–72 h. Mide el potasio y repónlo si baja.',
+      why: ['No se asocia al inicio de la B12.', '', 'La B12 no altera el sodio.', 'Es al revés: las células nuevas captan potasio y la hemólisis intramedular disminuye.', 'No tiene relación con el tratamiento.'],
+      ref: 'Stabler SP, NEJM 2013' }),
+
+    q({ id: 'ane-18', dif: 2,
+      stem: 'Hombre de 66 años con DM2 en metformina desde hace 12 años. Tiene parestesias en pies que se atribuyeron a neuropatía diabética. Hb 11.9 g/dL, VCM 104. ¿Qué estudio pides?',
+      opts: ['Ninguno: es neuropatía diabética', 'Vitamina B12 sérica (± ácido metilmalónico)', 'Ferritina', 'Electroforesis de hemoglobina', 'Aspirado de médula ósea'],
+      ans: 1,
+      exp: 'La metformina por años reduce la absorción de B12 en el íleon. La ADA sugiere medir B12 de forma periódica en quienes la toman, sobre todo si hay anemia o neuropatía. Si la B12 sale limítrofe, el ácido metilmalónico alto confirma el déficit.',
+      why: ['La macrocitosis no se explica por la diabetes; pasarías por alto una causa tratable de neuropatía.', '', 'Con VCM alto, la ferropenia no es lo primero.', 'Es para microcitosis con sospecha de talasemia.', 'Prematuro: primero se descarta lo carencial.'],
+      ref: 'ADA Standards of Care 2026' }),
+
+    q({ id: 'ane-19', dif: 3,
+      stem: 'Mujer de 26 años de origen filipino, asintomática. Hb 11.6 g/dL, VCM 68 fL, eritrocitos 5.6 millones/µL, ferritina 85 ng/mL. Electroforesis: HbA2 2.4% y HbF normal. ¿Diagnóstico más probable?',
+      opts: ['β-talasemia menor', 'Rasgo de α-talasemia', 'Ferropenia latente', 'Anemia sideroblástica', 'Anemia de inflamación'],
+      ans: 1,
+      exp: 'Microcitosis marcada con eritrocitos altos (Mentzer ≈12), ferritina normal y electroforesis normal en un adulto: rasgo de α-talasemia (deleción de 1–2 genes α). Se confirma con estudio genético; no requiere hierro ni tratamiento, pero importa para el consejo genético.',
+      why: ['En la β-talasemia menor la HbA2 está >3.5%.', '', 'La ferritina es normal.', 'Tiene ADE alta y sideroblastos en anillo; no da eritrocitos altos.', 'No hay enfermedad inflamatoria y el VCM es demasiado bajo para ese diagnóstico.'],
+      ref: 'Taher AT, et al. Lancet 2018' }),
+
+    q({ id: 'ane-20', dif: 2,
+      stem: 'Hombre de 58 años con hematemesis abundante desde hace 1 h. FC 124 lpm, PA 86/54 mmHg, piel fría y pálida. Hb 13.4 g/dL. ¿Cómo interpretas la Hb?',
+      opts: ['Descarta una pérdida importante: no necesita transfusión', 'Todavía no refleja la pérdida: la hemodilución tarda horas; guíate por la hemodinámica', 'Indica hemoconcentración por deshidratación', 'Sugiere que el sangrado es de tubo digestivo bajo', 'Es un error del laboratorio'],
+      ans: 1,
+      exp: 'En el sangrado agudo se pierde sangre completa: la Hb baja hasta que el líquido intersticial y los cristaloides diluyen la sangre (24–72 h). Taquicardia con hipotensión indican una pérdida grande. Reanima y transfunde según la hemodinámica, no según la Hb inicial.',
+      why: ['La Hb inicial subestima la pérdida aguda; el estado de choque es lo que manda.', '', 'El problema es la hemorragia, no la deshidratación.', 'La hematemesis indica origen alto.', 'Es un hallazgo esperado, no un error.'],
+      ref: 'ACG 2021 hemorragia digestiva alta · ATLS 10e' })
   ],
 
   cases: [
