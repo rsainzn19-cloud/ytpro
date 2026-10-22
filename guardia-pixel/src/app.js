@@ -37,10 +37,10 @@ const hasContent = (tid) => !!C.lessons[tid];
 const KEY = 'guardia-pixel-v1';
 const fresh = () => ({
   v: 1, xp: 0,
-  settings: { sound: false, timer: 10, budget: { wk: 90, tue: 150, we: 240 } },
+  settings: { sound: false, timer: 10, budget: { wk: 90, tue: 150, we: 240 }, vspeed: 1, vvoice: true, vcc: true },
   act: {}, diag: { done: false, ans: {} }, qs: {}, tp: {}, cards: {}, newCards: { date: '', n: 0 },
   err: {}, errFixed: 0, cases: {}, plan: null, checks: {}, ach: {}, spins: 0, sims: [], cardRev: 0,
-  daily: {}, cartas: 0, paid: {}
+  daily: {}, cartas: 0, paid: {}, vid: {}
 });
 function load() {
   try {
@@ -215,6 +215,8 @@ const ACH = [
   ['err5', 'Cuaderno limpio', 'Saca 5 preguntas del cuaderno de errores', () => S.errFixed >= 5],
   ['r3', 'Constancia', 'Racha de 3 días', () => streak() >= 3],
   ['r7', 'Semana de guardia', 'Racha de 7 días', () => streak() >= 7],
+  ['vid1', 'Primera función', 'Ve un video completo', () => Object.values(S.vid).some((v) => v.done)],
+  ['vid10', 'Maratonista', 'Ve 10 videos completos', () => Object.values(S.vid).filter((v) => v.done).length >= 10],
   ['sim80', 'Listo para el aula 3', 'Saca ≥80% en un simulacro de 20 o más', () => S.sims.some((s) => s.n >= 20 && s.ok / s.n >= 0.8)],
   ...C.subjects.map((s) => [`s-${s.id}`, SUBJ_ACH[s.id], `15 aciertos en ${s.name}`, () => subjOk(s.id) >= 15])
 ];
@@ -339,7 +341,7 @@ function buildPlan() {
 }
 function topicParts(tid) {
   if (!hasContent(tid)) return 'Con tus apuntes';
-  const p = ['Lección'];
+  const p = C.lessons[tid].video ? ['Video', 'lección'] : ['Lección'];
   if (C.lessons[tid].anim) p.push('animación');
   p.push('preguntas');
   if (C.cases.some((c) => c.topic === tid)) p.push('guardia');
@@ -390,7 +392,7 @@ const STATIC_CHG = {
 };
 function go(v, p = {}) { clearTimers(); route = { v, ...p }; render(); window.scrollTo(0, 0); }
 function render() {
-  stopLoops();
+  stopLoops(); stopVideo();
   ACT = { ...STATIC }; CHG = { ...STATIC_CHG };
   const m = $('#main'); m.innerHTML = '';
   (VIEWS[route.v] || VIEWS.home)(m);
@@ -407,7 +409,7 @@ function hud() {
   </div>`;
 }
 const TABS = [['home', 'Inicio', 'home'], ['temario', 'Temario', 'book'], ['guardia', 'Guardia', 'monitor'], ['repaso', 'Repaso', 'cards'], ['mas', 'Más', 'grid']];
-const TAB_OF = { home: 'home', diag: 'home', diagres: 'home', plan: 'home', temario: 'temario', topic: 'temario', guardia: 'guardia', caso: 'guardia', repaso: 'repaso', tarjetas: 'repaso', errores: 'repaso', perlas: 'repaso' };
+const TAB_OF = { home: 'home', diag: 'home', diagres: 'home', plan: 'home', temario: 'temario', topic: 'temario', guardia: 'guardia', caso: 'guardia', repaso: 'repaso', tarjetas: 'repaso', errores: 'repaso', perlas: 'repaso', videos: 'repaso' };
 function nav() {
   const cur = route.v === 'quiz' ? (QS && QS.tab) || 'home' : TAB_OF[route.v] || 'mas';
   $('#tabs').innerHTML = `<div class="tabs-in">${TABS.map(([v, l, ic]) => `<button class="tab" data-go="${v}"${cur === v ? ' aria-current="page"' : ''}>${icon(ic, cur === v ? '#F2C14E' : '#8790CC', 2)}<span>${l}</span></button>`).join('')}</div>`;
@@ -582,8 +584,8 @@ VIEWS.topic = (m) => {
     return;
   }
   const hasCase = C.cases.some((c) => c.topic === t.id);
-  const tabs = [['leccion', 'Lección'], ['anim', 'Animación'], ['preguntas', 'Preguntas'], ['guardia', 'Guardia'], ['tarjetas', 'Tarjetas'], ['jefe', 'Jefe']]
-    .filter(([k]) => (k !== 'anim' || L.anim) && (k !== 'guardia' || hasCase));
+  const tabs = [['video', 'Video'], ['leccion', 'Lección'], ['anim', 'Animación'], ['preguntas', 'Preguntas'], ['guardia', 'Guardia'], ['tarjetas', 'Tarjetas'], ['jefe', 'Jefe']]
+    .filter(([k]) => (k !== 'anim' || L.anim) && (k !== 'guardia' || hasCase) && (k !== 'video' || L.video));
   m.innerHTML = `${head}<div class="ttabs" role="tablist" aria-label="Secciones del tema">${tabs.map(([k, l]) => `<button class="ttab" role="tab" aria-selected="${tab === k}" data-go="topic" data-a="${t.id}" data-b="${k}">${l}</button>`).join('')}</div><div id="tbody" class="stack"></div>`;
   (tabs.some(([k]) => k === tab) ? TOPIC_TABS[tab] : TOPIC_TABS.leccion)($('#tbody'), t, L);
 };
@@ -602,7 +604,7 @@ function compareHTML(cid) {
 }
 TOPIC_TABS.leccion = (el, t, L) => {
   const read = S.tp[t.id] && S.tp[t.id].read;
-  el.innerHTML = `<p class="hook">${esc(L.hook)}</p>
+  el.innerHTML = `${L.video ? `<button class="btn gold-btn big vcta" data-act="vgo">▶ Ver el video del tema · ${vMin(t.id)} min${S.vid[t.id] && S.vid[t.id].done ? ' · visto ✓' : ''}</button>` : ''}<p class="hook">${esc(L.hook)}</p>
   <div class="row">${L.anim ? `<button class="btn small" data-go="topic" data-a="${t.id}" data-b="anim">Ver la animación</button>` : ''}<button class="btn small" data-go="topic" data-a="${t.id}" data-b="preguntas">Ir a las preguntas</button></div>
   ${L.sections.map((s) => `<section class="lsec"><h3>${esc(s.h)}</h3>${s.html}</section>`).join('')}
   ${(L.compare || []).map((cid) => `<section class="lsec"><h3>Comparador</h3>${compareHTML(cid)}</section>`).join('')}
@@ -613,6 +615,7 @@ TOPIC_TABS.leccion = (el, t, L) => {
   ${videosHTML(L)}
   <details class="refs"><summary>Referencias</summary><ol>${L.refs.map((r) => `<li>${esc(r)}</li>`).join('')}</ol></details>
   <button class="btn ${read ? '' : 'gold-btn'} big" data-act="readDone" ${read ? 'disabled' : ''}>${read ? 'Lección leída ✓' : 'Marcar como leída · +30 XP'}</button>`;
+  ACT.vgo = () => { VQUEUE = []; VAUTO = true; go('topic', { a: t.id, b: 'video' }); };
   ACT.readDone = () => {
     const tp = S.tp[t.id] || (S.tp[t.id] = {});
     if (tp.read) return;
@@ -620,6 +623,7 @@ TOPIC_TABS.leccion = (el, t, L) => {
   };
 };
 TOPIC_TABS.anim = (el, t, L) => { mountAnim(el, L.anim); };
+TOPIC_TABS.video = (el, t) => { mountVideo(el, t.id); };
 TOPIC_TABS.preguntas = (el, t) => {
   const qs = bank(t.id), ans = qs.filter((q) => S.qs[q.id]), ok = ans.filter((q) => S.qs[q.id].last === 1), bad = ans.filter((q) => S.qs[q.id].last === 0);
   el.innerHTML = `<section class="panel"><h2>${qs.length} preguntas tipo caso clínico</h2><p class="muted">Cada una explica por qué la correcta es correcta y por qué cada distractor no. ${ans.length ? `Llevas ${ans.length} de ${qs.length}; tu último intento: ${ok.length} bien y ${bad.length} mal.` : 'Todavía no respondes ninguna.'}</p>
@@ -647,32 +651,303 @@ TOPIC_TABS.jefe = (el, t) => {
   ACT.boss = () => startBoss(t.id);
 };
 
-// ═══════════ Animaciones paso a paso
+// ═══════════ Voz: narración con la síntesis de voz del navegador (en iPhone, las voces en español del sistema)
+const TTS = { ok: typeof window.speechSynthesis !== 'undefined' && typeof window.SpeechSynthesisUtterance === 'function', voice: null, tok: 0, broken: false };
+function pickVoice() {
+  if (!TTS.ok) return;
+  let vs = [];
+  try { vs = speechSynthesis.getVoices() || []; } catch (e) { /* sin voces */ }
+  const by = (re) => vs.find((v) => re.test(v.lang || ''));
+  TTS.voice = by(/^es[-_]MX/i) || by(/^es[-_](US|419)/i) || by(/^es\b/i) || null;
+}
+if (TTS.ok) { pickVoice(); try { speechSynthesis.addEventListener('voiceschanged', pickVoice); } catch (e) { /* navegador viejo */ } }
+// Lo que se lee en voz alta: sin etiquetas, sin símbolos y con las siglas más comunes desarrolladas
+const SAYFIX = [
+  [/<[^>]+>/g, ''], [/&lt;/g, '<'], [/&gt;/g, '>'], [/&amp;/g, ' y '],
+  [/(\d+)\s*\/\s*(\d+)\s*mmHg/g, '$1 sobre $2 milímetros de mercurio'], [/mg\/dL/g, ' miligramos por decilitro'], [/g\/dL/g, ' gramos por decilitro'],
+  [/mL\/min(\/1\.73 ?m²)?/g, ' mililitros por minuto'], [/mEq\/L/g, ' miliequivalentes por litro'], [/mmHg/g, ' milímetros de mercurio'],
+  [/µg\/L/g, ' microgramos por litro'], [/\/µL/g, ' por microlitro'], [/m\/s/g, ' metros por segundo'],
+  [/≥/g, ' mayor o igual a '], [/≤/g, ' menor o igual a '], [/</g, ' menor de '], [/>/g, ' mayor de '], [/↑/g, ' sube '], [/↓/g, ' baja '],
+  [/→/g, ', entonces, '], [/×/g, ' por '], [/±/g, ' más o menos '], [/%/g, ' por ciento'], [/[~≈]/g, ' cerca de '], [/[·•]/g, ', '], [/✕/g, ' bloqueado'], [/\s+/g, ' ']
+];
+const ABBR = { ECG: 'electrocardiograma', IAMCEST: 'infarto con elevación del ST', IAMSEST: 'infarto sin elevación del ST', SCASEST: 'síndrome coronario sin elevación del ST', ICP: 'angioplastia', TFG: 'filtración glomerular', LRA: 'lesión renal aguda', ERC: 'enfermedad renal crónica', NTA: 'necrosis tubular aguda', IBP: 'inhibidores de bomba de protones', AINE: 'antiinflamatorios', FEVI: 'fracción de expulsión', VI: 'ventrículo izquierdo', VD: 'ventrículo derecho', TEP: 'tromboembolia pulmonar', TVP: 'trombosis venosa profunda', HTA: 'hipertensión', DM2: 'diabetes tipo 2', PA: 'presión arterial', FC: 'frecuencia cardiaca', IV: 'intravenoso', VO: 'por vía oral' };
+const ABBR_RE = new RegExp('\\b(' + Object.keys(ABBR).join('|') + ')\\b', 'g');
+function speakable(s) { let x = String(s); for (const [re, r] of SAYFIX) x = x.replace(re, r); return x.replace(ABBR_RE, (k) => ABBR[k]).trim(); }
+// Frases: corta en punto, signo o puntos suspensivos seguidos de mayúscula; las muy largas, en ; : o ,
+function sentences(s) {
+  const t = String(s).replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim(), out = [];
+  let st = 0;
+  for (let i = 0; i < t.length; i++) if ('.!?…'.includes(t[i]) && (i === t.length - 1 || (t[i + 1] === ' ' && /[¿¡A-ZÁÉÍÓÚÑ"“]/.test(t[i + 2] || '')))) { out.push(t.slice(st, i + 1).trim()); st = i + 1; }
+  if (st < t.length) out.push(t.slice(st).trim());
+  return out.filter(Boolean).flatMap((p) => {
+    const parts = [];
+    while (p.length > 230) { const cut = Math.max(p.lastIndexOf(';', 210), p.lastIndexOf(':', 210), p.lastIndexOf(',', 210)); if (cut < 60) break; parts.push(p.slice(0, cut + 1)); p = p.slice(cut + 1).trim(); }
+    return [...parts, p];
+  });
+}
+const WPS = 2.6; // palabras por segundo a velocidad 1, aproximado para español
+const estSecs = (s) => (String(s).match(/\S+/g) || []).length / WPS + 0.35;
+const VT = new Set();
+const later = (fn, ms) => { const id = setTimeout(() => { VT.delete(id); fn(); }, ms); VT.add(id); return id; };
+const clearLater = () => { VT.forEach(clearTimeout); VT.clear(); };
+function hush() { TTS.tok++; if (TTS.ok) try { speechSynthesis.cancel(); } catch (e) { /* nada */ } }
+// Habla un fragmento y llama done() una vez. Si la voz "termina" casi al instante (no hay voz), se sigue con tiempos.
+function speak(text, rate, done) {
+  const tok = ++TTS.tok, est = estSecs(text) / rate, t0 = Date.now();
+  let fired = false;
+  const fin = (why) => {
+    if (fired || tok !== TTS.tok) return;
+    fired = true; clearTimeout(wd);
+    const el = (Date.now() - t0) / 1000;
+    if (why !== 'wd' && est > 1.5 && el < est * 0.25) { TTS.broken = true; later(() => { if (tok === TTS.tok) done(); }, (est - el) * 1000); return; }
+    // Dos frases seguidas sin que la voz avise que terminó: se sigue sin voz para no trabar el video
+    TTS.miss = why === 'wd' ? (TTS.miss || 0) + 1 : 0; if (TTS.miss >= 2) TTS.broken = true;
+    done();
+  };
+  const wd = setTimeout(() => fin('wd'), (est * 1.9 + 2.5) * 1000);
+  try {
+    if (speechSynthesis.paused) speechSynthesis.resume();
+    const u = new SpeechSynthesisUtterance(speakable(text));
+    u.lang = (TTS.voice && TTS.voice.lang) || 'es-MX';
+    if (TTS.voice) u.voice = TTS.voice;
+    u.rate = rate; u.onend = () => fin('end'); u.onerror = () => fin('err');
+    speechSynthesis.speak(u);
+  } catch (e) { fin('err'); }
+}
+const SPEEDS = [0.75, 1, 1.25, 1.5];
+const vRate = () => S.settings.vspeed || 1;
+let CINE = null;
+function setCine(el, on) {
+  if (CINE && CINE !== el) CINE.classList.remove('cine');
+  el.classList.toggle('cine', on); document.body.classList.toggle('cine-on', on); CINE = on ? el : null;
+}
+
+// ═══════════ Animaciones paso a paso (manual, automático y narrado)
 function mountAnim(el, id) {
   const A = C.anims[id], steps = A.steps, draws = SCENES[id];
-  let step = 0, t = 0, last = null, playing = !reduce;
-  el.innerHTML = `<h2>${esc(A.title)}</h2><div class="stage"><canvas width="160" height="120" aria-hidden="true"></canvas><div class="labels"></div></div>
+  let step = 0, t = 0, last = null, playing = !reduce, auto = false, narr = false;
+  el.innerHTML = `<h2>${esc(A.title)}</h2><div class="awrap" id="awrap"><div class="stage"><canvas width="160" height="120" aria-hidden="true"></canvas><div class="labels"></div></div>
   <div class="cap" aria-live="polite"></div>
   <div class="actrl"><button class="btn small" data-act="aprev">◀ Paso</button><button class="btn small" data-act="aplay"></button><span class="stepn"></span><button class="btn small gold-btn" data-act="anext">Paso ▶</button></div>
-  <div class="pips" role="group" aria-label="Pasos">${steps.map((_, i) => `<button data-act="apip" data-i="${i}" aria-label="Paso ${i + 1}"></button>`).join('')}</div>`;
-  const g = Pix(el.querySelector('canvas').getContext('2d'));
+  <div class="actrl2"><button class="btn small" data-act="aauto" aria-pressed="false">▶ Reproducir todo</button><button class="btn small" data-act="anarr" aria-pressed="false">Narrar</button><button class="btn small" data-act="acine" aria-pressed="false">⛶ Pantalla</button></div>
+  <div class="pips" role="group" aria-label="Pasos">${steps.map((_, i) => `<button data-act="apip" data-i="${i}" aria-label="Paso ${i + 1}"></button>`).join('')}</div></div>
+  <p class="small muted">“Reproducir todo” avanza solo; con “Narrar”, la voz de tu teléfono lee cada paso. Si no la escuchas, quita el modo silencio.</p>`;
+  const wrap = el.querySelector('#awrap'), g = Pix(el.querySelector('canvas').getContext('2d'));
   const draw = () => draws[step](g, reduce ? 3 : t);
+  const sync = () => {
+    wrap.querySelector('[data-act=aauto]').setAttribute('aria-pressed', auto); wrap.querySelector('[data-act=aauto]').textContent = auto ? '⏸ Detener' : '▶ Reproducir todo';
+    wrap.querySelector('[data-act=anarr]').setAttribute('aria-pressed', narr);
+  };
+  const narrate = () => {
+    const txt = steps[step].cap.replace(/<[^>]+>/g, '');
+    const next = () => { if (!auto) return; if (step < steps.length - 1) later(() => set(step + 1), 700); else { auto = false; sync(); } };
+    if (narr && TTS.ok && !TTS.broken) speak(txt, vRate(), next);
+    else if (auto) later(next, (estSecs(txt) / vRate() + 1.2) * 1000);
+  };
   const set = (i) => {
+    hush(); clearLater();
     step = clamp(i, 0, steps.length - 1); t = 0; last = null;
     const s = steps[step];
-    el.querySelector('.labels').innerHTML = (s.labels || []).map(([x, y, txt]) => `<span style="left:${(x / 160) * 100}%;top:${(y / 120) * 100}%">${esc(txt)}</span>`).join('');
-    el.querySelector('.cap').innerHTML = s.cap;
-    el.querySelector('.stepn').textContent = `${step + 1}/${steps.length}`;
-    el.querySelectorAll('.pips button').forEach((b, k) => (k === step ? b.setAttribute('aria-current', 'step') : b.removeAttribute('aria-current')));
-    el.querySelector('[data-act=aplay]').textContent = playing ? 'Pausa' : 'Animar';
+    wrap.querySelector('.labels').innerHTML = (s.labels || []).map(([x, y, txt]) => `<span style="left:${(x / 160) * 100}%;top:${(y / 120) * 100}%">${esc(txt)}</span>`).join('');
+    wrap.querySelector('.cap').innerHTML = s.cap;
+    wrap.querySelector('.stepn').textContent = `${step + 1}/${steps.length}`;
+    wrap.querySelectorAll('.pips button').forEach((b, k) => (k === step ? b.setAttribute('aria-current', 'step') : b.removeAttribute('aria-current')));
+    wrap.querySelector('[data-act=aplay]').textContent = playing ? 'Pausa' : 'Animar';
     draw();
+    if (auto || narr) narrate();
   };
   ACT.aprev = () => set(step - 1);
   ACT.anext = () => set(step + 1);
   ACT.apip = (b) => set(+b.dataset.i);
   ACT.aplay = (b) => { playing = !playing; b.textContent = playing ? 'Pausa' : 'Animar'; if (playing && reduce) toast('Tu sistema pide reducir el movimiento: se muestran cuadros fijos.'); };
+  ACT.aauto = () => { auto = !auto; sync(); if (auto) { pickVoice(); set(step === steps.length - 1 ? 0 : step); } else { hush(); clearLater(); } };
+  ACT.anarr = () => { narr = !narr; sync(); if (narr) { pickVoice(); narrate(); } else hush(); };
+  ACT.acine = (b) => { const on = !wrap.classList.contains('cine'); setCine(wrap, on); b.setAttribute('aria-pressed', on); b.textContent = on ? '✕ Salir' : '⛶ Pantalla'; };
   set(0);
   if (!reduce) loop((ts) => { if (last == null) last = ts; const dt = (ts - last) / 1000; last = ts; if (playing) t += Math.min(dt, 0.1); draw(); });
+}
+
+// ═══════════ Videos: escenas en pixel art con narración, subtítulos, capítulos y pausas con pregunta
+let VS = null, VAUTO = false, VQUEUE = [];
+const hasVideo = (tid) => !!(C.lessons[tid] && C.lessons[tid].video);
+const vFlat = (tid) => { const out = []; C.lessons[tid].video.forEach((ch, ci) => ch.sc.forEach((sc, si) => out.push({ ci, si, sc, ch: ch.ch }))); return out; };
+const sceneSecs = (sc) => estSecs(sc.say) + 0.7 + (sc.v.k === 'quiz' ? 6 + estSecs(sc.exp || '') : 0);
+const videoSecs = (tid) => (hasVideo(tid) ? vFlat(tid).reduce((a, x) => a + sceneSecs(x.sc), 0) : 0);
+const vMin = (tid) => Math.max(1, Math.round(videoSecs(tid) / 60));
+const mmss = (s) => `${Math.floor(s / 60)}:${pad(Math.floor(s % 60))}`;
+function stopVideo() { hush(); clearLater(); if (CINE) setCine(CINE, false); if (VS) VS.dead = true; VS = null; }
+document.addEventListener('visibilitychange', () => { if (document.hidden && VS && VS.playing) vPause(); });
+
+function vCmp(v) {
+  if (!v.cmp) return v;
+  const c = C.compares[v.cmp], rows = v.rows ? v.rows.map((i) => c.rows[i]).filter(Boolean) : c.rows.slice(0, 5);
+  return { a: c.a, b: c.b, rows };
+}
+function vSlideHTML(x) {
+  const v = x.sc.v, t = TOP[VS.tid];
+  switch (v.k) {
+    case 'title': return `<div class="vs-title">${subjIcon(t.subj, 4)}<span class="eyebrow">${esc(v.s || SUBJ[t.subj].name)}</span><span class="t">${esc(v.t)}</span></div>`;
+    case 'list': return `<div class="vs-list"><span class="h">${esc(v.t)}</span><ul>${v.items.map((it) => `<li data-r>${esc(it)}</li>`).join('')}</ul></div>`;
+    case 'big': return `<div class="vs-big">${v.h ? `<span class="h">${esc(v.h)}</span>` : ''}<span class="n">${esc(v.t)}</span>${v.u ? `<span class="u">${esc(v.u)}</span>` : ''}${v.s ? `<span class="s">${esc(v.s)}</span>` : ''}</div>`;
+    case 'vs': { const c = vCmp(v); return `<div class="vs-cmp"><div class="hd"><span class="a">${esc(c.a)}</span><span class="x">×</span><span class="b">${esc(c.b)}</span></div>${c.rows.map(([k, a, b]) => `<div class="r" data-r><span class="k">${esc(k)}</span><span class="va">${esc(a)}</span><span class="vb2">${esc(b)}</span></div>`).join('')}</div>`; }
+    case 'flow': return `<div class="vs-flow"><span class="h">${esc(v.t)}</span><ol>${v.steps.map((s) => `<li data-r>${esc(s)}</li>`).join('')}</ol></div>`;
+    case 'anim': { const s = C.anims[v.id].steps[v.step], m = /<b>(.*?)<\/b>/.exec(s.cap); return `<div class="vs-anim">${esc(v.cap || (m ? m[1].replace(/\.$/, '') : C.anims[v.id].title))}</div>`; }
+    case 'case': { const p = v.p || { name: 'Paciente', age: '', sex: 'H', skin: '#D9A07A', hair: '#2A1A12', gown: '#7FC8A9' }; return `<div class="vs-case"><div class="pt">${patientSpr(p, 5)}<span>${esc(p.name)}${p.age ? `, ${p.age} años` : ''}</span></div><div class="tx"><span class="h">${esc(v.t || 'Caso clínico')}</span><p>${esc(v.text)}</p>${v.vit ? `<div class="vit">${Object.entries(v.vit).map(([k, val]) => `<span><b>${esc(k)}</b> ${esc(val)}</span>`).join('')}</div>` : ''}</div></div>`; }
+    case 'quiz': return `<div class="vs-quiz"><span class="h">Pausa · ¿qué harías?</span><p class="q">${esc(v.q)}</p><div class="vopts">${v.opts.map((o, k) => `<button class="vopt" data-act="vpick" data-k="${k}">${LET[k]}. ${esc(o)}</button>`).join('')}</div><div class="vcount"><i></i></div></div>`;
+    case 'mnemo': return `<div class="vs-box box mnemo gold">${GEMS}<span class="lab">Mnemotecnia</span><span class="big">${esc(v.t)}</span><p>${esc(v.d)}</p></div>`;
+    case 'tip': return `<div class="vs-box box ${v.kind}"><span class="lab">${v.kind === 'pearl' ? 'Perla de examen' : 'Trampa típica'}</span><p>${esc(v.t)}</p></div>`;
+    default: return '';
+  }
+}
+function vDraw(t) {
+  if (!VS) return;
+  const v = VS.flat[VS.i].sc.v, g = VS.g;
+  if (v.k === 'anim') { SCENES[v.id][v.step](g, t); g.r(0, 120, 160, 40, COL.bg); g.r(0, 120, 160, 1, COL.frame); return; }
+  g.clear(COL.bg);
+  const col = SUBJ[TOP[VS.tid].subj].color;
+  for (let i = 0; i < 28; i++) { const x = (rnd(i, 81) * 160 + t * (2 + rnd(i, 82) * 5)) % 160, y = rnd(i, 83) * 160; g.p(x, y, i % 6 ? COL.frame : col); }
+  for (let y = 2; y < 160; y += 6) g.r(0, y, 160, 1, '#0E1336');
+}
+function vSub(s) { const el = $('#vsub'); if (el) el.textContent = VS && VS.cc ? s : ''; }
+function vReveal() {
+  const items = [...document.querySelectorAll('#vslide [data-r]')];
+  if (!items.length) return;
+  const n = items.length, ns = Math.max(1, VS.sents.length);
+  const shown = VS.phase !== 'say' ? n : clamp(Math.ceil(((VS.sent + 1) / ns) * n), 1, n);
+  items.forEach((it, k) => { it.classList.toggle('on', k < shown); it.classList.toggle('cur', k === shown - 1 && VS.phase === 'say'); });
+}
+function vProgress() {
+  if (!VS) return;
+  const before = VS.secs.slice(0, VS.i).reduce((a, b) => a + b, 0);
+  const frac = VS.phase === 'say' ? (VS.sent / Math.max(1, VS.sents.length)) * 0.85 : 0.9;
+  const pos = before + VS.secs[VS.i] * frac;
+  const f = $('#vfill'); if (f) f.style.setProperty('--p', Math.min(1, pos / VS.total));
+  const tm = $('#vtime'); if (tm) tm.textContent = `${mmss(pos)} / ${mmss(VS.total)}`;
+}
+function vShow(i) {
+  VS.i = clamp(i, 0, VS.flat.length - 1); VS.sent = 0; VS.phase = 'say'; VS.picked = null;
+  const x = VS.flat[VS.i], v = x.sc.v;
+  VS.sents = sentences(x.sc.say);
+  const sl = $('#vslide');
+  sl.classList.remove('enter'); void sl.offsetWidth; sl.classList.add('enter');
+  sl.innerHTML = vSlideHTML(x);
+  $('#vscreen').dataset.k = v.k;
+  const st = v.k === 'anim' ? C.anims[v.id].steps[v.step] : null;
+  $('#vlabels').innerHTML = st ? (st.labels || []).map(([lx, ly, txt]) => `<span style="left:${(lx / 160) * 100}%;top:${(ly / 160) * 100}%">${esc(txt)}</span>`).join('') : '';
+  $('#vchip').textContent = x.ch;
+  document.querySelectorAll('#vchaps button').forEach((b) => b.setAttribute('aria-current', +b.dataset.i === x.ci));
+  vSub(VS.started ? '' : sentences(x.sc.say)[0] || ''); vReveal(); vProgress(); vDraw(reduce ? 3 : VS.t);
+  S.vid[VS.tid] = { ...(S.vid[VS.tid] || {}), pos: VS.i }; save();
+}
+function vBtn() {
+  const b = $('#vplaybtn'); if (b) { b.textContent = VS.playing ? '⏸' : '▶'; b.setAttribute('aria-label', VS.playing ? 'Pausar' : 'Reproducir'); }
+  const big = $('#vbig'); if (big) big.hidden = VS.started;
+}
+function vPlay() {
+  if (!VS) return;
+  VS.playing = true; VS.started = true; vBtn();
+  if (VS.voice) pickVoice();
+  if (VS.phase === 'wait') vQuizWait(); else vStep();
+}
+function vPause() { if (!VS) return; VS.playing = false; hush(); clearLater(); vBtn(); }
+function vStep() {
+  if (!VS || !VS.playing) return;
+  const x = VS.flat[VS.i];
+  if (VS.sent >= VS.sents.length) {
+    if (VS.phase === 'say' && x.sc.v.k === 'quiz') { VS.phase = 'wait'; vQuizWait(); return; }
+    later(() => vGo(VS.i + 1), 650 / VS.speed); return;
+  }
+  const s = VS.sents[VS.sent];
+  vSub(s); vReveal(); vProgress();
+  const next = () => { if (!VS || !VS.playing) return; VS.sent++; vStep(); };
+  if (VS.voice && TTS.ok && !TTS.broken) speak(s, VS.speed, next); else later(next, (estSecs(s) / VS.speed) * 1000);
+}
+function vGo(i) {
+  if (!VS) return;
+  hush(); clearLater();
+  if (i >= VS.flat.length) { vEnd(); return; }
+  vShow(i);
+  if (VS.playing) vStep();
+}
+function vQuizWait() {
+  const box = document.querySelector('#vslide .vcount');
+  if (box) { box.style.setProperty('--d', 6 / VS.speed + 's'); box.classList.remove('run'); void box.offsetWidth; box.classList.add('run'); }
+  vSub('Elige una opción…');
+  later(() => vQuizReveal(null), 6000 / VS.speed);
+}
+function vQuizReveal(k) {
+  if (!VS || VS.phase === 'exp') return;
+  hush(); clearLater();
+  const x = VS.flat[VS.i], v = x.sc.v;
+  VS.phase = 'exp'; VS.picked = k;
+  document.querySelectorAll('#vslide .vopt').forEach((b, j) => { b.disabled = true; if (j === v.a) b.classList.add('ok'); else if (j === k) b.classList.add('bad'); });
+  const box = document.querySelector('#vslide .vcount'); if (box) box.classList.remove('run');
+  if (k === v.a) { beep('ok'); gain(5); } else if (k != null) beep('bad');
+  VS.sents = sentences(x.sc.exp); VS.sent = 0;
+  if (VS.playing) vStep(); else vSub(x.sc.exp);
+}
+function vEnd() {
+  const tid = VS.tid, prev = S.vid[tid] || {}, first = !prev.done;
+  VS.playing = false; hush(); clearLater(); vBtn();
+  S.vid[tid] = { done: prev.done || today(), pos: 0, n: (prev.n || 0) + 1 };
+  if (first) gain(40, 'Video completo'); else save();
+  const f = $('#vfill'); if (f) f.style.setProperty('--p', 1);
+  const nx = VQUEUE[0];
+  $('#vscreen').dataset.k = 'end'; $('#vlabels').innerHTML = '';
+  $('#vslide').innerHTML = `<div class="vs-end"><span class="eyebrow">Fin del video</span><span class="t">${esc(TOP[tid].title)}</span>${first ? '<span class="chip" style="--sc:var(--ok)">+40 XP</span>' : ''}
+    <button class="btn gold-btn" data-go="topic" data-a="${tid}" data-b="preguntas">Ir a las preguntas</button><button class="btn" data-act="vagain">Ver otra vez</button>
+    ${nx ? `<p class="small">Sigue: <b>${esc(TOP[nx].title)}</b> en <b id="vcd">5</b> s</p><button class="btn small" data-act="vqstop">Detener maratón</button>` : ''}</div>`;
+  vSub(nx ? 'Maratón: el siguiente video empieza en unos segundos.' : '¡Listo! Ahora contesta las preguntas del tema para fijarlo.');
+  if (nx) {
+    let n = 5;
+    const tickCd = () => { if (!VS || VS.tid !== tid) return; n--; const el = $('#vcd'); if (el) el.textContent = n; if (n <= 0) { VQUEUE.shift(); VAUTO = true; go('topic', { a: nx, b: 'video' }); } else later(tickCd, 1000); };
+    later(tickCd, 1000);
+  }
+}
+// Gancho para la herramienta de vista previa (tools/preview.cjs): solo existe con #preview en la URL
+if (location.hash === '#preview') window.__gp = { show: (i) => { VS.started = true; vBtn(); vShow(i); document.querySelectorAll('#vslide [data-r]').forEach((r) => r.classList.add('on')); const x = VS.flat[VS.i]; vSub(x.sc.say); if (x.sc.v.k === 'quiz') document.querySelectorAll('#vslide .vopt').forEach((b, j) => j === x.sc.v.a && b.classList.add('ok')); return VS.flat.length; } };
+function mountVideo(el, tid) {
+  const t = TOP[tid], chs = C.lessons[tid].video, flat = vFlat(tid), secs = flat.map((x) => sceneSecs(x.sc)), total = secs.reduce((a, b) => a + b, 0);
+  const st = S.vid[tid] || {}, startI = st.pos > 0 && st.pos < flat.length ? st.pos : 0;
+  const chStart = chs.map((_, ci) => flat.findIndex((x) => x.ci === ci));
+  const chSecs = chs.map((_, ci) => flat.reduce((a, x, k) => a + (x.ci === ci ? secs[k] : 0), 0));
+  VS = { tid, flat, secs, total, chStart, i: startI, sent: 0, sents: [], phase: 'say', playing: false, started: false, speed: vRate(), voice: S.settings.vvoice !== false, cc: S.settings.vcc !== false, t: 0, picked: null };
+  let acc = 0;
+  const ticks = chSecs.slice(0, -1).map((s) => { acc += s; return `<b style="left:${(acc / total) * 100}%"></b>`; }).join('');
+  el.innerHTML = `<div class="vp" id="vp" style="--sc:${SUBJ[t.subj].color}">
+    <div class="vscreen" id="vscreen"><canvas width="160" height="160" aria-hidden="true"></canvas><div class="vlabels" id="vlabels"></div><div class="vslide" id="vslide"></div><span class="vchip" id="vchip"></span>
+      <button class="vbig" data-act="vplay" id="vbig"><span class="pl">▶</span>${startI ? 'Continuar el video' : 'Ver el video'}<small>${mmss(total)} · ${chs.length} capítulos · con voz y subtítulos</small></button></div>
+    <div class="vsub" id="vsub" aria-live="polite"></div>
+    <div class="vbar" id="vbar" data-act="vseek" role="progressbar" aria-label="Avance del video">${ticks}<i id="vfill"></i></div>
+    <div class="vctrl">
+      <button class="vb" data-act="vprev" aria-label="Capítulo anterior">⏮</button><button class="vb vmain" data-act="vplay" id="vplaybtn" aria-label="Reproducir">▶</button><button class="vb" data-act="vnext" aria-label="Siguiente capítulo">⏭</button>
+      <span class="vtime" id="vtime">0:00 / ${mmss(total)}</span>
+      <button class="vb" data-act="vspeed" aria-label="Velocidad">${VS.speed}×</button><button class="vb" data-act="vvoice" aria-pressed="${VS.voice}">Voz</button><button class="vb" data-act="vcc" aria-pressed="${VS.cc}">CC</button><button class="vb" data-act="vcine" aria-pressed="false" aria-label="Modo cine">⛶</button>
+    </div>
+  </div>
+  <section class="panel tight"><h2>Capítulos</h2><ol class="vchaps" id="vchaps">${chs.map((c, ci) => `<li><button data-act="vch" data-i="${ci}"><span>${ci + 1}. ${esc(c.ch)}</span><span class="small muted">${mmss(chSecs[ci])}</span></button></li>`).join('')}</ol>
+  <p class="small muted">${TTS.ok ? 'La voz es la de tu teléfono. ¿No se escucha? Quita el modo silencio y sube el volumen; o apaga “Voz” y sigue con subtítulos.' : 'Este navegador no tiene voz: el video avanza con subtítulos.'} ${VQUEUE.length ? `Maratón: quedan ${VQUEUE.length} video(s) después de este.` : ''}</p></section>`;
+  VS.g = Pix(el.querySelector('canvas').getContext('2d'));
+  const restart = () => { if (VS.playing) { hush(); clearLater(); if (VS.phase === 'wait') vQuizWait(); else vStep(); } };
+  ACT.vplay = () => (VS.playing ? vPause() : vPlay());
+  ACT.vprev = () => { const ci = VS.flat[VS.i].ci, s0 = VS.chStart[ci]; vGo(VS.i > s0 || VS.sent > 0 ? s0 : VS.chStart[Math.max(0, ci - 1)]); };
+  ACT.vnext = () => { const ci = VS.flat[VS.i].ci; if (ci + 1 < VS.chStart.length) vGo(VS.chStart[ci + 1]); else vGo(VS.flat.length); };
+  ACT.vch = (b) => { vGo(VS.chStart[+b.dataset.i]); if (!VS.playing) vPlay(); };
+  ACT.vseek = (b, e) => {
+    const r = b.getBoundingClientRect(), tg = clamp((e.clientX - r.left) / r.width, 0, 1) * VS.total;
+    let a = 0, k = 0; while (k < VS.secs.length - 1 && a + VS.secs[k] < tg) { a += VS.secs[k]; k++; }
+    vGo(k);
+  };
+  ACT.vspeed = (b) => { VS.speed = SPEEDS[(SPEEDS.indexOf(VS.speed) + 1) % SPEEDS.length]; S.settings.vspeed = VS.speed; save(); b.textContent = VS.speed + '×'; restart(); };
+  ACT.vvoice = (b) => { VS.voice = !VS.voice; S.settings.vvoice = VS.voice; save(); b.setAttribute('aria-pressed', VS.voice); if (VS.voice) TTS.broken = false; restart(); };
+  ACT.vcc = (b) => { VS.cc = !VS.cc; S.settings.vcc = VS.cc; save(); b.setAttribute('aria-pressed', VS.cc); vSub(VS.cc && VS.sents[VS.sent] ? VS.sents[VS.sent] : ''); };
+  ACT.vcine = (b) => { const on = !$('#vp').classList.contains('cine'); setCine($('#vp'), on); b.setAttribute('aria-pressed', on); b.textContent = on ? '✕' : '⛶'; };
+  ACT.vpick = (b) => vQuizReveal(+b.dataset.k);
+  ACT.vagain = () => { S.vid[tid].pos = 0; save(); VAUTO = true; go('topic', { a: tid, b: 'video' }); };
+  ACT.vqstop = () => { VQUEUE = []; clearLater(); toast('Maratón detenido'); vSub(''); const p = document.querySelector('.vs-end p'); if (p) p.remove(); };
+  vShow(startI);
+  if (!reduce) { let last = null; loop((ts) => { if (!VS) return; if (last == null) last = ts; VS.t += Math.min((ts - last) / 1000, 0.1); last = ts; vDraw(VS.t); }); }
+  if (VAUTO) { VAUTO = false; vPlay(); }
 }
 
 // ═══════════ Preguntas (práctica, diagnóstico, jefe, errores, simulacro, una sola)
@@ -918,9 +1193,27 @@ VIEWS.repaso = (m) => {
   m.innerHTML = `<h1>Repaso</h1>
   <section class="panel"><h2>Tarjetas</h2><p class="muted">${cq.due.length} para repasar y ${cq.fresh.length} nuevas hoy (máximo 20 nuevas al día). Vuelven a 1, 2, 4, 7 y 12 días según qué tan bien te las sepas.</p><button class="btn gold-btn big" data-act="cardsAll"${tot ? '' : ' disabled'}>${tot ? 'Repasar tarjetas' : 'Al día por hoy'}</button></section>
   <section class="panel"><h2>Cuaderno de errores</h2><p class="muted">${ed.length} para hoy · ${all} en total. Cada pregunta que fallas regresa en 1, 3 y 7 días; a la tercera vez que la aciertas, sale del cuaderno.</p><button class="btn gold-btn big" data-act="errToday"${ed.length ? '' : ' disabled'}>${ed.length ? `Repasar las ${ed.length} de hoy` : 'Nada pendiente hoy'}</button>${all ? '<button class="btn" data-go="errores">Ver el cuaderno completo</button>' : ''}</section>
+  <section class="panel"><h2>Videos</h2><p class="muted">Un video por tema con narración, subtítulos y pausas para preguntarte. Ideal para el camino o antes de dormir.</p><button class="btn" data-go="videos">Abrir videos</button></section>
   <section class="panel"><h2>Perlas para el final</h2><p class="muted">Mnemotecnias, perlas y trampas de todos los temas disponibles en una sola página. Para la noche del 9 de noviembre.</p><button class="btn" data-go="perlas">Abrir perlas</button></section>`;
   ACT.cardsAll = () => { FS = makeCardSession(null); go('tarjetas'); };
   ACT.errToday = () => startQuiz({ mode: 'errors', title: 'Cuaderno de errores', qids: shuffle(ed), tab: 'repaso', back: 'repaso' });
+};
+VIEWS.videos = (m) => {
+  const vt = C.topics.filter((t) => hasVideo(t.id)), seen = vt.filter((t) => S.vid[t.id] && S.vid[t.id].done).length;
+  const status = (tid) => { const v = S.vid[tid]; return v && v.done ? 'Visto ✓' : v && v.pos ? 'Continuar' : 'Nuevo'; };
+  m.innerHTML = `<button class="btn small ghost" data-go="repaso" style="align-self:flex-start">← Repaso</button><h1>Videos</h1>
+  <p class="muted">Un video por tema: escenas en pixel art, narración con la voz de tu teléfono, subtítulos y pausas para preguntarte. ${seen} de ${vt.length} vistos. El maratón reproduce los pendientes de una materia uno tras otro.</p>
+  ${C.subjects.map((s) => {
+    const ts = vt.filter((t) => t.subj === s.id); if (!ts.length) return '';
+    const min = ts.reduce((a, t) => a + vMin(t.id), 0);
+    return `<section class="panel" style="--sc:${s.color}"><div class="row">${subjIcon(s.id, 2)}<h2 class="grow">${esc(s.name)}</h2><button class="btn small" data-act="vmara" data-s="${s.id}">Maratón · ${min} min</button></div>
+    <ul class="vlist">${ts.map((t) => `<li><button class="vitem" data-act="vopen" data-t="${t.id}"><span class="vth" aria-hidden="true">▶</span><span class="tt">${esc(t.title)}<small>Tema ${t.n} · ${vMin(t.id)} min · ${status(t.id)}</small></span></button></li>`).join('')}</ul></section>`;
+  }).join('')}`;
+  ACT.vopen = (b) => { VQUEUE = []; VAUTO = true; go('topic', { a: b.dataset.t, b: 'video' }); };
+  ACT.vmara = (b) => {
+    const ts = vt.filter((t) => t.subj === b.dataset.s), pend = ts.filter((t) => !(S.vid[t.id] && S.vid[t.id].done)), list = (pend.length ? pend : ts).map((t) => t.id);
+    VQUEUE = list.slice(1); VAUTO = true; go('topic', { a: list[0], b: 'video' });
+  };
 };
 VIEWS.tarjetas = (m) => {
   if (!FS) FS = makeCardSession(route.a || null);
@@ -970,7 +1263,7 @@ VIEWS.mas = (m) => {
     ['plan', 'Plan', 'Día por día hasta el parcial'], ['diag', 'Diagnóstico', S.diag.done ? 'Ver tu mapa de calor' : '30 preguntas para empezar'],
     ['sim', 'Simulacro', 'Con reloj, como el examen'], ['calc', 'Calculadoras', 'Escalas que te explican el resultado'],
     ['comp', 'Comparadores', 'Lado a lado: × '], ['ruleta', 'Ruleta', '¿Cuál será tu enfermedad?'],
-    ['perlas', 'Perlas', 'Repaso final de un vistazo'], ['logros', 'Logros', `${Object.keys(S.ach).length} de ${ACH.length}`],
+    ['videos', 'Videos', 'Un video por tema, con voz'], ['perlas', 'Perlas', 'Repaso final de un vistazo'], ['logros', 'Logros', `${Object.keys(S.ach).length} de ${ACH.length}`],
     ['ajustes', 'Ajustes', 'Sonido, reloj y respaldo']
   ];
   m.innerHTML = `<h1>Más</h1><div class="tools">${tiles.map(([v, t, d]) => `<button class="tile" data-go="${v}"><span class="t">${t}</span><span class="d">${esc(d)}</span></button>`).join('')}</div>`;

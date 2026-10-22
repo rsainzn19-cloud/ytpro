@@ -9,6 +9,73 @@ export default {
       nn: [['ischemic-heart-disease', 'Coronary Artery Disease'], ['case-study-18-presenting-with-myocardial-infarction', 'Case Study #18: Myocardial Infarction']],
       yt: 'acute coronary syndrome STEMI NSTEMI',
       anim: 'sca',
+      video: [
+        { ch: 'De la placa al infarto', sc: [
+          { v: { k: 'title', t: 'Síndromes coronarios agudos', s: 'Tema 2 · Cardiología' },
+            say: 'Bienvenido a la guardia. En este video vas a aprender a reconocer un síndrome coronario agudo, a leer el electrocardiograma en los primeros diez minutos y a decidir quién necesita reperfusión inmediata. Es de los temas que más preguntan en el parcial.' },
+          { v: { k: 'case', t: 'Llega a urgencias', p: { name: 'Ernesto', age: 61, sex: 'H', skin: '#D9A07A', hair: '#8C8C96', gown: '#7FC8A9' }, text: 'Dolor opresivo retroesternal de 40 min, irradiado al brazo izquierdo, con diaforesis. Diabético y fumador.', vit: { FC: '98', PA: '118/72', SpO2: '96%' } },
+            say: 'Imagina a Ernesto, de sesenta y un años, diabético y fumador. Llega con dolor opresivo en el pecho desde hace cuarenta minutos, que se le va al brazo izquierdo, y está sudoroso. Antes de cualquier otra cosa necesitas un electrocardiograma de doce derivaciones en diez minutos o menos. Pero primero, entendamos qué está pasando dentro de su arteria.' },
+          { v: { k: 'anim', id: 'sca', step: 2 },
+            say: 'Todo empieza con la aterosclerosis. El colesterol LDL entra a la pared de la arteria, se oxida y los macrófagos lo fagocitan. Con los años se forma una placa: un núcleo de grasa cubierto por una capa fibrosa. Mientras esa capa sea gruesa, la placa es estable y solo da angina con el esfuerzo.' },
+          { v: { k: 'anim', id: 'sca', step: 3 },
+            say: 'El problema llega cuando la capa fibrosa es delgada y se rompe. Las plaquetas se pegan al material expuesto y forman un trombo blanco que tapa la arteria de forma parcial. Eso es un síndrome coronario agudo sin elevación del ST, y en el electrocardiograma puedes ver infradesnivel.' },
+          { v: { k: 'anim', id: 'sca', step: 4 },
+            say: 'Si la fibrina atrapa eritrocitos, el trombo se vuelve rojo y cierra la arteria por completo. El miocardio que depende de ella empieza a morir. Eso se ve como elevación del ST. Recuerda la frase: tiempo es miocardio.' },
+          { v: { k: 'list', t: 'El espectro', items: ['Angina inestable: isquemia con troponina normal', 'IAMSEST: troponina elevada, sin elevación del ST', 'IAMCEST: elevación persistente del ST'] },
+            say: 'Así que el síndrome coronario agudo es un espectro. En la angina inestable hay isquemia en reposo, pero la troponina es normal. En el infarto sin elevación del ST, la troponina sube. Y en el infarto con elevación del ST hay elevación persistente del segmento, casi siempre por una arteria ocluida.' }
+        ] },
+        { ch: 'Los primeros 10 minutos', sc: [
+          { v: { k: 'flow', t: 'Primer contacto', steps: ['ECG de 12 derivaciones en ≤10 min', 'Monitor y acceso venoso', 'Troponina de alta sensibilidad 0 h y 1 h', 'Aspirina 150–300 mg masticada', '¿Elevación del ST? → reperfundir ya'] },
+            say: 'El orden importa. Electrocardiograma en diez minutos o menos. Monitor y acceso venoso. Troponina de alta sensibilidad a la hora cero y a la hora uno. Aspirina masticada, de ciento cincuenta a trescientos miligramos, a todos, salvo alergia verdadera. Y con el electrocardiograma decides el camino: si hay elevación del ST, se reperfunde ya, sin esperar la troponina.' },
+          { v: { k: 'mnemo', t: 'MONA se jubiló: solo la A es para todos', d: 'Morfina solo si el dolor es intenso · Oxígeno solo si SatO₂ <90% · Nitratos sin hipotensión, sin IAM de VD y sin sildenafil · Aspirina a todos.' },
+            say: 'Quizá aprendiste MONA: morfina, oxígeno, nitratos y aspirina. Hoy solo la aspirina es para todos. El oxígeno, solo si la saturación es menor de noventa por ciento. La morfina, solo para dolor intenso que no cede, porque retrasa la absorción de los antiagregantes orales. Y los nitratos nunca con hipotensión, con infarto del ventrículo derecho o si tomó sildenafil en las últimas veinticuatro horas.' },
+          { v: { k: 'quiz', q: 'Ernesto satura 96% al aire ambiente. ¿Le pones oxígeno?', opts: ['Sí: todo infarto lleva oxígeno', 'No: solo si la SatO₂ es <90%'], a: 1 },
+            say: 'Pausa. Ernesto satura noventa y seis por ciento al aire ambiente. ¿Le pones oxígeno?',
+            exp: 'No. El oxígeno solo se indica si la saturación es menor de noventa por ciento. Darlo a quien no tiene hipoxemia no ayuda y puede aumentar el daño.' }
+        ] },
+        { ch: 'Leer el electrocardiograma', sc: [
+          { v: { k: 'big', h: 'Elevación del ST', t: '≥1 mm', s: 'En 2 derivaciones contiguas. En V2–V3: ≥2 mm en hombres ≥40 años, ≥2.5 mm en <40 y ≥1.5 mm en mujeres.' },
+            say: 'Para hablar de elevación del ST necesitas un milímetro o más en dos derivaciones contiguas. En V2 y V3 el umbral es mayor: dos milímetros en hombres de cuarenta años o más, dos punto cinco en hombres más jóvenes y uno punto cinco en mujeres.' },
+          { v: { k: 'vs', a: 'Derivaciones', b: 'Arteria', rows: [['Anterior', 'V1–V4', 'Descendente anterior'], ['Inferior', 'DII, DIII, aVF', 'Coronaria derecha (80–90%)'], ['Lateral', 'DI, aVL, V5–V6', 'Circunfleja o diagonal'], ['Posterior', 'Infradesnivel V1–V3 con R alta', 'Circunfleja o CD: toma V7–V9']] },
+            say: 'Luego localiza. De V1 a V4 es la cara anterior: la descendente anterior. DII, DIII y aVF es la cara inferior: casi siempre la coronaria derecha. DI, aVL, V5 y V6 es la cara lateral: la circunfleja. Y si ves infradesnivel de V1 a V3 con ondas R altas, piensa en un infarto posterior y toma V7 a V9.' },
+          { v: { k: 'tip', kind: 'trap', t: 'IAM inferior + hipotensión + ingurgitación yugular + pulmones limpios = IAM de VD. Toma V4R. Nada de nitratos ni furosemida: necesita volumen.' },
+            say: 'Ojo con esta trampa. Infarto inferior con hipotensión, ingurgitación yugular y pulmones limpios: es un infarto del ventrículo derecho. Toma V4R. Aquí los nitratos y la furosemida están contraindicados, porque ese ventrículo depende de la precarga. Lo que necesita es volumen.' },
+          { v: { k: 'list', t: 'También se tratan como IAMCEST', items: ['Bloqueo de rama con síntomas isquémicos', 'Ritmo de marcapasos con isquemia', 'IAM posterior aislado', 'De Winter: ST ascendente con T altas'] },
+            say: 'Hay equivalentes que se tratan igual que un infarto con elevación del ST: bloqueo de rama con síntomas isquémicos persistentes, ritmo de marcapasos con isquemia, infarto posterior aislado y el patrón de De Winter. Y no olvides Wellens: ondas T profundas en V2 y V3 en un paciente sin dolor indican una estenosis crítica de la descendente anterior. A ese paciente no le hagas prueba de esfuerzo.' }
+        ] },
+        { ch: 'IAMCEST: reperfundir ya', sc: [
+          { v: { k: 'flow', t: 'IAMCEST de menos de 12 h', steps: ['¿ICP primaria en ≤120 min?', 'Sí → ICP primaria', 'No → fibrinólisis en ≤10 min', 'Luego: traslado a hemodinamia', 'Si falla → ICP de rescate'] },
+            say: 'Si los síntomas tienen menos de doce horas, hay que reperfundir. La pregunta clave es: ¿puedo hacer angioplastia primaria en ciento veinte minutos o menos desde el diagnóstico? Si la respuesta es sí, angioplastia. Si no, fibrinólisis en los primeros diez minutos, de preferencia con tenecteplasa, y traslado a un centro con hemodinamia. Si la fibrinólisis falla, angioplastia de rescate inmediata.' },
+          { v: { k: 'big', h: 'Fibrinólisis exitosa', t: '≥50%', u: 'baja del ST', s: 'a los 60–90 min, con alivio del dolor' },
+            say: '¿Cómo sabes si funcionó la fibrinólisis? El ST baja a la mitad o menos a los sesenta a noventa minutos y cede el dolor. Puede aparecer un ritmo idioventricular acelerado: es una arritmia de reperfusión y no se trata.' },
+          { v: { k: 'list', t: 'Fibrinólisis: contraindicaciones absolutas', items: ['Hemorragia intracraneal previa', 'EVC isquémico en los últimos 6 meses', 'Neoplasia o malformación del SNC', 'Trauma, cirugía o TCE en el último mes', 'Sangrado digestivo en el último mes', 'Disección aórtica o trastorno hemorrágico'] },
+            say: 'Antes de fibrinolizar, revisa las contraindicaciones absolutas. Cualquier hemorragia intracraneal previa. Evento vascular cerebral isquémico en los últimos seis meses. Tumor o malformación del sistema nervioso central. Trauma mayor, cirugía o traumatismo craneal en el último mes. Sangrado digestivo en el último mes. Y disección aórtica o un trastorno hemorrágico conocido.' },
+          { v: { k: 'anim', id: 'sca', step: 5 },
+            say: 'Con el stent, la arteria se abre y regresa el flujo. La aspirina y un inhibidor P2Y12 evitan que las plaquetas vuelvan a agregarse. El tamaño de la cicatriz depende de cuánto tardaste en abrirla.' },
+          { v: { k: 'quiz', q: 'IAMCEST anterior de 2 h. La hemodinamia más cercana está a 3 h. ¿Qué haces?', opts: ['Trasladar y esperar la ICP', 'Fibrinólisis ya y después trasladar', 'Solo anticoagular y observar'], a: 1 },
+            say: 'Pausa. Infarto anterior con elevación del ST, de dos horas de evolución. La hemodinamia más cercana está a tres horas. ¿Qué haces?',
+            exp: 'Fibrinólisis en los primeros diez minutos y después traslado. Como la angioplastia no llega en ciento veinte minutos, esperar significa perder miocardio.' }
+        ] },
+        { ch: 'SCASEST: cuándo cateterizar', sc: [
+          { v: { k: 'vs', cmp: 'stemi-nste', rows: [2, 4, 5] },
+            say: 'En el síndrome coronario sin elevación del ST el objetivo cambia: ya no es reperfundir en minutos, sino estratificar el riesgo y decidir cuándo hacer el cateterismo. Y algo que siempre preguntan: aquí nunca se da fibrinólisis, porque no beneficia y aumenta el sangrado.' },
+          { v: { k: 'flow', t: 'SCASEST: tiempo al cateterismo', steps: ['Muy alto riesgo → inmediato (<2 h)', 'Alto riesgo → temprano (<24 h)', 'Bajo riesgo → selectivo'] },
+            say: 'Muy alto riesgo, es decir, inestabilidad hemodinámica, dolor refractario, arritmias graves, insuficiencia cardiaca aguda o complicaciones mecánicas: cateterismo inmediato, en menos de dos horas. Alto riesgo, como un infarto sin elevación del ST confirmado, cambios dinámicos del ST o un puntaje GRACE mayor de ciento cuarenta: en menos de veinticuatro horas. El resto: estrategia selectiva, con prueba de isquemia o angiotomografía antes de decidir.' },
+          { v: { k: 'quiz', q: 'IAMSEST con troponina elevada, sin dolor y estable. ¿Qué indicas?', opts: ['Fibrinólisis', 'Cateterismo en menos de 24 h', 'Alta con prueba de esfuerzo'], a: 1 },
+            say: 'Pausa. Infarto sin elevación del ST, con troponina elevada, ya sin dolor y hemodinámicamente estable. ¿Qué indicas?',
+            exp: 'Cateterismo temprano, en menos de veinticuatro horas, porque el infarto confirmado lo pone en alto riesgo. La fibrinólisis nunca se usa sin elevación del ST.' }
+        ] },
+        { ch: 'Tratamiento y complicaciones', sc: [
+          { v: { k: 'list', t: 'Doble antiagregación · 12 meses', items: ['Aspirina 75–100 mg/día', 'Ticagrelor: carga 180 mg, luego 90 mg c/12 h', 'Prasugrel: carga 60 mg, luego 10 mg (no con EVC previo)', 'Clopidogrel: si hubo fibrinólisis o necesita anticoagulante'] },
+            say: 'El tratamiento antitrombótico base es la doble antiagregación por doce meses: aspirina más un inhibidor P2Y12. Ticagrelor o prasugrel son los preferidos. El prasugrel está contraindicado si ya tuvo un evento vascular cerebral. Y el clopidogrel se usa si recibió fibrinólisis o si necesita anticoagulante oral.' },
+          { v: { k: 'list', t: 'Al alta', items: ['Estatina de alta intensidad: LDL <55 mg/dL y ↓ ≥50%', 'Betabloqueador, sobre todo con FEVI ≤40%', 'IECA o ARA-II', 'Rehabilitación cardiaca y dejar de fumar'] },
+            say: 'Al alta: estatina de alta intensidad, con meta de LDL menor de cincuenta y cinco y una reducción de al menos la mitad. Betabloqueador, sobre todo si la fracción de expulsión es de cuarenta por ciento o menos. IECA o ARA dos. Y rehabilitación cardiaca, con dejar de fumar como parte del tratamiento.' },
+          { v: { k: 'list', t: 'El calendario de las complicaciones', items: ['Horas: fibrilación ventricular', 'Días 2–7: ruptura de músculo papilar', 'Días 3–5: comunicación interventricular', 'Días 3–14: ruptura de pared libre', 'Semanas: aneurisma y síndrome de Dressler'] },
+            say: 'Las complicaciones tienen su calendario. En las primeras horas, fibrilación ventricular: la principal causa de muerte antes de llegar al hospital. Del segundo al séptimo día, la ruptura del músculo papilar, con insuficiencia mitral aguda. Del tercero al quinto, la comunicación interventricular. Hasta el día catorce, la ruptura de la pared libre con taponamiento. Y semanas después, el aneurisma ventricular y el síndrome de Dressler.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'En IAMCEST nunca esperes la troponina para activar la hemodinamia. En SCASEST, la fibrinólisis siempre es la respuesta incorrecta.' },
+            say: 'La perla para el examen: en el infarto con elevación del ST nunca esperes la troponina para activar la hemodinamia. Y en el síndrome sin elevación del ST, la fibrinólisis siempre es la respuesta incorrecta. Ahora ve a las preguntas del tema para fijar lo que viste.' }
+        ] }
+      ],
       compare: ['stemi-nste'],
       sections: [
         { h: 'El espectro', html: `

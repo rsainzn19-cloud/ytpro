@@ -1,12 +1,20 @@
 // Arma index.html: une shell + CSS + contenido (como JSON) + app, y valida el contenido.
-// Uso: node build.mjs
+// Uso: node build.mjs                       → index.html con los 30 temas
+//      node build.mjs --only sca,scc --out /ruta/prueba.html
+//        → compila solo esos temas (más meta y diagnóstico) para probarlos sin depender del resto.
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 
 const src = new URL('./src/', import.meta.url);
 const read = (p) => readFileSync(new URL(p, src), 'utf8');
+const args = process.argv.slice(2);
+const opt = (k) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : null; };
+const OUT = opt('--out');
+const ONLY = opt('--only') ? new Set(opt('--only').split(',').map((x) => x.trim())) : null;
+const keepTopic = (tid) => !ONLY || ['meta', 'diagnostico'].includes(tid) || ONLY.has(tid);
 
 const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {} };
 for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('.js')).sort()) {
+  if (!keepTopic(f.replace(/^\d+-|\.js$/g, ''))) continue;
   const part = (await import(new URL('content/' + f, src))).default;
   for (const [k, v] of Object.entries(part)) {
     if (k === 'cards') {
@@ -20,7 +28,7 @@ for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('
 }
 
 // ───── Validación
-const errs = [];
+const errs = [], warns = [];
 const topics = new Map(C.topics.map((t) => [t.id, t]));
 const seen = new Set();
 for (const q of C.questions) {
@@ -42,7 +50,7 @@ for (const tid of Object.keys(C.lessons)) {
   for (const cid of L.compare || []) if (!C.compares[cid]) errs.push(`${tid}: comparador ${cid} no existe`);
   if (L.anim && !C.anims[L.anim]) errs.push(`${tid}: animación ${L.anim} no existe`);
 }
-for (const t of C.topics) if (!C.lessons[t.id]) errs.push(`tema ${t.id} sin lección`);
+for (const t of C.topics) if (!C.lessons[t.id] && keepTopic(t.id)) errs.push(`tema ${t.id} sin lección`);
 for (const [tid, L] of Object.entries(C.lessons)) {
   if (!Array.isArray(L.nn) || typeof L.yt !== 'string' || !L.yt) errs.push(`${tid}: faltan videos (nn/yt)`);
   for (const k of ['hook', 'sections', 'mnemo', 'pearl', 'trap', 'guide', 'refs']) if (!L[k]) errs.push(`${tid}: falta ${k}`);
@@ -55,11 +63,43 @@ for (const cs of C.cases) {
     if (!n.why || !n.q) errs.push(`${cs.id} nodo ${i}: falta q/why`);
   });
 }
-// Cada animación necesita un dibujo por paso en scenes.js
-const SCENES = new Function(read('scenes.js') + '\nreturn SCENES;')();
+// Escenas: scenes.js (utilidades + escenas base) y un archivo por animación en src/scenes/<id>.js
+const sceneFiles = readdirSync(new URL('scenes/', src)).filter((f) => f.endsWith('.js')).sort()
+  .filter((f) => !ONLY || Object.keys(C.anims).includes(f.replace(/\.js$/, '')));
+const scenesSrc = [read('scenes.js'), ...sceneFiles.map((f) => `// ─── scenes/${f}\n` + read('scenes/' + f))].join('\n');
+// Cada animación necesita un dibujo por paso
+const SCENES = new Function('clamp', scenesSrc + '\nreturn SCENES;')((v, a, b) => Math.max(a, Math.min(b, v)));
 for (const [id, a] of Object.entries(C.anims)) {
-  if (!SCENES[id]) errs.push(`animación ${id}: falta SCENES.${id} en scenes.js`);
+  if (!SCENES[id]) errs.push(`animación ${id}: falta SCENES.${id} (src/scenes/${id}.js)`);
   else if (SCENES[id].length !== a.steps.length) errs.push(`animación ${id}: ${a.steps.length} pasos y ${SCENES[id].length} dibujos`);
+}
+
+// Videos: capítulos → escenas con visual (v) y narración (say) escrita para leerse en voz alta
+const VK = { title: ['t'], list: ['t', 'items'], big: ['t'], vs: [], flow: ['t', 'steps'], anim: ['id'], case: ['text'], quiz: ['q', 'opts'], mnemo: ['t', 'd'], tip: ['kind', 't'] };
+const SYM = /[<>≥≤↑↓→←×±=%\/&*#@_~^|]|\[|\]/;
+const vidWords = {};
+for (const [tid, L] of Object.entries(C.lessons)) {
+  if (!L.video) { if (!ONLY) warns.push(`${tid}: sin video`); continue; }
+  if (!Array.isArray(L.video) || !L.video.length) { errs.push(`${tid}: video vacío`); continue; }
+  let w = 0;
+  L.video.forEach((ch, ci) => {
+    const at = `${tid} video cap ${ci + 1}`;
+    if (!ch.ch || !Array.isArray(ch.sc) || !ch.sc.length) { errs.push(`${at}: falta ch o sc`); return; }
+    ch.sc.forEach((s, si) => {
+      const here = `${at} escena ${si + 1}`, v = s.v;
+      if (!v || !VK[v.k]) { errs.push(`${here}: visual desconocido ${v && v.k}`); return; }
+      for (const f of VK[v.k]) if (v[f] == null || v[f] === '') errs.push(`${here}: ${v.k} sin ${f}`);
+      if (!s.say) errs.push(`${here}: falta say`);
+      else { if (SYM.test(s.say)) errs.push(`${here}: say con símbolos (${s.say.match(SYM)[0]}); escríbelo con palabras`); w += s.say.split(/\s+/).length; }
+      if (v.k === 'anim') { const a = C.anims[v.id]; if (!a) errs.push(`${here}: animación ${v.id} no existe`); else if (!(v.step >= 0 && v.step < a.steps.length)) errs.push(`${here}: paso ${v.step} fuera de rango`); }
+      if (v.k === 'vs') { if (v.cmp ? !C.compares[v.cmp] : !(v.a && v.b && Array.isArray(v.rows) && v.rows.length)) errs.push(`${here}: vs necesita cmp existente o a, b y rows`); }
+      if (v.k === 'list' && !(Array.isArray(v.items) && v.items.length >= 1 && v.items.length <= 6)) errs.push(`${here}: list con 1 a 6 items`);
+      if (v.k === 'flow' && !(Array.isArray(v.steps) && v.steps.length >= 2 && v.steps.length <= 6)) errs.push(`${here}: flow con 2 a 6 pasos`);
+      if (v.k === 'quiz') { if (!(Array.isArray(v.opts) && v.opts.length >= 2 && v.opts.length <= 4 && v.a >= 0 && v.a < v.opts.length)) errs.push(`${here}: quiz con 2–4 opciones y a válido`); if (!s.exp) errs.push(`${here}: quiz sin exp`); else if (SYM.test(s.exp)) errs.push(`${here}: exp con símbolos`); else w += s.exp.split(/\s+/).length; }
+      if (v.k === 'tip' && !['pearl', 'trap'].includes(v.kind)) errs.push(`${here}: tip.kind es pearl o trap`);
+    });
+  });
+  vidWords[tid] = w;
 }
 const diag = C.questions.filter((q) => q.diag);
 if (diag.length !== 30) errs.push(`el diagnóstico tiene ${diag.length} preguntas, no 30`);
@@ -72,6 +112,7 @@ for (const tid of Object.keys(C.lessons)) {
   const need = topics.get(tid)?.pri === 'alta' ? 15 : 10;
   if (n < need) errs.push(`${tid}: ${n} preguntas, mínimo ${need}`);
 }
+if (warns.length) console.warn('Avisos:\n- ' + warns.join('\n- '));
 if (errs.length) {
   console.error('Errores de contenido:\n- ' + errs.join('\n- '));
   process.exit(1);
@@ -81,6 +122,9 @@ const json = JSON.stringify(C).replace(/</g, '\\u003c');
 const html = read('shell.html')
   .replace('/*CSS*/', () => read('style.css'))
   .replace('/*JSON*/', () => json)
-  .replace('/*APP*/', () => "(() => {\n'use strict';\n" + read('scenes.js') + '\n' + read('app.js') + '\n})();');
-writeFileSync(new URL('./index.html', import.meta.url), html);
-console.log(`index.html listo · ${(html.length / 1024).toFixed(0)} KB · ${C.questions.length} preguntas · ${C.cards.length} tarjetas · ${C.cases.length} casos · ${Object.keys(C.lessons).length} lecciones`);
+  .replace('/*APP*/', () => "(() => {\n'use strict';\n" + scenesSrc + '\n' + read('app.js') + '\n})();');
+const out = OUT ? new URL('file://' + (OUT.startsWith('/') ? OUT : process.cwd() + '/' + OUT)) : new URL('./index.html', import.meta.url);
+writeFileSync(out, html);
+const vids = Object.values(vidWords), vmin = vids.reduce((a, w) => a + w / 150, 0);
+console.log(`${out.pathname.split('/').pop()} listo · ${(html.length / 1024).toFixed(0)} KB · ${C.questions.length} preguntas · ${C.cards.length} tarjetas · ${C.cases.length} casos · ${Object.keys(C.lessons).length} lecciones · ${Object.keys(C.anims).length} animaciones · ${vids.length} videos (~${Math.round(vmin)} min)`);
+if (ONLY) for (const [tid, w] of Object.entries(vidWords)) console.log(`  video ${tid}: ${w} palabras ≈ ${(w / 150).toFixed(1)} min`);
