@@ -10,6 +10,70 @@ export default {
       compare: ['ea-ia'],
       nn: [['valvular-heart-diseases-overview', 'Valvular Heart Disease'], ['heart-sounds', 'Heart Sounds & Murmurs']],
       yt: 'aortic stenosis aortic regurgitation',
+      video: [
+        { ch: 'Una válvula, dos problemas', sc: [
+          { v: { k: 'title', t: 'Valvulopatía aórtica', s: 'Tema 14 · Cardiología' },
+            say: 'Bienvenido a la guardia. Hoy vas a dominar la válvula aórtica: la estenosis, cuando no abre bien, y la insuficiencia, cuando no cierra. Vas a reconocer cada soplo, medir la gravedad y decidir entre cirugía y TAVI.' },
+          { v: { k: 'case', t: 'Consulta de cardiología', p: { name: 'Don Ramiro', age: 79, sex: 'H', skin: '#D9A07A', hair: '#C9C9D2', gown: '#7FC8A9' }, text: 'Disnea y opresión al caminar; ayer se desmayó subiendo escaleras. Soplo sistólico rudo en foco aórtico, irradiado a carótidas.', vit: { FC: '78', PA: '118/86', SpO2: '95%' } },
+            say: 'Imagina a don Ramiro, de setenta y nueve años. Desde hace meses le falta el aire y siente opresión al caminar. Ayer se desmayó subiendo escaleras. Le escuchas un soplo sistólico rudo en el foco aórtico que se va hacia las carótidas.' },
+          { v: { k: 'anim', id: 'aortica', step: 0 },
+            say: 'Primero, la válvula sana. Cuando el ventrículo izquierdo se contrae, las tres valvas se abren por completo y la sangre sale a la aorta sin turbulencia. En la diástole se cierran y no dejan regresar nada.' },
+          { v: { k: 'anim', id: 'aortica', step: 1 },
+            say: 'En la estenosis, las valvas calcificadas casi no se abren. La sangre pasa por un orificio estrecho, rápido y con turbulencia: ese es el soplo sistólico. El ventrículo engrosa su pared para vencer la resistencia. Es una sobrecarga de presión, con hipertrofia concéntrica.' },
+          { v: { k: 'list', t: 'Causas de estenosis aórtica', items: ['Degenerativa calcificada: >65–70 años (la más común)', 'Bicúspide: <65 años; coartación y aorta dilatada', 'Reumática: rara y casi siempre con valvulopatía mitral'] },
+            say: 'La causa más común es la degenerativa calcificada, después de los sesenta y cinco a setenta años. En menores de sesenta y cinco, piensa en válvula bicúspide, que se asocia a coartación y a dilatación de la aorta. La reumática es rara y casi siempre trae daño mitral.' }
+        ] },
+        { ch: 'Estenosis: clínica y gravedad', sc: [
+          { v: { k: 'mnemo', t: 'ASI: Angina, Síncope, Insuficiencia cardiaca', d: 'Supervivencia media sin tratamiento: 5, 3 y 2 años. Cualquiera de los tres con estenosis grave = intervenir.' },
+            say: 'Los síntomas se recuerdan con la palabra ASI: angina, síncope de esfuerzo e insuficiencia cardiaca. Sin tratamiento, la supervivencia media es de cinco, tres y dos años. Por eso, cualquier síntoma con estenosis grave obliga a intervenir.' },
+          { v: { k: 'list', t: 'La exploración', items: ['Soplo sistólico expulsivo en crescendo-decrescendo', 'Irradia a carótidas', 'Pulso parvus et tardus', 'S2 débil o ausente; S4', 'Grave: pico tardío del soplo'] },
+            say: 'Escuchas un soplo sistólico expulsivo, en crescendo y decrescendo, que irradia a las carótidas. El pulso carotídeo es débil y tardío: parvus et tardus. El segundo ruido se apaga y puede haber cuarto ruido. La gravedad la marca el pico tardío, no la intensidad.' },
+          { v: { k: 'big', h: 'Estenosis aórtica grave', t: '≥4 m/s', s: 'Gradiente medio ≥40 mmHg · área ≤1.0 cm² (≤0.6 cm²/m²)' },
+            say: 'El ecocardiograma confirma y gradúa. Es grave con velocidad pico de cuatro metros por segundo o más, gradiente medio de cuarenta milímetros de mercurio o más, o área valvular de un centímetro cuadrado o menos.' },
+          { v: { k: 'flow', t: 'Área grave, gradiente <40', steps: ['¿FEVI <50%?', 'Sí → eco con dobutamina', 'No → calcio valvular por TC', 'Grave confirmada → intervenir'] },
+            say: 'A veces el área es grave, pero el gradiente es bajo. Si la fracción de expulsión es menor de cincuenta por ciento, pide un eco con dobutamina para separar la estenosis grave verdadera de la seudograve. Si la fracción está conservada, mide el calcio valvular con tomografía.' },
+          { v: { k: 'quiz', q: 'Don Ramiro: Vmax 4.6 m/s, FEVI 60% y síncope de esfuerzo. ¿Qué sigue?', opts: ['Vigilar con eco cada año', 'Intervenir la válvula', 'Nitratos y diurético'], a: 1 },
+            say: 'Pausa. Don Ramiro tiene velocidad pico de cuatro punto seis metros por segundo, fracción de expulsión normal y síncope de esfuerzo. ¿Qué sigue?',
+            exp: 'Intervenir la válvula. Es una estenosis grave y sintomática, y eso basta. Vigilarlo es esperar la muerte súbita, y los nitratos pueden desplomarle la presión.' }
+        ] },
+        { ch: 'Cirugía o TAVI', sc: [
+          { v: { k: 'list', t: 'Estenosis grave: intervenir si…', items: ['Hay síntomas (cualquiera)', 'Asintomática con FEVI <50%', 'Prueba de esfuerzo anormal', 'Muy grave: Vmax ≥5 m/s', 'Irá a otra cirugía cardiaca'] },
+            say: 'En la estenosis grave se interviene si hay cualquier síntoma. Sin síntomas, se interviene con fracción de expulsión menor de cincuenta por ciento, prueba de esfuerzo anormal, velocidad de cinco metros por segundo o más, o si irá a otra cirugía cardiaca.' },
+          { v: { k: 'vs', a: 'TAVI', b: 'Cirugía (SAVR)', rows: [['Edad', 'ESC: ≥70 · AHA: >80', 'Jóvenes de bajo riesgo'], ['Anatomía', 'Acceso femoral adecuado', 'Bicúspide, aorta dilatada'], ['Riesgo', 'Alto o paciente frágil', 'Bajo; otra cirugía cardiaca']] },
+            say: 'Ahora, ¿TAVI o cirugía? El implante transcatéter de válvula aórtica, o TAVI, se prefiere en mayores, frágiles o de alto riesgo, con buen acceso femoral. La cirugía abierta, en jóvenes de bajo riesgo, con bicúspide, aorta dilatada o que necesitan otra cirugía cardiaca.' },
+          { v: { k: 'anim', id: 'aortica', step: 3 },
+            say: 'Así funciona el TAVI. Una prótesis montada en un stent viaja por un catéter, casi siempre desde la arteria femoral, y se expande dentro de la válvula enferma. No hay que abrir el tórax.' },
+          { v: { k: 'tip', kind: 'trap', t: '⚠️ Depende de la guía: TAVI desde ≥70 años (ESC/EACTS 2025) o >80 (ACC/AHA 2020; 65–80 decisión compartida).' },
+            say: 'Cuidado, aquí las guías no coinciden. La europea de dos mil veinticinco favorece el TAVI desde los setenta años. La americana de dos mil veinte lo prefiere después de los ochenta, con decisión compartida entre sesenta y cinco y ochenta. Usa la de tu profesor.' }
+        ] },
+        { ch: 'Insuficiencia aórtica', sc: [
+          { v: { k: 'anim', id: 'aortica', step: 2 },
+            say: 'Ahora el problema contrario. En la insuficiencia aórtica la válvula no cierra en la diástole y la sangre regresa de la aorta al ventrículo. El ventrículo recibe más volumen y se dilata: sobrecarga de volumen, con hipertrofia excéntrica.' },
+          { v: { k: 'list', t: 'Causas de insuficiencia aórtica', items: ['Raíz: HTA, Marfan, sífilis', 'Raíz: espondilitis anquilosante, disección', 'Válvula: bicúspide, endocarditis, reumática', 'Aguda: endocarditis o disección tipo A'] },
+            say: 'Las causas son de la raíz aórtica, como hipertensión, Marfan, sífilis, espondilitis anquilosante y disección, o de la propia válvula, como bicúspide, endocarditis y fiebre reumática. Cuando es aguda, piensa en endocarditis o en disección tipo A.' },
+          { v: { k: 'list', t: 'Soplo y pulsos', items: ['Diastólico temprano decreciente, BEI', 'Mejor sentado, inclinado y en espiración', 'Presión de pulso amplia', 'Corrigan, de Musset, Quincke, Duroziez', 'Austin Flint: retumbo apical funcional'] },
+            say: 'El soplo es diastólico temprano y decreciente, en el borde esternal izquierdo. Se oye mejor con el paciente sentado, inclinado hacia adelante y en espiración. Como el volumen latido es enorme, la presión de pulso se ensancha. Aparecen el pulso en martillo de agua, el cabeceo de Musset y el pulso capilar de Quincke.' },
+          { v: { k: 'vs', cmp: 'ea-ia', rows: [0, 2, 6] },
+            say: 'Compáralas de un vistazo. La estenosis es sobrecarga de presión, con pulso débil y tardío. La insuficiencia es sobrecarga de volumen, con pulso saltón. Y en fármacos, en la estenosis grave evitas nitratos; en la insuficiencia, los que bajan la frecuencia, porque alargan la diástole.' }
+        ] },
+        { ch: 'Insuficiencia aguda y cuándo operar', sc: [
+          { v: { k: 'case', t: 'Urgencias, 3 a. m.', p: { name: 'Iván', age: 34, sex: 'H', skin: '#C98E66', hair: '#2A1A12', gown: '#62E3FF' }, text: 'Usuario de drogas IV con endocarditis aórtica por S. aureus. De forma súbita: edema pulmonar, PA 85/40 y soplo diastólico corto.', vit: { FC: '124', PA: '85/40', SpO2: '86%' } },
+            say: 'Otro paciente. Iván, de treinta y cuatro años, usa drogas intravenosas y tiene endocarditis aórtica por estafilococo dorado. De pronto entra en edema pulmonar y cae la presión. Se perforó una valva: insuficiencia aórtica aguda. Sin tiempo para dilatarse, no hay pulso saltón y el soplo es corto.' },
+          { v: { k: 'quiz', q: '¿Qué necesita Iván?', opts: ['Cirugía valvular urgente', 'Balón de contrapulsación', 'Betabloqueador IV'], a: 0 },
+            say: 'Pausa. ¿Qué necesita Iván?',
+            exp: 'Cirugía valvular urgente, con antibióticos. El balón de contrapulsación está contraindicado porque aumenta el reflujo. El betabloqueador alarga la diástole y lo empeora. Para ganar tiempo sirven el nitroprusiato y la dobutamina.' },
+          { v: { k: 'big', h: 'IA crónica grave sin síntomas: operar si', t: '≤50%', u: 'FEVI', s: 'o diámetro telesistólico del VI >50 mm (>25 mm/m²). ⚠️ ACC/AHA 2020: desde FEVI ≤55%.' },
+            say: 'En la insuficiencia crónica grave, opera si hay síntomas. Sin síntomas, opera cuando el ventrículo empieza a fallar: fracción de expulsión de cincuenta por ciento o menos, o diámetro telesistólico mayor de cincuenta milímetros. La guía americana adelanta el corte a cincuenta y cinco por ciento.' }
+        ] },
+        { ch: 'Trampas de examen', sc: [
+          { v: { k: 'tip', kind: 'trap', t: 'Nitroglicerina en estenosis aórtica grave: el VI depende de la precarga → hipotensión grave.' },
+            say: 'Primera trampa: nitroglicerina a un paciente con estenosis aórtica grave. Ese ventrículo depende de la precarga, y al quitarla la presión se desploma. En cambio, en la insuficiencia aórtica crónica los vasodilatadores sí sirven para tratar la hipertensión.' },
+          { v: { k: 'list', t: 'Asociaciones que preguntan', items: ['Heyde: estenosis + angiodisplasia que sangra', 'Bicúspide + coartación + Turner', 'Profilaxis de endocarditis: solo alto riesgo', 'Amoxicilina 2 g VO 30–60 min antes'] },
+            say: 'Asociaciones de examen. Síndrome de Heyde: estenosis aórtica con angiodisplasia intestinal que sangra, por un von Willebrand adquirido. Válvula bicúspide con coartación y síndrome de Turner. Y profilaxis de endocarditis solo en alto riesgo, como una prótesis: amoxicilina dos gramos antes del procedimiento dental.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'La gravedad de la estenosis la marcan el pico tardío del soplo y un S2 que desaparece, no la intensidad.' },
+            say: 'La perla final: en la estenosis aórtica, la gravedad la marcan un soplo de pico tardío y un segundo ruido que desaparece, no qué tan fuerte suena. Si el ventrículo falla, el soplo incluso se suaviza. Ahora ve a las preguntas del tema para fijar lo que viste.' }
+        ] }
+      ],
       sections: [
         { h: 'Estenosis aórtica', html: `
 <ul>
