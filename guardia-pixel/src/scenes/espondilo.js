@@ -18,10 +18,13 @@ function espSpine(g, t, grow) {
   V.forEach((y) => { g.r(60, y, 40, 14, EB); for (let i = 0; i < 6; i++) g.p(62 + rnd(i + y, 95) * 36, y + 2 + rnd(i + y, 96) * 10, EBD); });
   V.slice(0, 5).forEach((y, j) => {
     g.r(62, y + 14, 36, 6, '#3A3F7A');
-    const p = clamp01(grow - j * 0.12), h = Math.round(3 * p);
-    if (p < 1 && blink(t + j * 0.3, 1.5)) { g.r(58, y + 12, 3, 3, COL.red); g.r(99, y + 12, 3, 3, COL.red); g.r(58, y + 19, 3, 3, COL.red); g.r(99, y + 19, 3, 3, COL.red); }
-    [57, 100].forEach((x) => { g.r(x, y + 14, 3, h, COL.white); g.r(x, y + 20 - h, 3, h, COL.white); });
-    if (p >= 1) { g.r(57, y + 11, 3, 12, COL.white); g.r(100, y + 11, 3, 12, COL.white); }
+    const p = clamp01(grow - j * 0.15), h = Math.round(6 * p);
+    if (p < 0.6 && blink(t + j * 0.3, 1.5)) [[59, y + 12], [99, y + 12], [59, y + 19], [99, y + 19]].forEach(([x, yy]) => g.r(x, yy, 3, 3, COL.red));
+    [55, 102].forEach((x) => {
+      if (p >= 1) { g.r(x, y + 8, 3, 18, COL.white); return; }
+      g.r(x, y + 8, 3, 3 + h, COL.white); g.r(x, y + 23 - h, 3, 3 + h, COL.white);
+      g.r(x + (x < 80 ? 3 : -1), y + 8, 2, 4, COL.white); g.r(x + (x < 80 ? 3 : -1), y + 22, 2, 4, COL.white);
+    });
   });
 }
 function espPelvis(g, t, edema) {
@@ -85,7 +88,7 @@ SCENES.espondilo = [
     for (let i = 0; i < 6; i++) { const a = t * 1.5 + i; g.r(113 + Math.cos(a) * 13, 76 + Math.sin(a) * 9, 2, 2, COL.orange); }
   },
   (g, t) => espPelvis(g, t, 0.35 + 0.5 * clamp01(0.5 + (t % 8) / 8)),
-  (g, t) => espSpine(g, t, 0.45 + (t % 10) / 6),
+  (g, t) => espSpine(g, t, 0.5 + (t % 10) / 5),
   (g, t) => espEye(g, t),
   (g, t) => {
     g.clear(COL.bg);

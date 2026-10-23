@@ -9,6 +9,59 @@ export default {
       compare: ['hemofilia-vwd'],
       nn: [['coagulopathy', 'Coagulopathy'], ['hemostasis-coagulation-cascade', 'Hemostasis: Coagulation Cascade']],
       yt: 'bleeding disorders hemophilia von Willebrand',
+      anim: 'sangrado',
+      video: [
+        { ch: '¿Plaqueta o factor?', sc: [
+          { v: { k: 'title', t: 'Paciente con sangrado', s: 'Tema 16 · Hematología' },
+            say: 'Bienvenido a la guardia. En este video vas a aprender a abordar al paciente que sangra: decidir si falla la plaqueta o el factor, leer los tiempos de coagulación y reconocer las trombocitopenias que matan.' },
+          { v: { k: 'anim', id: 'sangrado', step: 0 },
+            say: 'Cuando se rompe un vaso, primero actúa la hemostasia primaria. El colágeno queda expuesto, el factor de von Willebrand se pega a él y atrapa a las plaquetas. Las plaquetas se activan, se unen entre sí con fibrinógeno y forman un tapón en segundos.' },
+          { v: { k: 'vs', a: 'Plaqueta', b: 'Factor', rows: [['Dónde', 'Piel y mucosas', 'Articulaciones y músculo'], ['Lesión', 'Petequias, epistaxis, menorragia', 'Hemartrosis, hematomas'], ['Cuándo', 'Inmediato al corte', 'Tardío, horas después'], ['Ejemplos', 'PTI, von Willebrand', 'Hemofilia, warfarina']] },
+            say: 'Esta es la primera pregunta: ¿falla la plaqueta o el factor? Si falla la plaqueta, sangran la piel y las mucosas, con petequias, epistaxis y menorragia, y el sangrado es inmediato. Si falla el factor, sangra lo profundo, articulaciones y músculos, y el sangrado aparece tarde, horas después de una extracción dental.' },
+          { v: { k: 'mnemo', t: 'Plaqueta = Piel · Factor = Fondo', d: 'Plaqueta: superficial e inmediato (petequias, encías). Factor: profundo y tardío (hemartrosis, músculo).' },
+            say: 'Recuérdalo así: plaqueta es piel, factor es fondo. Lo superficial e inmediato es de plaquetas; lo profundo y tardío es de factores.' }
+        ] },
+        { ch: 'Leer TP, TTPa y la mezcla', sc: [
+          { v: { k: 'anim', id: 'sangrado', step: 1 },
+            say: 'Ahora la cascada. La vía extrínseca empieza con el factor tisular y el factor siete, y se mide con el tiempo de protrombina. La intrínseca usa los factores doce, once, nueve y ocho, y se mide con el tiempo de tromboplastina parcial activada. Las dos llegan a la vía común, donde la trombina convierte el fibrinógeno en fibrina.' },
+          { v: { k: 'list', t: 'Cómo leer TP y TTPa', items: ['TP ↑ solo: VII, warfarina, vitamina K, hígado', 'TTPa ↑ solo: VIII, IX, XI, heparina, lúpico', 'Ambos ↑: CID, hepatopatía grave, X, V, II', 'Ambos normales + sangrado: plaquetas o FvW', 'TTPa ↑ sin sangrado: factor XII'] },
+            say: 'Si solo se alarga el tiempo de protrombina, piensa en el factor siete: warfarina, falta de vitamina K o hepatopatía temprana, porque el siete tiene la vida media más corta. Si solo se alarga el tiempo de tromboplastina, piensa en ocho, nueve u once, en heparina o en anticoagulante lúpico. Si se alargan ambos, piensa en coagulación intravascular diseminada o hepatopatía avanzada. Y si ambos son normales pero sangra, revisa plaquetas y factor de von Willebrand.' },
+          { v: { k: 'anim', id: 'sangrado', step: 2 },
+            say: 'Cuando un tiempo está alargado, haz la prueba de mezcla: plasma del paciente con plasma normal en partes iguales. Si corrige, faltaba un factor. Si no corrige, hay un inhibidor: anticoagulante lúpico, heparina o un anticuerpo contra el factor ocho.' },
+          { v: { k: 'quiz', q: 'Mujer de 70 años con hematomas nuevos. TTPa 68 s que no corrige con la mezcla. ¿Qué es?', opts: ['Hemofilia A congénita', 'Hemofilia A adquirida (anti-VIII)', 'Von Willebrand tipo 1'], a: 1 },
+            say: 'Pausa. Mujer de setenta años, sin antecedentes, con hematomas extensos nuevos. Tiempo de tromboplastina de sesenta y ocho segundos que no corrige con la mezcla. ¿Qué tiene?',
+            exp: 'Hemofilia A adquirida: un autoanticuerpo contra el factor ocho. Sangrado nuevo en un adulto mayor con un tiempo que no corrige es la pista. El anticoagulante lúpico tampoco corrige, pero da trombosis, no hematomas.' }
+        ] },
+        { ch: 'Hemofilia y von Willebrand', sc: [
+          { v: { k: 'vs', cmp: 'hemofilia-vwd', rows: [0, 2, 4, 6] },
+            say: 'Las dos enfermedades hereditarias que siempre preguntan. La hemofilia A es ligada al X, la padecen los hombres y da hemartrosis, con tiempo de tromboplastina alargado. La enfermedad de von Willebrand es el trastorno hereditario de sangrado más común, autosómica dominante, y da sangrado de mucosas y menorragia.' },
+          { v: { k: 'list', t: 'Tratamiento', items: ['Hemofilia A: factor VIII; emicizumab profiláctico', 'Hemofilia B: factor IX', 'Von Willebrand tipo 1: desmopresina', 'Mucosas y menorragia: ácido tranexámico', 'Uremia: desmopresina y diálisis'] },
+            say: 'Para tratar: en la hemofilia A, concentrado de factor ocho, y emicizumab como profilaxis. En la B, factor nueve. En von Willebrand tipo uno, desmopresina, que libera el factor del endotelio; vigila el sodio, porque retiene agua. El ácido tranexámico ayuda en el sangrado de mucosas. Y en el sangrado urémico, desmopresina y diálisis.' }
+        ] },
+        { ch: 'Trombocitopenias que matan', sc: [
+          { v: { k: 'big', h: 'PTI: cuándo tratar', t: '<30 mil', u: 'plaquetas/µL', s: 'O si sangra. Prednisona o dexametasona ± IgIV. Es diagnóstico de exclusión.' },
+            say: 'La trombocitopenia inmune primaria es una trombocitopenia aislada, con plaquetas grandes en el frotis, y es un diagnóstico de exclusión. Se trata si las plaquetas son menores de treinta mil o si hay sangrado, con prednisona o dexametasona, más inmunoglobulina intravenosa si urge subirlas.' },
+          { v: { k: 'case', t: 'Urgencias', p: { name: 'Lucía', age: 34, sex: 'M', skin: '#D9A37E', hair: '#3A2418', gown: '#FF8FD0' }, text: 'Confusión desde la mañana, petequias y orina oscura. Hb 7.4, plaquetas 12 mil, LDH 1,450, haptoglobina indetectable. TP y TTPa normales.', vit: { FC: '108', PA: '128/78', PLQ: '12 mil' } },
+            say: 'Ahora Lucía, de treinta y cuatro años. Llega confundida, con petequias y orina oscura. Hemoglobina de siete punto cuatro, plaquetas de doce mil, deshidrogenasa láctica muy alta y haptoglobina indetectable. Los tiempos de coagulación son normales. ¿Qué buscas en el frotis?' },
+          { v: { k: 'anim', id: 'sangrado', step: 3 },
+            say: 'Esquistocitos. Esto es una púrpura trombocitopénica trombótica. Falta la enzima ADAMTS trece, que corta los multímeros gigantes del factor de von Willebrand. Sin ella, las plaquetas forman microtrombos en los vasos pequeños, y los eritrocitos se rompen al pasar: esos fragmentos son los esquistocitos.' },
+          { v: { k: 'flow', t: 'Sospecha de PTT', steps: ['Esquistocitos + plaquetas bajas', 'TP y TTPa normales', 'PLASMIC alto: no esperes ADAMTS13', 'Recambio plasmático + esteroide', '± caplacizumab y rituximab'] },
+            say: 'El manejo es una urgencia. Con esquistocitos, plaquetas bajas y coagulación normal, calcula el puntaje PLASMIC. Si es alto, inicia recambio plasmático y glucocorticoides hoy, sin esperar el resultado de ADAMTS trece. Después se agregan caplacizumab y rituximab. Sin tratamiento, la mortalidad es cercana al noventa por ciento.' },
+          { v: { k: 'anim', id: 'sangrado', step: 4 },
+            say: 'En la coagulación intravascular diseminada el disparador es otro: sepsis, trauma, leucemia promielocítica o una complicación obstétrica. Se forman trombos en todas partes y se consumen plaquetas y factores. Bajan las plaquetas y el fibrinógeno, se alargan ambos tiempos, sube el dímero D y el paciente sangra por las punciones. Trata la causa.' },
+          { v: { k: 'tip', kind: 'trap', t: 'HIT: plaquetas ↓ >50% a los 5–10 días de heparina, con trombosis. Suspende TODA heparina; nada de warfarina inicial ni plaquetas.' },
+            say: 'Ojo con la trombocitopenia inducida por heparina. Las plaquetas caen más de la mitad entre el quinto y el décimo día, y el paciente se trombosa, no sangra. Suspende toda la heparina, incluidos los lavados, e inicia argatrobán, fondaparinux o un anticoagulante oral directo. Nada de warfarina al inicio ni de transfundir plaquetas.' }
+        ] },
+        { ch: 'Revertir anticoagulantes', sc: [
+          { v: { k: 'list', t: 'Antídotos', items: ['Warfarina + sangrado grave: vit K IV + CCP 4F', 'Heparina no fraccionada: protamina', 'Dabigatrán: idarucizumab', 'Apixabán o rivaroxabán: andexanet o CCP 4F'] },
+            say: 'Por último, revertir anticoagulantes. Warfarina con sangrado grave: vitamina K intravenosa más concentrado de complejo protrombínico de cuatro factores. Heparina no fraccionada: protamina. Dabigatrán: idarucizumab. Y apixabán o rivaroxabán: andexanet alfa o, si no lo hay, complejo protrombínico.' },
+          { v: { k: 'quiz', q: 'Warfarina, INR 4.2 y hemorragia intracraneal. ¿Qué das?', opts: ['Solo vitamina K oral', 'Vitamina K IV + CCP de 4 factores', 'Protamina'], a: 1 },
+            say: 'Pausa. Paciente con warfarina, INR de cuatro punto dos y hemorragia intracraneal. ¿Qué le das?',
+            exp: 'Vitamina K intravenosa más concentrado de complejo protrombínico de cuatro factores. El concentrado corrige en minutos y la vitamina K mantiene el efecto. La protamina es para la heparina.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Esquistocitos + plaquetas bajas = PTT hasta demostrar lo contrario: recambio plasmático hoy. En PTT y HIT no transfundas plaquetas de rutina.' },
+            say: 'La perla para el examen: esquistocitos con plaquetas bajas son una púrpura trombocitopénica trombótica hasta demostrar lo contrario, y se trata hoy con recambio plasmático. En ella y en la trombocitopenia por heparina, no transfundas plaquetas de rutina. Ahora ve a las preguntas del tema para fijar lo que viste.' }
+        ] }
+      ],
       sections: [
         { h: 'Primaria vs secundaria', html: `
 <ul>
@@ -43,6 +96,34 @@ export default {
 <li>INR alto sin sangrado: omitir dosis; vitamina K oral si INR &gt;10.</li>
 <li><b>Heparina no fraccionada</b>: protamina (revierte parcialmente la HBPM).</li>
 <li><b>Dabigatrán</b>: idarucizumab. <b>Apixabán o rivaroxabán</b>: andexanet alfa o, si no hay, concentrado de complejo protrombínico.</li>
+</ul>` },
+        { h: 'Fisiopatología en 1 minuto', html: `
+<ul>
+<li><b>Hemostasia primaria</b> (segundos): el FvW se une al colágeno expuesto y a la <b>GPIb</b> de la plaqueta (adhesión); la plaqueta se activa y se une a otras con fibrinógeno a través de la <b>GPIIb/IIIa</b> (agregación). Resultado: tapón plaquetario.</li>
+<li><b>Hemostasia secundaria</b> (minutos): el factor tisular + VII (vía extrínseca, <b>TP</b>) y XII, XI, IX, VIII (vía intrínseca, <b>TTPa</b>) activan la vía común (X, V, II). La trombina convierte el fibrinógeno en fibrina, que estabiliza el tapón.</li>
+<li><b>Vitamina K</b>: necesaria para II, VII, IX y X (y proteínas C y S). El VII cae primero: por eso el TP se alarga antes.</li>
+<li><b>ADAMTS13</b>: corta los multímeros gigantes del FvW. Si falta (PTT), las plaquetas se pegan sin control y forman microtrombos.</li>
+<li><b>Trastornos de la función plaquetaria</b> (conteo normal): aspirina y otros antiagregantes, uremia, <b>Bernard-Soulier</b> (falta GPIb: plaquetas gigantes, sin aglutinación con ristocetina) y <b>Glanzmann</b> (falta GPIIb/IIIa: no agregan con ADP ni colágeno).</li>
+</ul>` },
+        { h: 'Diagnóstico diferencial de la trombocitopenia', html: `
+<div class="tablewrap"><table class="mini">
+<tr><th>Entidad</th><th>TP / TTPa</th><th>Frotis</th><th>Pista</th><th>Conducta</th></tr>
+<tr><td>Pseudotrombocitopenia</td><td>Normales</td><td>Grumos de plaquetas</td><td>Sin sangrado; artefacto por EDTA</td><td>Repetir en tubo con citrato</td></tr>
+<tr><td>PTI</td><td>Normales</td><td>Plaquetas grandes, sin esquistocitos</td><td>Trombocitopenia aislada; descarta VIH, VHC, H. pylori</td><td>Glucocorticoide ± IgIV si &lt;30,000 o sangra</td></tr>
+<tr><td>PTT</td><td>Normales</td><td>Esquistocitos</td><td>Neuro, fiebre, LDH ↑, ADAMTS13 &lt;10%</td><td>Recambio plasmático urgente</td></tr>
+<tr><td>SUH</td><td>Normales</td><td>Esquistocitos</td><td>Diarrea con sangre + lesión renal</td><td>Soporte, sin antibióticos</td></tr>
+<tr><td>CID</td><td>Ambos ↑</td><td>Esquistocitos</td><td>Sepsis, trauma, obstetricia; fibrinógeno ↓, dímero D ↑</td><td>Tratar la causa; componentes si sangra</td></tr>
+<tr><td>HIT</td><td>Normales</td><td>Normal</td><td>Día 5–10 de heparina, trombosis</td><td>Suspender heparina; argatrobán</td></tr>
+<tr><td>Hiperesplenismo</td><td>Normales (o TP ↑ si hay cirrosis)</td><td>Normal</td><td>Esplenomegalia, cirrosis</td><td>Tratar la causa</td></tr>
+</table></div>` },
+        { h: 'Cómo lo preguntan en el examen', html: `
+<ul>
+<li>Menorragia y epistaxis desde la menarca, madre igual, plaquetas normales → <b>von Willebrand</b>.</li>
+<li>Niño con hemartrosis y tío materno afectado, TTPa ↑ que corrige → <b>hemofilia A</b> (factor VIII).</li>
+<li>Adulto mayor o posparto con hematomas nuevos y TTPa ↑ que <b>no corrige</b> → <b>hemofilia A adquirida</b>.</li>
+<li>Confusión + petequias + esquistocitos + coagulación normal → <b>PTT</b>: recambio plasmático sin esperar ADAMTS13.</li>
+<li>Día 7 de heparina, plaquetas a la mitad y TVP nueva → <b>HIT</b>: suspende toda heparina, argatrobán.</li>
+<li>Terapia intensiva, ayuno y antibióticos con TP ↑ aislado que corrige → <b>déficit de vitamina K</b>.</li>
 </ul>` }
       ],
       mnemo: { t: 'Plaqueta = Piel y mucosa · Factor = Fondo', d: 'Si falla la plaqueta, sangra lo superficial y al instante (petequias, encías). Si falla el factor, sangra lo profundo y tarde (articulaciones, músculo).' },
@@ -77,6 +158,24 @@ export default {
     }
   },
 
+  anims: {
+    sangrado: {
+      title: 'Del tapón plaquetario a la CID',
+      steps: [
+        { cap: '<b>Hemostasia primaria.</b> Al romperse el vaso queda expuesto el colágeno. El factor de von Willebrand se une a él y atrapa plaquetas, que se activan y se agregan hasta formar un tapón que detiene la fuga.',
+          labels: [[24, 38, 'Plaquetas'], [80, 56, 'Tapón plaquetario'], [112, 74, 'FvW'], [80, 102, 'Colágeno expuesto']] },
+        { cap: '<b>Cascada de coagulación.</b> La vía extrínseca (factor tisular + VII) se mide con el TP; la intrínseca (XII, XI, IX, VIII) con el TTPa. Ambas convergen en X, V y II: la trombina convierte el fibrinógeno en una red de fibrina.',
+          labels: [[26, 10, 'TP: FT + VII'], [118, 10, 'TTPa: XII·XI·IX·VIII'], [112, 54, 'Común: X·V·II'], [52, 74, 'Trombina'], [80, 108, 'Red de fibrina']] },
+        { cap: '<b>Prueba de mezcla.</b> Plasma del paciente + plasma normal 1:1. Si falta un factor, el normal lo repone y el tiempo corrige. Si hay un inhibidor (anticoagulante lúpico, anti-VIII, heparina), también bloquea al plasma normal y no corrige.',
+          labels: [[40, 6, 'Déficit de factor'], [120, 6, 'Inhibidor'], [40, 104, 'Corrige'], [120, 104, 'No corrige']] },
+        { cap: '<b>PTT.</b> Sin ADAMTS13, los multímeros gigantes del factor de von Willebrand no se cortan y atrapan plaquetas: se forman microtrombos. Los eritrocitos se rompen al pasar y aparecen esquistocitos.',
+          labels: [[36, 40, 'FvW gigante'], [80, 42, 'Microtrombo'], [134, 70, 'Esquistocitos'], [34, 116, 'Sin ADAMTS13']] },
+        { cap: '<b>CID.</b> Un disparador como la sepsis activa la coagulación en todos los vasos: se forman microtrombos y se consumen plaquetas y fibrinógeno, mientras la fibrinólisis eleva el dímero D. El paciente se trombosa y sangra a la vez.',
+          labels: [[14, 10, 'Sepsis'], [96, 21, 'Microtrombos'], [16, 112, 'Plaq'], [38, 112, 'Fib'], [60, 112, 'DD'], [124, 110, 'Sangra en punciones']] }
+      ]
+    }
+  },
+
   cards: [
     ['Petequias y sangrado de mucosas', 'Defecto de hemostasia primaria (plaquetas o FvW)'],
     ['Hemartrosis', 'Defecto de factores: piensa en hemofilia'],
@@ -90,7 +189,12 @@ export default {
     ['Trastorno hereditario de sangrado más común', 'Enfermedad de von Willebrand'],
     ['Warfarina + sangrado grave', 'Vitamina K IV + concentrado de complejo protrombínico de 4 factores'],
     ['Antídoto de dabigatrán', 'Idarucizumab'],
-    ['PTI: cuándo tratar (ASH 2019)', 'Plaquetas <30,000 o sangrado']
+    ['PTI: cuándo tratar (ASH 2019)', 'Plaquetas <30,000 o sangrado'],
+    ['Plaquetas bajas sin sangrado + grumos en el frotis', 'Pseudotrombocitopenia por EDTA: repite el conteo en tubo con citrato'],
+    ['Bernard-Soulier', 'Falta GPIb (receptor del FvW): plaquetas gigantes, sin aglutinación con ristocetina'],
+    ['Glanzmann', 'Falta GPIIb/IIIa: plaquetas normales que no agregan con ADP ni colágeno'],
+    ['Desmopresina: efecto adverso y contraindicación', 'Hiponatremia (restringe líquidos); evitar en von Willebrand tipo 2B'],
+    ['PTI con sangrado que amenaza la vida', 'Plaquetas + IgIV + glucocorticoide IV (aquí sí se transfunden)']
   ],
 
   questions: [
@@ -172,6 +276,46 @@ export default {
       ans: 2,
       exp: 'El déficit de factor XII prolonga mucho el TTPa in vitro pero no causa sangrado (in vivo la coagulación se inicia por la vía del factor tisular).',
       why: ['Daría hemofilia A con sangrado.', 'Daría hemofilia B con sangrado.', '', 'El XI sí puede sangrar, sobre todo en cirugía.', 'Da sangrado mucocutáneo.'],
+      ref: 'Harrison 21e' }),
+
+    q({ id: 'sangrado-11', dif: 2,
+      stem: 'Hombre de 45 años asintomático, sin petequias ni sangrados, con plaquetas de 38,000/µL en un chequeo. Su BH de hace un año era normal. El frotis muestra grumos de plaquetas. ¿Siguiente paso?',
+      opts: ['Prednisona por PTI', 'Repetir el conteo en tubo con citrato', 'Aspirado de médula ósea', 'Transfundir plaquetas', 'Pedir ADAMTS13 urgente'],
+      ans: 1,
+      exp: 'Pseudotrombocitopenia: el EDTA del tubo morado hace que las plaquetas se agrupen in vitro y el contador las lee bajas. Pistas: paciente sin sangrado y grumos en el frotis. Se confirma repitiendo el conteo en tubo con citrato.',
+      why: ['Tratarías un número falso; primero confírmalo.', '', 'Invasivo e innecesario.', 'No hay trombocitopenia real ni sangrado.', 'Los grumos no sugieren microangiopatía; no hay esquistocitos ni hemólisis.'],
+      ref: 'Harrison 21e' }),
+
+    q({ id: 'sangrado-12', dif: 2,
+      stem: 'Mujer de 29 años con enfermedad de von Willebrand tipo 1 que respondió bien a una prueba con desmopresina. Se hará una extracción dental. ¿Cuál es el manejo y qué efecto adverso vigilas?',
+      opts: ['Plasma fresco congelado; sobrecarga de volumen', 'Desmopresina + ácido tranexámico; hiponatremia', 'Transfusión de plaquetas; reacción febril', 'Vitamina K; anafilaxia', 'Concentrado de factor IX; trombosis'],
+      ans: 1,
+      exp: 'En el tipo 1 la desmopresina libera FvW y VIII del endotelio, y el ácido tranexámico protege el coágulo en la mucosa oral. La desmopresina es antidiurética: restringe líquidos 24 h y vigila el sodio. En el tipo 2B está contraindicada porque empeora la trombocitopenia.',
+      why: ['Aporta poco FvW por volumen; hay opciones específicas.', '', 'Las plaquetas son normales; el defecto es el FvW.', 'El defecto no depende de la vitamina K.', 'El factor IX es para la hemofilia B.'],
+      ref: 'ASH/ISTH/NHF/WFH 2021 vWD' }),
+
+    q({ id: 'sangrado-13', dif: 2,
+      stem: 'Mujer de 38 años con PTI conocida llega con cefalea súbita y hemorragia intracraneal en la TC. Plaquetas 6,000/µL. ¿Qué tratamiento indicas?',
+      opts: ['Solo prednisona oral', 'Transfusión de plaquetas + IgIV + glucocorticoide IV', 'Esplenectomía urgente', 'Observar: en la PTI nunca se transfunden plaquetas', 'Rituximab como único fármaco'],
+      ans: 1,
+      exp: 'Sangrado que amenaza la vida en PTI: se combinan transfusión de plaquetas (aunque duren poco), IgIV y glucocorticoide IV a dosis altas; puede agregarse un agonista del receptor de TPO. La regla de no transfundir plaquetas aplica a PTT y HIT, no a la PTI con sangrado grave.',
+      why: ['Tarda días en actuar; necesita subir las plaquetas ya.', '', 'No es la medida inicial en la urgencia.', 'Confundes con PTT y HIT: aquí sí se transfunden.', 'Tarda semanas en actuar.'],
+      ref: 'ASH 2019 PTI' }),
+
+    q({ id: 'sangrado-14', dif: 2,
+      stem: 'Hombre de 60 años con 3 semanas en terapia intensiva, en ayuno y con antibióticos de amplio espectro. Sangra por sitios de punción. Plaquetas 210,000, INR 2.6, TTPa normal, fibrinógeno normal. La mezcla corrige. ¿Qué indicas?',
+      opts: ['Protamina', 'Vitamina K IV', 'Crioprecipitado', 'Desmopresina', 'Factor VIII'],
+      ans: 1,
+      exp: 'Ayuno + antibióticos (eliminan la flora que produce vitamina K) = déficit de vitamina K. Cae primero el VII, de vida media más corta: TP prolongado aislado que corrige con la mezcla. Se da vitamina K IV; si el sangrado es grave, se agrega concentrado de complejo protrombínico.',
+      why: ['Revierte heparina, que alargaría el TTPa.', '', 'El fibrinógeno es normal.', 'Sirve en von Willebrand y uremia.', 'El VIII no depende de la vitamina K y el TTPa es normal.'],
+      ref: 'Harrison 21e' }),
+
+    q({ id: 'sangrado-15', dif: 3,
+      stem: 'Niño de 6 años con epistaxis y gingivorragia frecuentes. Plaquetas 110,000/µL, gigantes en el frotis. TP y TTPa normales. No aglutinan con ristocetina, pero sí agregan con ADP y colágeno. ¿Diagnóstico?',
+      opts: ['Trombastenia de Glanzmann', 'Síndrome de Bernard-Soulier', 'Hemofilia A', 'PTI', 'Enfermedad de von Willebrand tipo 3'],
+      ans: 1,
+      exp: 'Bernard-Soulier: falta la GPIb, receptor del FvW. Da plaquetas gigantes, trombocitopenia leve y falta de aglutinación con ristocetina que no corrige al agregar FvW. Glanzmann es el déficit de GPIIb/IIIa: plaquetas normales que no agregan con ADP ni colágeno, pero sí con ristocetina.',
+      why: ['En Glanzmann el número y el tamaño son normales, y falla la agregación con ADP y colágeno.', '', 'Daría hemartrosis y TTPa prolongado.', 'Tiene plaquetas grandes, pero la aglutinación con ristocetina es normal.', 'Las plaquetas son de tamaño normal y el VIII muy bajo alargaría el TTPa.'],
       ref: 'Harrison 21e' })
   ],
 

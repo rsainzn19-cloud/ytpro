@@ -92,13 +92,43 @@ export default {
 <li><b>Aguda</b> (endocarditis, disección): edema pulmonar y choque sin tiempo para que el VI se adapte → cirugía urgente.</li>
 <li><b>Crónica</b>: sobrecarga de volumen → VI dilatado (hipertrofia excéntrica). Soplo diastólico temprano decreciente en borde esternal izquierdo, mejor sentado, inclinado hacia adelante y en espiración.</li>
 <li><b>Signos de pulso amplio</b>: presión de pulso ancha, pulso en martillo de agua (Corrigan), de Musset (cabeceo), Quincke (pulso capilar ungueal), Duroziez (soplo femoral), Traube; Austin Flint (retumbo apical funcional).</li>
-<li><b>Cirugía</b> si es grave y sintomática; asintomática si FEVI ≤50% o diámetro telesistólico del VI &gt;50 mm (o &gt;25 mm/m²).</li>
+<li><b>Cirugía</b> si es grave y sintomática; asintomática si FEVI ≤50% o diámetro telesistólico del VI &gt;50 mm (o &gt;25 mm/m²). La ACC/AHA 2020 opera desde FEVI ≤55%.</li>
 <li>Vasodilatadores (IECA, ARA-II, dihidropiridinas) para la HTA en insuficiencia aórtica.</li>
 </ul>` },
         { h: 'Profilaxis de endocarditis', html: `
 <ul>
 <li>Solo en alto riesgo: prótesis valvular (o reparación con material protésico), endocarditis previa, ciertas cardiopatías congénitas (y TAVI).</li>
 <li>Antes de procedimientos dentales que manipulan encía: amoxicilina 2 g VO 30–60 min antes.</li>
+</ul>` },
+        { h: 'Fisiopatología en 1 minuto', html: `
+<ul>
+<li><b>Estenosis = sobrecarga de presión</b>: el VI vence un orificio fijo engrosando su pared (hipertrofia concéntrica). La hipertrofia aumenta el consumo de O₂ y comprime el subendocardio → <b>angina aun con coronarias sanas</b>.</li>
+<li><b>Síncope de esfuerzo</b>: con el ejercicio caen las resistencias periféricas, pero el gasto no puede subir a través del orificio fijo → hipoperfusión cerebral (también por arritmias).</li>
+<li><b>Dependencia de precarga</b>: el VI rígido necesita buen llenado y la contracción auricular; la FA, la deshidratación y los venodilatadores lo descompensan.</li>
+<li><b>Insuficiencia crónica = sobrecarga de volumen</b>: el VI se dilata (hipertrofia excéntrica) y expulsa un volumen latido enorme → sistólica alta, diastólica baja y presión de pulso amplia.</li>
+<li><b>Insuficiencia aguda</b>: el VI no tiene tiempo de dilatarse; su presión diastólica sube de golpe → edema pulmonar y choque, con soplo corto y <b>sin</b> pulsos saltones.</li>
+</ul>` },
+        { h: 'Gravedad por eco y diagnóstico diferencial', html: `
+<div class="tablewrap"><table class="mini">
+<tr><th>Grave si…</th><th>Estenosis aórtica</th><th>Insuficiencia aórtica</th></tr>
+<tr><td>Flujo</td><td>Vmax ≥4 m/s, gradiente medio ≥40 mmHg</td><td>Vena contracta &gt;6 mm; flujo reverso holodiastólico en aorta descendente o abdominal</td></tr>
+<tr><td>Orificio / volumen</td><td>Área ≤1.0 cm² (≤0.6 cm²/m²)</td><td>Volumen regurgitante ≥60 mL, fracción ≥50%, ORE ≥0.3 cm²</td></tr>
+<tr><td>VI</td><td>Hipertrofia concéntrica</td><td>Dilatación progresiva (DTS &gt;50 mm = operar)</td></tr>
+</table></div>
+<ul>
+<li><b>Esclerosis aórtica</b>: valvas engrosadas sin obstrucción; soplo sistólico suave, sin irradiación, con pulso y S2 normales. No se interviene.</li>
+<li><b>Miocardiopatía hipertrófica obstructiva</b>: soplo sistólico en borde esternal izquierdo que <b>aumenta con Valsalva y al ponerse de pie</b> y disminuye en cuclillas; en la estenosis aórtica ocurre lo contrario. Pulso bífido, no tardío.</li>
+<li><b>Insuficiencia mitral</b>: holosistólico apical irradiado a axila, aumenta con el handgrip. <b>CIV</b>: holosistólico paraesternal con frémito.</li>
+<li><b>Estenosis mitral vs Austin Flint</b>: ambas dan retumbo diastólico apical, pero solo la estenosis mitral tiene chasquido de apertura.</li>
+</ul>` },
+        { h: 'Cómo lo preguntan en el examen', html: `
+<ul>
+<li>Anciano con angina, síncope o disnea de esfuerzo + soplo sistólico a carótidas + pulso parvus et tardus → <b>estenosis aórtica grave: intervenir</b> (TAVI si es mayor o frágil).</li>
+<li>Joven con soplo eyectivo y clic de eyección, ± HTA en brazos con pulsos femorales débiles → <b>válvula bicúspide</b> (busca coartación; piensa en Turner).</li>
+<li>Estenosis aórtica + anemia ferropénica por angiodisplasia → <b>síndrome de Heyde</b>.</li>
+<li>Soplo diastólico + presión de pulso amplia + cabeceo o pulso capilar → <b>insuficiencia aórtica crónica</b>; si no tiene síntomas, la clave es la FEVI y el diámetro telesistólico.</li>
+<li>Dolor desgarrante + soplo diastólico nuevo, o endocarditis + edema pulmonar súbito → <b>insuficiencia aórtica aguda: cirugía urgente</b> (balón de contrapulsación contraindicado).</li>
+<li>Estenosis aórtica grave con dolor torácico y “le damos nitroglicerina” → <b>trampa: hipotensión grave</b>.</li>
 </ul>` }
       ],
       mnemo: { t: 'Estenosis: “ASI”: Angina, Síncope, Insuficiencia cardiaca', d: 'En ese orden de aparición y de peor pronóstico (5, 3 y 2 años). Cualquiera de los tres con estenosis grave = intervenir.' },
@@ -106,7 +136,7 @@ export default {
       trap: 'Dar nitroglicerina a un paciente con estenosis aórtica grave: el VI depende de la precarga y puede caer en hipotensión grave.',
       guide: [
         'Edad para TAVI: la ESC/EACTS 2025 bajó el umbral a ≥70 años (antes ≥75); la ACC/AHA 2020 prefiere cirugía <65, decisión compartida entre 65 y 80, y TAVI >80. ⚠️ Verifica qué umbral usa tu profesor.',
-        'Umbral de FEVI en insuficiencia aórtica asintomática: guías previas usaban ≤50%; algunas recomendaciones recientes consideran operar antes (≤55%). Si no te dan más datos, ≤50%.'
+        'Insuficiencia aórtica grave asintomática: la ESC/EACTS indica cirugía con FEVI ≤50% o DTS >50 mm (>25 mm/m²) y la considera desde FEVI ≤55% si el riesgo es bajo; la ACC/AHA 2020 la indica (clase 1) desde FEVI ≤55%. ⚠️ Depende de la guía; si no te dan más datos, FEVI ≤50% o DTS >50 mm.'
       ],
       refs: [
         'Praz F, et al. 2025 ESC/EACTS Guidelines for the management of valvular heart disease. Eur Heart J 2025.',
@@ -157,7 +187,12 @@ export default {
     ['Insuficiencia aórtica aguda', 'Endocarditis o disección: cirugía urgente'],
     ['Cirugía en IA asintomática', 'FEVI ≤50% o diámetro telesistólico >50 mm'],
     ['Fármaco a evitar en estenosis aórtica grave', 'Nitratos (dependencia de precarga)'],
-    ['Profilaxis de endocarditis', 'Solo alto riesgo (prótesis, endocarditis previa): amoxicilina 2 g antes de procedimiento dental']
+    ['Profilaxis de endocarditis', 'Solo alto riesgo (prótesis, endocarditis previa): amoxicilina 2 g antes de procedimiento dental'],
+    ['Esclerosis aórtica', 'Valvas engrosadas sin obstrucción: soplo sistólico suave, sin irradiación; pulso y S2 normales'],
+    ['Insuficiencia aórtica grave por eco', 'Vena contracta >6 mm, volumen regurgitante ≥60 mL, fracción ≥50%, ORE ≥0.3 cm²'],
+    ['Estenosis aórtica con bajo flujo-bajo gradiente y FEVI baja', 'Eco con dobutamina: distingue la grave verdadera de la seudograve'],
+    ['Valsalva en un soplo sistólico', 'Aumenta el de miocardiopatía hipertrófica obstructiva; disminuye el de estenosis aórtica'],
+    ['Soplo de Austin Flint', 'Retumbo diastólico apical funcional en insuficiencia aórtica grave, sin chasquido de apertura']
   ],
 
   questions: [
@@ -239,6 +274,46 @@ export default {
       ans: 1,
       exp: 'Las prótesis valvulares son de alto riesgo: profilaxis con amoxicilina 2 g antes de procedimientos dentales que manipulan encía o región periapical (clindamicina ya no se recomienda; con alergia, azitromicina o doxiciclina según la guía).',
       why: ['Es de alto riesgo: sí la necesita.', '', 'No es el esquema.', 'No es rutinaria.', 'Solo como alternativa en alergia a penicilina.'],
-      ref: 'AHA 2021 · ESC 2023 endocarditis' })
+      ref: 'AHA 2021 · ESC 2023 endocarditis' }),
+
+    q({ id: 'aor-11', dif: 2,
+      stem: 'Hombre de 19 años con síncope mientras jugaba futbol. Soplo sistólico en el borde esternal izquierdo que aumenta con Valsalva y al ponerse de pie, y disminuye en cuclillas. Pulso carotídeo rápido y bífido. ¿Diagnóstico más probable?',
+      opts: ['Estenosis aórtica por válvula bicúspide', 'Miocardiopatía hipertrófica obstructiva', 'Insuficiencia aórtica', 'Comunicación interventricular', 'Prolapso de válvula mitral'],
+      ans: 1,
+      exp: 'El soplo de la miocardiopatía hipertrófica obstructiva aumenta cuando baja la precarga (Valsalva, bipedestación), porque un VI más pequeño acentúa la obstrucción del tracto de salida. En la estenosis aórtica el soplo disminuye con esas maniobras y el pulso es parvus et tardus.',
+      why: ['Su soplo disminuye con Valsalva y el pulso es débil y tardío, no bífido.', '', 'Da soplo diastólico.', 'Holosistólico paraesternal que disminuye con Valsalva.', 'Da clic mesosistólico y soplo apical tardío; no explica el síncope con pulso bífido.'],
+      ref: 'AHA/ACC 2024 miocardiopatía hipertrófica · ACC/AHA 2020' }),
+
+    q({ id: 'aor-12', dif: 3,
+      stem: 'Hombre de 74 años con disnea. Eco: área valvular aórtica 0.8 cm², gradiente medio 28 mmHg y FEVI 35%. ¿Siguiente paso para definir la gravedad?',
+      opts: ['Concluir que es moderada y vigilar', 'Ecocardiograma de estrés con dobutamina', 'Prueba de esfuerzo en banda', 'Calcio valvular por TC como primer estudio', 'Ventriculografía izquierda'],
+      ans: 1,
+      exp: 'Estenosis de bajo flujo y bajo gradiente con FEVI reducida. La dobutamina aumenta el flujo: si el área sigue ≤1.0 cm² y el gradiente llega a ≥40 mmHg, es grave verdadera; si el área aumenta, es seudograve. Además muestra si hay reserva contráctil.',
+      why: ['Con FEVI baja el gradiente subestima la gravedad.', '', 'Peligrosa en un paciente sintomático y no mide el orificio.', 'Se prefiere con FEVI conservada (bajo flujo paradójico) o si la dobutamina no es concluyente.', 'Invasiva y no responde la pregunta.'],
+      ref: 'ESC/EACTS 2025 · ACC/AHA 2020' }),
+
+    q({ id: 'aor-13', dif: 2,
+      stem: 'Adolescente de 16 años con amenorrea primaria, talla baja y cuello alado. PA 150/90 en brazos con pulsos femorales débiles y retrasados. Soplo sistólico eyectivo con clic de eyección. ¿Valvulopatía asociada más probable?',
+      opts: ['Estenosis mitral', 'Válvula aórtica bicúspide', 'Prolapso mitral', 'Estenosis pulmonar', 'Insuficiencia tricuspídea'],
+      ans: 1,
+      exp: 'Síndrome de Turner: se asocia a coartación de aorta (HTA en brazos, pulsos femorales débiles y retrasados) y a válvula aórtica bicúspide, que da clic de eyección y puede evolucionar a estenosis o insuficiencia. Hay que vigilar también la dilatación de la aorta.',
+      why: ['Suele ser reumática y da retumbo diastólico.', '', 'Se asocia a Marfan y Ehlers-Danlos; da clic mesosistólico.', 'Típica de Noonan (fenotipo parecido con cariotipo normal).', 'No es la asociación típica.'],
+      ref: 'ACC/AHA 2020 valvulopatías (bicúspide)' }),
+
+    q({ id: 'aor-14', dif: 2,
+      stem: 'Hombre de 58 años, hipertenso, con dolor torácico súbito “desgarrante” irradiado a la espalda, diferencia de 30 mmHg en la PA entre ambos brazos y un soplo diastólico nuevo en el borde esternal izquierdo. ¿Qué explica el soplo y qué haces?',
+      opts: ['Estenosis aórtica calcificada; programar TAVI', 'Disección tipo A con insuficiencia aórtica aguda; cirugía urgente', 'Ruptura de músculo papilar; angioplastia', 'Pericarditis aguda; AINE y colchicina', 'Insuficiencia aórtica crónica; IECA y seguimiento'],
+      ans: 1,
+      exp: 'La disección de la aorta ascendente (tipo A) dilata la raíz o desinserta las valvas y causa insuficiencia aórtica aguda. Se confirma con angio-TC (o eco transesofágico si está inestable) y requiere cirugía urgente; mientras, control de FC y PA.',
+      why: ['No es súbita ni da soplo diastólico.', '', 'Da soplo sistólico apical (insuficiencia mitral aguda).', 'Da frote y dolor que cambia con la posición.', 'El inicio súbito con dolor desgarrante indica un proceso agudo.'],
+      ref: 'ESC 2024 enfermedades aórticas · ACC/AHA 2022 aorta' }),
+
+    q({ id: 'aor-15', dif: 2,
+      stem: 'En un paciente con estenosis aórtica, ¿qué hallazgo de la exploración física sugiere mejor que es grave?',
+      opts: ['Soplo muy intenso', 'Soplo con pico tardío y S2 único o ausente', 'Irradiación del soplo a carótidas', 'Clic de eyección', 'Presión de pulso amplia'],
+      ans: 1,
+      exp: 'La gravedad se correlaciona con un pico tardío del soplo, un S2 que se apaga (o desdoblamiento paradójico) y un pulso parvus et tardus. La intensidad no es fiable: cuando el VI falla, el soplo se hace más suave.',
+      why: ['La intensidad depende del flujo: con VI que falla, una estenosis grave puede sonar suave.', '', 'Ocurre en estenosis de cualquier grado.', 'Sugiere bicúspide con valvas aún flexibles.', 'Es típica de la insuficiencia aórtica; en la estenosis grave la presión de pulso es estrecha.'],
+      ref: 'ACC/AHA 2020 valvulopatías' })
   ]
 };

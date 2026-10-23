@@ -65,9 +65,9 @@ SCENES.erge = (() => {
     // 2 · Relajación transitoria + hernia hiatal: el ácido sube al esófago
     (g, t) => {
       g.clear(COL.bg);
-      stomach(g); diaphragm(g, 52, 54, 106);
+      stomach(g); diaphragm(g, 54, 46, 114);
       tube(g, 44, 74);
-      ell(g, 80, 42, 21, 10, COL.pink); ell(g, 80, 42, 17, 7, GL);
+      ell(g, 80, 42, 30, 11, COL.pink); ell(g, 80, 42, 26, 8, GL);
       tube(g, 0, 20);
       const q = (t % 3) / 3, open = q < 0.12 ? q / 0.12 : q < 0.6 ? 1 : q < 0.7 ? 1 - (q - 0.6) / 0.1 : 0;
       les(g, 20, open); acidSt(g, t, 10);

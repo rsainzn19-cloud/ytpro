@@ -10,6 +10,71 @@ export default {
       compare: ['gota-pseudo'],
       nn: [['gout-nclex', 'Gout (NCLEX)']],
       yt: 'gout pseudogout',
+      video: [
+        { ch: 'Del urato al cristal', sc: [
+          { v: { k: 'title', t: 'Gota y pseudogota', s: 'Tema 12 · Reumatología' },
+            say: 'Bienvenido a la guardia. En este video vas a aprender a diagnosticar la gota con los cristales, a apagar un ataque según el paciente que tengas enfrente y a bajar el urato con la meta correcta. Al final, la pseudogota.' },
+          { v: { k: 'case', t: 'Llega a urgencias', p: { name: 'Jesús', age: 54, sex: 'H', skin: '#B97A52', hair: '#2A1C14', gown: '#4DB8FF' }, text: 'Chofer con obesidad, HTA con hidroclorotiazida y ERC. Tras una carne asada con cerveza despertó con el dedo gordo rojo; no tolera ni la sábana.', vit: { FC: '96', PA: '148/90', T: '37.6' } },
+            say: 'Conoce a don Chuy, chofer de cincuenta y cuatro años, con obesidad, hipertensión tratada con hidroclorotiazida y enfermedad renal crónica. Después de una carne asada con cerveza, despertó con el dedo gordo del pie rojo, caliente y tan adolorido que no tolera ni la sábana. Vamos a entender por qué.' },
+          { v: { k: 'anim', id: 'gota', step: 0 },
+            say: 'Todo empieza con el ácido úrico. Las purinas se convierten en hipoxantina, luego en xantina y al final en ácido úrico, gracias a una enzima: la xantina oxidasa. Por arriba de seis punto ocho miligramos por decilitro, el urato ya no cabe disuelto.' },
+          { v: { k: 'list', t: 'Por qué sube el urato', items: ['90%: baja excreción renal', 'ERC, tiazidas y de asa, aspirina a dosis baja', 'Alcohol (cerveza), carnes rojas, mariscos', 'Refrescos con fructosa, obesidad', 'Sobreproducción: lisis tumoral, mieloproliferativos'] },
+            say: 'En nueve de cada diez pacientes el problema es que el riñón excreta poco urato. Lo empeoran la enfermedad renal, los diuréticos tiazídicos y de asa y la aspirina a dosis baja. Suman el alcohol, sobre todo la cerveza, las carnes rojas, los mariscos, los refrescos con fructosa y la obesidad. Pocos casos son por sobreproducción, como la lisis tumoral.' },
+          { v: { k: 'anim', id: 'gota', step: 1 },
+            say: 'El urato precipita como cristales en forma de aguja, sobre todo en articulaciones frías y periféricas. Por eso el sitio clásico es la primera articulación metatarsofalángica. A ese ataque se le llama podagra.' }
+        ] },
+        { ch: 'El ataque', sc: [
+          { v: { k: 'anim', id: 'gota', step: 2 },
+            say: 'Los macrófagos fagocitan los cristales y activan el inflamasoma. Liberan interleucina uno beta y llaman a los neutrófilos. En pocas horas la articulación se pone roja, caliente, hinchada y muy dolorosa.' },
+          { v: { k: 'list', t: 'Cómo se ve la gota', items: ['Monoartritis aguda nocturna: podagra', 'Pico en <24 h; cede en 1–2 semanas', 'También tobillo, rodilla, muñeca', 'Tofos: oreja, codo, Aquiles', 'Litos de ácido úrico (radiolúcidos)'] },
+            say: 'El cuadro típico es una monoartritis aguda que empieza de noche, en el dedo gordo del pie. Alcanza su máximo en menos de un día y, aun sin tratamiento, cede en una o dos semanas. Con los años aparecen tofos en el pabellón auricular, los codos y el tendón de Aquiles. Y litos de ácido úrico, que no se ven en la radiografía simple.' },
+          { v: { k: 'flow', t: 'Monoartritis aguda', steps: ['Artrocentesis siempre que puedas', 'Cristales con luz polarizada', 'Gram y cultivo: siempre', '>50 000 leucocitos: piensa en sepsis', 'Urato sérico: 2–4 sem después'] },
+            say: 'Ante una monoartritis aguda, la regla de oro es la artrocentesis. Buscas cristales con luz polarizada y siempre pides tinción de Gram y cultivo, porque gota e infección pueden coexistir. Con más de cincuenta mil leucocitos y fiebre, trátala como séptica hasta tener el cultivo. El urato sérico mídelo dos a cuatro semanas después.' },
+          { v: { k: 'vs', cmp: 'gota-pseudo', rows: [1, 2, 3] },
+            say: 'Compara los cristales. En la gota son agujas con birrefringencia negativa intensa: amarillas cuando quedan paralelas al compensador. En la pseudogota son romboides con birrefringencia positiva débil: azules en paralelo. La gota prefiere el primer dedo del pie; la pseudogota, la rodilla y la muñeca.' },
+          { v: { k: 'tip', kind: 'trap', t: 'Urato normal durante el ataque NO descarta gota: la inflamación lo baja. El diagnóstico se hace con cristales.' },
+            say: 'Ojo con esta trampa. Durante el ataque el ácido úrico puede estar normal, porque la inflamación aumenta su excreción. Un urato normal no descarta gota. El diagnóstico se hace con los cristales.' },
+          { v: { k: 'list', t: 'Imagen', items: ['Rx tardía: erosión en sacabocado', 'Con borde óseo colgante', 'USG: signo del doble contorno', 'TC de doble energía: depósitos de urato'] },
+            say: 'La radiografía tarda años en cambiar. Cuando lo hace, muestra erosiones en sacabocado con un borde de hueso colgante. El ultrasonido ve antes el signo del doble contorno: urato sobre la superficie del cartílago. Y la tomografía de doble energía colorea los depósitos de urato.' },
+          { v: { k: 'quiz', q: 'Rodilla caliente, fiebre de 39 °C, 110 000 leucocitos/µL y cristales de urato. ¿Qué haces?', opts: ['Es gota: colchicina y alta', 'Cultivo, antibiótico y drenaje'], a: 1 },
+            say: 'Pausa. Rodilla caliente, fiebre de treinta y nueve grados, ciento diez mil leucocitos en el líquido y cristales de urato. ¿Qué haces?',
+            exp: 'Antibióticos empíricos, Gram, cultivo y drenaje. Los cristales no descartan una artritis séptica, y una articulación infectada se destruye en días.' }
+        ] },
+        { ch: 'Apagar el ataque', sc: [
+          { v: { k: 'list', t: 'Tres opciones, en las primeras 24 h', items: ['Colchicina a dosis baja', 'AINE a dosis plenas', 'Glucocorticoide oral o intraarticular', 'Elige según riñón, estómago y fármacos', 'Refractario: anti-IL-1'] },
+            say: 'Para el ataque tienes tres opciones, igual de eficaces si las das pronto, idealmente en las primeras veinticuatro horas. Colchicina a dosis baja, un antiinflamatorio no esteroideo a dosis plenas o un glucocorticoide. No eliges por potencia, sino por el paciente: su riñón, su estómago y los otros fármacos que toma.' },
+          { v: { k: 'anim', id: 'gota', step: 3 },
+            say: 'La colchicina bloquea los microtúbulos de los neutrófilos: ya no pueden migrar ni amplificar la inflamación. Se da a dosis baja: uno punto dos miligramos y cero punto seis una hora después. La guía europea usa un miligramo y luego medio. Cuidado con la claritromicina: la toxicidad puede ser mortal.' },
+          { v: { k: 'list', t: 'Elige según el paciente', items: ['ERC avanzada: glucocorticoide', 'Úlcera, IC o anticoagulado: no AINE', 'Claritromicina: no colchicina', 'Una sola articulación: esteroide intraarticular', 'Diabetes descontrolada: cuidado con esteroide'] },
+            say: 'Ahora decide. Con enfermedad renal avanzada, el glucocorticoide es lo más seguro. Si hay úlcera, insuficiencia cardiaca o anticoagulación, nada de antiinflamatorios no esteroideos. Si toma claritromicina, nada de colchicina. Y si solo es una articulación accesible, una infiltración de esteroide funciona muy bien.' },
+          { v: { k: 'quiz', q: 'Don Chuy: TFG 38 y úlcera duodenal hace 4 meses. ¿Con qué tratas el ataque?', opts: ['Indometacina 50 mg c/8 h', 'Prednisona 30–40 mg/día por 5 días'], a: 1 },
+            say: 'Pausa. Don Chuy tiene una tasa de filtración glomerular de treinta y ocho y una úlcera duodenal de hace cuatro meses. ¿Con qué tratas el ataque?',
+            exp: 'Con prednisona, de treinta a cuarenta miligramos al día por cinco días. La indometacina dañaría su riñón y su estómago. La colchicina sería posible, pero con ajuste por la función renal.' }
+        ] },
+        { ch: 'Bajar el urato', sc: [
+          { v: { k: 'list', t: 'Cuándo iniciar alopurinol (ACR 2020)', items: ['≥1 tofo', 'Daño radiográfico por gota', '≥2 ataques al año', 'Considerar: 1er ataque + ERC ≥3, urato >9 o litos'] },
+            say: 'El tratamiento para bajar el urato tiene indicaciones fuertes: al menos un tofo, daño radiográfico por gota, o dos o más ataques al año. Se considera desde el primer ataque si hay enfermedad renal en estadio tres o más, urato mayor de nueve o litiasis urinaria. La hiperuricemia sin síntomas no se trata con fármacos.' },
+          { v: { k: 'anim', id: 'gota', step: 4 },
+            say: 'El alopurinol inhibe la xantina oxidasa. Se forma menos ácido úrico y, con meses de urato bajo, los cristales se disuelven. Es de primera línea, incluso en enfermedad renal crónica.' },
+          { v: { k: 'big', h: 'Meta de urato', t: '<6', u: 'mg/dL', s: '<5 si hay tofos (EULAR). Sube el alopurinol hasta llegar.' },
+            say: 'La meta es un urato menor de seis miligramos por decilitro, por debajo del punto de saturación. La guía europea pide menos de cinco si hay tofos. No es una dosis fija: subes el alopurinol hasta llegar a la meta.' },
+          { v: { k: 'flow', t: 'Cómo iniciar alopurinol', steps: ['HLA-B*58:01 si hay riesgo étnico', '≤100 mg/día (menos en ERC)', 'Subir cada 2–5 semanas', 'Profilaxis: colchicina 3–6 meses', 'Si hay ataque: NO suspender'] },
+            say: 'Así se inicia. En personas de origen coreano, chino han, tailandés o afrodescendientes, pide primero el HLA-B cincuenta y ocho cero uno, por el riesgo de Stevens-Johnson. Empieza con cien miligramos o menos y sube cada dos a cinco semanas. Da profilaxis con colchicina de tres a seis meses. Y si hay un ataque, no lo suspendas.' },
+          { v: { k: 'list', t: 'Otros fármacos', items: ['Febuxostat: evitar con ECV (CARES)', 'Probenecid: no en litiasis ni ERC', 'Pegloticasa: refractaria; no con déficit de G6PD', 'Losartán: baja un poco el urato', 'Alopurinol + azatioprina: peligro'] },
+            say: 'Las alternativas. El febuxostat también inhibe la xantina oxidasa, pero se asoció a más muerte cardiovascular: evítalo si hay enfermedad cardiovascular. El probenecid es uricosúrico: no sirve con litiasis ni con enfermedad renal. La pegloticasa es para gota refractaria y no se usa con deficiencia de glucosa seis fosfato deshidrogenasa. Si puedes, cambia la tiazida por losartán.' },
+          { v: { k: 'quiz', q: 'Ya toma alopurinol con buen control y le da un ataque. ¿Qué haces con el alopurinol?', opts: ['Suspenderlo hasta que pase', 'Mantenerlo y tratar el ataque'], a: 1 },
+            say: 'Pausa. Un paciente que ya toma alopurinol tiene un ataque. ¿Qué haces con el alopurinol?',
+            exp: 'Lo mantienes igual y tratas el ataque. Suspenderlo hace que el urato oscile y provoca más ataques.' }
+        ] },
+        { ch: 'Pseudogota y trampas', sc: [
+          { v: { k: 'vs', cmp: 'gota-pseudo', rows: [4, 5, 7] },
+            say: 'La pseudogota es el depósito de cristales de pirofosfato de calcio. Es de adultos mayores, en la rodilla y la muñeca, y a veces aparece después de una cirugía. En la radiografía ves condrocalcinosis: calcio lineal en los meniscos. No hay un fármaco que disuelva esos cristales; solo tratas los ataques.' },
+          { v: { k: 'mnemo', t: 'Agujas Amarillas Negativas = gota', d: 'Romboides Positivos = pseudogota. Pseudogota antes de los 60: busca las 4 H (Hiperparatiroidismo, Hemocromatosis, Hipomagnesemia, Hipofosfatasia).' },
+            say: 'Para no confundirte: agujas amarillas negativas, gota. Romboides positivos, pseudogota. Y si la pseudogota aparece antes de los sesenta años, busca las cuatro haches: hiperparatiroidismo, hemocromatosis, hipomagnesemia e hipofosfatasia.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Ataque: elige por el paciente. Alopurinol: dosis baja, titula a urato <6, profilaxis 3–6 meses y nunca lo suspendas en un ataque.' },
+            say: 'La perla para el examen: el ataque se trata según el paciente, y el alopurinol se inicia bajo, se titula hasta un urato menor de seis, con profilaxis, y nunca se suspende durante un ataque. Ahora ve a las preguntas del tema para fijar lo que viste.' }
+        ] }
+      ],
       sections: [
         { h: 'Fisiopatología', html: `
 <ul>
@@ -54,6 +119,38 @@ export default {
 <li>Adultos mayores; rodilla y muñeca. Rx: <b>condrocalcinosis</b> (meniscos, fibrocartílago triangular).</li>
 <li>Si aparece antes de los 60 años, busca causas: <b>hiperparatiroidismo, hemocromatosis, hipomagnesemia, hipofosfatasia</b>.</li>
 <li>Ataque: AINE, colchicina o esteroide intraarticular. No hay tratamiento que disuelva los cristales.</li>
+</ul>` },
+        { h: 'Diagnóstico diferencial de la monoartritis aguda', html: `
+<div class="tablewrap"><table class="mini">
+<tr><th>Causa</th><th>Pista</th><th>Líquido sinovial</th></tr>
+<tr><td><b>Gota</b></td><td>1ª MTF, hombre, diuréticos, alcohol</td><td>Inflamatorio; agujas con birrefringencia negativa</td></tr>
+<tr><td><b>CPPD</b></td><td>Adulto mayor, rodilla o muñeca, condrocalcinosis, posoperatorio</td><td>Inflamatorio; romboides con birrefringencia positiva débil</td></tr>
+<tr><td><b>Artritis séptica</b></td><td>Fiebre, prótesis, inmunosupresión, drogas IV; <i>S. aureus</i></td><td>Purulento, &gt;50,000 leucocitos con &gt;90% neutrófilos; Gram y cultivo positivos</td></tr>
+<tr><td><b>Gonocócica</b></td><td>Joven sexualmente activo, tenosinovitis, pústulas</td><td>Cultivo a menudo negativo: busca en mucosas (PCR o cultivo)</td></tr>
+<tr><td><b>Hemartrosis</b></td><td>Trauma, anticoagulante, hemofilia</td><td>Sangre</td></tr>
+<tr><td><b>Celulitis o bursitis</b></td><td>Eritema sin derrame; bursa olecraneana o prerrotuliana</td><td>Sin derrame articular</td></tr>
+</table></div>
+<p>La gota puede dar &gt;50,000 leucocitos y una artritis séptica puede tener cristales: ante la duda, antibiótico y cultivo.</p>` },
+        { h: 'Fármacos clave', html: `
+<div class="tablewrap"><table class="mini">
+<tr><th>Fármaco</th><th>Mecanismo</th><th>Efecto adverso clave</th><th>Contraindicación / precaución</th></tr>
+<tr><td><b>Colchicina</b></td><td>Inhibe la polimerización de microtúbulos (neutrófilos)</td><td>Diarrea; miopatía y mielosupresión si se acumula</td><td>Claritromicina, ciclosporina y otros inhibidores de CYP3A4/P-gp; ajustar en ERC</td></tr>
+<tr><td><b>AINE</b> (naproxeno, indometacina)</td><td>Inhiben la COX</td><td>Úlcera, lesión renal, retención de líquidos</td><td>ERC, úlcera, IC, anticoagulación</td></tr>
+<tr><td><b>Glucocorticoides</b></td><td>Antiinflamatorio amplio</td><td>Hiperglucemia, rebote si se retiran rápido</td><td>Infección articular (intraarticular); DM descontrolada</td></tr>
+<tr><td><b>Alopurinol</b></td><td>Inhibe la xantina oxidasa</td><td>Exantema; SJS/NET/DRESS (HLA-B*58:01)</td><td>Azatioprina y 6-mercaptopurina: mielotoxicidad (reducir su dosis ~75% o evitar)</td></tr>
+<tr><td><b>Febuxostat</b></td><td>Inhibe la xantina oxidasa (no purínico)</td><td>Más mortalidad CV (CARES), transaminasas</td><td>Enfermedad CV establecida; azatioprina</td></tr>
+<tr><td><b>Probenecid</b></td><td>Uricosúrico (inhibe URAT1)</td><td>Litiasis de ácido úrico</td><td>Litiasis, ERC moderada o grave</td></tr>
+<tr><td><b>Pegloticasa</b></td><td>Uricasa: convierte urato en alantoína</td><td>Reacciones a la infusión, anticuerpos</td><td>Déficit de G6PD (hemólisis, metahemoglobinemia)</td></tr>
+<tr><td><b>Anakinra, canakinumab</b></td><td>Bloquean la IL-1</td><td>Infecciones</td><td>Infección activa</td></tr>
+</table></div>` },
+        { h: 'Cómo lo preguntan en el examen', html: `
+<ul>
+<li>Hombre con podagra nocturna tras alcohol o carne → <b>artrocentesis</b> (cristales + Gram y cultivo).</li>
+<li>Agujas negativas vs romboides positivos con condrocalcinosis en un adulto mayor → <b>gota vs CPPD</b>.</li>
+<li>Ataque con ERC y úlcera → <b>glucocorticoide</b>; con claritromicina → <b>no colchicina</b>.</li>
+<li>Ataque en quien ya toma alopurinol → <b>no suspenderlo</b>. Urato alto sin ataques → <b>no tratar con fármacos</b>.</li>
+<li>Tofo o ≥2 ataques al año → <b>alopurinol</b> en dosis baja, titulado a urato &lt;6, con profilaxis 3–6 meses.</li>
+<li>Gota + IAM previo → <b>evita febuxostat</b>. Gota + azatioprina → <b>alopurinol solo con reducción de azatioprina</b>. CPPD en &lt;60 años → <b>las 4 H</b>.</li>
 </ul>` }
       ],
       mnemo: { t: 'Agujas Amarillas Negativas = gota · Romboides Positivos = pseudogota', d: 'Urato: agujas, birrefringencia negativa, amarillas paralelas al compensador. Pirofosfato: romboides, positiva débil, azules paralelos. Para buscar causas de CPPD: las 4 H (Hiperparatiroidismo, Hemocromatosis, Hipomagnesemia, Hipofosfatasia).' },
@@ -61,7 +158,8 @@ export default {
       trap: 'Suspender el alopurinol durante un ataque o no dar profilaxis con colchicina al iniciarlo: ambas cosas provocan más ataques.',
       guide: [
         'Iniciar alopurinol durante el ataque: el ACR 2020 lo permite (recomendación condicional); libros antiguos dicen “esperar 2 semanas”. Si te preguntan con la guía actual, se puede iniciar.',
-        'Meta de urato: ACR <6 mg/dL; EULAR <6 y <5 si hay tofos.'
+        'Meta de urato: ACR <6 mg/dL; EULAR <6 y <5 si hay tofos.',
+        '⚠️ Depende de la guía · Colchicina en el ataque: ACR 2020 usa 1.2 mg y 0.6 mg una hora después (tabletas de 0.6 mg de EE. UU.); EULAR 2016 da 1 mg y 0.5 mg una hora después (tabletas que hay en México). Ambas son “dosis baja” y temprana.'
       ],
       refs: [
         'FitzGerald JD, et al. 2020 American College of Rheumatology Guideline for the Management of Gout. Arthritis Care Res 2020.',
@@ -119,7 +217,12 @@ export default {
     ['Antihipertensivo que baja el urato', 'Losartán'],
     ['4 H de la pseudogota', 'Hiperparatiroidismo, hemocromatosis, hipomagnesemia, hipofosfatasia'],
     ['Rx de la gota crónica', 'Erosiones en sacabocado con borde colgante'],
-    ['Litiasis de ácido úrico', 'Radiolúcida; alcalinizar con citrato de potasio']
+    ['Litiasis de ácido úrico', 'Radiolúcida; alcalinizar con citrato de potasio'],
+    ['Alopurinol + azatioprina', 'Mielosupresión grave: la xantina oxidasa ya no inactiva la 6-mercaptopurina (reducir la azatioprina o evitar)'],
+    ['Hiperuricemia asintomática (ACR 2020)', 'No iniciar terapia hipouricemiante'],
+    ['Signo del doble contorno en el USG', 'Urato sobre la superficie del cartílago: gota (en CPPD el calcio está dentro del cartílago)'],
+    ['Pegloticasa: contraindicación', 'Déficit de G6PD (hemólisis y metahemoglobinemia)'],
+    ['Ataque de CPPD en una sola rodilla', 'Artrocentesis evacuadora + esteroide intraarticular (Gram y cultivo negativos)']
   ],
 
   questions: [
@@ -241,7 +344,47 @@ export default {
       ans: 1,
       exp: 'Bajar el urato bruscamente moviliza cristales y provoca ataques. Por eso se inicia a dosis baja, se titula y se da profilaxis antiinflamatoria los primeros meses.',
       why: ['Es un efecto esperado, no una falla.', '', 'Tendría el mismo efecto y no está indicado por esto.', 'No hay datos de alergia.', 'Empeora el urato.'],
-      ref: 'ACR 2020' })
+      ref: 'ACR 2020' }),
+
+    q({ id: 'gota-16', dif: 3,
+      stem: 'Hombre de 50 años con enfermedad de Crohn controlada con azatioprina. Por gota tofácea inicia alopurinol 100 mg/día sin otros cambios. A las 4 semanas tiene fiebre, úlceras orales y neutrófilos de 300/µL, sin exantema. ¿Qué explica el cuadro?',
+      opts: ['Reacción DRESS al alopurinol', 'Acumulación de 6-mercaptopurina por inhibición de la xantina oxidasa', 'Brote de Crohn', 'Deficiencia de vitamina B12', 'Síndrome de lisis tumoral'],
+      ans: 1,
+      exp: 'La azatioprina se convierte en 6-mercaptopurina, que se inactiva por la xantina oxidasa. Al bloquearla con alopurinol (o febuxostat) se acumulan los metabolitos activos y aparece mielosupresión grave. Si es indispensable combinarlos, se reduce la azatioprina ~75% con vigilancia estrecha de la BH.',
+      why: ['Daría exantema, eosinofilia y afección hepática o renal, no aplasia aislada.', '', 'No causa neutropenia profunda.', 'Daría macrocitosis y anemia, no neutropenia aguda en semanas.', 'No hay neoplasia ni tratamiento citotóxico.'],
+      ref: 'ACR 2020 · ficha técnica del alopurinol' }),
+
+    q({ id: 'gota-17', dif: 2,
+      stem: 'Mujer de 80 años en el día 2 posoperatorio de fractura de cadera. Su rodilla derecha amanece caliente y con derrame. Líquido: 18 000 leucocitos/µL, cristales romboides con birrefringencia positiva débil, Gram negativo. Rx: condrocalcinosis. ¿Tratamiento?',
+      opts: ['Alopurinol', 'Artrocentesis evacuadora con esteroide intraarticular', 'Antibióticos por 6 semanas', 'Colchicina a dosis altas por 1 mes', 'Febuxostat'],
+      ans: 1,
+      exp: 'Ataque agudo de CPPD (pseudogota), típico tras cirugía o enfermedad aguda. Con una sola articulación grande, drenar e infiltrar esteroide es ideal (cultivo pendiente); alternativas: colchicina a dosis baja, AINE con cautela o esteroide oral. Los hipouricemiantes no sirven: el cristal no es urato.',
+      why: ['No disuelve cristales de pirofosfato.', '', 'Gram negativo, cristales y condrocalcinosis explican el cuadro; el cultivo se sigue.', 'Las dosis altas son tóxicas, sobre todo en ancianas.', 'No disuelve cristales de pirofosfato.'],
+      ref: 'Rosenthal AK, NEJM 2016 · EULAR CPPD 2011' }),
+
+    q({ id: 'gota-18', dif: 2,
+      stem: 'Hombre de 45 años con urato de 9.2 mg/dL en un chequeo. Nunca ha tenido ataques, tofos ni litos. TFG normal. ¿Qué haces?',
+      opts: ['Alopurinol hasta urato <6', 'No iniciar fármaco: estilo de vida y revisar medicamentos que elevan el urato', 'Febuxostat', 'Colchicina profiláctica', 'Probenecid'],
+      ans: 1,
+      exp: 'La hiperuricemia asintomática no se trata con fármacos (ACR 2020, recomendación condicional en contra): la mayoría nunca tendrá gota y el beneficio no compensa el riesgo. Se corrigen peso, alcohol, refrescos y fármacos como tiazidas.',
+      why: ['No hay indicación sin gota, tofos ni litos.', '', 'Tampoco está indicado, y tiene advertencia CV.', 'No hay ataques que prevenir.', 'No hay indicación.'],
+      ref: 'ACR 2020' }),
+
+    q({ id: 'gota-19', dif: 2,
+      stem: 'Hombre de 56 años con monoartritis recurrente de rodilla; no se logró la artrocentesis. El USG muestra una línea hiperecoica irregular sobre la superficie del cartílago, paralela al hueso. ¿Qué indica?',
+      opts: ['Condrocalcinosis por pirofosfato', 'Depósito de urato (signo del doble contorno): gota', 'Sinovitis reumatoide', 'Osteofitos', 'Derrame séptico'],
+      ans: 1,
+      exp: 'El signo del doble contorno es urato depositado sobre la superficie del cartílago hialino: apoya fuertemente gota. En la CPPD los depósitos hiperecoicos están dentro del cartílago.',
+      why: ['En la CPPD el calcio está dentro del cartílago, no sobre su superficie.', '', 'Daría engrosamiento sinovial con Doppler positivo, no una línea sobre el cartílago.', 'Están en los márgenes óseos.', 'Daría líquido ecogénico, no una línea sobre el cartílago.'],
+      ref: 'ACR/EULAR 2015 clasificación de gota' }),
+
+    q({ id: 'gota-20', dif: 2,
+      stem: 'Hombre de 58 años con gota tofácea en alopurinol 100 mg/día desde hace 6 meses, sin ataques recientes y con buen apego. TFG 75. Urato 7.8 mg/dL. ¿Qué haces?',
+      opts: ['Mantener la dosis: ya no tiene ataques', 'Subir el alopurinol de forma gradual hasta urato <6 (menos de 5 por los tofos según EULAR)', 'Cambiar a febuxostat', 'Suspender el alopurinol porque falló', 'Agregar colchicina sin cambiar el alopurinol'],
+      ans: 1,
+      exp: 'Se trata a una meta, no a una dosis: el alopurinol se titula (p. ej., 100 mg cada 2–5 semanas, hasta 800 mg/día si se tolera) hasta urato <6. Muchos pacientes quedan con dosis insuficientes.',
+      why: ['Sin llegar a la meta los tofos no se disuelven.', '', 'Solo si no tolera el alopurinol o no llega a la meta con la dosis máxima.', 'No falló: la dosis es baja.', 'La profilaxis no baja el urato.'],
+      ref: 'ACR 2020 · EULAR 2016' })
   ],
 
   cases: [

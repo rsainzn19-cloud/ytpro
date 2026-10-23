@@ -10,6 +10,71 @@ export default {
       compare: ['duodenal-gastrica'],
       nn: [['gi-bleed-etiology-pathophysiology-clinical-features-diagnosis-treatment', 'GI Bleed'], ['stomach-disorders', 'Stomach Disorders']],
       yt: 'peptic ulcer disease H pylori',
+      video: [
+        { ch: 'Por qué se forma una úlcera', sc: [
+          { v: { k: 'title', t: 'Enfermedad ácido-péptica y STDA', s: 'Tema 9 · Gastroenterología' },
+            say: 'Bienvenido a la guardia. Hoy vas a entender por qué se forma una úlcera péptica y cómo se trata Helicobacter pylori. Después vas a manejar, paso a paso, un sangrado de tubo digestivo alto. Es un tema que siempre aparece en el examen.' },
+          { v: { k: 'case', t: 'Llega a urgencias', p: { name: 'Armando', age: 59, sex: 'H', skin: '#C08060', hair: '#4A3A2A', gown: '#F2B66D' }, text: 'Albañil con lumbalgia; toma diclofenaco a diario. Hoy, 3 evacuaciones negras y mareo al ponerse de pie.', vit: { FC: '118', PA: '92/58', Hb: '6.8' } },
+            say: 'Conoce a Armando, albañil de cincuenta y nueve años. Toma diclofenaco todos los días por dolor de espalda. Hoy tuvo tres evacuaciones negras y se mareó al levantarse. Llega taquicárdico, con presión baja y hemoglobina de seis punto ocho. Antes de tratarlo, entendamos qué le pasó a su estómago.' },
+          { v: { k: 'anim', id: 'stda', step: 0 },
+            say: 'Tu estómago produce ácido todo el día y, aun así, no se digiere a sí mismo. Lo protege una capa de moco con bicarbonato, sostenida por las prostaglandinas. La úlcera aparece cuando el ácido le gana a esa defensa.' },
+          { v: { k: 'anim', id: 'stda', step: 1 },
+            say: 'El primer agresor es Helicobacter pylori, un bacilo gramnegativo. Su ureasa convierte la urea en amoníaco, que lo protege del ácido. Inflama la mucosa y la debilita. Además, causa adenocarcinoma gástrico y linfoma MALT.' },
+          { v: { k: 'anim', id: 'stda', step: 2 },
+            say: 'El segundo agresor son los antiinflamatorios no esteroideos, o AINE, incluida la aspirina. Bloquean la ciclooxigenasa uno y bajan las prostaglandinas. Sin ellas hay menos moco y menos bicarbonato. Eso le pasó a Armando con su diclofenaco.' },
+          { v: { k: 'anim', id: 'stda', step: 3 },
+            say: 'Cuando el ácido atraviesa la mucosa y llega a la submucosa, ya es una úlcera. Si erosiona un vaso, sangra. Grábatelo: una úlcera es por Helicobacter o por AINE hasta demostrar lo contrario.' }
+        ] },
+        { ch: 'Duodenal o gástrica', sc: [
+          { v: { k: 'vs', cmp: 'duodenal-gastrica', rows: [1, 3, 4] },
+            say: 'La úlcera duodenal es la más común. Su dolor mejora al comer y regresa en ayuno o de noche. La gástrica empeora con la comida y hace bajar de peso. Y lo más importante: la úlcera gástrica puede ser un cáncer ulcerado. Por eso siempre se biopsia y se confirma que cicatrizó.' },
+          { v: { k: 'list', t: 'Piensa en gastrinoma si…', items: ['Úlceras múltiples o refractarias a IBP', 'Úlceras en yeyuno, más allá del duodeno', 'Diarrea crónica', 'Hipercalcemia: piensa en MEN1', 'Pide gastrina en ayuno y prueba de secretina'] },
+            say: 'Si las úlceras son múltiples, no cicatrizan con inhibidores de la bomba de protones o aparecen en el yeyuno, piensa en un gastrinoma: el síndrome de Zollinger-Ellison. Suele haber diarrea. Si además hay hipercalcemia, piensa en neoplasia endocrina múltiple tipo uno. Pide gastrina en ayuno y prueba de secretina.' }
+        ] },
+        { ch: 'Helicobacter y AINE', sc: [
+          { v: { k: 'list', t: 'Cómo buscar H. pylori', items: ['Sin endoscopia: aliento con urea o antígeno fecal', 'Con endoscopia: ureasa rápida o histología', 'Antes: sin IBP 2 sem; sin antibióticos 4 sem', 'Serología: no distingue infección activa'] },
+            say: 'Para buscar Helicobacter sin endoscopia, usa la prueba de aliento con urea o el antígeno en heces. Si ya hay endoscopia, la prueba rápida de ureasa o la histología. Suspende el inhibidor de bomba dos semanas antes, y los antibióticos o el bismuto cuatro semanas antes, o tendrás falsos negativos. La serología no distingue una infección activa de una pasada.' },
+          { v: { k: 'list', t: 'Primera línea en México · 14 días', items: ['IBP dos veces al día', 'Subcitrato de bismuto', 'Tetraciclina', 'Metronidazol', 'Triple con claritromicina: solo si es sensible'] },
+            say: 'En México hay mucha resistencia a la claritromicina. Por eso la primera línea es la terapia cuádruple con bismuto por catorce días: inhibidor de bomba, bismuto, tetraciclina y metronidazol. La triple con claritromicina solo se usa si sabes que la cepa es sensible.' },
+          { v: { k: 'quiz', q: 'Armando terminó la cuádruple hace 1 mes. ¿Cómo confirmas la curación?', opts: ['Serología para H. pylori', 'Aliento o antígeno fecal, sin IBP 2 sem'], a: 1 },
+            say: 'Pausa. Armando terminó su tratamiento hace un mes. ¿Cómo confirmas que se curó?',
+            exp: 'Con prueba de aliento o antígeno fecal, al menos cuatro semanas después de terminar y sin inhibidor de bomba las dos semanas previas. La serología se queda positiva por meses, así que no sirve para confirmar la curación.' },
+          { v: { k: 'list', t: 'AINE: a quién proteger', items: ['Edad >65 años o úlcera previa', 'Dosis altas o dos AINE juntos', 'Con anticoagulante, esteroide o ISRS', 'Protección: IBP (o misoprostol)', 'Muy alto riesgo: celecoxib + IBP'] },
+            say: 'Con los AINE, el riesgo de úlcera sube después de los sesenta y cinco años y con una úlcera previa. También con dosis altas, o si se combinan con anticoagulantes, esteroides o antidepresivos inhibidores de recaptura de serotonina. A ellos los proteges con inhibidor de bomba. En muy alto riesgo, celecoxib más inhibidor de bomba. Y antes de un AINE crónico, busca y erradica Helicobacter.' }
+        ] },
+        { ch: 'Sangrado digestivo alto', sc: [
+          { v: { k: 'flow', t: 'Primeras horas', steps: ['2 vías gruesas y cristaloides', 'Transfundir si Hb <7 g/dL', 'IBP IV en bolo', 'Eritromicina IV antes de endoscopia', 'Endoscopia en ≤24 h'] },
+            say: 'Volvamos con Armando. Melena, hematemesis o posos de café te hablan de un sangrado alto. Primero se reanima: dos vías periféricas gruesas y cristaloides. Luego, inhibidor de bomba intravenoso en bolo. Eritromicina intravenosa de treinta a ciento veinte minutos antes de la endoscopia, para vaciar el estómago de sangre. Y endoscopia en las primeras veinticuatro horas, ya estable.' },
+          { v: { k: 'big', h: 'Transfundir si la Hb es', t: '<7', u: 'g/dL', s: 'Estrategia restrictiva. Con enfermedad cardiovascular, umbral de ≈8 g/dL.' },
+            say: 'La transfusión es restrictiva: se transfunde con hemoglobina menor de siete gramos por decilitro. Si tiene enfermedad cardiovascular, el umbral sube a cerca de ocho. Transfundir de más aumenta el resangrado.' },
+          { v: { k: 'list', t: 'Glasgow-Blatchford', items: ['BUN y hemoglobina', 'Presión sistólica y frecuencia cardiaca', 'Melena o síncope', 'Hepatopatía o insuficiencia cardiaca', '0–1 puntos: manejo ambulatorio'] },
+            say: 'Para decidir quién se puede ir a casa, usa la escala de Glasgow-Blatchford. Suma el nitrógeno ureico, la hemoglobina, la presión sistólica y la frecuencia cardiaca. También la melena, el síncope, la hepatopatía y la insuficiencia cardiaca. Con cero o un punto, el riesgo es muy bajo y puede manejarse de forma ambulatoria.' },
+          { v: { k: 'tip', kind: 'trap', t: 'Nada de ácido tranexámico (HALT-IT) ni sonda nasogástrica de rutina. Endoscopia en <6 h no reduce la mortalidad: primero reanima.' },
+            say: 'Cuidado con estas trampas. El ácido tranexámico no reduce la mortalidad y aumenta las trombosis venosas, según el estudio HALT-IT. La sonda nasogástrica no se pone de rutina. Y hacer la endoscopia antes de seis horas no reduce la mortalidad: primero se reanima.' }
+        ] },
+        { ch: 'Forrest: qué hacer en la endoscopia', sc: [
+          { v: { k: 'mnemo', t: 'Forrest: “1 sangra, 2 avisa, 3 limpia”', d: 'I: sangrado activo (Ia chorro, Ib capa). II: estigmas (IIa vaso visible, IIb coágulo, IIc base pigmentada). III: base limpia.' },
+            say: 'En la endoscopia, la úlcera se clasifica con Forrest. Recuerda: uno sangra, dos avisa, tres limpia. Forrest uno es sangrado activo, en chorro o en capa. Forrest dos son estigmas que avisan: vaso visible, coágulo adherido o base pigmentada. Forrest tres es base limpia.' },
+          { v: { k: 'list', t: 'Conducta según Forrest', items: ['Ia, Ib, IIa: terapia endoscópica dual', 'Luego: IBP a dosis altas por 72 h', 'IIb: retirar el coágulo y tratar la base', 'IIc y III: IBP oral, dieta y alta temprana', 'Adrenalina sola: nunca basta'] },
+            say: 'Uno A, uno B y dos A son de alto riesgo. Necesitan terapia endoscópica dual: adrenalina más un método térmico o clips. Después, inhibidor de bomba a dosis altas por setenta y dos horas. En el coágulo adherido, se intenta retirarlo y tratar lo que hay debajo. Con base pigmentada o limpia: inhibidor de bomba oral, dieta y alta temprana.' },
+          { v: { k: 'quiz', q: 'Úlcera duodenal con vaso visible que no sangra. ¿Qué haces?', opts: ['IBP oral y alta', 'Terapia dual + IBP a dosis altas'], a: 1 },
+            say: 'Pausa. En la endoscopia ves una úlcera duodenal con un vaso visible que no está sangrando. ¿Qué haces?',
+            exp: 'Es un Forrest dos A, de alto riesgo. Aunque no sangre ahora, puede resangrar. Lleva terapia endoscópica dual y después inhibidor de bomba a dosis altas por setenta y dos horas.' },
+          { v: { k: 'list', t: 'Después de la hemostasia', items: ['Resangrado: segunda endoscopia', 'Si falla: embolización por radiología', 'Cirugía: último recurso', 'Aspirina de prevención 2.ª: reanudar pronto', 'AINE: suspender'] },
+            say: 'Si vuelve a sangrar, haz una segunda endoscopia. Si falla, embolización por radiología intervencionista, y la cirugía queda como último recurso. Si toma aspirina por un infarto o un stent, no la suspendas para siempre: reanúdala pronto, con inhibidor de bomba. El AINE, en cambio, se suspende.' },
+          { v: { k: 'anim', id: 'stda', step: 4 },
+            say: 'Los inhibidores de bomba bloquean la bomba de hidrógeno y potasio de la célula parietal, el último paso de la secreción de ácido. Con menos ácido, el coágulo se estabiliza y la úlcera cicatriza. Los antibióticos se encargan de Helicobacter.' }
+        ] },
+        { ch: 'Complicaciones y trampas', sc: [
+          { v: { k: 'list', t: 'Otras complicaciones', items: ['Perforación: abdomen en tabla y aire libre', 'Obstrucción pilórica: vómito y alcalosis', 'Penetración a páncreas: dolor a la espalda', 'Duodenal posterior: arteria gastroduodenal'] },
+            say: 'La complicación más común es el sangrado. La perforación da dolor súbito, abdomen en tabla y aire libre bajo el diafragma: va a cirugía. La obstrucción pilórica da vómito de comida retenida y alcalosis metabólica hipoclorémica e hipokalémica. Si penetra al páncreas, el dolor se va a la espalda. Y la úlcera duodenal posterior puede erosionar la arteria gastroduodenal.' },
+          { v: { k: 'quiz', q: 'Toma naproxeno. Dolor súbito, abdomen en tabla y aire bajo el diafragma. ¿Qué sigue?', opts: ['Endoscopia urgente', 'Cirugía urgente'], a: 1 },
+            say: 'Pausa. Una mujer que toma naproxeno llega con dolor epigástrico súbito, abdomen en tabla y aire bajo el diafragma. ¿Qué sigue?',
+            exp: 'Cirugía urgente, con reanimación, inhibidor de bomba intravenoso y antibióticos. La endoscopia está contraindicada en una perforación, porque el aire que se insufla la empeora.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Úlcera = H. pylori o AINE. En el STDA: reanima, IBP IV, endoscopia en ≤24 h y trata Ia, Ib y IIa. Confirma la erradicación con aliento o antígeno fecal.' },
+            say: 'La perla para el examen: toda úlcera es por Helicobacter o por AINE hasta demostrar lo contrario. En el sangrado, reanima, da inhibidor de bomba, haz endoscopia en veinticuatro horas y trata los Forrest de alto riesgo. Ahora ve a las preguntas del tema y ponte a prueba.' }
+        ] }
+      ],
       sections: [
         { h: 'Úlcera péptica', html: `
 <ul>
@@ -38,7 +103,7 @@ export default {
 <ul>
 <li>Hematemesis, “posos de café”, melena; BUN/Cr &gt;30 sugiere origen alto.</li>
 <li><b>Reanimación</b>: dos vías gruesas, cristaloides, transfundir con Hb &lt;7 (≈8 con enfermedad cardiovascular).</li>
-<li><b>Glasgow-Blatchford</b> 0–1: puede manejarse de forma ambulatoria. Calculadora en Más → Calculadoras.</li>
+<li><b>Glasgow-Blatchford</b> (BUN, Hb, PAS, FC, melena, síncope, hepatopatía e insuficiencia cardiaca) 0–1: puede manejarse de forma ambulatoria. Calculadora en Más → Calculadoras.</li>
 <li><b>IBP IV</b> (bolo y dosis altas), <b>eritromicina IV</b> 30–120 min antes de la endoscopia para vaciar el estómago.</li>
 <li><b>Endoscopia en ≤24 h</b> tras reanimar (hacerla en &lt;6 h no reduce la mortalidad).</li>
 <li>No uses sonda nasogástrica de rutina ni ácido tranexámico (HALT-IT).</li>
@@ -57,6 +122,43 @@ export default {
 <li><b>Resangrado</b>: segunda endoscopia; si falla, embolización por radiología intervencionista; cirugía si no hay otra opción.</li>
 <li><b>Aspirina en prevención secundaria</b>: reanudarla pronto (de inmediato si la úlcera es de bajo riesgo; hacia el día 3 si fue de alto riesgo), con IBP. Los AINE se suspenden.</li>
 <li>Otras causas: Mallory-Weiss (desgarro tras vómito, se autolimita), Boerhaave (perforación esofágica: dolor torácico, enfisema, mediastinitis).</li>
+</ul>` },
+        { h: 'Diagnóstico diferencial del STDA', html: `
+<div class="tablewrap"><table class="mini">
+<tr><th>Causa</th><th>Pista</th><th>Conducta clave</th></tr>
+<tr><td>Úlcera péptica</td><td>AINE o <i>H. pylori</i>; dolor epigástrico. La causa más común</td><td>IBP IV, endoscopia ≤24 h, Forrest</td></tr>
+<tr><td>Várices esofágicas o gástricas</td><td>Cirrosis: ascitis, ictericia, arañas vasculares, plaquetas bajas</td><td>Vasoactivo (octreotida o terlipresina) + ceftriaxona antes de la endoscopia; ligadura en ≤12 h</td></tr>
+<tr><td>Mallory-Weiss</td><td>Arcadas o vómito intenso previo (alcohol)</td><td>Suele autolimitarse; terapia endoscópica si sangra activamente</td></tr>
+<tr><td>Esofagitis erosiva</td><td>ERGE de larga evolución; sangrado leve</td><td>IBP</td></tr>
+<tr><td>Lesión de Dieulafoy</td><td>Arteria submucosa aberrante sin úlcera; sangrado masivo e intermitente</td><td>Terapia endoscópica (clips o ligadura)</td></tr>
+<tr><td>Cáncer gástrico</td><td>Pérdida de peso, saciedad temprana, anemia crónica</td><td>Biopsia</td></tr>
+<tr><td>Fístula aortoentérica</td><td>Injerto aórtico previo; “sangrado heraldo” pequeño</td><td>Angio-TC urgente y cirugía</td></tr>
+</table></div>
+<ul>
+<li><b>¿Alto o bajo?</b> Hematemesis o posos de café = alto. La melena casi siempre es alta. Un BUN/Cr elevado apoya el origen alto (la sangre se digiere y se absorbe). Una hematoquecia masiva con inestabilidad también puede venir del tubo alto.</li>
+<li><b>Boerhaave</b>: vómito violento → dolor torácico intenso, enfisema subcutáneo, derrame pleural izquierdo. No es un sangrado grande sino una perforación esofágica: TC o esofagograma con contraste hidrosoluble y cirugía.</li>
+<li><b>Heces negras por bismuto o hierro</b>: formadas, sin el olor fétido ni el aspecto alquitranado de la melena, con signos vitales y Hb estables. No es sangrado.</li>
+</ul>` },
+        { h: 'Fármacos clave', html: `
+<div class="tablewrap"><table class="mini">
+<tr><th>Fármaco</th><th>Mecanismo</th><th>Efecto adverso clave</th><th>Ojo / contraindicación</th></tr>
+<tr><td>IBP (omeprazol, pantoprazol, esomeprazol)</td><td>Bloqueo irreversible de la H⁺/K⁺ ATPasa (bomba de protones)</td><td>Uso prolongado: hipomagnesemia, déficit de B12, <i>C. difficile</i>, fracturas (asociación)</td><td>30–60 min antes del desayuno; suspender 2 semanas antes de buscar <i>H. pylori</i></td></tr>
+<tr><td>Vonoprazán</td><td>Bloqueador de ácido competitivo con el potasio; efecto rápido, no depende de la comida</td><td>Hipergastrinemia</td><td>Alternativa en esquemas para <i>H. pylori</i> (dual con amoxicilina, ACG 2024)</td></tr>
+<tr><td>Bismuto</td><td>Antimicrobiano tópico y citoprotector</td><td>Heces y lengua negras (no es melena)</td><td>Evitar en insuficiencia renal grave</td></tr>
+<tr><td>Tetraciclina</td><td>Inhibe la subunidad ribosomal 30S</td><td>Fotosensibilidad, esofagitis por pastilla</td><td>Embarazo y niños &lt;8 años</td></tr>
+<tr><td>Metronidazol</td><td>Daña el ADN bacteriano</td><td>Sabor metálico, efecto tipo disulfiram, neuropatía</td><td>No tomar alcohol</td></tr>
+<tr><td>Claritromicina</td><td>Macrólido: inhibe la subunidad 50S</td><td>QT largo; interacciones (inhibe CYP3A4)</td><td>Alta resistencia en México: solo si la cepa es sensible</td></tr>
+<tr><td>Misoprostol</td><td>Análogo de prostaglandina E1</td><td>Diarrea, cólico</td><td>Embarazo (abortivo)</td></tr>
+<tr><td>Eritromicina IV</td><td>Agonista de motilina: vacía el estómago</td><td>QT largo</td><td>Una dosis 30–120 min antes de la endoscopia</td></tr>
+</table></div>` },
+        { h: 'Cómo lo preguntan en el examen', html: `
+<ul>
+<li><b>Dispepsia, &lt;60 años, sin datos de alarma</b> → probar y tratar <i>H. pylori</i> (aliento o antígeno fecal). Con alarma o ≥60 años → endoscopia.</li>
+<li><b>Melena + AINE + taquicardia</b> → reanimar, transfundir si Hb &lt;7, IBP IV, eritromicina y endoscopia en ≤24 h. La trampa: endoscopia antes de reanimar, o ácido tranexámico.</li>
+<li><b>“Vaso visible” o “sangrado en capa”</b> → terapia endoscópica dual + IBP a dosis altas 72 h. La trampa: adrenalina sola.</li>
+<li><b>“¿Cómo confirmas la erradicación?”</b> → aliento o antígeno fecal ≥4 semanas después, sin IBP 2 semanas. La trampa: serología.</li>
+<li><b>Úlceras múltiples o en yeyuno + diarrea (+ hipercalcemia)</b> → gastrinoma (MEN1): gastrina en ayuno y prueba de secretina.</li>
+<li><b>Cirrótico con hematemesis</b> → asume várices: vasoactivo + ceftriaxona y endoscopia en ≤12 h.</li>
 </ul>` }
       ],
       mnemo: { t: 'Forrest: “1 sangra, 2 avisa, 3 limpia”', d: 'Forrest I: sangrado activo (a chorro o en capa). Forrest II: estigmas que avisan (vaso visible, coágulo, base pigmentada). Forrest III: base limpia. Ia, Ib y IIa se tratan con terapia endoscópica dual.' },
@@ -64,7 +166,8 @@ export default {
       trap: 'Triple esquema con claritromicina por 7 días en México: alta resistencia. La respuesta esperada suele ser la cuádruple con bismuto por 14 días.',
       guide: [
         'Primera línea para H. pylori: ACG 2024 prefiere la cuádruple con bismuto y deja la triple con claritromicina para cepas sensibles. El consenso mexicano también recomienda esquemas cuádruples por la resistencia local. ⚠️ Si tu profesor enseña otra combinación, apréndete esa para el examen.',
-        'Momento de la endoscopia: ACG y ESGE coinciden en ≤24 h; la ESGE pide <12 h en pacientes de muy alto riesgo que siguen inestables.'
+        'Momento de la endoscopia: ACG y ESGE coinciden en ≤24 h; la ESGE pide <12 h en pacientes de muy alto riesgo que siguen inestables.',
+        'Umbral de transfusión: la ESGE 2021 transfunde con Hb ≤7 g/dL (≤8 con enfermedad cardiovascular aguda) y el consenso internacional de 2019 (Barkun) sugiere <8 g/dL. ⚠️ Depende de la guía; todas coinciden en una estrategia restrictiva.'
       ],
       refs: [
         'Laine L, et al. ACG Clinical Guideline: Upper Gastrointestinal and Ulcer Bleeding. Am J Gastroenterol 2021.',
@@ -80,7 +183,7 @@ export default {
       topic: 'stda', a: 'Úlcera duodenal', b: 'Úlcera gástrica',
       rows: [
         ['Frecuencia', 'Más común', 'Menos común'],
-        ['Dolor y comida', 'Mejora al comer; regresa 2–3 h después y de noche', 'Empeora al comer'],
+        ['Dolor y comida', 'Mejora al comer; duele en ayuno y de noche', 'Empeora al comer'],
         ['Peso', 'Puede subir (come para calmar el dolor)', 'Suele bajar'],
         ['Causa principal', 'H. pylori', 'AINE y H. pylori'],
         ['Riesgo de cáncer', 'Casi nulo', 'Hay que biopsiar siempre'],
@@ -122,7 +225,12 @@ export default {
     ['Antes de la endoscopia en STDA', 'Eritromicina IV 30–120 min antes'],
     ['Forrest de alto riesgo', 'Ia (chorro), Ib (capa), IIa (vaso visible): terapia dual + IBP dosis altas 72 h'],
     ['Resangrado tras terapia endoscópica', 'Segunda endoscopia; si falla, embolización'],
-    ['Aspirina en prevención secundaria tras un sangrado', 'Reanudar pronto (día 3 en úlcera de alto riesgo) con IBP']
+    ['Aspirina en prevención secundaria tras un sangrado', 'Reanudar pronto (día 3 en úlcera de alto riesgo) con IBP'],
+    ['Heces negras con bismuto, Hb y signos vitales normales', 'Efecto del bismuto, no melena: completar el esquema'],
+    ['H. pylori y alergia a la penicilina', 'Cuádruple con bismuto (no lleva amoxicilina)'],
+    ['Variables de Glasgow-Blatchford', 'BUN, Hb, PAS, FC, melena, síncope, hepatopatía e insuficiencia cardiaca'],
+    ['Úlcera en la cara posterior del bulbo duodenal que sangra masivamente', 'Arteria gastroduodenal'],
+    ['STDA en un paciente con cirrosis', 'Vasoactivo (octreotida o terlipresina) + ceftriaxona; endoscopia en ≤12 h con ligadura']
   ],
 
   questions: [
@@ -244,7 +352,46 @@ export default {
       ans: 1,
       exp: 'En dispepsia sin alarma en menores de 60 años, la estrategia “probar y tratar” H. pylori (aliento o antígeno fecal) es costo-efectiva. Si es negativo o persisten síntomas: IBP. Con alarma o ≥60 años: endoscopia.',
       why: ['Se reserva para datos de alarma o ≥60 años.', '', 'Sin indicación.', 'La serología no sirve para seguimiento.', 'No tiene relación con dispepsia.'],
-      ref: 'ACG/CAG 2017 dispepsia' })
+      ref: 'ACG/CAG 2017 dispepsia' }),
+    q({ id: 'stda-16', dif: 2,
+      stem: 'Hombre de 45 años en el día 5 de terapia cuádruple con bismuto para H. pylori. Consulta porque desde hace 3 días sus heces son negras, formadas y sin olor fétido. FC 74, PA 124/78, Hb 14.2 g/dL (igual que hace 2 semanas). ¿Conducta?',
+      opts: ['Endoscopia urgente por melena', 'Explicarle que es efecto del bismuto y continuar el tratamiento', 'Suspender el esquema y cambiar a triple con claritromicina', 'IBP IV en infusión y hospitalizar', 'Transfundir un paquete globular'],
+      ans: 1,
+      exp: 'El bismuto tiñe de negro las heces (y la lengua). La melena es alquitranada, pegajosa y fétida, y se acompaña de datos de sangrado (taquicardia, Hb que baja, BUN alto). Con signos vitales normales y Hb estable, se tranquiliza al paciente y se completa el esquema.',
+      why: ['No hay datos de sangrado: heces formadas, signos vitales y Hb normales.', '', 'Suspender reduce la erradicación, y la triple con claritromicina no es buena opción en México.', 'No hay sangrado que tratar.', 'Hb normal y estable: no hay indicación.'],
+      ref: 'ACG 2024 H. pylori' }),
+
+    q({ id: 'stda-17', dif: 2,
+      stem: 'Hombre de 56 años con cirrosis por alcohol (ascitis, arañas vasculares, plaquetas 68 000). Llega con hematemesis abundante, FC 116 y PA 94/60. Ya tiene 2 vías gruesas y reanimación con volumen. ¿Qué agregas antes de la endoscopia?',
+      opts: ['Solo IBP IV y endoscopia en 48 h', 'Octreotida (o terlipresina) + ceftriaxona IV, y endoscopia en ≤12 h con ligadura', 'Propranolol IV para bajar la presión portal', 'Plasma fresco congelado hasta normalizar el INR', 'Ácido tranexámico IV'],
+      ans: 1,
+      exp: 'En un cirrótico con STDA se asume origen variceal: vasoactivo (octreotida, somatostatina o terlipresina) en cuanto se sospecha, profilaxis antibiótica con ceftriaxona (reduce infecciones, resangrado y mortalidad) y endoscopia en ≤12 h con ligadura. Transfusión restrictiva.',
+      why: ['Falta el vasoactivo y el antibiótico, y 48 h es demasiado tarde.', '', 'Los betabloqueadores no se usan en el sangrado agudo con hipotensión; son para profilaxis.', 'Corregir el INR con plasma no mejora el sangrado y aumenta el volumen y la presión portal.', 'No reduce la mortalidad y aumenta las trombosis (HALT-IT).'],
+      ref: 'Baveno VII 2022' }),
+
+    q({ id: 'stda-18', dif: 2,
+      stem: 'Mujer de 34 años con úlcera duodenal y prueba de aliento positiva para H. pylori. Tuvo anafilaxia con amoxicilina. ¿Esquema más adecuado?',
+      opts: ['IBP + amoxicilina + claritromicina por 14 días', 'Cuádruple con bismuto (IBP + bismuto + tetraciclina + metronidazol) por 14 días', 'Vonoprazán + amoxicilina por 14 días', 'IBP + levofloxacino + amoxicilina', 'Solo IBP por 8 semanas'],
+      ans: 1,
+      exp: 'La cuádruple con bismuto no lleva betalactámicos: es la opción en alergia a la penicilina (y además es la primera línea en México). Los esquemas con amoxicilina están contraindicados por la anafilaxia.',
+      why: ['Lleva amoxicilina: contraindicada por la anafilaxia.', '', 'Lleva amoxicilina.', 'Lleva amoxicilina, y las quinolonas no son de primera línea.', 'No erradica la bacteria: la úlcera recurre.'],
+      ref: 'ACG 2024 H. pylori' }),
+
+    q({ id: 'stda-19', dif: 1,
+      stem: 'Hombre de 61 años con hematemesis masiva y choque. La endoscopia muestra una úlcera profunda en la cara posterior del bulbo duodenal con sangrado en chorro. ¿Qué arteria es la responsable más probable?',
+      opts: ['Arteria gástrica izquierda', 'Arteria gastroduodenal', 'Arteria esplénica', 'Arteria mesentérica superior', 'Arteria gastroepiploica izquierda'],
+      ans: 1,
+      exp: 'La arteria gastroduodenal corre detrás de la primera porción del duodeno: las úlceras de la cara posterior del bulbo la erosionan y sangran masivamente. Si la terapia endoscópica falla, se emboliza por radiología intervencionista.',
+      why: ['Es la típica de las úlceras de la curvatura menor gástrica.', '', 'Puede sangrar por pseudoaneurisma en pancreatitis, no por úlcera duodenal.', 'Irriga el intestino delgado; no corre detrás del bulbo.', 'Irriga la curvatura mayor del estómago.'],
+      ref: 'Anatomía · ACG 2021' }),
+
+    q({ id: 'stda-20', dif: 2,
+      stem: 'Hombre de 67 años en terapia intensiva por neumonía grave, con ventilación mecánica desde hace 4 días, plaquetas de 42 000 e INR 1.9. No tiene sangrado. ¿Qué medida reduce el riesgo de sangrado digestivo clínicamente importante?',
+      opts: ['Ninguna: la profilaxis no tiene beneficio', 'IBP profiláctico (por ejemplo, pantoprazol)', 'Misoprostol', 'Octreotida en infusión', 'Ácido tranexámico'],
+      ans: 1,
+      exp: 'La úlcera por estrés es más probable con ventilación mecánica, coagulopatía, choque o hepatopatía. En estos pacientes, la profilaxis con IBP reduce el sangrado digestivo clínicamente importante (REVISE, 2024). No se da de rutina a todo paciente hospitalizado.',
+      why: ['Tiene factores de alto riesgo, y en ellos sí reduce el sangrado.', '', 'No es la profilaxis recomendada y causa diarrea.', 'Es para el sangrado variceal.', 'No previene la úlcera por estrés.'],
+      ref: 'REVISE, NEJM 2024' })
   ],
 
   cases: [
