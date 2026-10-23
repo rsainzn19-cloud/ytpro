@@ -464,3 +464,27 @@ body.cine-on #hud,body.cine-on #tabs{display:none}
 .vitem .tt{font:16px/1.25 var(--f-body)}
 .vitem .tt small{display:block;color:var(--ink-3);font-size:13px}
 @media (prefers-reduced-motion: reduce){.vslide.enter{animation:none}.vs-list li,.vs-flow li,.vs-cmp .r{transition:none}}
+
+/* ───── Retención en los videos: tarjeta de capítulo, racha, repaso relámpago y palabras clave */
+.vccard{position:absolute;left:50%;top:44%;z-index:4;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 18px;background:var(--void);border:4px solid var(--gold);box-shadow:6px 6px 0 #000;text-align:center;opacity:0;pointer-events:none;max-width:86%}
+.vccard span{font:16px/1 var(--f-ui);letter-spacing:.16em;text-transform:uppercase;color:var(--sc)}
+.vccard b{font:clamp(24px,7vw,34px)/1.05 var(--f-ui);color:var(--gold-3);font-weight:400;text-wrap:balance}
+.vccard.on{animation:vccard 1.7s steps(10) both}
+@keyframes vccard{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}12%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}20%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0}}
+.vcombo{position:absolute;right:8px;top:34px;z-index:4;font:20px/1 var(--f-ui);color:#241500;background:var(--gold);border:3px solid var(--gold-3);padding:5px 8px 4px;opacity:0;pointer-events:none}
+.vcombo.on{animation:vcombo 1.8s steps(8) both}
+@keyframes vcombo{0%{opacity:0;transform:translateY(8px)}15%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0;transform:translateY(-6px)}}
+.vs-recap{position:relative;display:flex;flex-direction:column;gap:8px;padding:14px 14px 12px;background:var(--wine);border:3px solid var(--gold)}
+.vs-recap .h{font:clamp(22px,6.4vw,30px)/1.05 var(--f-ui);color:var(--gold-3)}
+.vs-recap ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;counter-reset:rc}
+.vs-recap li{counter-increment:rc;display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;font:clamp(14px,4.1vw,18px)/1.28 var(--f-body);opacity:0;transform:scale(.9)}
+.vs-recap li::before{content:counter(rc);display:grid;place-items:center;width:24px;height:24px;background:var(--gold);color:#241500;font:17px/1 var(--f-ui)}
+.vs-recap li.on{opacity:1;transform:none;transition:opacity .3s steps(3),transform .3s steps(3)}
+.vs-recap.fin{background:#0C2233;border-color:var(--cyan)}
+.vs-recap.fin li::before{background:var(--cyan)}
+.vsub b{color:var(--gold-3);font-weight:700}
+.vscreen[data-k="big"] .vs-big .n{animation:vpunch .5s steps(4) both}
+@keyframes vpunch{0%{transform:scale(1.6);opacity:0}50%{transform:scale(.92);opacity:1}100%{transform:scale(1)}}
+.vscreen[data-k="tip"] .vs-box.trap{animation:vshake .45s steps(6) .3s both}
+@keyframes vshake{0%,100%{transform:none}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+@media (prefers-reduced-motion: reduce){.vccard.on,.vcombo.on,.vscreen[data-k="big"] .vs-big .n,.vscreen[data-k="tip"] .vs-box.trap{animation:none}.vccard.on{opacity:0}.vcombo.on{opacity:1}}

@@ -39,6 +39,14 @@ video: [
   cuadrada y del ancho de un iPhone. La vista previa avisa si algo no cabe.
 - Duración: 1000–1400 palabras para prioridad alta (≈7–9 min) y 800–1100 para media o baja.
 
+## Retención (automática en todos los videos)
+
+El reproductor agrega, sin tocar los guiones: efectos 8-bit (cambio de escena, capítulo, cada punto que
+aparece, cifra clave, trampa, perla, mnemotecnia, tic-tac del quiz, acierto/error y final; botón “♪”),
+tarjeta de capítulo, “Repaso relámpago” al final de cada capítulo (con las cifras, listas, algoritmos y
+comparadores que se vieron), “3 cosas para recordar” al final, racha de aciertos en los quizzes y palabras
+clave resaltadas en los subtítulos.
+
 ## Animaciones
 
 `anims.<id>` en el archivo del tema (pasos con `cap` y `labels` `[x, y, texto]` en un lienzo de 160×120)
