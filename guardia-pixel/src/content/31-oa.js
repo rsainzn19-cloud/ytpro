@@ -7,6 +7,7 @@ export default {
     oa: {
       hook: 'Dolor articular mecánico en mayores de 45 años, rigidez breve y laboratorio normal: osteoartritis. El tratamiento empieza con ejercicio y bajar de peso, no con pastillas.',
       compare: ['ar-oa'],
+      anim: 'oa',
       nn: [],
       yt: 'osteoarthritis',
       sections: [
@@ -47,6 +48,24 @@ export default {
         'Kolasinski SL, et al. 2019 ACR/Arthritis Foundation Guideline for the Management of Osteoarthritis of the Hand, Hip, and Knee. Arthritis Rheumatol 2020.',
         'Bannuru RR, et al. OARSI guidelines for the non-surgical management of knee, hip, and polyarticular OA. Osteoarthritis Cartilage 2019.',
         'NICE NG226: Osteoarthritis in over 16s, 2022.'
+      ]
+    }
+  },
+
+  anims: {
+    oa: {
+      title: 'Del cartílago sano a la descarga',
+      steps: [
+        { cap: '<b>Rodilla sana.</b> El cartílago es grueso y liso y reparte la carga por igual entre el compartimento medial y el lateral. El espacio articular es simétrico.',
+          labels: [[80, 14, 'Fémur'], [26, 72, 'Cartílago'], [80, 104, 'Tibia']] },
+        { cap: '<b>Desgaste del cartílago.</b> Con la carga repetida el cartílago medial se adelgaza y se fisura: el espacio se estrecha de un solo lado. El dolor sube con el uso y baja con el reposo (dolor mecánico).',
+          labels: [[24, 62, 'Cartílago fisurado'], [118, 78, 'Lado sano'], [146, 104, 'Dolor']] },
+        { cap: '<b>Rx de la OA.</b> El hueso responde: osteofitos en los bordes, esclerosis subcondral (hueso más blanco) y quistes subcondrales, con estrechamiento asimétrico del espacio articular.',
+          labels: [[22, 92, 'Osteofito'], [62, 66, 'Esclerosis'], [50, 100, 'Quiste'], [112, 64, 'Espacio conservado']] },
+        { cap: '<b>Manos.</b> Los osteofitos forman nódulos duros: Heberden en las IFD y Bouchard en las IFP. También duele la base del pulgar (1ª carpometacarpiana). La MCF se respeta.',
+          labels: [[112, 26, 'Heberden (IFD)'], [74, 76, 'Bouchard (IFP)'], [30, 26, 'MCF respetada'], [30, 112, 'Base del pulgar']] },
+        { cap: '<b>Quitar carga.</b> Bajar de peso y fortalecer el cuádriceps reducen la fuerza sobre el cartílago: cada kilo menos quita unos 4 kg de carga a la rodilla en cada paso, y el dolor baja.',
+          labels: [[80, 30, 'Carga'], [44, 14, 'Cuádriceps'], [16, 104, 'Peso'], [148, 104, 'Dolor']] }
       ]
     }
   },
