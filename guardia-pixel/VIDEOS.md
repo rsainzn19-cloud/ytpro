@@ -3,7 +3,7 @@
 ## Video de un tema (`lessons.<id>.video`)
 
 Un video es una lista de capítulos; cada capítulo tiene escenas. Cada escena tiene un visual (`v`) y una
-narración (`say`) que la voz del teléfono lee frase por frase, con subtítulos. Ejemplo completo:
+narración (`say`) que se narra frase por frase mientras aparecen sus conceptos clave. Ejemplo completo:
 `src/content/11-sca.js` (≈8 min).
 
 ```js
@@ -44,8 +44,8 @@ video: [
 El reproductor agrega, sin tocar los guiones: efectos 8-bit (cambio de escena, capítulo, cada punto que
 aparece, cifra clave, trampa, perla, mnemotecnia, tic-tac del quiz, acierto/error y final; botón “♪”),
 tarjeta de capítulo, “Repaso relámpago” al final de cada capítulo (con las cifras, listas, algoritmos y
-comparadores que se vieron), “3 cosas para recordar” al final, racha de aciertos en los quizzes y palabras
-clave resaltadas en los subtítulos.
+comparadores que se vieron), “3 cosas para recordar” al final, racha de aciertos en los quizzes y, en la franja inferior,
+los conceptos centrales de lo que se va narrando (botón “Aa”).
 
 ## Animaciones
 
@@ -74,8 +74,8 @@ node tools/preview.cjs scc,mitral /tmp/prev                  # PNG de cada escen
 
 Cada video tiene su audio en `audio/<tema>.mp3` (voz Piper es_MX “claude-high”) y un mapa de tiempos por
 frase en `src/voice/<tema>.json`; el reproductor toca cada frase desde el audio (funciona en cualquier
-teléfono, también con el modo silencio) y muestra el texto como popups de 2–4 palabras (karaoke, palabras clave en grande)
-sincronizados. Si una frase cambia, se vuelve a grabar:
+teléfono, también con el modo silencio) y, mientras la voz va de fondo, hace aparecer con calma
+los términos centrales de cada frase (máximo 4 a la vez; tienen prioridad los que también están en la escena). Si una frase cambia, se vuelve a grabar:
 
 ```
 python3 -m venv venv && venv/bin/pip install piper-tts

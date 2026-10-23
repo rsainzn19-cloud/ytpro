@@ -919,37 +919,55 @@ function vDraw(t) {
 }
 const KEYW = /(\b\d[\d.,]*|\b(?:nunca|siempre|contraindicad[oa]s?|de elección|primera línea|urgencia|urgente|inmediat[oa]|trampa|perla|clave|meta|nada de)\b)/gi;
 // Subtítulos en fragmentos cortos (≤9 palabras) repartidos a lo largo de la frase
-// Popups de alta retención: 2–4 palabras que brincan al ritmo de la voz, palabra por palabra (karaoke),
-// con las palabras clave en grande y ⛔/✅ en prohibiciones y elecciones
-function chunks(s) {
-  const out = []; let cur = [];
-  for (const w of String(s).split(/\s+/).filter(Boolean)) {
-    cur.push(w);
-    if (cur.length >= 4 || (cur.length >= 2 && /[,;:.?!]$/.test(w))) { out.push(cur.join(' ')); cur = []; }
-  }
-  if (cur.length) { if (cur.length === 1 && out.length && out[out.length - 1].split(' ').length < 5) out[out.length - 1] += ' ' + cur[0]; else out.push(cur.join(' ')); }
-  return out;
+// Conceptos en pantalla: la voz va de fondo y en la franja del video aparecen, con calma, los términos
+// centrales de cada frase (los que también se ven en la escena tienen prioridad), sin texto palabra por palabra
+const norm = (w) => w.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9ñ]/g, '');
+const STOPW = new Set('entonces también ejemplo cuando porque después primero segundo tercero mientras pregunta recuerda importante diferencia significa necesitas puedes tienes debes cualquier solamente todavía bienvenido video capítulo examen parcial siguiente anterior aunque siempre nunca alguien ningún ninguna demasiado mucho muchos muchas pocos través dentro afuera además ahora antes luego hacia desde hasta sobre entre contra según durante quieres quiere sirve sirven hacer hace hacen tener tiene tienen estar están puede pueden debe deben cuál cuáles cómo dónde donde mismo misma mismos mismas otra otras otros mejor peor menor mayor nuestro nuestra vamos veamos pausa respuesta correcta incorrecta opción opciones número números paciente pacientes repaso relámpago cosas recordar confirma confirmas descarta descartas clasifica sigue mira dice haces toma tomas tolera según casa cada solo sola activa elevada elevado pistas pista medir bien bloqueas esperes mediciones ambos ambas sentado espalda normal hora horas días meses semanas años dieta tratar causas causa sugiere responde compensan enfermedad veinticuatro cuarenta ochenta noventa cien piensa piensas pide pides busca buscas clave regla truco forma manera parte grupo tipo tipos caso casos fuera estilo todos menos contacto pones indicas necesita evita joven cifra apoyada motivo planea ajusta continua vigila esperado controlada'.split(' ').map(norm));
+function sceneText(v) {
+  const c = v.k === 'vs' ? vCmp(v) : null;
+  return [v.t, v.h, v.s, v.u, v.q, v.d, v.text, ...(v.items || []), ...(v.steps || []), ...(v.opts || []), ...(c ? [c.a, c.b, ...c.rows.flat()] : [])].filter(Boolean).join(' ');
 }
-const KWW = /^(\d[\d.,]*|nunca|siempre|contraindicad[oa]s?|elección|primera|línea|urgencia|urgente|inmediat[oa]|trampa|perla|clave|meta|jamás|evita|prohibid[oa]s?)$/i;
-function vPop(c, secs) {
+function keyTerms(sent, v) {
+  const onScreen = new Set(sceneText(v).split(/[\s,;:()/·–-]+/).map(norm).filter((w) => w.length >= 4));
+  const words = sent.split(/\s+/), out = [];
+  words.forEach((raw, i) => {
+    const w = raw.replace(/^[¿¡"“(]+|[.,;:?!"”)]+$/g, ''), n = norm(w);
+    if (n.length < 3 || STOPW.has(n) || /^\d+$/.test(n) || out.some((o) => o.n === n)) return;
+    const acr = /^[A-ZÁÉÍÓÚÑ0-9]{2,}[A-Za-z0-9]*$/.test(w) && /[A-Z]/.test(w);
+    const proper = i > 0 && /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]{3,}$/.test(w);
+    // Verbos (infinitivos, gerundios, enclíticos) casi nunca son el concepto central
+    if (!acr && !proper && n !== 'cancer' && /(ar|er|ir|ando|iendo|[aei]rl[ao]s?|amos|emos|imos|aste|iste)$/.test(n)) return;
+    const med = /(itis|emia|osis|patia|oma|ina|ismo|asa|grafia|scopia|cito|citos|logia|tropo|lisis|rragia|algia|uria|plasia|terapia)$/.test(n);
+    let sc = (onScreen.has(n) ? 3 : 0) + (acr ? 2.5 : 0) + (proper ? 2 : 0) + (med ? 1.5 : 0) + Math.max(0, n.length - 7) * 0.45;
+    if (!acr && !proper && !med && n.length < 7 && !onScreen.has(n)) sc = 0;
+    if (!acr && n.length < 5) sc = 0;
+    if (sc >= 2) out.push({ w: acr ? w : w.charAt(0).toUpperCase() + w.slice(1), n, sc, i: i / words.length });
+  });
+  return out.sort((a, b) => b.sc - a.sc).slice(0, 2).sort((a, b) => a.i - b.i);
+}
+function vConcept(term) {
   const el = $('#vsub');
-  if (!el) return;
-  if (!VS || !VS.cc || !c) { el.innerHTML = ''; return; }
-  const words = c.split(' '), low = c.toLowerCase();
-  const icon = /\b(nunca|jamás|contraindicad|nada de|evita|prohibid)/.test(low) ? '⛔ ' : /\b(de elección|primera línea|siempre)\b/.test(low) ? '✅ ' : '';
-  VS.popN = (VS.popN || 0) + 1;
-  el.innerHTML = `<span class="pop r${VS.popN % 3}">${icon}${words.map((w) => `<i class="w${KWW.test(w.replace(/[^\p{L}\d.,]/gu, '').replace(/[.,]$/, '')) ? ' kw' : ''}${secs ? '' : ' on'}">${esc(w)}</i>`).join(' ')}</span>`;
-  if (!secs) return;
-  const ws = el.querySelectorAll('.w'), lens = words.map((w) => w.length + 2), tot = lens.reduce((a, b) => a + b, 0);
-  let acc = 0;
-  ws.forEach((w, k) => { const at = (acc / tot) * secs * 1000; acc += lens[k]; if (k === 0) w.classList.add('on'); else later(() => w.classList.add('on'), at); });
+  if (!el || !VS || !VS.cc) return;
+  if (!el.querySelector('.kboard')) el.innerHTML = '<div class="kboard"></div>';
+  const bd = el.querySelector('.kboard');
+  if ([...bd.children].some((c) => c.dataset.n === term.n)) return;
+  bd.querySelectorAll('.kc.new').forEach((c) => c.classList.remove('new'));
+  const c = document.createElement('span');
+  c.className = 'kc new'; c.dataset.n = term.n; c.textContent = term.w;
+  bd.appendChild(c);
+  while (bd.children.length > 4) bd.firstElementChild.remove();
 }
 function vCaption(s, secs) {
-  const cs = chunks(s), n = (c) => c.length + 2, tot = cs.reduce((a, c) => a + n(c), 0);
-  let acc = 0;
-  cs.forEach((c, k) => { const at = (acc / tot) * secs * 1000, d = (n(c) / tot) * secs; acc += n(c); if (k === 0) vPop(c, d); else later(() => vPop(c, d), at); });
+  if (!VS) return;
+  const v = VS.flat[VS.i].sc.v;
+  keyTerms(s, v).forEach((t) => { const at = Math.max(0, t.i * secs * 1000 - 150); if (at < 60) vConcept(t); else later(() => vConcept(t), at); });
 }
-function vSub(s) { vPop(s, 0); }
+// Mensajes del reproductor (quiz, final): una línea tranquila en la franja
+function vSub(s) {
+  const el = $('#vsub');
+  if (!el) return;
+  el.innerHTML = VS && VS.cc && s ? `<div class="kmsg">${esc(s)}</div>` : '';
+}
 function vReveal() {
   const items = [...document.querySelectorAll('#vslide [data-r]')];
   if (!items.length) return;
@@ -987,7 +1005,7 @@ function vShow(i) {
     if (v.k === 'case') [500, 1300, 2100].forEach((ms) => later(() => vfx('beat'), ms));
   }
   document.querySelectorAll('#vchaps button').forEach((b) => b.setAttribute('aria-current', +b.dataset.i === x.ci));
-  vSub(VS.started ? '' : chunks(sentences(x.sc.say)[0] || '')[0] || ''); vReveal(); vProgress(); vDraw(reduce ? 3 : VS.t);
+  vSub(VS.started ? '' : 'Toca ▶ para empezar'); vReveal(); vProgress(); vDraw(reduce ? 3 : VS.t);
   S.vid[VS.tid] = { ...(S.vid[VS.tid] || {}), pos: VS.i }; save();
 }
 function vBtn() {
@@ -1049,7 +1067,7 @@ function vQuizReveal(k) {
     gain(5); const c = $('#vcombo'); if (c) { c.textContent = VS.combo >= 2 ? `Racha ×${VS.combo} 🔥` : '¡Correcto! +5 XP'; c.classList.remove('on'); void c.offsetWidth; c.classList.add('on'); }
   } else { VS.combo = 0; vfx('bad'); }
   VS.sents = sentences(x.sc.exp); VS.sent = 0;
-  if (VS.playing) vStep(); else vSub(chunks(sentences(x.sc.exp)[0] || '')[0] || '');
+  vSub(''); if (VS.playing) vStep();
 }
 function vEnd() {
   const tid = VS.tid, prev = S.vid[tid] || {}, first = !prev.done;
@@ -1071,8 +1089,9 @@ function vEnd() {
   }
 }
 // Gancho para la herramienta de vista previa (tools/preview.cjs): solo existe con #preview en la URL
-if (location.hash === '#preview') window.__gp = { show: (i) => { VS.started = true; vBtn(); vShow(i); document.querySelectorAll('#vslide [data-r]').forEach((r) => r.classList.add('on')); const x = VS.flat[VS.i]; vSub(chunks(sentences(x.sc.say)[0] || '')[0] || ''); if (x.sc.v.k === 'quiz') document.querySelectorAll('#vslide .vopt').forEach((b, j) => j === x.sc.v.a && b.classList.add('ok')); return VS.flat.length; },
+if (location.hash === '#preview') window.__gp = { show: (i) => { VS.started = true; vBtn(); vShow(i); document.querySelectorAll('#vslide [data-r]').forEach((r) => r.classList.add('on')); const x = VS.flat[VS.i]; vSub(''); sentences(x.sc.say).forEach((t) => keyTerms(t, x.sc.v).forEach(vConcept)); if (x.sc.v.k === 'quiz') document.querySelectorAll('#vslide .vopt').forEach((b, j) => j === x.sc.v.a && b.classList.add('ok')); return VS.flat.length; },
   // Frases que se graban por tema (tools/narrate): video, explicaciones de quiz, repasos y pasos de la animación
+  terms: (tid) => vFlat(tid).map((x) => sentences(x.sc.say).map((t) => keyTerms(t, x.sc.v).map((k) => k.w).join(' + ')).filter(Boolean).join(' | ')),
   segs: (tid) => {
     const out = [], seen = new Set();
     const add = (t) => { const k = speakable(t), h = hashStr(k); if (k && !seen.has(h)) { seen.add(h); out.push([h, k]); } };
@@ -1096,7 +1115,7 @@ function mountVideo(el, tid) {
     <div class="vctrl">
       <button class="vb" data-act="vprev" aria-label="Capítulo anterior">⏮</button><button class="vb vmain" data-act="vplay" id="vplaybtn" aria-label="Reproducir">▶</button><button class="vb" data-act="vnext" aria-label="Siguiente capítulo">⏭</button>
       <span class="vtime" id="vtime">0:00 / ${mmss(total)}</span>
-      <button class="vb" data-act="vspeed" aria-label="Velocidad">${VS.speed}×</button><button class="vb" data-act="vvoice" aria-pressed="${VS.voice}">Voz</button><button class="vb" data-act="vcc" aria-pressed="${VS.cc}">CC</button><button class="vb" data-act="vsfx" aria-pressed="${VS.sfx}" aria-label="Efectos de sonido">♪</button><button class="vb" data-act="vcine" aria-pressed="false" aria-label="Modo cine">⛶</button>
+      <button class="vb" data-act="vspeed" aria-label="Velocidad">${VS.speed}×</button><button class="vb" data-act="vvoice" aria-pressed="${VS.voice}">Voz</button><button class="vb" data-act="vcc" aria-pressed="${VS.cc}" aria-label="Conceptos en pantalla">Aa</button><button class="vb" data-act="vsfx" aria-pressed="${VS.sfx}" aria-label="Efectos de sonido">♪</button><button class="vb" data-act="vcine" aria-pressed="false" aria-label="Modo cine">⛶</button>
     </div>
   </div>
   <section class="panel tight"><h2>Capítulos</h2><ol class="vchaps" id="vchaps">${chs.map((c, ci) => `<li><button data-act="vch" data-i="${ci}"><span>${ci + 1}. ${esc(c.ch)}</span><span class="small muted">${mmss(chSecs[ci])}</span></button></li>`).join('')}</ol>
@@ -1115,7 +1134,7 @@ function mountVideo(el, tid) {
   };
   ACT.vspeed = (b) => { VS.speed = SPEEDS[(SPEEDS.indexOf(VS.speed) + 1) % SPEEDS.length]; S.settings.vspeed = VS.speed; save(); b.textContent = VS.speed + '×'; restart(); };
   ACT.vvoice = (b) => { VS.voice = !VS.voice; S.settings.vvoice = VS.voice; save(); b.setAttribute('aria-pressed', VS.voice); if (VS.voice) TTS.broken = false; restart(); };
-  ACT.vcc = (b) => { VS.cc = !VS.cc; S.settings.vcc = VS.cc; save(); b.setAttribute('aria-pressed', VS.cc); vSub(VS.cc && VS.sents[VS.sent] ? VS.sents[VS.sent] : ''); };
+  ACT.vcc = (b) => { VS.cc = !VS.cc; S.settings.vcc = VS.cc; save(); b.setAttribute('aria-pressed', VS.cc); vSub(''); };
   ACT.vsfx = (b) => { VS.sfx = !VS.sfx; S.settings.vsfx = VS.sfx; save(); b.setAttribute('aria-pressed', VS.sfx); if (VS.sfx) vfx('pop', 3); };
   ACT.vcine = (b) => { const on = !$('#vp').classList.contains('cine'); setCine($('#vp'), on); b.setAttribute('aria-pressed', on); b.textContent = on ? '✕' : '⛶'; };
   ACT.vpick = (b) => vQuizReveal(+b.dataset.k);
