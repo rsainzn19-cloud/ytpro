@@ -23,7 +23,7 @@ SCENES.sii = [
     for (let x = 52; x < 112; x += 10) { g.r(x, 70, 1, 2, COL.myo); g.r(x, 76, 1, 2, COL.myo); }
     for (let i = 0; i < 14; i++) { const [x, y] = along([[40, 118], [40, 74], [120, 74], [120, 118]], (t * 0.06 + i / 14) % 1); g.r(x - 1, y - 1 + (i % 2), 3, 1, COL.green); }
     for (let i = 0; i < 4; i++) { const p = (t * 0.5 + i / 4) % 1; g.r(75, lerp(31, 64, p), 2, 2, COL.gold); g.r(83, lerp(64, 31, p), 2, 2, COL.cyan); }
-    if (blink(t, 1.5)) { g.line(42, 8, 37, 17, COL.gold); g.line(37, 17, 43, 17, COL.gold); g.line(43, 17, 38, 26, COL.gold); }
+    { const c = blink(t, 1.5) ? COL.gold : COL.orange; for (let d = 0; d < 2; d++) { g.line(42 + d, 8, 37 + d, 17, c); g.line(37, 17 + d, 43, 17 + d, c); g.line(43 + d, 17, 38 + d, 26, c); } }
   },
   // 2. Hipersensibilidad visceral: misma distensión, muchas más señales de dolor en el SII
   (g, t) => {
@@ -71,7 +71,7 @@ SCENES.sii = [
       const p = (t * 0.5 + i / 10) % 1, x = 14 + (i * 17) % 136, top = i % 2 === 0;
       g.r(x, top ? lerp(cy - h - 10, cy - h + 5, p) : lerp(cy + h + 10, cy + h - 5, p), 2, 2, COL.cyan);
     }
-    if (k > 0.3 && blink(t, 3)) for (let i = 0; i < 4; i++) { const x = 94 + i * 14; g.line(x, cy + h + 5, x - 2, cy + h + 9, COL.red); g.line(x - 2, cy + h + 9, x + 1, cy + h + 12, COL.red); }
+    { const c = blink(t, 3) ? COL.red : COL.orange; for (let i = 0; i < 4; i++) { const x = 94 + i * 14; g.line(x, cy + h + 5, x - 2, cy + h + 9, c); g.line(x - 2, cy + h + 9, x + 1, cy + h + 12, c); } }
   },
   // 5. Fármacos por subtipo: linaclotida (SII-E), tricíclico (dolor), rifaximina y loperamida (SII-D)
   (g, t) => {

@@ -14,8 +14,9 @@ const keepTopic = (tid) => !ONLY || ['meta', 'diagnostico'].includes(tid) || ONL
 
 const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {} };
 for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('.js')).sort()) {
-  if (!keepTopic(f.replace(/^\d+-|\.js$/g, ''))) continue;
   const part = (await import(new URL('content/' + f, src))).default;
+  // Con --only se cargan solo esos temas, pero los comparadores de todos (una lección puede usar uno ajeno)
+  if (!keepTopic(f.replace(/^\d+-|\.js$/g, ''))) { Object.assign(C.compares, part.compares || {}); continue; }
   for (const [k, v] of Object.entries(part)) {
     if (k === 'cards') {
       // Tarjetas: [frente, reverso] → objetos con id estable por tema
@@ -79,7 +80,7 @@ const VK = { title: ['t'], list: ['t', 'items'], big: ['t'], vs: [], flow: ['t',
 const SYM = /[<>≥≤↑↓→←×±=%\/&*#@_~^|]|\[|\]/;
 const vidWords = {};
 for (const [tid, L] of Object.entries(C.lessons)) {
-  if (!L.video) { if (!ONLY) warns.push(`${tid}: sin video`); continue; }
+  if (!L.video) { errs.push(`${tid}: sin video`); continue; }
   if (!Array.isArray(L.video) || !L.video.length) { errs.push(`${tid}: video vacío`); continue; }
   let w = 0;
   L.video.forEach((ch, ci) => {
@@ -109,7 +110,7 @@ for (const s of C.subjects) {
 }
 for (const tid of Object.keys(C.lessons)) {
   const n = C.questions.filter((q) => q.topic === tid && !q.diag).length;
-  const need = topics.get(tid)?.pri === 'alta' ? 15 : 10;
+  const need = topics.get(tid)?.pri === 'alta' ? 20 : 15;
   if (n < need) errs.push(`${tid}: ${n} preguntas, mínimo ${need}`);
 }
 if (warns.length) console.warn('Avisos:\n- ' + warns.join('\n- '));
