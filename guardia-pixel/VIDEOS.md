@@ -69,3 +69,19 @@ Todo determinista: usa `rnd(i, semilla)`, nunca `Math.random`.
 node build.mjs --only scc,mitral --out /tmp/prueba.html      # valida y compila solo esos temas
 node tools/preview.cjs scc,mitral /tmp/prev                  # PNG de cada escena y cada paso + hojas de contacto
 ```
+
+## Narración grabada
+
+Cada video tiene su audio en `audio/<tema>.mp3` (voz Piper es_MX “claude-high”) y un mapa de tiempos por
+frase en `src/voice/<tema>.json`; el reproductor toca cada frase desde el audio (funciona en cualquier
+teléfono, también con el modo silencio) y muestra los subtítulos dentro del video, en fragmentos cortos
+sincronizados. Si una frase cambia, se vuelve a grabar:
+
+```
+python3 -m venv venv && venv/bin/pip install piper-tts
+# modelo: https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-es_MX-claude-high.tar.bz2
+PIPER_PY=venv/bin/python PIPER_VOICE=vits-piper-es_MX-claude-high node tools/narrate.cjs [tema1,tema2]
+node build.mjs
+```
+
+Al publicar, los MP3 van junto a la página en la carpeta `audio/`.
