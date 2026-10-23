@@ -74,7 +74,7 @@ node tools/preview.cjs scc,mitral /tmp/prev                  # PNG de cada escen
 
 Cada video tiene su audio en `audio/<tema>.mp3` (voz Piper es_MX “claude-high”) y un mapa de tiempos por
 frase en `src/voice/<tema>.json`; el reproductor toca cada frase desde el audio (funciona en cualquier
-teléfono, también con el modo silencio) y muestra los subtítulos dentro del video, en fragmentos cortos
+teléfono, también con el modo silencio) y muestra el texto como popups de 2–4 palabras (karaoke, palabras clave en grande)
 sincronizados. Si una frase cambia, se vuelve a grabar:
 
 ```

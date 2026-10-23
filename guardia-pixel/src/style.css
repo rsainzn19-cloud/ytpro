@@ -497,3 +497,15 @@ body.cine-on #hud,body.cine-on #tabs{display:none}
 .vp.cine .vscreen{width:min(100%,calc((100dvh - 190px) * 4 / 5))}
 
 .vp{scroll-margin-top:72px}
+
+/* ───── Popups de alta retención (reemplazan la franja de subtítulos) */
+.vcap{background:linear-gradient(#05061A,#0B0E2A);border-top:2px solid var(--line);padding:6px 10px;overflow:visible}
+.pop{--rot:-1.5deg;display:inline-block;max-width:96%;padding:6px 12px 7px;background:#FFFFFF;color:#10122B;border:3px solid #10122B;box-shadow:5px 5px 0 #000;font:800 clamp(21px,6.4vw,30px)/1.18 var(--f-body);text-shadow:none;text-align:center;transform:translateY(-34%) rotate(var(--rot));animation:popin .34s steps(5) both;position:relative;z-index:5}
+.pop.r1{--rot:1.2deg}.pop.r2{--rot:-0.4deg;background:#FFE7A6}
+.pop .w{font-style:normal;opacity:.38;transition:opacity .08s}
+.pop .w.on{opacity:1}
+.pop .kw{display:inline-block;background:var(--gold);color:#241500;padding:0 .14em;font-size:1.12em;box-shadow:2px 2px 0 #10122B}
+.pop .kw.on{animation:kwpop .3s steps(3) both}
+@keyframes popin{0%{opacity:0;transform:translateY(-34%) scale(.4) rotate(-7deg)}60%{opacity:1;transform:translateY(-34%) scale(1.12) rotate(2deg)}100%{opacity:1;transform:translateY(-34%) scale(1) rotate(var(--rot))}}
+@keyframes kwpop{0%{transform:scale(1)}50%{transform:scale(1.25)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){.pop,.pop .kw.on{animation:none}}

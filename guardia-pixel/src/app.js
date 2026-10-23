@@ -919,21 +919,37 @@ function vDraw(t) {
 }
 const KEYW = /(\b\d[\d.,]*|\b(?:nunca|siempre|contraindicad[oa]s?|de elección|primera línea|urgencia|urgente|inmediat[oa]|trampa|perla|clave|meta|nada de)\b)/gi;
 // Subtítulos en fragmentos cortos (≤9 palabras) repartidos a lo largo de la frase
+// Popups de alta retención: 2–4 palabras que brincan al ritmo de la voz, palabra por palabra (karaoke),
+// con las palabras clave en grande y ⛔/✅ en prohibiciones y elecciones
 function chunks(s) {
   const out = []; let cur = [];
   for (const w of String(s).split(/\s+/).filter(Boolean)) {
     cur.push(w);
-    if (cur.length >= 9 || (cur.length >= 5 && /[,;:]$/.test(w))) { out.push(cur.join(' ')); cur = []; }
+    if (cur.length >= 4 || (cur.length >= 2 && /[,;:.?!]$/.test(w))) { out.push(cur.join(' ')); cur = []; }
   }
-  if (cur.length) { if (cur.length <= 2 && out.length) out[out.length - 1] += ' ' + cur.join(' '); else out.push(cur.join(' ')); }
+  if (cur.length) { if (cur.length === 1 && out.length && out[out.length - 1].split(' ').length < 5) out[out.length - 1] += ' ' + cur[0]; else out.push(cur.join(' ')); }
   return out;
 }
-function vCaption(s, secs) {
-  const cs = chunks(s), n = (c) => c.split(' ').length, tot = cs.reduce((a, c) => a + n(c), 0);
+const KWW = /^(\d[\d.,]*|nunca|siempre|contraindicad[oa]s?|elección|primera|línea|urgencia|urgente|inmediat[oa]|trampa|perla|clave|meta|jamás|evita|prohibid[oa]s?)$/i;
+function vPop(c, secs) {
+  const el = $('#vsub');
+  if (!el) return;
+  if (!VS || !VS.cc || !c) { el.innerHTML = ''; return; }
+  const words = c.split(' '), low = c.toLowerCase();
+  const icon = /\b(nunca|jamás|contraindicad|nada de|evita|prohibid)/.test(low) ? '⛔ ' : /\b(de elección|primera línea|siempre)\b/.test(low) ? '✅ ' : '';
+  VS.popN = (VS.popN || 0) + 1;
+  el.innerHTML = `<span class="pop r${VS.popN % 3}">${icon}${words.map((w) => `<i class="w${KWW.test(w.replace(/[^\p{L}\d.,]/gu, '').replace(/[.,]$/, '')) ? ' kw' : ''}${secs ? '' : ' on'}">${esc(w)}</i>`).join(' ')}</span>`;
+  if (!secs) return;
+  const ws = el.querySelectorAll('.w'), lens = words.map((w) => w.length + 2), tot = lens.reduce((a, b) => a + b, 0);
   let acc = 0;
-  cs.forEach((c, k) => { const at = (acc / tot) * secs * 1000; acc += n(c); if (k === 0) vSub(c); else later(() => vSub(c), at); });
+  ws.forEach((w, k) => { const at = (acc / tot) * secs * 1000; acc += lens[k]; if (k === 0) w.classList.add('on'); else later(() => w.classList.add('on'), at); });
 }
-function vSub(s) { const el = $('#vsub'); if (el) el.innerHTML = VS && VS.cc ? `<span>${esc(s).replace(KEYW, '<b>$1</b>')}</span>` : ''; }
+function vCaption(s, secs) {
+  const cs = chunks(s), n = (c) => c.length + 2, tot = cs.reduce((a, c) => a + n(c), 0);
+  let acc = 0;
+  cs.forEach((c, k) => { const at = (acc / tot) * secs * 1000, d = (n(c) / tot) * secs; acc += n(c); if (k === 0) vPop(c, d); else later(() => vPop(c, d), at); });
+}
+function vSub(s) { vPop(s, 0); }
 function vReveal() {
   const items = [...document.querySelectorAll('#vslide [data-r]')];
   if (!items.length) return;
