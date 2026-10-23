@@ -28,6 +28,10 @@ for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('
   }
 }
 
+// Narración grabada: src/voice/<tema>.json → C.voice (mapa hash de frase → [inicio, fin] en audio/<tema>.mp3)
+C.voice = {};
+try { for (const f of readdirSync(new URL('voice/', src)).filter((f) => f.endsWith('.json'))) { const tid = f.replace(/\.json$/, ''); if (C.lessons[tid]) C.voice[tid] = JSON.parse(read('voice/' + f)); } } catch (e) { /* sin grabaciones */ }
+
 // ───── Validación
 const errs = [], warns = [];
 const topics = new Map(C.topics.map((t) => [t.id, t]));

@@ -35,7 +35,7 @@ fs.writeFileSync(page, '<!doctype html><html><head><meta charset="utf-8"><meta n
         await pg.evaluate((i) => window.__gp.show(i), i); await pg.clock.runFor(1200);
         const f = path.join(out, `video-${tid}-${String(i + 1).padStart(2, '0')}.png`);
         await pg.locator('#vp').screenshot({ path: f }); files.push(f);
-        const over = await pg.evaluate(() => { const s = document.getElementById('vslide'), sc = document.getElementById('vscreen'); return s.scrollHeight > sc.clientHeight + 2 || [...s.querySelectorAll('*')].some((e) => e.getBoundingClientRect().bottom > sc.getBoundingClientRect().bottom + 1 || e.getBoundingClientRect().right > sc.getBoundingClientRect().right + 1); });
+        const over = await pg.evaluate(() => { const s = document.getElementById('vslide'), sc = document.getElementById('vsq'); return s.scrollHeight > sc.clientHeight + 2 || [...s.querySelectorAll('*')].some((e) => e.getBoundingClientRect().bottom > sc.getBoundingClientRect().bottom + 1 || e.getBoundingClientRect().right > sc.getBoundingClientRect().right + 1); });
         if (over) errs.push(`${tid} escena ${i + 1}: el contenido no cabe en la pantalla del video (acorta el texto o quita elementos)`);
       }
       sheets.push([`video-${tid}.png`, files, 4]);

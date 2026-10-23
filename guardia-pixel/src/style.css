@@ -488,3 +488,12 @@ body.cine-on #hud,body.cine-on #tabs{display:none}
 .vscreen[data-k="tip"] .vs-box.trap{animation:vshake .45s steps(6) .3s both}
 @keyframes vshake{0%,100%{transform:none}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
 @media (prefers-reduced-motion: reduce){.vccard.on,.vcombo.on,.vscreen[data-k="big"] .vs-big .n,.vscreen[data-k="tip"] .vs-box.trap{animation:none}.vccard.on{opacity:0}.vcombo.on{opacity:1}}
+
+/* ───── Video: el subtítulo va dentro del marco, debajo de la imagen cuadrada */
+.vscreen{aspect-ratio:4/5;display:flex;flex-direction:column}
+.vsq{position:relative;width:100%;aspect-ratio:1/1;flex:none;overflow:hidden}
+.vcap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:4px 14px;text-align:center;background:#05061A;border-top:2px solid var(--line);font:600 clamp(17px,5vw,23px)/1.28 var(--f-body);color:#FFFFFF;text-shadow:2px 2px 0 #000;text-wrap:balance}
+.vcap b{color:var(--gold-3)}
+.vp.cine .vscreen{width:min(100%,calc((100dvh - 190px) * 4 / 5))}
+
+.vp{scroll-margin-top:72px}

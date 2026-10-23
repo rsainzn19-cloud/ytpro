@@ -660,7 +660,7 @@ TOPIC_TABS.leccion = (el, t, L) => {
     tp.read = today(); gain(30, 'Lección leída'); checkTopicDone(t.id); render();
   };
 };
-TOPIC_TABS.anim = (el, t, L) => { mountAnim(el, L.anim); };
+TOPIC_TABS.anim = (el, t, L) => { mountAnim(el, L.anim, t.id); };
 TOPIC_TABS.video = (el, t) => { mountVideo(el, t.id); };
 TOPIC_TABS.preguntas = (el, t) => {
   const qs = bank(t.id), ans = qs.filter((q) => S.qs[q.id]), ok = ans.filter((q) => S.qs[q.id].last === 1), bad = ans.filter((q) => S.qs[q.id].last === 0);
@@ -728,7 +728,43 @@ const estSecs = (s) => (String(s).match(/\S+/g) || []).length / WPS + 0.35;
 const VT = new Set();
 const later = (fn, ms) => { const id = setTimeout(() => { VT.delete(id); fn(); }, ms); VT.add(id); return id; };
 const clearLater = () => { VT.forEach(clearTimeout); VT.clear(); };
-function hush() { TTS.tok++; if (TTS.ok) try { speechSynthesis.cancel(); } catch (e) { /* nada */ } }
+function hush() { TTS.tok++; hushRec(); if (TTS.ok) try { speechSynthesis.cancel(); } catch (e) { /* nada */ } }
+
+// ───── Narración grabada: audio/<tema>.mp3 + mapa de tiempos por frase (C.voice[tema][hash] = [inicio, fin])
+// Suena en cualquier teléfono (también con el modo silencio); si falta, se usa la voz del navegador.
+const VOICE = C.voice || {};
+let VA = null;
+function recAudio(tid) {
+  if (!VOICE[tid]) return null;
+  if (VA && VA.tid === tid) return VA.ok ? VA.el : null;
+  hushRec();
+  const el = new Audio();
+  el.preload = 'auto'; el.setAttribute('playsinline', ''); el.src = `audio/${tid}.mp3`;
+  VA = { tid, el, ok: true };
+  el.addEventListener('error', () => { if (VA && VA.el === el) VA.ok = false; });
+  return el;
+}
+function hushRec() { if (VA) try { VA.el.pause(); } catch (e) { /* nada */ } }
+const recSeg = (tid, text) => (VOICE[tid] ? VOICE[tid][hashStr(speakable(text))] : null);
+// Toca una frase grabada y llama done() al terminar. Devuelve su duración, o false si no hay grabación.
+function playRec(tid, text, rate, done) {
+  const seg = recSeg(tid, text), el = seg ? recAudio(tid) : null;
+  if (!el) return false;
+  const tok = ++TTS.tok, dur = (seg[1] - seg[0]) / rate;
+  let started = false;
+  const begin = () => { if (started || tok !== TTS.tok) return; started = true; later(() => { if (tok !== TTS.tok) return; hushRec(); done(); }, dur * 1000 + 60); };
+  const seek = () => { try { el.currentTime = seg[0]; } catch (e) { /* aún sin datos */ } };
+  try {
+    el.playbackRate = rate;
+    if (el.readyState >= 1) seek(); else el.addEventListener('loadedmetadata', seek, { once: true });
+    el.addEventListener('playing', begin, { once: true });
+    const p = el.play();
+    if (p && p.catch) p.catch(() => { if (tok === TTS.tok && VA) VA.ok = false; });
+  } catch (e) { return false; }
+  // Si en 6 s no empezó (sin red o bloqueado), se sigue sin grabación
+  later(() => { if (!started && tok === TTS.tok) { if (VA) VA.ok = false; started = true; done(); } }, 6000);
+  return dur;
+}
 // Habla un fragmento y llama done() una vez. Si la voz "termina" casi al instante (no hay voz), se sigue con tiempos.
 function speak(text, rate, done) {
   const tok = ++TTS.tok, est = estSecs(text) / rate, t0 = Date.now();
@@ -761,7 +797,7 @@ function setCine(el, on) {
 }
 
 // ═══════════ Animaciones paso a paso (manual, automático y narrado)
-function mountAnim(el, id) {
+function mountAnim(el, id, tid) {
   const A = C.anims[id], steps = A.steps, draws = SCENES[id];
   let step = 0, t = 0, last = null, playing = !reduce, auto = false, narr = false;
   el.innerHTML = `<h2>${esc(A.title)}</h2><div class="awrap" id="awrap"><div class="stage"><canvas width="160" height="120" aria-hidden="true"></canvas><div class="labels"></div></div>
@@ -769,7 +805,7 @@ function mountAnim(el, id) {
   <div class="actrl"><button class="btn small" data-act="aprev">◀ Paso</button><button class="btn small" data-act="aplay"></button><span class="stepn"></span><button class="btn small gold-btn" data-act="anext">Paso ▶</button></div>
   <div class="actrl2"><button class="btn small" data-act="aauto" aria-pressed="false">▶ Reproducir todo</button><button class="btn small" data-act="anarr" aria-pressed="false">Narrar</button><button class="btn small" data-act="acine" aria-pressed="false">⛶ Pantalla</button></div>
   <div class="pips" role="group" aria-label="Pasos">${steps.map((_, i) => `<button data-act="apip" data-i="${i}" aria-label="Paso ${i + 1}"></button>`).join('')}</div></div>
-  <p class="small muted">“Reproducir todo” avanza solo; con “Narrar”, la voz de tu teléfono lee cada paso. Si no la escuchas, quita el modo silencio.</p>`;
+  <p class="small muted">“Reproducir todo” avanza solo; con “Narrar”, una voz lee cada paso.</p>`;
   const wrap = el.querySelector('#awrap'), g = Pix(el.querySelector('canvas').getContext('2d'));
   const draw = () => draws[step](g, reduce ? 3 : t);
   const sync = () => {
@@ -779,6 +815,7 @@ function mountAnim(el, id) {
   const narrate = () => {
     const txt = steps[step].cap.replace(/<[^>]+>/g, '');
     const next = () => { if (!auto) return; if (step < steps.length - 1) later(() => set(step + 1), 700); else { auto = false; sync(); } };
+    if (narr && playRec(tid, txt, vRate(), next) !== false) return;
     if (narr && TTS.ok && !TTS.broken) speak(txt, vRate(), next);
     else if (auto) later(next, (estSecs(txt) / vRate() + 1.2) * 1000);
   };
@@ -836,7 +873,14 @@ const vFlat = (tid) => {
   return out;
 };
 const sceneSecs = (sc) => estSecs(sc.say) + 0.7 + (sc.v.k === 'quiz' ? 6 + estSecs(sc.exp || '') : 0);
-const videoSecs = (tid) => (hasVideo(tid) ? vFlat(tid).reduce((a, x) => a + sceneSecs(x.sc), 0) : 0);
+// Con grabación, la duración real de la escena; si falta alguna frase, la estimación por palabras
+function recSceneSecs(tid, sc) {
+  if (!VOICE[tid]) return 0;
+  let t = 0;
+  for (const x of [...sentences(sc.say), ...(sc.exp ? sentences(sc.exp) : [])]) { const g = recSeg(tid, x); if (!g) return 0; t += g[1] - g[0]; }
+  return t + 0.7 + (sc.v.k === 'quiz' ? 6 : 0);
+}
+const videoSecs = (tid) => (hasVideo(tid) ? vFlat(tid).reduce((a, x) => a + (recSceneSecs(tid, x.sc) || sceneSecs(x.sc)), 0) : 0);
 const vMin = (tid) => Math.max(1, Math.round(videoSecs(tid) / 60));
 const mmss = (s) => `${Math.floor(s / 60)}:${pad(Math.floor(s % 60))}`;
 function stopVideo() { hush(); clearLater(); if (CINE) setCine(CINE, false); if (VS) VS.dead = true; VS = null; }
@@ -874,6 +918,21 @@ function vDraw(t) {
   for (let y = 2; y < 160; y += 6) g.r(0, y, 160, 1, '#0E1336');
 }
 const KEYW = /(\b\d[\d.,]*|\b(?:nunca|siempre|contraindicad[oa]s?|de elección|primera línea|urgencia|urgente|inmediat[oa]|trampa|perla|clave|meta|nada de)\b)/gi;
+// Subtítulos en fragmentos cortos (≤9 palabras) repartidos a lo largo de la frase
+function chunks(s) {
+  const out = []; let cur = [];
+  for (const w of String(s).split(/\s+/).filter(Boolean)) {
+    cur.push(w);
+    if (cur.length >= 9 || (cur.length >= 5 && /[,;:]$/.test(w))) { out.push(cur.join(' ')); cur = []; }
+  }
+  if (cur.length) { if (cur.length <= 2 && out.length) out[out.length - 1] += ' ' + cur.join(' '); else out.push(cur.join(' ')); }
+  return out;
+}
+function vCaption(s, secs) {
+  const cs = chunks(s), n = (c) => c.split(' ').length, tot = cs.reduce((a, c) => a + n(c), 0);
+  let acc = 0;
+  cs.forEach((c, k) => { const at = (acc / tot) * secs * 1000; acc += n(c); if (k === 0) vSub(c); else later(() => vSub(c), at); });
+}
 function vSub(s) { const el = $('#vsub'); if (el) el.innerHTML = VS && VS.cc ? `<span>${esc(s).replace(KEYW, '<b>$1</b>')}</span>` : ''; }
 function vReveal() {
   const items = [...document.querySelectorAll('#vslide [data-r]')];
@@ -912,7 +971,7 @@ function vShow(i) {
     if (v.k === 'case') [500, 1300, 2100].forEach((ms) => later(() => vfx('beat'), ms));
   }
   document.querySelectorAll('#vchaps button').forEach((b) => b.setAttribute('aria-current', +b.dataset.i === x.ci));
-  vSub(VS.started ? '' : sentences(x.sc.say)[0] || ''); vReveal(); vProgress(); vDraw(reduce ? 3 : VS.t);
+  vSub(VS.started ? '' : chunks(sentences(x.sc.say)[0] || '')[0] || ''); vReveal(); vProgress(); vDraw(reduce ? 3 : VS.t);
   S.vid[VS.tid] = { ...(S.vid[VS.tid] || {}), pos: VS.i }; save();
 }
 function vBtn() {
@@ -923,6 +982,7 @@ function vPlay() {
   if (!VS) return;
   const first = !VS.started;
   VS.playing = true; VS.started = true; vBtn();
+  if (first && !$('#vp').classList.contains('cine')) $('#vp').scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
   if (VS.sfx) { try { audio(); } catch (e) { /* sin audio */ } }
   if (first && VS.flat[VS.i].si === 0) { vfx('chapter'); const card = $('#vccard'); if (card) { const x = VS.flat[VS.i]; card.innerHTML = `<span>Capítulo ${x.ci + 1}</span><b>${esc(x.ch)}</b>`; card.classList.remove('on'); void card.offsetWidth; card.classList.add('on'); } }
   if (VS.voice) pickVoice();
@@ -937,9 +997,14 @@ function vStep() {
     later(() => vGo(VS.i + 1), 650 / VS.speed); return;
   }
   const s = VS.sents[VS.sent];
-  vSub(s); vReveal(); vProgress();
+  vReveal(); vProgress();
   const next = () => { if (!VS || !VS.playing) return; VS.sent++; vStep(); };
-  if (VS.voice && TTS.ok && !TTS.broken) speak(s, VS.speed, next); else later(next, (estSecs(s) / VS.speed) * 1000);
+  let dur = VS.voice ? playRec(VS.tid, s, VS.speed, next) : false;
+  if (dur === false) {
+    dur = estSecs(s) / VS.speed;
+    if (VS.voice && TTS.ok && !TTS.broken) speak(s, VS.speed, next); else later(next, dur * 1000);
+  }
+  vCaption(s, dur);
 }
 function vGo(i) {
   if (!VS) return;
@@ -968,7 +1033,7 @@ function vQuizReveal(k) {
     gain(5); const c = $('#vcombo'); if (c) { c.textContent = VS.combo >= 2 ? `Racha ×${VS.combo} 🔥` : '¡Correcto! +5 XP'; c.classList.remove('on'); void c.offsetWidth; c.classList.add('on'); }
   } else { VS.combo = 0; vfx('bad'); }
   VS.sents = sentences(x.sc.exp); VS.sent = 0;
-  if (VS.playing) vStep(); else vSub(x.sc.exp);
+  if (VS.playing) vStep(); else vSub(chunks(sentences(x.sc.exp)[0] || '')[0] || '');
 }
 function vEnd() {
   const tid = VS.tid, prev = S.vid[tid] || {}, first = !prev.done;
@@ -990,9 +1055,17 @@ function vEnd() {
   }
 }
 // Gancho para la herramienta de vista previa (tools/preview.cjs): solo existe con #preview en la URL
-if (location.hash === '#preview') window.__gp = { show: (i) => { VS.started = true; vBtn(); vShow(i); document.querySelectorAll('#vslide [data-r]').forEach((r) => r.classList.add('on')); const x = VS.flat[VS.i]; vSub(x.sc.say); if (x.sc.v.k === 'quiz') document.querySelectorAll('#vslide .vopt').forEach((b, j) => j === x.sc.v.a && b.classList.add('ok')); return VS.flat.length; } };
+if (location.hash === '#preview') window.__gp = { show: (i) => { VS.started = true; vBtn(); vShow(i); document.querySelectorAll('#vslide [data-r]').forEach((r) => r.classList.add('on')); const x = VS.flat[VS.i]; vSub(chunks(sentences(x.sc.say)[0] || '')[0] || ''); if (x.sc.v.k === 'quiz') document.querySelectorAll('#vslide .vopt').forEach((b, j) => j === x.sc.v.a && b.classList.add('ok')); return VS.flat.length; },
+  // Frases que se graban por tema (tools/narrate): video, explicaciones de quiz, repasos y pasos de la animación
+  segs: (tid) => {
+    const out = [], seen = new Set();
+    const add = (t) => { const k = speakable(t), h = hashStr(k); if (k && !seen.has(h)) { seen.add(h); out.push([h, k]); } };
+    for (const x of vFlat(tid)) { sentences(x.sc.say).forEach(add); if (x.sc.exp) sentences(x.sc.exp).forEach(add); }
+    const L = C.lessons[tid]; if (L.anim) C.anims[L.anim].steps.forEach((st) => add(st.cap.replace(/<[^>]+>/g, '')));
+    return out;
+  } };
 function mountVideo(el, tid) {
-  const t = TOP[tid], chs = C.lessons[tid].video, flat = vFlat(tid), secs = flat.map((x) => sceneSecs(x.sc)), total = secs.reduce((a, b) => a + b, 0);
+  const t = TOP[tid], chs = C.lessons[tid].video, flat = vFlat(tid), secs = flat.map((x) => recSceneSecs(tid, x.sc) || sceneSecs(x.sc)), total = secs.reduce((a, b) => a + b, 0);
   const st = S.vid[tid] || {}, startI = st.pos > 0 && st.pos < flat.length ? st.pos : 0;
   const chStart = chs.map((_, ci) => flat.findIndex((x) => x.ci === ci));
   const chSecs = chs.map((_, ci) => flat.reduce((a, x, k) => a + (x.ci === ci ? secs[k] : 0), 0));
@@ -1000,9 +1073,9 @@ function mountVideo(el, tid) {
   let acc = 0;
   const ticks = chSecs.slice(0, -1).map((s) => { acc += s; return `<b style="left:${(acc / total) * 100}%"></b>`; }).join('');
   el.innerHTML = `<div class="vp" id="vp" style="--sc:${SUBJ[t.subj].color}">
-    <div class="vscreen" id="vscreen"><canvas width="160" height="160" aria-hidden="true"></canvas><div class="vlabels" id="vlabels"></div><div class="vslide" id="vslide"></div><span class="vchip" id="vchip"></span><div class="vccard" id="vccard" aria-hidden="true"></div><div class="vcombo" id="vcombo" aria-live="polite"></div>
+    <div class="vscreen" id="vscreen"><div class="vsq" id="vsq"><canvas width="160" height="160" aria-hidden="true"></canvas><div class="vlabels" id="vlabels"></div><div class="vslide" id="vslide"></div><span class="vchip" id="vchip"></span><div class="vccard" id="vccard" aria-hidden="true"></div><div class="vcombo" id="vcombo" aria-live="polite"></div></div>
+      <div class="vcap" id="vsub" aria-live="polite"></div>
       <button class="vbig" data-act="vplay" id="vbig"><span class="pl">▶</span>${startI ? 'Continuar el video' : 'Ver el video'}<small>${mmss(total)} · ${chs.length} capítulos · con voz y subtítulos</small></button></div>
-    <div class="vsub" id="vsub" aria-live="polite"></div>
     <div class="vbar" id="vbar" data-act="vseek" role="progressbar" aria-label="Avance del video">${ticks}<i id="vfill"></i></div>
     <div class="vctrl">
       <button class="vb" data-act="vprev" aria-label="Capítulo anterior">⏮</button><button class="vb vmain" data-act="vplay" id="vplaybtn" aria-label="Reproducir">▶</button><button class="vb" data-act="vnext" aria-label="Siguiente capítulo">⏭</button>
@@ -1011,8 +1084,9 @@ function mountVideo(el, tid) {
     </div>
   </div>
   <section class="panel tight"><h2>Capítulos</h2><ol class="vchaps" id="vchaps">${chs.map((c, ci) => `<li><button data-act="vch" data-i="${ci}"><span>${ci + 1}. ${esc(c.ch)}</span><span class="small muted">${mmss(chSecs[ci])}</span></button></li>`).join('')}</ol>
-  <p class="small muted">${TTS.ok ? 'La voz es la de tu teléfono. ¿No se escucha? Quita el modo silencio y sube el volumen; o apaga “Voz” y sigue con subtítulos.' : 'Este navegador no tiene voz: el video avanza con subtítulos.'} ${VQUEUE.length ? `Maratón: quedan ${VQUEUE.length} video(s) después de este.` : ''}</p></section>`;
+  <p class="small muted">${VOICE[tid] ? 'La narración está grabada: sube el volumen. Con “Voz” apagada, el video avanza solo con subtítulos.' : TTS.ok ? 'La voz es la de tu teléfono. ¿No se escucha? Sube el volumen o apaga “Voz” y sigue con subtítulos.' : 'Este navegador no tiene voz: el video avanza con subtítulos.'} ${VQUEUE.length ? `Maratón: quedan ${VQUEUE.length} video(s) después de este.` : ''}</p></section>`;
   VS.g = Pix(el.querySelector('canvas').getContext('2d'));
+  recAudio(tid);
   const restart = () => { if (VS.playing) { hush(); clearLater(); if (VS.phase === 'wait') vQuizWait(); else vStep(); } };
   ACT.vplay = () => (VS.playing ? vPause() : vPlay());
   ACT.vprev = () => { const ci = VS.flat[VS.i].ci, s0 = VS.chStart[ci]; vGo(VS.i > s0 || VS.sent > 0 ? s0 : VS.chStart[Math.max(0, ci - 1)]); };
