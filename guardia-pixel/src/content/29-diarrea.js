@@ -24,7 +24,7 @@ export default {
           { v: { k: 'list', t: 'Estudia las heces si hay…', items: ['Sangre o fiebre ≥38.5 °C', 'Deshidratación grave o >7 días', 'Inmunosupresión o adulto mayor frágil', 'Hospitalización o antibióticos recientes', 'Brote o manipulador de alimentos'] },
             say: 'La diarrea aguda casi siempre es viral, sobre todo por norovirus, y se quita sola. Solo pides coprocultivo o panel molecular si hay sangre, fiebre alta, deshidratación grave, más de siete días, inmunosupresión, hospitalización o antibióticos recientes.' },
           { v: { k: 'flow', t: 'Diarrea aguda: manejo', steps: ['Hidratación oral para todos', '¿Datos de alarma? → estudiar heces', 'Disentería febril → azitromicina', 'Sin fiebre ni sangre → loperamida', 'Sospecha de STEC → sin antibiótico'] },
-            say: 'El algoritmo es sencillo. Hidratación oral para todos: es lo que salva vidas. Si hay datos de alarma, estudias las heces. El antibiótico empírico se reserva para la disentería con fiebre o la diarrea del viajero grave, y el de elección es la azitromicina. La loperamida sirve en la diarrea acuosa sin fiebre ni sangre.' },
+            say: 'El algoritmo es sencillo. Hidratación oral para todos. Si hay datos de alarma, estudias las heces. El antibiótico empírico se reserva para la disentería con fiebre o la diarrea del viajero grave, y el de elección es la azitromicina. La loperamida sirve en la diarrea acuosa sin fiebre ni sangre.' },
           { v: { k: 'tip', kind: 'trap', t: 'Diarrea con sangre tras carne mal cocida = E. coli O157:H7. Sin antibióticos ni loperamida: aumentan el riesgo de SUH.' },
             say: 'Trampa clásica: diarrea con sangre después de una hamburguesa mal cocida. Piensa en Escherichia coli productora de toxina Shiga. No des antibióticos ni antidiarreicos, porque aumentan el riesgo de síndrome urémico hemolítico. Vigila plaquetas, hemoglobina y creatinina.' },
           { v: { k: 'anim', id: 'diarrea', step: 4 },
@@ -52,7 +52,7 @@ export default {
           { v: { k: 'anim', id: 'diarrea', step: 3 },
             say: 'Cuando falla la digestión o la absorción de la grasa aparece la esteatorrea: heces voluminosas, grasosas y fétidas, que flotan. La grasa no absorbida arrastra consigo las vitaminas liposolubles A, D, E y K.' },
           { v: { k: 'list', t: 'Huellas de malabsorción', items: ['Pérdida de peso y esteatorrea', 'Anemia: hierro, B12 o folato', 'Osteopenia o tetania: vitamina D y calcio', 'Equimosis e INR alto: vitamina K', 'Edema: albúmina baja'] },
-            say: 'Busca las huellas en el cuerpo. Pérdida de peso. Anemia por falta de hierro, vitamina B doce o folato. Huesos frágiles o tetania por falta de vitamina D y calcio. Moretones y tiempo de protrombina alargado por falta de vitamina K. Y edema por albúmina baja.' },
+            say: 'Busca sus huellas. Pérdida de peso. Anemia por falta de hierro, vitamina B doce o folato. Huesos frágiles o tetania por falta de vitamina D y calcio. Moretones y tiempo de protrombina alargado por falta de vitamina K. Y edema por albúmina baja.' },
           { v: { k: 'vs', a: 'Insuf. pancreática', b: 'Sobrecrecimiento', rows: [['Contexto', 'Pancreatitis crónica, fibrosis quística', 'Diabetes, asas ciegas, dismotilidad'], ['Prueba', 'Elastasa fecal baja', 'Prueba de aliento'], ['Pista', 'Esteatorrea marcada', 'B12 baja con folato alto'], ['Tratamiento', 'Enzimas con cada comida', 'Rifaximina']] },
             say: 'Dos causas que debes distinguir. La insuficiencia pancreática, por pancreatitis crónica o fibrosis quística, se detecta con elastasa fecal baja y se trata con enzimas en cada comida. El sobrecrecimiento bacteriano da vitamina B doce baja con folato alto, se diagnostica con prueba de aliento y se trata con rifaximina.' }
         ] },
@@ -73,9 +73,9 @@ export default {
         ] },
         { ch: 'Perlas de examen', sc: [
           { v: { k: 'list', t: 'Celiaca: seguimiento', items: ['Dieta sin gluten estricta de por vida', 'Anti-tTG a los 6 y 12 meses', 'Sin respuesta: casi siempre gluten oculto', 'Riesgo: linfoma T y celiaca refractaria'] },
-            say: 'En el seguimiento, la dieta sin gluten es de por vida y la antitransglutaminasa debe bajar en seis a doce meses. Si no mejora, lo más común es que siga comiendo gluten sin saberlo. Solo después piensas en celiaca refractaria o en linfoma de células T.' },
+            say: 'La dieta sin gluten es de por vida. Si no mejora, lo más común es que siga comiendo gluten sin saberlo. Solo después piensas en celiaca refractaria o en linfoma de células T.' },
           { v: { k: 'tip', kind: 'pearl', t: 'Anemia ferropénica que no responde al hierro oral y sin sangrado: pide anti-tTG IgA + IgA total.' },
-            say: 'La perla para el examen: anemia por falta de hierro que no responde al hierro oral y sin sangrado visible, pide serología de celiaca. Y en la diarrea aguda, hidratación primero y antibiótico solo con una buena razón. Ahora ve a las preguntas del tema para fijar lo que viste.' }
+            say: 'La perla para el examen: anemia por falta de hierro que no responde al hierro oral y sin sangrado visible, pide serología de celiaca. Y en la diarrea aguda, hidratación primero. Ahora ve a las preguntas del tema para fijar lo que viste.' }
         ] }
       ],
       compare: ['diarrea-osm-sec'],
@@ -112,6 +112,47 @@ export default {
 <li><b>Tamizaje</b>: anti-transglutaminasa tisular IgA + IgA total (si hay déficit de IgA → pruebas IgG). Debe estar comiendo gluten.</li>
 <li><b>Confirmación</b>: biopsia duodenal (≥4 en segunda porción + 1–2 en bulbo): atrofia de vellosidades, hiperplasia de criptas, linfocitos intraepiteliales (Marsh).</li>
 <li>Tratamiento: <b>dieta sin gluten de por vida</b>. Complicaciones: linfoma T asociado a enteropatía, celiaca refractaria.</li>
+</ul>` },
+        { h: 'Fisiopatología en 1 minuto', html: `
+<p><b>Definición</b>: ≥3 evacuaciones blandas o líquidas al día. <b>Aguda</b> &lt;14 días · <b>persistente</b> 14–30 días · <b>crónica</b> &gt;4 semanas.</p>
+<div class="tablewrap"><table class="mini">
+<tr><th>Tipo</th><th>Mecanismo</th><th>Pista</th></tr>
+<tr><td>Osmótica</td><td>Un soluto no absorbido retiene agua en la luz</td><td>Cede con el ayuno; brecha &gt;125</td></tr>
+<tr><td>Secretora</td><td>Toxina, hormona o ácidos biliares abren canales de Cl⁻ (CFTR) del enterocito</td><td>Persiste en ayuno y de noche; brecha &lt;50</td></tr>
+<tr><td>Inflamatoria</td><td>Daño de la mucosa: exudado, sangre, menor absorción</td><td>Sangre, fiebre, calprotectina ↑</td></tr>
+<tr><td>Grasa</td><td>Falla la digestión (lipasa, ácidos biliares) o la absorción (mucosa)</td><td>Esteatorrea, déficit de vitaminas A, D, E y K</td></tr>
+<tr><td>Motora</td><td>Tránsito acelerado</td><td>Hipertiroidismo, neuropatía diabética, posquirúrgica</td></tr>
+</table></div>
+<ul>
+<li>La <b>solución de rehidratación oral</b> funciona incluso en el cólera porque el cotransporte de sodio y glucosa (SGLT1) sigue intacto.</li>
+<li><b>Hierro, folato y calcio</b> se absorben en duodeno y yeyuno proximal (por eso la celiaca da ferropenia); la <b>B12 y las sales biliares</b>, en el íleon terminal.</li>
+<li><b>Resección ileal</b>: &lt;100 cm → los ácidos biliares llegan al colon y causan diarrea secretora (colestiramina); &gt;100 cm → se agota el pool de ácidos biliares y hay esteatorrea (dieta baja en grasa con triglicéridos de cadena media).</li>
+</ul>` },
+        { h: 'Fármacos clave', html: `
+<div class="tablewrap"><table class="mini">
+<tr><th>Fármaco</th><th>Mecanismo</th><th>Efecto adverso clave</th><th>Contraindicación o cuidado</th></tr>
+<tr><td>Solución de rehidratación oral</td><td>Cotransporte Na⁺-glucosa</td><td>Vómito si se da muy rápido</td><td>Choque o íleo: usar IV</td></tr>
+<tr><td>Loperamida</td><td>Agonista opioide μ periférico: frena el tránsito</td><td>Estreñimiento; arritmias (QT) en dosis altas</td><td>Disentería, fiebre, STEC, C. difficile</td></tr>
+<tr><td>Azitromicina</td><td>Macrólido</td><td>Náusea, QT largo</td><td>QT largo conocido</td></tr>
+<tr><td>Fidaxomicina</td><td>Macrólido de espectro estrecho, casi no se absorbe</td><td>Náusea; costo</td><td>De elección en C. difficile (menos recurrencias)</td></tr>
+<tr><td>Vancomicina oral</td><td>Glucopéptido que no se absorbe: actúa en la luz</td><td>Pocos</td><td>La IV no sirve para C. difficile</td></tr>
+<tr><td>Rifaximina</td><td>Rifamicina no absorbible</td><td>Náusea; rara vez C. difficile</td><td>Alergia a rifamicinas</td></tr>
+<tr><td>Colestiramina</td><td>Secuestra ácidos biliares</td><td>Estreñimiento; reduce la absorción de otros fármacos y vitaminas liposolubles</td><td>Separar otros fármacos; empeora la esteatorrea</td></tr>
+<tr><td>Budesonida</td><td>Esteroide con alto metabolismo de primer paso</td><td>Pocos efectos sistémicos</td><td>Cirrosis (pierde el primer paso)</td></tr>
+<tr><td>Enzimas pancreáticas</td><td>Reponen lipasa, proteasa y amilasa</td><td>Colonopatía fibrosante con dosis muy altas</td><td>Darlas con cada comida y colación</td></tr>
+<tr><td>Dapsona</td><td>Inhibe la función de los neutrófilos (dermatitis herpetiforme)</td><td>Hemólisis, metahemoglobinemia</td><td>Déficit de G6PD: medirla antes</td></tr>
+</table></div>
+<p><b>C. difficile por gravedad (IDSA/SHEA)</b>: no grave o grave (leucocitos ≥15,000 o creatinina &gt;1.5 mg/dL) → fidaxomicina 200 mg c/12 h o vancomicina 125 mg c/6 h VO por 10 días · <b>fulminante</b> (hipotensión, choque, íleo o megacolon) → vancomicina 500 mg c/6 h VO o por sonda (más vancomicina rectal si hay íleo) + metronidazol 500 mg IV c/8 h y valoración quirúrgica · <b>1ª recurrencia</b> → fidaxomicina o vancomicina en dosis decrecientes y pulsos · <b>≥2 recurrencias</b> → trasplante de microbiota fecal.</p>` },
+        { h: 'Cómo lo preguntan en el examen', html: `
+<ul>
+<li>Diarrea con sangre tras hamburguesa o carne mal cocida → <b>E. coli O157:H7</b>: soporte, sin antibióticos ni loperamida; vigila plaquetas y creatinina (SUH).</li>
+<li>Diarrea tras antibióticos u hospitalización con leucocitosis → <b>C. difficile</b>: PCR o toxina; fidaxomicina o vancomicina VO.</li>
+<li>Anemia ferropénica refractaria con distensión → <b>celiaca</b>: anti-tTG IgA + IgA total con gluten.</li>
+<li>Mujer &gt;60 años con diarrea acuosa, toma AINE, IBP o ISRS, colonoscopia normal → <b>colitis microscópica</b>: biopsias; budesonida.</li>
+<li>Diarrea acuosa después de colecistectomía o resección ileal corta → <b>ácidos biliares</b>: colestiramina.</li>
+<li>Diabetes de larga evolución, B12 baja y folato alto → <b>sobrecrecimiento bacteriano</b>: prueba de aliento; rifaximina.</li>
+<li>Hombre con artralgias, pérdida de peso, diarrea y síntomas neurológicos → <b>Whipple</b>: macrófagos PAS+; ceftriaxona y luego TMP-SMX por 1 año.</li>
+<li>Campista con diarrea grasosa y distensión → <b>Giardia</b>: antígeno o PCR en heces; metronidazol, tinidazol o nitazoxanida.</li>
 </ul>` }
       ],
       mnemo: { t: 'Celiaca = “TTG con gluten”', d: 'Pide anti-transglutaminasa IgA con IgA total, mientras el paciente sigue comiendo gluten. Si ya lo dejó, el resultado puede salir falso negativo.' },
@@ -119,13 +160,47 @@ export default {
       trap: 'Diarrea con sangre en un niño o adulto con E. coli O157:H7: no des antibióticos ni antimotilidad; aumentan el riesgo de SUH.',
       guide: [
         'C. difficile: la IDSA/SHEA 2021 prefiere fidaxomicina sobre vancomicina en el episodio inicial; en México la fidaxomicina puede no estar disponible y la vancomicina oral es aceptable.',
-        'Diagnóstico de celiaca sin biopsia: la ESPGHAN lo permite en niños con anti-TTG ≥10 veces el límite; en adultos, la ACG 2023 sigue recomendando biopsia en general.'
+        'Diagnóstico de celiaca sin biopsia: la ESPGHAN lo permite en niños con anti-TTG ≥10 veces el límite; en adultos, la ACG 2023 sigue recomendando biopsia en general.',
+        'Loperamida: la ACG 2016 la acepta como complemento del antibiótico en la diarrea del viajero; la IDSA 2017 pide evitarla si se sospecha STEC. En el examen, con sangre y fiebre, evítala.'
       ],
       refs: [
         'Riddle MS, et al. ACG Clinical Guideline: Acute Diarrheal Infections in Adults. Am J Gastroenterol 2016.',
         'Johnson S, et al. IDSA/SHEA 2021 Focused Update on C. difficile. Clin Infect Dis 2021.',
         'Rubio-Tapia A, et al. ACG Guidelines Update: Diagnosis and Management of Celiac Disease. Am J Gastroenterol 2023.',
-        'Arasaradnam RP, et al. BSG guidelines for chronic diarrhoea in adults. Gut 2018.'
+        'Arasaradnam RP, et al. BSG guidelines for chronic diarrhoea in adults. Gut 2018.',
+        'Shane AL, et al. 2017 IDSA Clinical Practice Guidelines for the Diagnosis and Management of Infectious Diarrhea. Clin Infect Dis 2017.',
+        'Gardner TB, et al. ACG Clinical Guideline: Chronic Pancreatitis. Am J Gastroenterol 2020.'
+      ]
+    }
+  },
+
+  compares: {
+    'diarrea-osm-sec': {
+      topic: 'diarrea', a: 'Osmótica', b: 'Secretora',
+      rows: [
+        ['Mecanismo', 'Un soluto no absorbido jala agua', 'El enterocito secreta Cl⁻ y agua'],
+        ['Con ayuno', 'Cede', 'Persiste'],
+        ['De noche', 'No despierta al paciente', 'Despierta al paciente'],
+        ['Brecha osmótica', '>125 mOsm/kg', '<50 mOsm/kg'],
+        ['Causas', 'Lactosa, Mg, PEG, sorbitol', 'Toxinas, VIPoma, ácidos biliares, senósidos']
+      ]
+    }
+  },
+
+  anims: {
+    diarrea: {
+      title: 'Cuatro formas de tener diarrea',
+      steps: [
+        { cap: '<b>Diarrea osmótica.</b> Un soluto que no se absorbe (lactosa, magnesio, PEG, sorbitol) se queda en la luz y jala agua desde la sangre. Cede con el ayuno y la brecha osmótica fecal es mayor de 125.',
+          labels: [[44, 14, 'Soluto no absorbido'], [80, 70, 'Enterocitos'], [124, 90, 'Agua']] },
+        { cap: '<b>Diarrea secretora.</b> Una toxina (cólera), una hormona (VIP) o los ácidos biliares abren los canales de cloro del enterocito: sale cloro con agua aunque el paciente no coma. Persiste en ayuno y de noche; brecha menor de 50.',
+          labels: [[44, 48, 'Toxina'], [100, 28, 'Cl⁻ + agua'], [147, 24, 'Noche']] },
+        { cap: '<b>Enfermedad celiaca.</b> El gluten activa linfocitos T en personas HLA-DQ2/DQ8. Las vellosidades se aplanan, las criptas se alargan y aumentan los linfocitos intraepiteliales; aparecen anticuerpos contra la transglutaminasa tisular.',
+          labels: [[40, 10, 'Vellosidad sana'], [120, 40, 'Gluten'], [120, 77, 'Atrofia + linfocitos'], [104, 96, 'Criptas'], [140, 116, 'Anti-tTG']] },
+        { cap: '<b>Malabsorción de grasa.</b> Sin lipasa pancreática (o sin superficie de absorción) la grasa llega intacta al colon: heces voluminosas, fétidas y que flotan. Se pierden las vitaminas A, D, E y K.',
+          labels: [[28, 16, 'Páncreas'], [52, 33, 'Sin lipasa'], [70, 60, 'Grasa'], [140, 114, 'Esteatorrea']] },
+        { cap: '<b>C. difficile.</b> Los antibióticos barren la flora normal; la bacteria prolifera y libera toxinas A y B que inflaman el colon y forman seudomembranas. Tratamiento: fidaxomicina o vancomicina oral.',
+          labels: [[16, 17, 'Antibiótico'], [106, 14, 'C. difficile'], [110, 38, 'Toxinas A y B'], [112, 66, 'Seudomembranas']] }
       ]
     }
   },
@@ -143,7 +218,12 @@ export default {
     ['Celiaca: histología', 'Atrofia de vellosidades, hiperplasia de criptas, linfocitos intraepiteliales'],
     ['Lesión de piel de la celiaca', 'Dermatitis herpetiforme'],
     ['Whipple: hallazgo en biopsia', 'Macrófagos PAS positivos'],
-    ['Elastasa fecal baja', 'Insuficiencia pancreática exocrina']
+    ['Elastasa fecal baja', 'Insuficiencia pancreática exocrina'],
+    ['Resección ileal <100 cm con diarrea acuosa', 'Diarrea por ácidos biliares → colestiramina'],
+    ['Resección ileal >100 cm', 'Esteatorrea por pérdida del pool de ácidos biliares → dieta baja en grasa + triglicéridos de cadena media'],
+    ['C. difficile fulminante (choque, íleo, megacolon)', 'Vancomicina 500 mg c/6 h VO o por sonda (± rectal) + metronidazol IV; valorar colectomía'],
+    ['VIPoma', 'Diarrea secretora masiva + hipokalemia + aclorhidria (WDHA)'],
+    ['Celiaca que no mejora con la dieta: causa más común', 'Ingesta inadvertida de gluten (antes de pensar en celiaca refractaria)']
   ],
 
   questions: [
@@ -225,6 +305,46 @@ export default {
       ans: 1,
       exp: 'Diarrea del viajero con disentería y fiebre: azitromicina, por la alta resistencia de Campylobacter a quinolonas. Las quinolonas son alternativa en ciertas regiones.',
       why: ['Alta resistencia de Campylobacter.', '', 'No cubre bien los agentes.', 'Para C. difficile o parásitos.', 'Está indicado en esta situación.'],
-      ref: 'ACG 2016 · ISTM 2017' })
+      ref: 'ACG 2016 · ISTM 2017' }),
+
+    q({ id: 'diarrea-11', dif: 3,
+      stem: 'Hombre de 74 años hospitalizado por neumonía, tratado con ceftriaxona. Tras 3 días de diarrea, hoy tiene PA 82/50, distensión, ruidos ausentes, leucocitos 32,000 y colon transverso de 8 cm en la radiografía. PCR para C. difficile positiva. Además de pedir valoración quirúrgica, ¿qué indicas?',
+      opts: ['Metronidazol oral por 10 días', 'Fidaxomicina oral sola', 'Vancomicina 500 mg c/6 h VO o por sonda, más vancomicina rectal por el íleo, más metronidazol IV', 'Vancomicina IV', 'Loperamida y líquidos IV'],
+      ans: 2,
+      exp: 'Infección fulminante por C. difficile (hipotensión, íleo o megacolon): vancomicina 500 mg c/6 h por vía oral o sonda; con íleo se agrega vancomicina en enema de retención, más metronidazol 500 mg IV c/8 h. Interconsulta temprana a cirugía (colectomía si empeora).',
+      why: ['El metronidazol oral no basta en un cuadro fulminante.', 'En la forma fulminante la evidencia es con vancomicina en dosis altas; la fidaxomicina casi no se ha estudiado ahí y con íleo no llega bien.', '', 'La vancomicina IV no llega a la luz del colon.', 'Los antimotílicos están contraindicados: empeoran el megacolon.'],
+      ref: 'IDSA/SHEA 2017 y 2021' }),
+
+    q({ id: 'diarrea-12', dif: 3,
+      stem: 'Mujer de 34 años con enfermedad de Crohn a la que le resecaron 40 cm de íleon terminal hace 6 meses. Desde entonces tiene 5–6 evacuaciones acuosas al día, sin sangre. Calprotectina normal y colonoscopia sin actividad. ¿Tratamiento más adecuado?',
+      opts: ['Colestiramina', 'Dieta baja en grasa con triglicéridos de cadena media', 'Enzimas pancreáticas', 'Escalar a un biológico', 'Metronidazol'],
+      ans: 0,
+      exp: 'Resección ileal corta (<100 cm): los ácidos biliares no se reabsorben, llegan al colon y estimulan la secreción de agua (diarrea por ácidos biliares). Responde a secuestrantes como la colestiramina. Si la resección es >100 cm, se agota el pool de ácidos biliares y predomina la esteatorrea: ahí la colestiramina empeora y se usa dieta baja en grasa con TCM.',
+      why: ['', 'Es para resecciones extensas (>100 cm) con esteatorrea.', 'El páncreas está sano.', 'No hay actividad inflamatoria: el problema es la falta de reabsorción de ácidos biliares.', 'No hay datos de sobrecrecimiento ni de infección.'],
+      ref: 'BSG 2018 diarrea crónica' }),
+
+    q({ id: 'diarrea-13', dif: 2,
+      stem: 'Mujer de 26 años con DM1, distensión y anemia ferropénica. Anti-transglutaminasa tisular IgA negativa, pero la IgA sérica total es indetectable. Sigue comiendo gluten. ¿Qué sigue?',
+      opts: ['Descartar celiaca: la anti-tTG IgA es negativa', 'Pedir anti-tTG IgG o anti-péptidos de gliadina deamidada IgG', 'Pedir anticuerpos antiendomisio IgA', 'Iniciar dieta sin gluten de prueba', 'Prueba de aliento con lactosa'],
+      ans: 1,
+      exp: 'El déficit selectivo de IgA es más frecuente en celiacos y vuelve falsamente negativas las pruebas IgA. Por eso siempre se pide IgA total: si es baja, se usan pruebas IgG (anti-tTG IgG o anti-DGP IgG) y, si salen positivas o la sospecha es alta, biopsia duodenal.',
+      why: ['Con déficit de IgA una prueba IgA negativa no descarta nada.', '', 'También es IgA: saldrá negativa por el déficit.', 'Sin diagnóstico, la dieta altera la serología y la biopsia posteriores.', 'No explica la ferropenia ni evalúa celiaca.'],
+      ref: 'ACG 2023 celiaca' }),
+
+    q({ id: 'diarrea-14', dif: 2,
+      stem: 'Hombre de 30 años con pápulas y vesículas muy pruriginosas y agrupadas en codos, rodillas y glúteos. La inmunofluorescencia directa muestra depósitos granulares de IgA en las papilas dérmicas. Anti-tTG IgA positiva. ¿Tratamiento?',
+      opts: ['Aciclovir oral', 'Dieta sin gluten de por vida y dapsona mientras responde la piel', 'Prednisona sistémica por 6 meses', 'Solo antihistamínicos y emolientes', 'Isotretinoína'],
+      ans: 1,
+      exp: 'Dermatitis herpetiforme: es la manifestación cutánea de la enfermedad celiaca. La dieta sin gluten es el tratamiento de fondo; la dapsona controla rápido el prurito (mide G6PD antes por el riesgo de hemólisis) y se retira cuando la dieta hace efecto.',
+      why: ['Pese al nombre no es herpes: no tiene origen viral.', '', 'No es el tratamiento y tiene muchos efectos adversos.', 'No tratan la causa.', 'Es para acné.'],
+      ref: 'ACG 2023 celiaca' }),
+
+    q({ id: 'diarrea-15', dif: 2,
+      stem: 'Hombre de 52 años con alcoholismo y pancreatitis crónica. Tiene evacuaciones voluminosas, grasosas y fétidas que flotan, pérdida de 7 kg y DM de reciente inicio. Elastasa fecal 60 µg/g. ¿Tratamiento de la diarrea?',
+      opts: ['Enzimas pancreáticas con cada comida', 'Dieta sin gluten', 'Rifaximina', 'Loperamida', 'Colestiramina'],
+      ans: 0,
+      exp: 'Esteatorrea por insuficiencia pancreática exocrina (elastasa fecal <200 µg/g; <100 indica insuficiencia grave). Se trata con enzimas pancreáticas (pancrelipasa) con cada comida y colación, sin restringir la grasa; si responde poco, se agrega IBP. Hay que suplementar vitaminas liposolubles y dejar el alcohol.',
+      why: ['', 'No hay datos de celiaca; la causa es pancreática.', 'Es para sobrecrecimiento bacteriano.', 'Solo baja la frecuencia y no corrige la malabsorción.', 'Es para diarrea por ácidos biliares; empeora la esteatorrea.'],
+      ref: 'ACG 2020 pancreatitis crónica' })
   ]
 };

@@ -74,7 +74,7 @@ SCENES.diarrea = [
     g.disk(16, 16, 9, COL.pink); g.disk(30, 13, 8, COL.pink); g.disk(42, 17, 6, COL.pink);
     for (let i = 0; i < 9; i++) g.p(9 + rnd(i, 209) * 38, 9 + rnd(i, 210) * 12, COL.brainD);
     g.r(27, 22, 3, 22, COL.tub);
-    xMark(g, t, 28, 33, 4);
+    g.line(24, 29, 32, 37, COL.red); g.line(32, 29, 24, 37, COL.red); g.line(25, 29, 33, 37, COL.red); g.line(33, 29, 25, 37, COL.red);
     g.r(0, 44, 130, 2, COL.wall); g.r(0, 46, 130, 28, DZ_LUM); g.r(0, 74, 130, 2, COL.wall);
     for (let x = 0; x < 130; x += 6) g.r(x, 76, 5, 4, COL.pink);
     for (let i = 0; i < 12; i++) {

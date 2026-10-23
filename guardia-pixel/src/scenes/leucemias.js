@@ -91,7 +91,7 @@ SCENES.leucemias = (() => {
       g.clear(COL.bg);
       g.r(0, 0, 160, 10, '#2A1430');
       const bl = Math.min(1, (t % 10) / 6);
-      for (let i = 0; i < 5; i++) g.disk(124 + i * 7, 5, Math.round(1 + bl * 2 * rnd(i, 250) + bl), COL.rbcD);
+      for (let i = 0; i < 5; i++) { const x = 124 + i * 7, rr = Math.round(2 + bl * 2 * rnd(i, 250) + bl); g.disk(x, 5, rr, COL.rbcD); g.disk(x, 5, Math.max(1, rr - 1), COL.rbc); }
       g.r(0, 10, 160, 2, COL.wall); g.r(0, 44, 160, 2, COL.wall); g.r(0, 12, 160, 32, COL.lumen);
       g.r(132, 10, 4, 2, COL.lumen);
       for (let i = 0; i < 3; i++) { const p = (t * 0.5 + i / 3) % 1; rbc(g, 134, Math.round(lerp(22, 6, p))); }
@@ -113,7 +113,6 @@ SCENES.leucemias = (() => {
         else if (st === 2) { g.disk(x, y, 4, '#F0E8F4'); g.r(x - 2, y - 2, 4, 1, COL.violet); g.r(x - 3, y - 1, 1, 3, COL.violet); g.r(x + 2, y - 1, 1, 3, COL.violet); }
         else { g.disk(x, y, 4, COL.white); g.r(x - 3, y - 1, 2, 2, COL.violet); g.r(x, y + 1, 2, 2, COL.violet); g.r(x + 2, y - 2, 2, 2, COL.violet); }
       }
-      g.spr(ARROW_UP, 76, 70, { X: COL.frame }); g.r(60, 72, 1, 1, COL.frame);
     },
     // 5. Lisis tumoral: los blastos se rompen y liberan K, fósforo y ácido úrico
     (g, t) => {

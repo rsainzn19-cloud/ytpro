@@ -13,7 +13,7 @@ function oaKnee(g, t, o = {}) {
   for (let x = 38; x <= 122; x++) {
     const top = x >= 62 && x <= 98 ? 0 : Math.round(40 - Math.sqrt(Math.max(0, R * R - (x - (x < 80 ? 58 : 102)) ** 2)));
     const yb = bot(x), dy = off(x);
-    g.r(x, top + dy, 1, yb - top, bone);
+    if (top === 0) g.r(x, 0, 1, yb + dy, bone); else g.r(x, top + dy, 1, yb - top, bone);
     const near = Math.min(Math.abs(x - 58), Math.abs(x - 102)) < 17;
     if (near && !xr) g.r(x, yb + dy, 1, x < 80 ? thM : thL, COL.bow);
     if (near && o.scler && x < 80) g.r(x, yb + dy - 4, 1, 4, xr ? '#FFFFFF' : COL.white);
@@ -26,12 +26,12 @@ function oaKnee(g, t, o = {}) {
   if (!xr) for (let x = 38; x < 122; x += 3) { const yb = bot(x) + off(x) + (x < 80 ? thM : thL); if (yb < TOP - 1 && Math.min(Math.abs(x - 58), Math.abs(x - 102)) < 17) g.p(x, yb + 1, '#2A6A9A'); }
   if (o.fis) for (let k = 0; k < 6; k++) { const x = 42 + k * 6; if (rnd(k, 115) < o.fis) { g.r(x, TOP - thM, 1, thM, COL.bg); g.p(x, bot(x) + off(x), COL.bg); } }
   if (o.osteo) {
-    const s = Math.round(2 + 5 * o.osteo);
+    const s = Math.round(3 + 6 * o.osteo);
     for (let k = 0; k < s; k++) { g.r(34 - k, TOP + k, k + 1, 1, bone); g.r(38 - k, bot(40) + off(40) - 6 + k, k + 1, 1, bone); }
     const s2 = Math.round(s / 2);
     for (let k = 0; k < s2; k++) { g.r(126, TOP + k, s2 - k, 1, bone); g.r(122, 48 + k, s2 - k, 1, bone); }
   }
-  if (o.cysts) { g.disk(50, TOP + 8, 2, xr ? '#2A2E40' : '#7A6A50'); g.disk(64, bot(64) + off(64) - 8, 2, xr ? '#2A2E40' : '#7A6A50'); }
+  if (o.cysts) { g.disk(46, TOP + 9, 2, xr ? '#2A2E40' : '#7A6A50'); g.disk(64, bot(64) + off(64) - 8, 2, xr ? '#2A2E40' : '#7A6A50'); }
   return { TOP, drop, off, bot };
 }
 function oaDownArrow(g, x, y, len, w, c) { g.r(x - Math.floor(w / 2), y, w, len, c); for (let k = 0; k < w + 2; k++) g.r(x - Math.floor(w / 2) - 2 + Math.ceil(k / 2), y + len + Math.floor(k / 2), w + 4 - 2 * Math.ceil(k / 2), 1, c); }
@@ -55,7 +55,7 @@ SCENES.oa = [
   (g, t) => {
     const k = 0.4 + 0.6 * clamp01((t % 8) / 5);
     oaKnee(g, t, { xray: true, thM: 1, gapM: 1, osteo: k, scler: true, cysts: true });
-    if (blink(t, 1)) { g.ring(50, 81, 4, COL.cyan); }
+    if (blink(t, 1)) g.ring(46, 81, 4, COL.cyan);
   },
   (g, t) => {
     g.clear(COL.bg);
@@ -63,9 +63,9 @@ SCENES.oa = [
     g.r(26, 42, 112, 18, OSK); g.disk(138, 51, 9, OSK);
     g.r(132, 45, 8, 10, '#E8C8B0');
     [26, 74, 112].forEach((x) => g.r(x, 44, 1, 14, OSKD));
-    const s = Math.round(2 + 2 * (0.5 + 0.5 * Math.sin(t * 2)));
+    const s = Math.round(4 + (0.5 + 0.5 * Math.sin(t * 2)));
     [[74, 'B'], [112, 'H']].forEach(([x]) => { g.disk(x, 41, s, '#E6D2B8'); g.disk(x, 61, s, '#E6D2B8'); g.ring(x, 41, s, OBD); g.ring(x, 61, s, OBD); });
-    if (blink(t, 1.5)) g.ring(26, 51, 11, COL.green);
+    g.ring(26, 51, 11, blink(t, 1.5) ? COL.green : COL.greenD);
     g.r(20, 92, 52, 14, OSK); g.disk(72, 99, 7, OSK); g.r(70, 94, 6, 9, '#E8C8B0');
     g.line(40, 92, 40, 105, OSKD);
     g.disk(16, 96, blink(t, 2) ? 7 : 6, '#C24A5E'); g.disk(16, 96, 3, COL.red);
