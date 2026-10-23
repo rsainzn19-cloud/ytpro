@@ -93,8 +93,8 @@ SCENES.linfo = (() => {
       const edge = (t * 28) % 190 - 15;
       for (let i = 0; i < 18; i++) { const x = 6 + rnd(i, 430) * 148, y = 22 + rnd(i, 431) * 92; g.ring(x, y, 3, COL.pink); }
       for (let i = 0; i < 34; i++) {
-        const x = 6 + rnd(i, 432) * 148, y = 22 + rnd(i, 433) * 92, frag = rnd(i, 434) < 0.35;
-        if (frag && x < edge) { g.disk(x, y, 3, '#5A4A90'); for (let k = 0; k < 5; k++) g.p(x - 4 + rnd(k + i, 435) * 8, y - 4 + rnd(k + i, 436) * 8, '#8A7AC0'); g.r(x - 4, y + 2, 3, 1, '#5A4A90'); }
+        const x = 6 + rnd(i, 432) * 148, y = 22 + rnd(i, 433) * 92, fr = rnd(i, 434);
+        if (fr < 0.18 || (fr < 0.4 && x < edge)) { ell(g, x, y, 4, 3, '#8A6AC8'); ell(g, x + 1, y, 2, 2, '#B49CE8'); for (let k = 0; k < 7; k++) g.p(x - 5 + rnd(k + i, 435) * 10, y - 4 + rnd(k + i, 436) * 8, '#C8B4F0'); g.r(x - 6, y + 1, 4, 1, '#8A6AC8'); }
         else { g.disk(x, y, 3, '#9FC8FF'); g.disk(x, y, 2, '#3A2A8A'); }
       }
       g.disk(30, 60, 5, '#9FC8FF'); g.disk(30, 60, 4, '#3A2A8A');
