@@ -23,10 +23,14 @@ Los 30 temas tienen:
 - **Animación** paso a paso (30), con reproducción automática, narración y pantalla completa, y modo
   **Etiquétalo** (el dibujo sin nombres: tú pones cada etiqueta en su lugar) y **Predice** (antes de cada paso
   eliges qué pasa).
-- **Taller** (pestaña del tema y Más → Taller; `src/content/51-taller.js`): algoritmos con casos (anemia,
-  reperfusión, LRA, glomerulopatías, TEP, dolor articular, diarrea y gasometría; el build comprueba que cada caso
+- **Taller** en los 30 temas (pestaña del tema y Más → Taller; `src/content/51-taller.js`): 15 algoritmos con
+  casos (anemia, reperfusión, LRA, glomerulopatías, TEP, dolor articular, diarrea, gasometría, sangrado,
+  pancreatitis, hipófisis, hipertensión pulmonar, leucemias, linfomas y disfagia; el build comprueba que cada caso
   llegue a su diagnóstico), **Lee el ECG** (13 patrones generados en el teléfono, con las derivaciones clave
-  resaltadas al responder) y simuladores (potasio y ECG, TFG y ERC, ferritina y saturación, estenosis aórtica).
+  resaltadas al responder), **Lee el frotis** (11 hallazgos en pixel art, con las células clave marcadas) y simuladores (potasio y ECG, TFG y ERC, ferritina y saturación, estenosis aórtica).
+- **Tu progreso en tu cuenta**: con las capacidades `db` y `user`, el estado se guarda en un documento privado
+  (`data/users/<id>/progreso`) y se sincroniza entre dispositivos; gana el progreso más reciente y un dispositivo
+  nuevo toma el de la cuenta. Fuera de Claude, todo sigue funcionando solo con el navegador.
 - **Ronda mezclada** diaria (Inicio y Repaso): 10 preguntas revueltas de los temas que ya viste.
 - **¿Dónde actúa?** (`src/content/50-mecanismos.js`): ubica cada fármaco en su vía o diana (SRAA, diuréticos,
   plaqueta, coagulación, ácido úrico, ácido gástrico, antidiabéticos, hipolipemiantes, FAME); en las cascadas,

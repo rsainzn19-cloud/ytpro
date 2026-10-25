@@ -604,3 +604,4 @@ body.cine-on #hud,body.cine-on #tabs{display:none}
 .gauges i{height:14px;border:2px solid var(--line-2);background:linear-gradient(90deg,var(--gold) calc(var(--p) * 100%),transparent 0)}
 .simstage{aspect-ratio:2/1}
 .simstage canvas{width:100%;height:100%;image-rendering:pixelated}
+.smearcv{width:100%;display:block;image-rendering:pixelated;border:3px solid var(--line);background:#0B0E2A;aspect-ratio:4/3}

@@ -42,18 +42,93 @@ const fresh = () => ({
   err: {}, errFixed: 0, cases: {}, plan: null, checks: {}, ach: {}, spins: 0, sims: [], cardRev: 0,
   daily: {}, cartas: 0, paid: {}, vid: {}
 });
+const normalize = (o) => { const f = fresh(); return { ...f, ...o, settings: { ...f.settings, ...o.settings, budget: { ...f.settings.budget, ...(o.settings && o.settings.budget) } }, diag: { ...f.diag, ...o.diag } }; };
 function load() {
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) {
-      const o = JSON.parse(raw), f = fresh();
-      return { ...f, ...o, settings: { ...f.settings, ...o.settings, budget: { ...f.settings.budget, ...(o.settings && o.settings.budget) } }, diag: { ...f.diag, ...o.diag } };
-    }
+    if (raw) return normalize(JSON.parse(raw));
   } catch (e) { /* sin almacenamiento: se juega sin guardar */ }
   return fresh();
 }
 let S = load();
-function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignorar */ } }
+// Firma del progreso (sin el plan, que se rehace solo): S._at cambia solo cuando cambia tu progreso de verdad
+function sig(o) {
+  const t = JSON.stringify({ ...o, plan: null, _at: 0 });
+  let h = 2166136261;
+  for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+let SIG = sig(S);
+function save() {
+  const g = sig(S);
+  if (g !== SIG) { SIG = g; S._at = Date.now(); }
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignorar */ }
+  syncSoon();
+}
+
+// ───── Tu progreso en tu cuenta: un documento privado (data/users/<tu id>/progreso) que siguen todos tus dispositivos.
+// Gana el progreso más reciente; un dispositivo nuevo (sin progreso) toma el de la cuenta.
+const SY = { ref: null, state: 'off', pushed: 0, timer: null, busy: false, pending: null, last: 0 };
+const hasProgress = (o) => !!o && (o.xp > 0 || Object.keys(o.qs || {}).length > 0 || Object.keys((o.diag && o.diag.ans) || {}).length > 0);
+async function syncInit() {
+  try {
+    if (!window.claude || !window.claude.use) return;
+    const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+    const id = user && (await user.id());
+    if (!db || !id) return;
+    SY.ref = db.doc(`data/users/${id}/progreso`); SY.state = 'on';
+    syncTake(await SY.ref.get(), true);
+    SY.ref.onSnapshot((snap) => syncTake(snap, false), () => { SY.state = 'err'; syncUI(); });
+    if ((S._at || 0) > SY.pushed && hasProgress(S)) syncSoon(500);
+  } catch (e) { SY.state = SY.ref ? 'err' : 'off'; }
+  syncUI();
+}
+function syncTake(snap, first) {
+  if (!snap || !snap.exists) return;
+  const d = snap.data() || {}, at = +d.at || 0;
+  SY.pushed = Math.max(SY.pushed, at); SY.last = SY.last || at;
+  let o = null;
+  try { o = JSON.parse(d.s); } catch (e) { return; }
+  if (!o || typeof o.xp !== 'number') return;
+  const newer = at > (S._at || 0) || (!hasProgress(S) && hasProgress(o));
+  if (!newer || at === (S._at || 0)) return;
+  o._at = at;
+  if (syncBusy()) { SY.pending = o; return; }
+  syncAdopt(o, first ? 'Recuperé tu progreso de tu cuenta' : 'Tu progreso se actualizó desde otro dispositivo');
+}
+const syncBusy = () => (QS && !QS.finished) || (FS && route.v === 'tarjetas') || (VS && VS.playing) || route.v === 'caso';
+function syncAdopt(o, msg) {
+  const plan = S.plan;
+  S = normalize(o); S.plan = plan; SIG = sig(S);
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignorar */ }
+  SY.pending = null;
+  buildPlan();
+  if (msg) toast(msg);
+  if (started) render();
+}
+function syncSoon(ms = 4000) {
+  if (!SY.ref) return;
+  clearTimeout(SY.timer); SY.timer = setTimeout(syncPush, ms);
+}
+async function syncPush() {
+  if (!SY.ref || !(S._at > SY.pushed)) return;
+  if (SY.busy) { syncSoon(1500); return; }
+  const at = S._at, body = { v: 1, at, s: JSON.stringify({ ...S, plan: null }) };
+  if (body.s.length > 230000) { SY.state = 'big'; syncUI(); return; }
+  SY.busy = true;
+  try { await SY.ref.set(body); SY.pushed = at; SY.last = Date.now(); SY.state = 'on'; }
+  catch (e) { if (e && e.code === 'unavailable') syncSoon(6000); else SY.state = e && e.code === 'revoked' ? 'off' : 'err'; }
+  SY.busy = false; syncUI();
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden) syncPush(); });
+function syncText() {
+  const t = SY.last ? new Date(SY.last).toLocaleString('es-MX', { weekday: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+  return { on: `Activa: tu progreso se guarda en tu cuenta y aparece igual en tu iPhone, tu compu o donde abras esta página.${t ? ` Último guardado: ${t.replace(/\.$/, '')}.` : ''}`,
+    err: 'No se pudo sincronizar ahora; se vuelve a intentar sola. Tu progreso sigue guardado en este dispositivo.',
+    big: 'Tu progreso ya es muy grande para sincronizarlo; sigue guardado en este dispositivo. Usa el respaldo para pasarlo.',
+    off: 'No disponible en esta vista (por ejemplo, fuera de Claude o sin sesión): tu progreso vive solo en este navegador. Usa el respaldo para pasarlo.' }[SY.state];
+}
+function syncUI() { const el = document.getElementById('syncst'); if (el) el.textContent = syncText(); }
 
 // ───── Sonido 8-bit (apagado de inicio)
 let AC = null;
@@ -539,6 +614,7 @@ const STATIC_CHG = {
 function go(v, p = {}) { clearTimers(); route = { v, ...p }; render(); window.scrollTo(0, 0); }
 function render() {
   stopLoops(); stopVideo();
+  if (SY.pending && !(QS && !QS.finished)) { const o = SY.pending; SY.pending = null; const plan = S.plan; S = normalize(o); S.plan = plan; SIG = sig(S); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignorar */ } buildPlan(); toast('Tu progreso se actualizó desde otro dispositivo'); }
   ACT = { ...STATIC }; CHG = { ...STATIC_CHG };
   const m = $('#main'); m.innerHTML = '';
   (VIEWS[route.v] || VIEWS.home)(m);
@@ -1321,41 +1397,125 @@ function ecgDraw(cv, P, layout, hl = []) {
     if (!strips && x0 > 0) { g.fillStyle = 'rgba(201,206,255,.35)'; g.fillRect(x0, r * rowH + 4, 1, rowH - 8); }
   }
 }
-// ── Lee el ECG: patrón al azar del tema, cuatro opciones y explicación con las derivaciones clave resaltadas
+// ── Lee el estudio (ECG o frotis): un patrón al azar del tema, cuatro opciones y la explicación con lo clave resaltado
+const READERS = {
+  ecg: { set: () => C.ecg, title: 'Lee el ECG', next: 'Otro ECG ▶', q: '¿Qué muestra este ECG?', cls: 'ecgcv', label: 'Electrocardiograma',
+    note: '12 derivaciones a 25 mm/s (DI–aVF a la izquierda, V1–V6 a la derecha) y una tira de DII.',
+    make: (id) => ecgSpec(id), draw: (cv, g, on) => ecgDraw(cv, g.P, '12', on ? C.ecg[g.cur].hl : []) },
+  frotis: { set: () => C.frotis, title: 'Lee el frotis', next: 'Otro frotis ▶', q: '¿Qué ves en este frotis?', cls: 'smearcv', label: 'Frotis de sangre periférica',
+    note: 'Sangre periférica teñida, vista al microscopio. Al responder se marcan las células clave.',
+    make: () => (Math.random() * 1e9) | 0, draw: (cv, g, on) => smearDraw(cv, g.cur, g.P, on) }
+};
 const EG = {};
-function mountEcg(host, ids, key) {
+function mountReader(host, kind, ids, key) {
   if (ids.length < 2) return;
   ACT.egpick = (b) => {
     const g = EG[b.dataset.k]; if (g.ans) return;
     g.ans = b.dataset.id; g.n++;
     if (g.ans === g.cur) { g.hits++; wsfx('ok'); gain(8); } else wsfx('bad');
-    WS().ecg = (WS().ecg || 0) + (g.ans === g.cur ? 1 : 0);
-    ecgRender(b.dataset.k);
+    WS()[g.kind] = (WS()[g.kind] || 0) + (g.ans === g.cur ? 1 : 0);
+    readerRender(b.dataset.k);
   };
-  ACT.egnext = (b) => ecgNext(b.dataset.k);
+  ACT.egnext = (b) => readerNext(b.dataset.k);
   const sec = document.createElement('section');
   sec.className = 'panel ecgq'; host.appendChild(sec);
-  EG[key] = { sec, ids, hits: 0, n: 0, last: null };
-  ecgNext(key);
+  EG[kind + ':' + key] = { kind, sec, ids, hits: 0, n: 0, last: null };
+  readerNext(kind + ':' + key);
 }
-function ecgNext(key) {
-  const g = EG[key], all = Object.keys(C.ecg);
+const mountEcg = (host, ids, key) => mountReader(host, 'ecg', ids, key);
+function readerNext(key) {
+  const g = EG[key], R = READERS[g.kind], all = Object.keys(R.set());
   const pick = shuffle(g.ids.filter((id) => id !== g.last))[0];
   const others = shuffle(all.filter((id) => id !== pick)), near = others.filter((id) => g.ids.includes(id));
-  g.cur = pick; g.last = pick; g.ans = null; g.P = ecgSpec(pick);
+  g.cur = pick; g.last = pick; g.ans = null; g.P = R.make(pick);
   g.opts = shuffle([pick, ...[...near, ...others.filter((id) => !near.includes(id))].slice(0, 3)]);
-  ecgRender(key);
+  readerRender(key);
 }
-function ecgRender(key) {
-  const g = EG[key], e = C.ecg[g.cur];
-  g.sec.innerHTML = `<div class="row"><h2 class="grow">Lee el ECG</h2>${g.n ? `<span class="small muted">${g.hits}/${g.n}</span>` : ''}</div>
-    <p class="small muted">12 derivaciones a 25 mm/s (DI–aVF a la izquierda, V1–V6 a la derecha) y una tira de DII.</p>
-    <canvas class="ecgcv" aria-label="Electrocardiograma"></canvas>
-    <p class="aq">¿Qué muestra este ECG?</p>
-    <div class="aopts">${g.opts.map((id) => `<button class="aopt${g.ans ? (id === g.cur ? ' ok' : id === g.ans ? ' no' : '') : ''}" data-act="egpick" data-k="${key}" data-id="${id}"${g.ans ? ' disabled' : ''}>${esc(C.ecg[id].name)}</button>`).join('')}</div>
-    ${g.ans ? `<div class="mexp"><p>${g.ans === g.cur ? '✓ ' : ''}<b>${esc(e.name)}.</b> ${esc(e.why)}</p></div><div class="actrl"><button class="btn small gold-btn" data-act="egnext" data-k="${key}">Otro ECG ▶</button></div>` : ''}`;
+function readerRender(key) {
+  const g = EG[key], R = READERS[g.kind], set = R.set(), e = set[g.cur];
+  g.sec.innerHTML = `<div class="row"><h2 class="grow">${R.title}</h2>${g.n ? `<span class="small muted">${g.hits}/${g.n}</span>` : ''}</div>
+    <p class="small muted">${R.note}</p>
+    <canvas class="${R.cls}" aria-label="${R.label}"></canvas>
+    <p class="aq">${R.q}</p>
+    <div class="aopts">${g.opts.map((id) => `<button class="aopt${g.ans ? (id === g.cur ? ' ok' : id === g.ans ? ' no' : '') : ''}" data-act="egpick" data-k="${key}" data-id="${id}"${g.ans ? ' disabled' : ''}>${esc(set[id].name)}</button>`).join('')}</div>
+    ${g.ans ? `<div class="mexp"><p>${g.ans === g.cur ? '✓ ' : ''}<b>${esc(e.name)}.</b> ${esc(e.why)}</p></div><div class="actrl"><button class="btn small gold-btn" data-act="egnext" data-k="${key}">${R.next}</button></div>` : ''}`;
   const cv = g.sec.querySelector('canvas');
-  requestAnimationFrame(() => ecgDraw(cv, g.P, '12', g.ans ? e.hl : []));
+  requestAnimationFrame(() => R.draw(cv, g, !!g.ans));
+}
+// ── Frotis en pixel art: un campo de microscopio de 160 × 120 con células dibujadas punto por punto
+function smearDraw(cv, id, seed, mark) {
+  const W = 160, H = 120, rnd = seeded(seed), hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const K = { bg: hex('#F3E7EA'), out: hex('#0B0E2A'), rbc: hex('#E3889A'), edge: hex('#C05C70'), pal: hex('#F5CDD4'), dense: hex('#C9475F'), nuc: hex('#5C3C9E'), nucD: hex('#3F2878'), cyto: hex('#E4D2EE'), blast: hex('#9EB3E6'), auer: hex('#D3184A'), plt: hex('#7A4CB8'), lyc: hex('#A9C3EE'), gold: hex('#F2C14E') };
+  cv.width = W; cv.height = H;
+  const g = cv.getContext('2d'), img = g.createImageData(W, H), px = img.data;
+  const inField = (x, y) => ((x - W / 2) / 78) ** 2 + ((y - H / 2) / 58) ** 2 <= 1;
+  const put = (x, y, c) => { x = Math.round(x); y = Math.round(y); if (x < 0 || y < 0 || x >= W || y >= H || !inField(x, y)) return; const i = (y * W + x) * 4; px[i] = c[0]; px[i + 1] = c[1]; px[i + 2] = c[2]; px[i + 3] = 255; };
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = (y * W + x) * 4, c = inField(x, y) ? K.bg : K.out; px[i] = c[0]; px[i + 1] = c[1]; px[i + 2] = c[2]; px[i + 3] = 255; }
+  const placed = [], keys = [];
+  const spot = (r) => {
+    for (let k = 0; k < 80; k++) {
+      const x = 8 + rnd() * (W - 16), y = 8 + rnd() * (H - 16);
+      if (((x - W / 2) / (78 - r)) ** 2 + ((y - H / 2) / (58 - r)) ** 2 > 1) continue;
+      if (placed.every(([a, b, c]) => (a - x) ** 2 + (b - y) ** 2 > (c + r - 1.5) ** 2)) { placed.push([x, y, r]); return [x, y]; }
+    }
+    return null;
+  };
+  // Mancha genérica: elipse con borde, palidez, recortes y color por zona
+  const blob = (x, y, o) => {
+    const rx = o.rx, ry = o.ry || o.rx, R = Math.ceil(Math.max(rx, ry)) + 1, a = o.rot || 0, ca = Math.cos(a), sa = Math.sin(a);
+    for (let dy = -R; dy <= R; dy++) for (let dx = -R; dx <= R; dx++) {
+      const u = dx * ca + dy * sa, v = -dx * sa + dy * ca, n = Math.sqrt((u / rx) ** 2 + (v / ry) ** 2);
+      if (n > 1 || (o.cut && o.cut(u, v))) continue;
+      let c = n > 0.8 ? K.edge : o.fill || K.rbc;
+      if (o.pal && n < o.pal) c = o.dot && n < o.dot ? K.dense : K.pal;
+      if (o.color) c = o.color(n, u, v) || c;
+      put(x + dx, y + dy, c);
+    }
+  };
+  const rbc = (o = {}) => { const r = o.r || 5 + rnd() * 0.8, p = spot(o.ry ? Math.max(r, o.ry) : r); if (p) blob(p[0] + 0.5, p[1] + 0.5, { rx: r, ry: o.ry, rot: rnd() * Math.PI, pal: o.pal ?? 0.46, ...o }); return p; };
+  const key = (p, r) => { if (p) keys.push([p[0], p[1], r]); };
+  const plts = (n) => { for (let k = 0; k < n; k++) { const p = spot(1.5); if (p) { put(p[0], p[1], K.plt); if (rnd() < 0.5) put(p[0] + 1, p[1], K.plt); } } };
+  // Neutrófilo: lóbulos separados por puentes finos de cromatina, en arco
+  const neut = (lobes) => {
+    const R = lobes > 4 ? 10.5 : 8.5, p = spot(R + 0.5); if (!p) return null;
+    blob(p[0], p[1], { rx: R, color: () => K.cyto });
+    const a0 = rnd() * 6.28, step = (2 * Math.PI * (lobes > 4 ? 0.82 : 0.5)) / lobes, ring = lobes > 4 ? 6 : 4.2, pts = [];
+    for (let k = 0; k < lobes; k++) { const t = a0 + (k - (lobes - 1) / 2) * step; pts.push([p[0] + Math.cos(t) * ring, p[1] + Math.sin(t) * ring]); }
+    pts.forEach(([x, y], k) => { if (k) { const [px0, py0] = pts[k - 1]; for (let s = 0; s <= 1; s += 0.2) put(px0 + (x - px0) * s, py0 + (y - py0) * s, K.nuc); } });
+    pts.forEach(([x, y]) => blob(x, y, { rx: lobes > 4 ? 1.9 : 2.2, color: () => K.nuc }));
+    return p;
+  };
+  const blast = (auer) => {
+    const p = spot(10.5); if (!p) return null;
+    blob(p[0], p[1], { rx: 10, ry: 9, color: () => K.blast });
+    blob(p[0] + 1, p[1], { rx: 7.5, ry: 6.8, color: (n) => (n < 0.25 ? K.cyto : K.nuc) });
+    if (auer) { const a = rnd() * 6.28, ox = p[0] + Math.cos(a) * 8.2, oy = p[1] + Math.sin(a) * 7.4, d = a + 1.57; for (let s = -2.5; s <= 2.5; s += 0.5) put(ox + Math.cos(d) * s, oy + Math.sin(d) * s, K.auer); }
+    return p;
+  };
+  const lymph = () => { const p = spot(5.2); if (p) { blob(p[0], p[1], { rx: 5, color: () => K.lyc }); blob(p[0], p[1], { rx: 4.2, color: () => K.nucD }); } return p; };
+  const smudge = () => { const p = spot(6.5); if (p) { const j = Array.from({ length: 16 }, () => 0.6 + rnd() * 0.4); blob(p[0], p[1], { rx: 6.5, ry: 5, rot: rnd() * 3, cut: (u, v) => Math.sqrt((u / 6.5) ** 2 + (v / 5) ** 2) > j[Math.floor(((Math.atan2(v, u) + Math.PI) / (2 * Math.PI)) * 16) % 16], color: (n) => (n < 0.6 ? K.nuc : hex('#8D72C4')) }); } return p; };
+  const fillRbc = (n, o) => { for (let k = 0; k < n; k++) rbc(o); };
+  switch (id) {
+    case 'esquisto': {
+      for (let k = 0; k < 8; k++) { const t = rnd() * 6.28, ct = Math.cos(t), st = Math.sin(t), tri = rnd() < 0.4; key(rbc({ r: 4.6, pal: 0, cut: (u, v) => u * ct + v * st > 0.6 || (tri && u * Math.cos(t + 2.1) + v * Math.sin(t + 2.1) > 1.2) }), 5); }
+      fillRbc(22); plts(2); break;
+    }
+    case 'esfero': for (let k = 0; k < 11; k++) key(rbc({ r: 3.8, pal: 0, fill: K.dense }), 4); fillRbc(17); plts(6); break;
+    case 'diana': for (let k = 0; k < 10; k++) key(rbc({ r: 5.8, pal: 0.74, dot: 0.36 }), 6); fillRbc(18, { r: 4.6 }); plts(6); break;
+    case 'ferro': for (let k = 0; k < 3; k++) key(rbc({ r: 7.5, ry: 2.4, pal: 0 }), 7); for (let k = 0; k < 30; k++) rbc({ r: 3.6 + rnd() * 1.8, pal: 0.64 }); plts(9); break;
+    case 'lagrima': {
+      for (let k = 0; k < 8; k++) { const p = rbc({ r: 4.6 }); if (p) { const t = rnd() * 6.28; for (let s = 4; s < 9; s++) for (let w = -Math.max(0, (8 - s) / 3); w <= Math.max(0, (8 - s) / 3); w += 0.5) put(p[0] + Math.cos(t) * s - Math.sin(t) * w, p[1] + Math.sin(t) * s + Math.cos(t) * w, s > 6 ? K.edge : K.rbc); key(p, 7); } }
+      fillRbc(18); plts(5); break;
+    }
+    case 'hiperseg': key(neut(6), 10); for (let k = 0; k < 20; k++) rbc({ r: 7, ry: 5.6, pal: 0.2 }); plts(4); break;
+    case 'auer': for (let k = 0; k < 4; k++) key(blast(true), 11); fillRbc(12); plts(2); break;
+    case 'gump': for (let k = 0; k < 4; k++) key(smudge(), 8); for (let k = 0; k < 8; k++) lymph(); fillRbc(12); plts(4); break;
+    case 'falci': for (let k = 0; k < 8; k++) { const t = rnd() * 6.28, ox = Math.cos(t) * 3.8, oy = Math.sin(t) * 3.8; key(rbc({ r: 6, ry: 3.2, pal: 0, fill: K.dense, cut: (u, v) => (u - ox) ** 2 + (v - oy) ** 2 < 14 }), 7); } fillRbc(18); plts(6); break;
+    case 'mordida': for (let k = 0; k < 6; k++) { const t = rnd() * 6.28, ox = Math.cos(t) * 4.8, oy = Math.sin(t) * 4.8; key(rbc({ r: 5, cut: (u, v) => (u - ox) ** 2 + (v - oy) ** 2 < 6.5 }), 6); } fillRbc(20); plts(6); break;
+    default: neut(3); fillRbc(30); plts(8);
+  }
+  if (mark) for (const [x, y, r] of keys) for (let t = 0; t < 6.28; t += 0.08) put(x + Math.cos(t) * (r + 2), y + Math.sin(t) * (r + 2), K.gold);
+  g.putImageData(img, 0, 0);
 }
 
 // ── Simuladores: mueves un valor y ves el efecto
@@ -1476,13 +1636,15 @@ function simAortica(sec) {
 // ── Pestaña Taller del tema y vista con todo (Más → Taller)
 const algosOf = (tid) => Object.keys(C.algos || {}).filter((id) => C.algos[id].topics.includes(tid));
 const ecgOf = (tid) => Object.keys(C.ecg || {}).filter((id) => C.ecg[id].topics.includes(tid));
+const smearOf = (tid) => Object.keys(C.frotis || {}).filter((id) => C.frotis[id].topics.includes(tid));
 const simsOf = (tid) => Object.keys(SIMS).filter((id) => SIMS[id].topics.includes(tid));
 const pathsOf = (tid) => Object.keys(C.paths || {}).filter((id) => C.paths[id].topics.includes(tid));
-const hasTaller = (tid) => !!(algosOf(tid).length || ecgOf(tid).length >= 2 || simsOf(tid).length || pathsOf(tid).length);
+const hasTaller = (tid) => !!(algosOf(tid).length || ecgOf(tid).length >= 2 || smearOf(tid).length >= 2 || simsOf(tid).length || pathsOf(tid).length);
 TOPIC_TABS.taller = (el, t) => {
   el.innerHTML = '<p class="muted">Practica con las manos: decide en algoritmos con casos, lee ECG, mueve valores y ubica fármacos. Cuenta para tu XP.</p>';
   algosOf(t.id).forEach((id) => mountAlgo(el, id));
   mountEcg(el, ecgOf(t.id), t.id);
+  mountReader(el, 'frotis', smearOf(t.id), t.id);
   simsOf(t.id).forEach((id) => mountSim(el, id));
   mountPaths(el, t.id);
 };
@@ -1493,6 +1655,7 @@ VIEWS.taller = (m) => {
     const el = $('#tool'), [kind, id] = a.split(':');
     if (kind === 'algo' && C.algos[id]) mountAlgo(el, id);
     else if (kind === 'ecg') mountEcg(el, Object.keys(C.ecg), 'all');
+    else if (kind === 'frotis') mountReader(el, 'frotis', Object.keys(C.frotis), 'all');
     else if (kind === 'sim' && SIMS[id]) mountSim(el, id);
     else if (kind === 'path' && C.paths[id]) { const tid = C.paths[id].topics[0]; mountPaths(el, tid, id); }
     return;
@@ -1502,7 +1665,7 @@ VIEWS.taller = (m) => {
   m.innerHTML = `<button class="btn small ghost" data-go="mas" style="align-self:flex-start">← Más</button><h1>Taller</h1>
   <p class="muted">Lo que más se parece a las preguntas del parcial: decidir el siguiente paso, leer un estudio y ubicar un fármaco.</p>
   <h2>Algoritmos con casos</h2><div class="tools">${Object.entries(C.algos).map(([id, A]) => tile('algo:' + id, A.title, `${A.cases.length} casos${best('algo:' + id)}`)).join('')}</div>
-  <h2>Lee el estudio</h2><div class="tools">${tile('ecg:all', 'Lee el ECG', `${Object.keys(C.ecg).length} patrones al azar`)}${tile('algo:gaso', 'Gasometría paso a paso', `${C.algos.gaso.cases.length} casos`)}</div>
+  <h2>Lee el estudio</h2><div class="tools">${tile('ecg:all', 'Lee el ECG', `${Object.keys(C.ecg).length} patrones al azar`)}${tile('frotis:all', 'Lee el frotis', `${Object.keys(C.frotis).length} hallazgos al azar`)}${tile('algo:gaso', 'Gasometría paso a paso', `${C.algos.gaso.cases.length} casos`)}</div>
   <h2>Simuladores</h2><div class="tools">${Object.entries(SIMS).map(([id, s]) => tile('sim:' + id, s.title, 'Mueve el valor y mira qué cambia')).join('')}</div>
   <h2>¿Dónde actúa?</h2><div class="tools">${Object.entries(C.paths).map(([id, p]) => tile('path:' + id, p.title, `${p.drugs.length} fármacos`)).join('')}</div>`;
 };
@@ -1759,6 +1922,7 @@ function vEnd() {
 // Gancho para la herramienta de vista previa (tools/preview.cjs): solo existe con #preview en la URL
 if (location.hash === '#preview') window.__gp = { show: (i) => { VS.started = true; vBtn(); vShow(i); document.querySelectorAll('#vslide [data-r]').forEach((r) => r.classList.add('on')); const x = VS.flat[VS.i]; vSub(''); sentences(x.sc.say).forEach((t) => keyTerms(t, x.sc.v).forEach(vConcept)); if (x.sc.v.k === 'quiz') document.querySelectorAll('#vslide .vopt').forEach((b, j) => j === x.sc.v.a && b.classList.add('ok')); return VS.flat.length; },
   // Frases que se graban por tema (tools/narrate): video, explicaciones de quiz, repasos y pasos de la animación
+  smear: (id) => { const cv = document.createElement('canvas'); smearDraw(cv, id, 42, true); return cv.toDataURL(); },
   ecg: (id, k) => { const cv = document.createElement('canvas'); cv.style.width = '358px'; document.body.appendChild(cv); const P = ecgSpec(id, k); P.seed = 42; ecgDraw(cv, P, '12', []); const u = cv.toDataURL(); cv.remove(); return u; },
   mu: () => ({ url: MU.url, paused: MU.el ? MU.el.paused : null, t: MU.el ? MU.el.currentTime : null, src: MU.el ? MU.el.src.slice(0, 30) : null, beat: musicBeat() }),
   render: () => musicRender(),
@@ -2161,9 +2325,14 @@ VIEWS.ajustes = (m) => {
   <section class="panel"><h2>Sonido</h2><p class="muted">Efectos 8-bit al acertar, fallar y girar la ruleta.</p><button class="btn" data-act="snd">${S.settings.sound ? 'Apagar sonido' : 'Activar sonido'}</button></section>
   <section class="panel"><h2>Reloj del modo guardia</h2><div class="field"><label for="tmr">Segundos para cada decisión A/B</label><select id="tmr" data-chg="timer">${[0, 5, 10, 15, 20, 30].map((v) => `<option value="${v}"${S.settings.timer === v ? ' selected' : ''}>${v ? v + ' segundos' : 'Sin reloj'}</option>`).join('')}</select></div><p class="small muted">5 segundos es modo difícil: primero aprende con 15 o 20.</p></section>
   <section class="panel"><h2>Tiempo de estudio</h2><p class="muted">Se ajusta en el plan, y el plan se rehace solo.</p><button class="btn" data-go="plan">Abrir el plan</button></section>
+  <section class="panel"><h2>Tu progreso en tu cuenta</h2><p class="muted" id="syncst">${esc(syncText())}</p>${SY.ref ? '<button class="btn" data-act="syncNow">Sincronizar ahora</button>' : ''}</section>
   <section class="panel"><h2>Respaldo</h2><p class="muted">Tu progreso vive solo en este navegador. Copia el código para pasarlo a otro dispositivo o guardarlo.</p><button class="btn" data-act="bkCopy">Copiar mi respaldo</button><div class="field"><label for="bk">Pega aquí un respaldo para restaurarlo</label><textarea id="bk" spellcheck="false"></textarea></div><button class="btn" data-act="bkLoad">Restaurar</button></section>
   <section class="panel"><h2>Empezar de cero</h2><button class="btn" data-act="wipe" style="border-color:var(--bad);color:var(--bad)">Borrar todo mi progreso</button></section>`;
   CHG.timer = (el) => { S.settings.timer = +el.value; save(); toast(+el.value ? `Reloj: ${el.value} s por decisión` : 'Reloj apagado'); };
+  ACT.syncNow = async () => {
+    if (!(S._at > SY.pushed)) { toast('Ya está todo guardado en tu cuenta'); return; }
+    await syncPush(); toast(SY.state === 'on' ? 'Guardado en tu cuenta' : 'No se pudo ahora; se reintenta sola');
+  };
   ACT.bkCopy = () => {
     const code = btoa(unescape(encodeURIComponent(JSON.stringify(S))));
     const ta = $('#bk');
@@ -2177,7 +2346,7 @@ VIEWS.ajustes = (m) => {
       confirmBox('¿Restaurar el respaldo?', 'Se reemplaza tu progreso actual por el del respaldo.', 'Restaurar', () => { localStorage.setItem(KEY, JSON.stringify(o)); S = load(); toast('Respaldo restaurado'); go('home'); });
     } catch (e) { toast('Ese texto no es un respaldo válido. Cópialo completo.'); }
   };
-  ACT.wipe = () => confirmBox('¿Borrar todo?', 'Se pierden XP, diagnóstico, plan, tarjetas y cuaderno de errores. No se puede deshacer.', 'Borrar', () => { S = fresh(); buildPlan(); save(); go('home'); });
+  ACT.wipe = () => confirmBox('¿Borrar todo?', 'Se pierden XP, diagnóstico, plan, tarjetas y cuaderno de errores, aquí y en tu cuenta (en todos tus dispositivos). No se puede deshacer.', 'Borrar', () => { S = fresh(); buildPlan(); save(); go('home'); });
 };
 
 // ═══════════ Simulacro
@@ -2420,5 +2589,6 @@ function start(data) {
   // El plan se reacomoda una vez al día: lo pendiente de días pasados vuelve a entrar desde hoy.
   if (!S.plan || S.plan.built !== today() || S.plan.start !== C.exam.start) buildPlan();
   render();
+  syncInit();
 }
 if (hot && typeof hot.ready === 'function') hot.ready(start); else start((hot && hot.data) || {});

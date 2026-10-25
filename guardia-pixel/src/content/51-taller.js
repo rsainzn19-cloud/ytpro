@@ -186,6 +186,166 @@ export default {
         { t: 'Mujer de 25 años con dolor abdominal que mejora al evacuar; alterna diarrea y estreñimiento, sin datos de alarma.', data: [['Biometría y PCR', 'Normales'], ['Anti-transglutaminasa', 'Negativa']], path: { dur: 1, cron: 2 }, end: 'sii' }
       ]
     },
+    sangrado: {
+      title: 'Paciente con sangrado: plaquetas, TP y TTPa', topics: ['sangrado'], start: 'plq',
+      nodes: {
+        plq: { q: '¿Cuántas plaquetas tiene?', hint: 'Antes de alarmarte, descarta pseudotrombocitopenia por EDTA: cúmulos en el frotis; repite con citrato.', opts: [{ t: 'Bajas (menos de 150,000)', go: 'tromb' }, { t: 'Normales', go: 'coag' }] },
+        tromb: { q: 'Trombocitopenia: ¿qué más tiene?', opts: [{ t: 'Solo plaquetas bajas, frotis normal, por lo demás sano', go: 'pti' }, { t: 'Esquistocitos con anemia hemolítica', go: 'mat' }, { t: 'Inició heparina hace 5 a 10 días', go: 'hit' }, { t: 'TP y TTPa largos, fibrinógeno bajo y dímero D alto, en sepsis', go: 'cid' }] },
+        mat: { q: 'Microangiopatía trombótica: ¿qué más tiene?', opts: [{ t: 'Fiebre o alteración neurológica, ADAMTS13 muy baja', go: 'ptt' }, { t: 'Diarrea con sangre previa y falla renal', go: 'shu' }] },
+        coag: { q: 'Plaquetas normales: ¿cómo están el TP y el TTPa?', opts: [{ t: 'Solo el TTPa largo', go: 'ttpa' }, { t: 'Solo el TP (INR) largo', go: 'tpl' }, { t: 'Los dos largos', go: 'ambos' }, { t: 'Los dos normales, con sangrado de mucosas', go: 'vwf' }] },
+        ttpa: { q: 'TTPa largo aislado: prueba de mezcla con plasma normal.', hint: 'Si corrige, falta un factor; si no corrige, hay un inhibidor.', opts: [{ t: 'Corrige', go: 'hemof' }, { t: 'No corrige, y tiene trombosis o pérdidas gestacionales', go: 'aaf' }, { t: 'No corrige, con sangrado grave sin antecedentes', go: 'hemadq' }] },
+        pti: { end: 'Trombocitopenia inmune (PTI)', d: 'Diagnóstico de exclusión: solo bajan las plaquetas. Se trata si sangra o si están por debajo de 30,000: prednisona o dexametasona; inmunoglobulina IV si urge subirlas.' },
+        ptt: { end: 'Púrpura trombocitopénica trombótica', d: 'ADAMTS13 menor de 10%. Recambio plasmático urgente con esteroide (y caplacizumab); no transfundas plaquetas.' },
+        shu: { end: 'Síndrome hemolítico urémico', d: 'Por E. coli productora de toxina Shiga, sobre todo en niños: soporte y diálisis si hace falta; sin antibióticos ni antidiarreicos.' },
+        hit: { end: 'Trombocitopenia inducida por heparina', d: 'Las plaquetas caen más de 50% a los 5 a 10 días; escala 4T y anticuerpos anti-PF4. Suspende toda heparina y anticoagula con argatrobán o fondaparinux: el riesgo es la trombosis.' },
+        cid: { end: 'Coagulación intravascular diseminada', d: 'Consumo de plaquetas y factores por sepsis, trauma, cáncer u obstetricia. Trata la causa; plasma, crioprecipitado o plaquetas solo si sangra.' },
+        hemof: { end: 'Hemofilia A o B', d: 'Hombre con hemartrosis y sangrado después de trauma o cirugía (ligada al X). Mide factor VIII (A) y IX (B); reposición del factor (emicizumab como profilaxis en la A).' },
+        aaf: { end: 'Anticoagulante lúpico (síndrome antifosfolípido)', d: 'Alarga el TTPa en el tubo, pero en el cuerpo da trombosis y pérdidas gestacionales. Confirma los anticuerpos a las 12 semanas; warfarina si hubo trombosis.' },
+        hemadq: { end: 'Hemofilia adquirida (anticuerpo contra el factor VIII)', d: 'Sangrado grave sin antecedentes en un adulto mayor, en el posparto o con autoinmunidad. Agentes de puenteo y esteroide con ciclofosfamida o rituximab.' },
+        tpl: { end: 'TP largo aislado (factor VII)', d: 'Warfarina, déficit de vitamina K (ayuno, antibióticos, colestasis) o hepatopatía temprana. Vitamina K; si sangra, complejo protrombínico.' },
+        ambos: { end: 'Vía común o varios factores', d: 'Hepatopatía avanzada, exceso de anticoagulante, déficit grave de vitamina K o CID: mide fibrinógeno y dímero D.' },
+        vwf: { end: 'Enfermedad de von Willebrand', d: 'El trastorno hereditario de sangrado más común: epistaxis, menstruación abundante, sangrado dental. Antígeno y actividad del factor de von Willebrand (el TTPa puede alargarse si baja el VIII). Desmopresina en el tipo 1.' }
+      },
+      cases: [
+        { t: 'Mujer de 28 años con petequias y epistaxis; por lo demás sana.', data: [['Plaquetas', '18,000/µL'], ['Hb y leucocitos', 'Normales'], ['Frotis', 'Plaquetas grandes, sin esquistocitos']], path: { plq: 0, tromb: 0 }, end: 'pti' },
+        { t: 'Mujer de 35 años con fiebre, confusión y petequias.', data: [['Plaquetas', '15,000/µL'], ['Hb', '8.1 g/dL'], ['Frotis', 'Esquistocitos'], ['LDH', '1,200 U/L'], ['ADAMTS13', 'Menor de 5%']], path: { plq: 0, tromb: 1, mat: 0 }, end: 'ptt' },
+        { t: 'Hombre de 66 años con enoxaparina desde una cirugía hace 7 días; ahora tiene una trombosis venosa en la pierna.', data: [['Plaquetas', 'De 210,000 a 85,000/µL'], ['Anti-PF4', 'Positivo']], path: { plq: 0, tromb: 2 }, end: 'hit' },
+        { t: 'Hombre de 70 años en choque séptico que sangra por los sitios de punción.', data: [['Plaquetas', '42,000/µL'], ['TP y TTPa', 'Largos'], ['Fibrinógeno', '90 mg/dL'], ['Dímero D', 'Muy alto']], path: { plq: 0, tromb: 3 }, end: 'cid' },
+        { t: 'Niño de 6 años con hemartrosis de rodilla tras una caída leve; su tío materno también sangra mucho.', data: [['Plaquetas', 'Normales'], ['TP', 'Normal'], ['TTPa', 'Largo, corrige con la mezcla'], ['Factor VIII', '3%']], path: { plq: 1, coag: 0, ttpa: 0 }, end: 'hemof' },
+        { t: 'Mujer de 24 años con menstruaciones abundantes desde la adolescencia y sangrado prolongado tras una extracción dental.', data: [['Plaquetas', 'Normales'], ['TP y TTPa', 'Normales'], ['Factor de von Willebrand', '35%']], path: { plq: 1, coag: 3 }, end: 'vwf' },
+        { t: 'Hombre de 58 años que toma warfarina y empezó un antibiótico; ahora tiene hematuria.', data: [['Plaquetas', 'Normales'], ['INR', '6.8'], ['TTPa', 'Normal']], path: { plq: 1, coag: 1 }, end: 'tpl' },
+        { t: 'Mujer de 32 años con dos pérdidas gestacionales y una TVP; el TTPa salió largo en un preoperatorio.', data: [['Plaquetas', 'Normales'], ['TTPa', 'Largo, no corrige con la mezcla']], path: { plq: 1, coag: 0, ttpa: 1 }, end: 'aaf' }
+      ]
+    },
+    pancreatitis: {
+      title: 'Pancreatitis aguda: diagnóstico y gravedad', topics: ['pancrea'], start: 'dx',
+      nodes: {
+        dx: { q: '¿Cumple criterios de pancreatitis aguda?', hint: 'Se necesitan 2 de 3: dolor epigástrico típico (en cinturón), lipasa o amilasa de 3 veces el límite o más, e imagen compatible.', opts: [{ t: 'Sí: dolor típico y lipasa de 3 veces o más', go: 'causa' }, { t: 'Dolor típico, pero lipasa menor de 3 veces', go: 'img' }] },
+        img: { q: 'Lipasa menor de 3 veces: ¿qué muestra la TC con contraste?', opts: [{ t: 'Pancreatitis (edema o líquido peripancreático)', go: 'causa' }, { t: 'Páncreas normal', go: 'otra' }] },
+        causa: { q: 'Confirmada. Con ultrasonido y laboratorios, ¿cuál es la causa?', opts: [{ t: 'Biliar: litos y ALT mayor de 150', go: 'grav' }, { t: 'Alcohol', go: 'grav' }, { t: 'Triglicéridos mayores de 1,000 mg/dL', go: 'grav' }, { t: 'Después de una CPRE o por fármacos', go: 'grav' }] },
+        grav: { q: 'Gravedad (Atlanta revisada): ¿hay falla orgánica y cuánto dura?', hint: 'Falla respiratoria, cardiovascular o renal (Marshall de 2 o más). Transitoria: se resuelve en menos de 48 h.', opts: [{ t: 'Sin falla orgánica ni complicaciones', go: 'leve' }, { t: 'Falla transitoria (menos de 48 h) o complicaciones locales', go: 'mod' }, { t: 'Falla orgánica persistente (más de 48 h)', go: 'grave' }] },
+        leve: { end: 'Pancreatitis leve', d: 'Líquidos moderados y dirigidos (Ringer lactato), analgesia y vía oral temprana en cuanto tolere. Si es biliar, colecistectomía en el mismo internamiento.' },
+        mod: { end: 'Pancreatitis moderadamente grave', d: 'Vigila de cerca; nutrición enteral si no tolera la vía oral. Las colecciones estériles no se drenan ni llevan antibiótico profiláctico.' },
+        grave: { end: 'Pancreatitis grave', d: 'Terapia intensiva y nutrición enteral temprana. TC después de 72 h para ver necrosis; antibiótico solo si sospechas necrosis infectada (gas en la TC), con drenaje escalonado.' },
+        otra: { end: 'Pancreatitis descartada', d: 'Busca otra causa de dolor epigástrico: úlcera perforada, colecistitis, isquemia mesentérica o infarto inferior.' }
+      },
+      cases: [
+        { t: 'Mujer de 45 años con dolor epigástrico en cinturón después de una comida copiosa.', data: [['Lipasa', '12 veces el límite'], ['ALT', '320 U/L'], ['Ultrasonido', 'Litos en la vesícula'], ['Falla orgánica', 'No']], path: { dx: 0, causa: 0, grav: 0 }, end: 'leve' },
+        { t: 'Hombre de 50 años que bebe a diario, con dolor en cinturón y vómito.', data: [['Lipasa', '8 veces el límite'], ['Creatinina', 'Sube y se normaliza en 24 h con líquidos'], ['TC', 'Colección peripancreática']], path: { dx: 0, causa: 1, grav: 1 }, end: 'mod' },
+        { t: 'Hombre de 38 años con dolor intenso y suero lechoso.', data: [['Lipasa', '5 veces el límite'], ['Triglicéridos', '2,300 mg/dL'], ['PaO2/FiO2', '220 durante 3 días'], ['Creatinina', '2.4 mg/dL persistente']], path: { dx: 0, causa: 2, grav: 2 }, end: 'grave' },
+        { t: 'Mujer de 60 años con dolor epigástrico típico que empezó hace 3 días.', data: [['Lipasa', '1.5 veces el límite'], ['TC', 'Edema pancreático y líquido peripancreático'], ['Ultrasonido', 'Litos en la vesícula'], ['Falla orgánica', 'No']], path: { dx: 1, img: 0, causa: 0, grav: 0 }, end: 'leve', why: { dx: 'La lipasa baja con los días: con 3 días de evolución, la imagen da el segundo criterio.' } }
+      ]
+    },
+    hipofisis: {
+      title: 'Tumor hipofisario: ¿qué hormona?', topics: ['hipofisis'], start: 'tipo',
+      nodes: {
+        tipo: { q: '¿Qué predomina?', opts: [{ t: 'Galactorrea, amenorrea o baja libido', go: 'prl' }, { t: 'Manos y pies grandes, rasgos toscos', go: 'acro' }, { t: 'Obesidad central, estrías violáceas, HTA e hiperglucemia', go: 'cush' }, { t: 'Solo efecto de masa: cefalea y hemianopsia bitemporal', go: 'nf' }] },
+        prl: { q: 'Prolactina alta: antes de culpar al tumor, ¿qué encuentras?', hint: 'Descarta embarazo, hipotiroidismo primario y fármacos antidopaminérgicos.', opts: [{ t: 'TSH alta con T4 libre baja', go: 'hipot' }, { t: 'Toma un antipsicótico o metoclopramida', go: 'farm' }, { t: 'Todo normal y adenoma en la resonancia', go: 'prlma' }] },
+        acro: { q: 'IGF-1 alta: ¿qué pasa con la GH tras 75 g de glucosa?', opts: [{ t: 'No se suprime (más de 1 ng/mL)', go: 'acroL' }, { t: 'Se suprime (menos de 1 ng/mL)', go: 'acroNo' }] },
+        cush: { q: 'Hipercortisolismo confirmado (cortisol libre urinario, salival nocturno o 1 mg de dexametasona). ¿Cómo está la ACTH?', opts: [{ t: 'Baja (suprimida)', go: 'cushSup' }, { t: 'Normal o alta, con adenoma en la resonancia', go: 'cushHip' }, { t: 'Muy alta, sin tumor en la hipófisis y con hipokalemia', go: 'cushEct' }] },
+        nf: { q: 'Macroadenoma no funcionante: antes de operar, ¿qué haces?', opts: [{ t: 'Campimetría y todos los ejes; repón primero el cortisol', go: 'nfL' }, { t: 'Inicia levotiroxina primero', go: 'crisis' }] },
+        hipot: { end: 'Hiperprolactinemia por hipotiroidismo primario', d: 'La TRH alta estimula la prolactina: levotiroxina, y la prolactina se normaliza sin tocar la hipófisis.' },
+        farm: { end: 'Hiperprolactinemia por fármacos', d: 'Antipsicóticos, metoclopramida o verapamilo. Suspende o cambia el fármaco si se puede.' },
+        prlma: { end: 'Prolactinoma', d: 'Agonista dopaminérgico (cabergolina) de primera línea, incluso en macroprolactinoma con afección visual; cirugía si no responde o no lo tolera.' },
+        acroL: { end: 'Acromegalia', d: 'Resonancia de silla turca y cirugía transesfenoidal; si persiste, análogos de somatostatina. Busca cardiomegalia, diabetes, apnea y pólipos de colon.' },
+        acroNo: { end: 'Acromegalia descartada', d: 'Si la GH se suprime con la glucosa, la IGF-1 alta tiene otra explicación (embarazo, pubertad): repite y correlaciona.' },
+        cushSup: { end: 'Cushing independiente de ACTH', d: 'Primero descarta corticoides exógenos; luego TC de suprarrenales (adenoma o carcinoma) y suprarrenalectomía.' },
+        cushHip: { end: 'Enfermedad de Cushing (adenoma hipofisario)', d: 'La causa endógena más común. Cirugía transesfenoidal; si la resonancia no es clara, cateterismo de senos petrosos.' },
+        cushEct: { end: 'ACTH ectópica', d: 'Carcinoma pulmonar de células pequeñas o carcinoides: hipokalemia marcada y avance rápido. Busca el tumor con TC de tórax y abdomen.' },
+        nfL: { end: 'Adenoma no funcionante con efecto de masa', d: 'Cirugía transesfenoidal si comprime el quiasma. Antes, valora todos los ejes y repón primero el cortisol.' },
+        crisis: { end: 'Riesgo de crisis suprarrenal', d: 'La levotiroxina acelera el metabolismo del cortisol: si falta ACTH, primero hidrocortisona y después tiroides.' }
+      },
+      cases: [
+        { t: 'Mujer de 28 años con amenorrea y galactorrea; no toma medicamentos.', data: [['Prolactina', '180 ng/mL'], ['β-hCG', 'Negativa'], ['TSH', 'Normal'], ['Resonancia', 'Microadenoma de 6 mm']], path: { tipo: 0, prl: 2 }, end: 'prlma' },
+        { t: 'Mujer de 40 años con galactorrea, cansancio, piel seca y aumento de peso.', data: [['Prolactina', '60 ng/mL'], ['TSH', '28 mUI/L'], ['T4 libre', 'Baja']], path: { tipo: 0, prl: 0 }, end: 'hipot' },
+        { t: 'Hombre de 45 años al que ya no le queda su anillo; prognatismo y sudoración.', data: [['IGF-1', '3 veces el límite'], ['GH tras glucosa', '4.2 ng/mL']], path: { tipo: 1, acro: 0 }, end: 'acroL' },
+        { t: 'Mujer de 36 años con estrías violáceas, HTA y diabetes de reciente inicio.', data: [['Cortisol libre urinario', 'Alto'], ['Dexametasona 1 mg', 'No suprime'], ['ACTH', '68 pg/mL'], ['Resonancia', 'Adenoma de 5 mm']], path: { tipo: 2, cush: 1 }, end: 'cushHip' },
+        { t: 'Hombre de 62 años, fumador, con debilidad y un Cushing que avanzó en semanas.', data: [['K', '2.4 mEq/L'], ['ACTH', '320 pg/mL'], ['Resonancia de hipófisis', 'Normal'], ['TC de tórax', 'Masa pulmonar central']], path: { tipo: 2, cush: 2 }, end: 'cushEct' },
+        { t: 'Hombre de 55 años con cefalea que choca con los marcos de las puertas.', data: [['Campimetría', 'Hemianopsia bitemporal'], ['Resonancia', 'Macroadenoma de 2.8 cm'], ['Prolactina', '35 ng/mL'], ['Cortisol matutino', 'Bajo']], path: { tipo: 3, nf: 0 }, end: 'nfL' }
+      ]
+    },
+    hp: {
+      title: 'Hipertensión pulmonar: ¿qué grupo?', topics: ['hp'], start: 'eco',
+      nodes: {
+        eco: { q: 'Disnea con ecocardiograma que sugiere HP (PSAP alta, VD dilatado). ¿Qué encuentras primero?', opts: [{ t: 'Cardiopatía izquierda: FEVI baja, valvulopatía o aurícula izquierda grande', go: 'g2' }, { t: 'Enfermedad pulmonar o hipoxia: EPOC, intersticial, apnea del sueño', go: 'g3' }, { t: 'Ninguna de las dos', go: 'vq' }] },
+        vq: { q: 'Sin causa izquierda ni pulmonar: gammagrama ventilación/perfusión.', hint: 'El V/Q es el mejor estudio para descartar HP tromboembólica crónica (más sensible que la angio-TC).', opts: [{ t: 'Defectos de perfusión que no coinciden con la ventilación', go: 'g4' }, { t: 'Normal', go: 'cat' }] },
+        cat: { q: 'Cateterismo derecho: PAPm mayor de 20, presión en cuña de 15 o menos y RVP mayor de 2 UW. ¿Qué contexto tiene?', opts: [{ t: 'Mujer joven sin otra causa', go: 'hapi' }, { t: 'Esclerosis sistémica, VIH, hipertensión portal o anorexígenos', go: 'hapa' }] },
+        g2: { end: 'Grupo 2: por cardiopatía izquierda', d: 'La causa más común. Trata la cardiopatía (diuréticos, corregir la válvula); el sildenafil y otros vasodilatadores pulmonares no están indicados.' },
+        g3: { end: 'Grupo 3: por enfermedad pulmonar o hipoxia', d: 'Trata la neumopatía y da oxígeno si hay hipoxemia; CPAP en la apnea del sueño.' },
+        g4: { end: 'Grupo 4: tromboembólica crónica (HPTEC)', d: 'Anticoagulación de por vida y evaluación para endarterectomía pulmonar (curativa); riociguat o angioplastia con balón si no es operable.' },
+        hapi: { end: 'Grupo 1: hipertensión arterial pulmonar idiopática', d: 'Prueba de vasorreactividad en el cateterismo: si responde, calcioantagonista a dosis alta; si no, terapia combinada (antagonista de endotelina más inhibidor de PDE-5).' },
+        hapa: { end: 'Grupo 1: hipertensión arterial pulmonar asociada', d: 'Misma terapia específica que la idiopática (antagonista de endotelina, sildenafil o tadalafil, prostanoides) más el manejo de la enfermedad de base.' }
+      },
+      cases: [
+        { t: 'Mujer de 70 años con insuficiencia cardiaca, FEVI de 30% y disnea.', data: [['PSAP por eco', '55 mmHg'], ['Aurícula izquierda', 'Dilatada']], path: { eco: 0 }, end: 'g2' },
+        { t: 'Hombre de 68 años con EPOC grave.', data: [['SpO2', '86%'], ['VEF1', '35%'], ['PSAP por eco', '48 mmHg']], path: { eco: 1 }, end: 'g3' },
+        { t: 'Mujer de 52 años con disnea progresiva; tuvo una TEP hace un año.', data: [['PSAP por eco', '70 mmHg'], ['FEVI y espirometría', 'Normales'], ['Gammagrama V/Q', 'Defectos segmentarios no coincidentes']], path: { eco: 2, vq: 0 }, end: 'g4' },
+        { t: 'Mujer de 29 años con disnea de esfuerzo y síncope al subir escaleras.', data: [['FEVI y espirometría', 'Normales'], ['V/Q', 'Normal'], ['PAPm', '48 mmHg'], ['Cuña', '9 mmHg'], ['RVP', '9 UW']], path: { eco: 2, vq: 1, cat: 0 }, end: 'hapi' },
+        { t: 'Mujer de 50 años con esclerosis sistémica limitada y DLCO baja.', data: [['PSAP por eco', '60 mmHg'], ['V/Q', 'Normal'], ['PAPm', '38 mmHg'], ['Cuña', '10 mmHg']], path: { eco: 2, vq: 1, cat: 1 }, end: 'hapa' }
+      ]
+    },
+    leucemia: {
+      title: 'Leucemias y SMD: blastos y linaje', topics: ['leucemias'], start: 'blast',
+      nodes: {
+        blast: { q: '¿Hay blastos en sangre o médula?', opts: [{ t: 'Sí, 20% o más', go: 'aguda' }, { t: 'Menos de 20%, con displasia y citopenias', go: 'smd' }, { t: 'No: leucocitosis con células maduras', go: 'cron' }] },
+        aguda: { q: 'Leucemia aguda: ¿de qué linaje? (citometría de flujo)', opts: [{ t: 'Mieloide: mieloperoxidasa positiva, bastones de Auer', go: 'mieloide' }, { t: 'Linfoide: TdT, CD10 y CD19', go: 'lla' }] },
+        mieloide: { q: 'LMA: ¿hay coagulopatía y promielocitos cargados de bastones de Auer?', opts: [{ t: 'Sí', go: 'lpa' }, { t: 'No', go: 'lma' }] },
+        cron: { q: 'Leucocitosis madura: ¿qué células predominan?', opts: [{ t: 'Neutrófilos en todas las etapas, basofilia y esplenomegalia', go: 'lmc' }, { t: 'Linfocitos pequeños maduros y sombras de Gumprecht', go: 'llc' }] },
+        lpa: { end: 'Leucemia promielocítica aguda', d: 't(15;17) PML::RARA. Urgencia: ácido transretinoico (ATRA) en cuanto la sospeches, sin esperar la genética, y corrige la coagulopatía; ATRA con trióxido de arsénico.' },
+        lma: { end: 'Leucemia mieloide aguda', d: 'La aguda más común en adultos. Inducción con citarabina y antraciclina (7+3); vigila lisis tumoral y neutropenia febril.' },
+        lla: { end: 'Leucemia linfoblástica aguda', d: 'La más común en niños (pico de 2 a 5 años). Quimioterapia por fases con profilaxis del SNC; si es Ph+, se agrega un inhibidor de tirosina cinasa.' },
+        smd: { end: 'Síndrome mielodisplásico', d: 'Adulto mayor con citopenias, displasia y blastos menores de 20%. Según el IPSS-R: soporte transfusional, eritropoyetina o hipometilantes; el trasplante es la única cura.' },
+        lmc: { end: 'Leucemia mieloide crónica', d: 'Cromosoma Filadelfia, t(9;22) BCR::ABL1. Imatinib u otro inhibidor de tirosina cinasa, vigilando la respuesta molecular.' },
+        llc: { end: 'Leucemia linfocítica crónica', d: 'Linfocitosis B monoclonal de 5,000 o más (CD5+ y CD23+). En etapa temprana y sin síntomas, solo vigilancia.' }
+      },
+      cases: [
+        { t: 'Mujer de 40 años con sangrado de encías, equimosis y fiebre.', data: [['Leucocitos', '3,000/µL'], ['Plaquetas', '20,000/µL'], ['Fibrinógeno', '80 mg/dL'], ['Médula', '80% promielocitos con muchos bastones de Auer']], path: { blast: 0, aguda: 0, mieloide: 0 }, end: 'lpa' },
+        { t: 'Hombre de 67 años con cansancio e infecciones repetidas.', data: [['Blastos en médula', '45%, mieloperoxidasa +'], ['Bastones de Auer', 'Aislados'], ['Coagulación', 'Normal']], path: { blast: 0, aguda: 0, mieloide: 1 }, end: 'lma' },
+        { t: 'Niño de 4 años con dolor óseo, palidez y petequias.', data: [['Blastos en médula', '70%'], ['Citometría', 'TdT+, CD10+, CD19+']], path: { blast: 0, aguda: 1 }, end: 'lla' },
+        { t: 'Hombre de 50 años con saciedad temprana y bazo grande.', data: [['Leucocitos', '180,000/µL, todas las etapas'], ['Basófilos', '6%'], ['BCR::ABL1', 'Positivo']], path: { blast: 2, cron: 0 }, end: 'lmc' },
+        { t: 'Mujer de 72 años, asintomática, con linfocitosis en un chequeo.', data: [['Leucocitos', '28,000/µL, 85% linfocitos maduros'], ['Frotis', 'Sombras de Gumprecht'], ['Citometría', 'CD5+, CD23+']], path: { blast: 2, cron: 1 }, end: 'llc' },
+        { t: 'Hombre de 74 años con anemia macrocítica y plaquetas bajas.', data: [['Blastos en médula', '6%'], ['Médula', 'Displasia en dos líneas'], ['B12 y folato', 'Normales']], path: { blast: 1 }, end: 'smd' }
+      ]
+    },
+    linfoma: {
+      title: 'Adenopatía: ¿qué linfoma?', topics: ['linfo'], start: 'biop',
+      nodes: {
+        biop: { q: 'Adenopatía persistente (más de 4 semanas, mayor de 2 cm, dura, sin infección): ¿cómo la estudias?', opts: [{ t: 'Biopsia escisional o con aguja gruesa', go: 'tipo' }, { t: 'Aspiración con aguja fina', go: 'faf' }] },
+        tipo: { q: '¿Qué muestra la histología?', opts: [{ t: 'Células de Reed-Sternberg (CD15+, CD30+)', go: 'hodg' }, { t: 'Células B grandes difusas (CD20+), crecimiento rápido', go: 'ldcbg' }, { t: 'Patrón folicular con BCL2 por t(14;18), curso lento', go: 'folic' }] },
+        faf: { end: 'Insuficiente para diagnosticar un linfoma', d: 'La aspiración no muestra la arquitectura del ganglio: pide biopsia escisional o con aguja gruesa.' },
+        hodg: { end: 'Linfoma de Hodgkin', d: 'Adulto joven con adenopatía cervical o mediastinal, a veces con dolor al beber alcohol. PET-TC para estadificar; ABVD (o brentuximab con AVD), con radioterapia en etapas tempranas.' },
+        ldcbg: { end: 'Linfoma difuso de células B grandes', d: 'El linfoma no Hodgkin más común: agresivo pero curable. R-CHOP (o pola-R-CHP).' },
+        folic: { end: 'Linfoma folicular', d: 'Indolente, t(14;18). Sin síntomas ni masa voluminosa, vigilancia; si hay que tratar, rituximab con quimioterapia.' }
+      },
+      cases: [
+        { t: 'Hombre de 24 años con adenopatía cervical de 6 semanas, sudoración nocturna y prurito.', data: [['Radiografía', 'Mediastino ensanchado'], ['Biopsia', 'Células de Reed-Sternberg CD15+ CD30+']], path: { biop: 0, tipo: 0 }, end: 'hodg' },
+        { t: 'Mujer de 64 años con una masa abdominal que creció en 2 meses.', data: [['LDH', 'Alta'], ['Biopsia', 'Láminas de células B grandes CD20+']], path: { biop: 0, tipo: 1 }, end: 'ldcbg' },
+        { t: 'Hombre de 58 años con adenopatías axilares e inguinales que crecen y bajan desde hace 2 años.', data: [['Biopsia', 'Patrón folicular, BCL2+'], ['Citogenética', 't(14;18)']], path: { biop: 0, tipo: 2 }, end: 'folic' }
+      ]
+    },
+    disfagia: {
+      title: 'Disfagia: ¿orofaríngea o esofágica?', topics: ['deglucion'], start: 'tipo',
+      nodes: {
+        tipo: { q: '¿Dónde está el problema?', opts: [{ t: 'Le cuesta iniciar la deglución: tos, regurgitación nasal, voz húmeda', go: 'oro' }, { t: 'Siente que la comida se atora en el pecho segundos después de tragar', go: 'eso' }] },
+        eso: { q: 'Esofágica: ¿con qué alimentos?', opts: [{ t: 'Solo sólidos', go: 'obst' }, { t: 'Sólidos y líquidos desde el inicio', go: 'mot' }] },
+        obst: { q: 'Obstructiva: ¿cómo es?', hint: 'El primer estudio es la endoscopia con biopsias.', opts: [{ t: 'Progresiva, con pérdida de peso, en un fumador mayor', go: 'ca' }, { t: 'Intermitente, con impactación de alimento, en un joven con atopia', go: 'eeo' }, { t: 'Intermitente, no progresiva, con un anillo en la unión esofagogástrica', go: 'schatzki' }] },
+        mot: { q: 'Motora: ¿qué muestra la manometría de alta resolución?', opts: [{ t: 'Relajación incompleta del esfínter inferior y aperistalsis', go: 'acal' }, { t: 'Contracciones prematuras con dolor torácico', go: 'espasmo' }, { t: 'Peristalsis ausente con esfínter hipotenso, con Raynaud', go: 'esclero' }] },
+        oro: { end: 'Disfagia orofaríngea', d: 'Causas neuromusculares (EVC, Parkinson, miastenia) o divertículo de Zenker. Videofluoroscopia de la deglución y rehabilitación.' },
+        ca: { end: 'Cáncer de esófago hasta demostrar lo contrario', d: 'Endoscopia con biopsia: escamoso (tabaco y alcohol, tercio medio) o adenocarcinoma (Barrett, tercio distal). Estadifica con TC y ultrasonido endoscópico.' },
+        eeo: { end: 'Esofagitis eosinofílica', d: 'Anillos y surcos en la endoscopia; biopsias con 15 o más eosinófilos por campo. IBP, budesonida deglutida o dieta de eliminación.' },
+        schatzki: { end: 'Anillo de Schatzki', d: 'La “disfagia del filete”: impactación intermitente de sólidos. Dilatación endoscópica e IBP.' },
+        acal: { end: 'Acalasia', d: 'Esofagograma en “pico de pájaro”; se confirma con manometría (y endoscopia para descartar pseudoacalasia). Dilatación neumática, miotomía de Heller o POEM.' },
+        espasmo: { end: 'Espasmo esofágico distal', d: 'Dolor torácico que imita angina (descártala primero). Calcioantagonistas o nitratos; POEM si no responde.' },
+        esclero: { end: 'Esófago en esclerodermia', d: 'El músculo liso se fibrosa: reflujo grave por esfínter hipotenso. IBP a dosis altas y procinéticos.' }
+      },
+      cases: [
+        { t: 'Hombre de 78 años que tuvo un EVC; tose al beber y el líquido se le sale por la nariz.', data: [['Exploración', 'Disartria, voz húmeda']], path: { tipo: 0 }, end: 'oro' },
+        { t: 'Hombre de 66 años, fumador y bebedor, con disfagia a sólidos que avanza desde hace 3 meses.', data: [['Peso', 'Perdió 8 kg'], ['Hb', '10.9 g/dL']], path: { tipo: 1, eso: 0, obst: 0 }, end: 'ca' },
+        { t: 'Hombre de 22 años con asma y rinitis; se le atora la carne y ya necesitó endoscopia para sacarla.', data: [['Endoscopia', 'Anillos y surcos'], ['Biopsia', '40 eosinófilos por campo']], path: { tipo: 1, eso: 0, obst: 1 }, end: 'eeo' },
+        { t: 'Mujer de 38 años con disfagia a sólidos y líquidos desde el inicio y regurgitación de comida sin digerir.', data: [['Esofagograma', '“Pico de pájaro”'], ['Manometría', 'Relajación incompleta del esfínter, aperistalsis']], path: { tipo: 1, eso: 1, mot: 0 }, end: 'acal' },
+        { t: 'Mujer de 50 años con Raynaud, esclerodactilia y agruras intensas.', data: [['Manometría', 'Aperistalsis distal, esfínter hipotenso']], path: { tipo: 1, eso: 1, mot: 2 }, end: 'esclero' }
+      ]
+    },
     gaso: {
       title: 'Gasometría paso a paso', topics: ['lra', 'erc', 'dm2', 'diarrea'], start: 'ph',
       nodes: {
@@ -214,6 +374,21 @@ export default {
         { t: 'Hombre de 45 años que tomó alcohol adulterado y ahora ve borroso.', data: [['pH', '7.22'], ['PaCO2', '20 mmHg'], ['HCO3', '8 mEq/L'], ['Na / Cl', '140 / 102'], ['Brecha osmolar', '35 mOsm/kg']], path: { ph: 0, acid: 0, comp: 0, ag: 0, agcausa: 3 }, end: 'tox', why: { ag: '140 − (102 + 8) = 30.' } }
       ]
     }
+  },
+
+  // frotis.<id>: { name, why, topics } (las células se dibujan en app.js)
+  frotis: {
+    normal: { name: 'Frotis normal', why: 'Eritrocitos del tamaño del núcleo de un linfocito pequeño, con palidez central de un tercio; leucocitos y plaquetas normales.', topics: ['anemias', 'hemoliticas', 'sangrado', 'leucemias', 'linfo'] },
+    esquisto: { name: 'Esquistocitos', why: 'Fragmentos de eritrocito (en casco o en triángulo) por daño mecánico: microangiopatía trombótica (PTT, SHU, CID) o válvula protésica. Con plaquetas bajas, piensa en PTT: recambio plasmático urgente.', topics: ['sangrado', 'hemoliticas'] },
+    esfero: { name: 'Esferocitos', why: 'Pequeños, densos y sin palidez central: esferocitosis hereditaria (CHCM alta, Coombs negativo) o anemia hemolítica autoinmune por anticuerpos calientes (Coombs positivo).', topics: ['hemoliticas'] },
+    diana: { name: 'Dianocitos (células en diana)', why: 'Hemoglobina en el centro y en el borde: talasemia, hemoglobinopatía C, hepatopatía y después de una esplenectomía.', topics: ['anemias', 'hemoliticas'] },
+    ferro: { name: 'Microcitosis hipocrómica', why: 'Eritrocitos pequeños y pálidos de tamaños distintos (ADE alta), con células en lápiz: ferropenia. Confirma con ferritina.', topics: ['anemias'] },
+    lagrima: { name: 'Dacriocitos (células en lágrima)', why: 'Los eritrocitos se deforman al salir de una médula fibrosa: mielofibrosis o infiltración medular, con leucoeritroblastosis y esplenomegalia.', topics: ['leucemias', 'anemias'] },
+    hiperseg: { name: 'Neutrófilo hipersegmentado con macroovalocitos', why: 'Seis lóbulos o más (o más de 5% de neutrófilos con cinco): anemia megaloblástica por déficit de B12 o folato.', topics: ['anemias'] },
+    auer: { name: 'Blastos con bastones de Auer', why: 'Bastones rojizos en el citoplasma de mieloblastos: leucemia mieloide aguda. Si son muchos y hay coagulopatía, piensa en promielocítica y da ATRA ya.', topics: ['leucemias'] },
+    gump: { name: 'Sombras de Gumprecht', why: 'Linfocitos pequeños maduros y células que se rompen al hacer el frotis: leucemia linfocítica crónica.', topics: ['leucemias', 'linfo'] },
+    falci: { name: 'Drepanocitos (células falciformes)', why: 'La HbS se polimeriza con la hipoxia: anemia de células falciformes, con crisis vasooclusivas. Hidroxiurea; transfusión o recambio en las crisis graves.', topics: ['hemoliticas'] },
+    mordida: { name: 'Células mordidas (déficit de G6PD)', why: 'Los macrófagos del bazo “muerden” los cuerpos de Heinz: déficit de G6PD después de un fármaco oxidante, una infección o habas.', topics: ['hemoliticas'] }
   },
 
   ecg: {
