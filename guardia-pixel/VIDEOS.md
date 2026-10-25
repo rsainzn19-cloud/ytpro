@@ -83,7 +83,9 @@ los términos centrales de cada frase (máximo 4 a la vez; tienen prioridad los 
 python3 -m venv venv && venv/bin/pip install piper-tts
 # modelo: https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-es_MX-claude-high.tar.bz2
 PIPER_PY=venv/bin/python PIPER_VOICE=vits-piper-es_MX-claude-high node tools/narrate.cjs [tema1,tema2]
+sh tools/voces.sh [tema1 tema2]     # timbres “Héroe” y “Espartano” (mismos tiempos)
 node build.mjs
 ```
 
-Al publicar, los MP3 van junto a la página en la carpeta `audio/`.
+Al publicar, los MP3 van junto a la página en `audio/`, `audio/heroe/` y `audio/espartano/`. El botón de timbre
+del reproductor cambia entre Normal, Héroe y Espartano; si falta un archivo, se usa la voz normal.

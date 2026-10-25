@@ -768,7 +768,7 @@ TOPIC_TABS.leccion = (el, t, L) => {
     tp.read = today(); gain(30, 'Lección leída'); checkTopicDone(t.id); render();
   };
 };
-TOPIC_TABS.anim = (el, t, L) => { mountAnim(el, L.anim, t.id); };
+TOPIC_TABS.anim = (el, t, L) => { mountAnim(el, L.anim, t.id); mountPaths(el, t.id); };
 TOPIC_TABS.video = (el, t) => { mountVideo(el, t.id); };
 TOPIC_TABS.preguntas = (el, t) => {
   const qs = bank(t.id), ans = qs.filter((q) => S.qs[q.id]), ok = ans.filter((q) => S.qs[q.id].last === 1), bad = ans.filter((q) => S.qs[q.id].last === 0);
@@ -840,16 +840,21 @@ function hush() { TTS.tok++; hushRec(); if (TTS.ok) try { speechSynthesis.cancel
 
 // ───── Narración grabada: audio/<tema>.mp3 + mapa de tiempos por frase (C.voice[tema][hash] = [inicio, fin])
 // Suena en cualquier teléfono (también con el modo silencio); si falta, se usa la voz del navegador.
+// Tres timbres con los mismos tiempos (tools/voces.sh): audio/, audio/heroe/, audio/espartano/
 const VOICE = C.voice || {};
+const TIMBRES = { normal: ['Normal', ''], heroe: ['Héroe', 'heroe/'], espartano: ['Espartano', 'espartano/'] }, TB_BAD = new Set();
+const timbre = () => (TIMBRES[S.settings.vtimbre] && !TB_BAD.has(S.settings.vtimbre) ? S.settings.vtimbre : 'normal');
 let VA = null;
 function recAudio(tid) {
   if (!VOICE[tid]) return null;
-  if (VA && VA.tid === tid) return VA.ok ? VA.el : null;
+  const tb = timbre();
+  if (VA && VA.tid === tid && VA.tb === tb) return VA.ok ? VA.el : null;
   hushRec();
   const el = new Audio();
-  el.preload = 'auto'; el.setAttribute('playsinline', ''); el.src = `audio/${tid}.mp3`;
-  VA = { tid, el, ok: true };
-  el.addEventListener('error', () => { if (VA && VA.el === el) VA.ok = false; });
+  el.preload = 'auto'; el.setAttribute('playsinline', ''); el.src = `audio/${TIMBRES[tb][1]}${tid}.mp3`;
+  VA = { tid, tb, el, ok: true };
+  // Si falta el archivo de un timbre, se queda con la voz normal
+  el.addEventListener('error', () => { if (!VA || VA.el !== el) return; if (tb !== 'normal') { TB_BAD.add(tb); VA = null; } else VA.ok = false; });
   return el;
 }
 function hushRec() { if (VA) try { VA.el.pause(); } catch (e) { /* nada */ } }
@@ -908,12 +913,14 @@ function setCine(el, on) {
 function mountAnim(el, id, tid) {
   const A = C.anims[id], steps = A.steps, draws = SCENES[id];
   let step = 0, t = 0, last = null, playing = !reduce, auto = false, narr = false;
+  const qSteps = steps.map((s, i) => ((s.labels || []).length >= 2 ? i : -1)).filter((i) => i >= 0);
   el.innerHTML = `<h2>${esc(A.title)}</h2><div class="awrap" id="awrap"><div class="stage"><canvas width="160" height="120" aria-hidden="true"></canvas><div class="labels"></div></div>
+  <div class="lbank" hidden></div>
   <div class="cap" aria-live="polite"></div>
   <div class="actrl"><button class="btn small" data-act="aprev">◀ Paso</button><button class="btn small" data-act="aplay"></button><span class="stepn"></span><button class="btn small gold-btn" data-act="anext">Paso ▶</button></div>
-  <div class="actrl2"><button class="btn small" data-act="aauto" aria-pressed="false">▶ Reproducir todo</button><button class="btn small" data-act="anarr" aria-pressed="false">Narrar</button><button class="btn small" data-act="acine" aria-pressed="false">⛶ Pantalla</button></div>
+  <div class="actrl2"><button class="btn small" data-act="aauto" aria-pressed="false">▶ Reproducir todo</button><button class="btn small" data-act="anarr" aria-pressed="false">Narrar</button><button class="btn small" data-act="acine" aria-pressed="false">⛶ Pantalla</button>${qSteps.length ? '<button class="btn small gold-btn" data-act="aquiz">🧩 Etiquétalo</button>' : ''}</div>
   <div class="pips" role="group" aria-label="Pasos">${steps.map((_, i) => `<button data-act="apip" data-i="${i}" aria-label="Paso ${i + 1}"></button>`).join('')}</div></div>
-  <p class="small muted">“Reproducir todo” avanza solo; con “Narrar”, una voz lee cada paso.</p>`;
+  <p class="small muted">“Reproducir todo” avanza solo; con “Narrar”, una voz lee cada paso. Con “Etiquétalo” los nombres desaparecen y tú los pones: recordar cuesta más que reconocer, y por eso se queda.</p>`;
   const wrap = el.querySelector('#awrap'), g = Pix(el.querySelector('canvas').getContext('2d'));
   const draw = () => draws[step](g, reduce ? 3 : t);
   const sync = () => {
@@ -946,8 +953,116 @@ function mountAnim(el, id, tid) {
   ACT.aauto = () => { auto = !auto; sync(); if (auto) { pickVoice(); set(step === steps.length - 1 ? 0 : step); } else { hush(); clearLater(); } };
   ACT.anarr = () => { narr = !narr; sync(); if (narr) { pickVoice(); narrate(); } else hush(); };
   ACT.acine = (b) => { const on = !wrap.classList.contains('cine'); setCine(wrap, on); b.setAttribute('aria-pressed', on); b.textContent = on ? '✕ Salir' : '⛶ Pantalla'; };
+  // ── Etiquétalo: el mismo dibujo sin nombres; tocas una etiqueta y luego su lugar (o al revés)
+  let Q = null;
+  const bankEl = wrap.querySelector('.lbank'), capEl = wrap.querySelector('.cap');
+  const qfx = (k) => { if (S.settings.vsfx !== false) tones(VSFX[k]); };
+  // Los lugares numerados no se salen del dibujo aunque la etiqueta original esté en la orilla
+  const pos = (x, y) => `left:${clamp((x / 160) * 100, 8, 92)}%;top:${clamp((y / 120) * 100, 10, 90)}%`;
+  const qRender = () => {
+    const lab = steps[step].labels, solved = Q.ok.size === lab.length;
+    wrap.querySelector('.labels').innerHTML = lab.map(([x, y, txt], j) => (Q.ok.has(j)
+      ? `<span class="lok" style="${pos(x, y)}">${esc(txt)}</span>`
+      : `<button class="lslot${Q.slot === j ? ' sel' : ''}" data-act="aslot" data-j="${j}" style="${pos(x, y)}" aria-label="Lugar ${j + 1}">${j + 1}</button>`)).join('');
+    bankEl.innerHTML = Q.bank.map((b, k) => `<button class="lchip${Q.sel === k ? ' sel' : ''}" data-act="achip" data-k="${k}"${b.used ? ' disabled' : ''}>${esc(b.txt)}</button>`).join('');
+    const last = Q.k === qSteps.length - 1;
+    capEl.innerHTML = !solved ? `<p class="lhint">Dibujo ${Q.k + 1} de ${qSteps.length} · toca una etiqueta y luego su número en el dibujo.${Q.bank.some((b) => b.decoy) ? ' Ojo: una etiqueta no va aquí.' : ''}</p>`
+      : `${steps[step].cap}<div class="actrl"><button class="btn small gold-btn" data-act="${last ? 'aqend' : 'aqnext'}">${last ? 'Ver resultado' : 'Siguiente dibujo ▶'}</button></div>`;
+  };
+  const qEnter = (k) => {
+    Q.k = k; step = qSteps[k]; t = 0; last = null; Q.ok = new Set(); Q.bad = new Set(); Q.sel = null; Q.slot = null;
+    const lab = steps[step].labels, mine = new Set(lab.map((l) => l[2]));
+    const others = shuffle(steps.flatMap((s) => (s.labels || []).map((l) => l[2])).filter((x) => !mine.has(x)));
+    Q.bank = shuffle([...lab.map((l) => ({ txt: l[2] })), ...(others.length && lab.length <= 5 ? [{ txt: others[0], decoy: true }] : [])]);
+    wrap.querySelector('.stepn').textContent = `${step + 1}/${steps.length}`;
+    draw(); qRender();
+  };
+  const qTry = () => {
+    if (Q.sel == null || Q.slot == null) { qRender(); return; }
+    const b = Q.bank[Q.sel], j = Q.slot, lab = steps[step].labels;
+    if (b.txt === lab[j][2]) {
+      Q.ok.add(j); b.used = true; Q.tot++; if (!Q.bad.has(j)) Q.hits++;
+      Q.sel = null; Q.slot = null; qfx(Q.ok.size === lab.length ? 'ok' : 'pop');
+      qRender();
+    } else {
+      Q.bad.add(j); Q.miss++; Q.sel = null; Q.slot = null; qfx('bad'); qRender();
+      const el = wrap.querySelector(`.lslot[data-j="${j}"]`); if (el) el.classList.add('no');
+    }
+  };
+  const qBtn = (on) => { const b = wrap.querySelector('[data-act=aquiz]'); if (b) b.textContent = on ? '✕ Salir de la prueba' : '🧩 Etiquétalo'; };
+  const qStop = () => { Q = null; wrap.classList.remove('quiz'); bankEl.hidden = true; qBtn(false); set(step); };
+  ACT.aquiz = () => {
+    if (Q) { qStop(); return; }
+    auto = false; narr = false; sync(); hush(); clearLater();
+    Q = { k: 0, hits: 0, tot: 0, miss: 0 }; wrap.classList.add('quiz'); bankEl.hidden = false; qBtn(true);
+    qEnter(0); wrap.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
+  };
+  ACT.achip = (b) => { const k = +b.dataset.k; Q.sel = Q.sel === k ? null : k; qTry(); };
+  ACT.aslot = (b) => { const j = +b.dataset.j; Q.slot = Q.slot === j ? null : j; qTry(); };
+  ACT.aqnext = () => qEnter(Q.k + 1);
+  ACT.aqend = () => {
+    const p = Q.tot ? Q.hits / Q.tot : 0, tp = S.tp[tid] || (S.tp[tid] = {}), best = Math.max(tp.lab || 0, p);
+    tp.lab = best; gain(Math.round(10 + 20 * p), 'Diagrama etiquetado');
+    qfx(p >= 0.8 ? 'end' : 'recap');
+    wrap.querySelector('.labels').innerHTML = steps[step].labels.map(([x, y, txt]) => `<span class="lok" style="${pos(x, y)}">${esc(txt)}</span>`).join('');
+    bankEl.innerHTML = '';
+    capEl.innerHTML = `<p><b>${Q.hits} de ${Q.tot}</b> a la primera (${pct(p)}%). ${p >= 0.8 ? '¡Lo dominas!' : p >= 0.5 ? 'Vas bien: repítelo mañana y verás cómo sube.' : 'Míralo otra vez con “Narrar” y vuelve a intentarlo.'} Tu mejor marca: ${pct(best)}%.</p>
+      <div class="actrl"><button class="btn small gold-btn" data-act="aqagain">Otra vez</button><button class="btn small" data-act="aquiz">Salir</button></div>`;
+  };
+  ACT.aqagain = () => { Q = { k: 0, hits: 0, tot: 0, miss: 0 }; qEnter(0); };
   set(0);
   if (!reduce) loop((ts) => { if (last == null) last = ts; const dt = (ts - last) / 1000; last = ts; if (playing) t += Math.min(dt, 0.1); draw(); });
+}
+
+// ═══════════ ¿Dónde actúa? Ubica cada fármaco en su vía (C.paths, src/content/50-mecanismos.js)
+const PG = {};
+function mountPaths(host, tid) {
+  for (const [pid, p] of Object.entries(C.paths || {})) {
+    if (!(p.topics || []).includes(tid)) continue;
+    const sec = document.createElement('section');
+    sec.className = 'panel mech'; sec.style.marginTop = '14px'; host.appendChild(sec);
+    PG[pid] = { p, sec, tid, order: shuffle(p.drugs.map((_, i) => i)), k: 0, hits: 0, miss: 0, done: false, ans: null, pick: null, placed: {} };
+    pathRender(pid);
+  }
+  const node = (b) => { const g = PG[b.dataset.p]; return g && pathPick(b.dataset.p, +b.dataset.n); };
+  ACT.mnode = node;
+  ACT.mnext = (b) => { const g = PG[b.dataset.p]; g.k++; g.miss = 0; g.ans = null; g.pick = null; if (g.k >= g.order.length) pathEnd(b.dataset.p); else pathRender(b.dataset.p); };
+  ACT.magain = (b) => { const g = PG[b.dataset.p]; Object.assign(g, { order: shuffle(g.p.drugs.map((_, i) => i)), k: 0, hits: 0, miss: 0, done: false, ans: null, pick: null, placed: {} }); pathRender(b.dataset.p); };
+}
+function pathRender(pid) {
+  const g = PG[pid], p = g.p, cur = g.done ? null : p.drugs[g.order[g.k]];
+  const blockAt = g.ans != null && p.chain ? cur.n : -1;
+  const cls = (i) => [g.ans === 'ok' && cur.n === i ? 'ok' : '', g.ans === 'bad' && g.pick === i ? 'no' : '', g.ans === 'show' && cur.n === i ? 'hint' : '', blockAt >= 0 && i > blockAt ? 'dim' : '', g.done && g.pick === i ? 'sel' : ''].filter(Boolean).join(' ');
+  const nodes = p.nodes.map((nd, i) => `${i && p.chain ? `<li class="marr${blockAt >= 0 && i > blockAt ? ' off' : ''}" aria-hidden="true"><i></i><i></i><i></i></li>` : ''}<li><button class="mnode ${cls(i)}" data-act="mnode" data-p="${pid}" data-n="${i}"><b>${esc(nd.t)}</b><small>${esc(nd.s)}</small>${(g.placed[i] || []).length ? `<span class="mtags">${g.placed[i].map((d) => `<em>${esc(d)}</em>`).join('')}</span>` : ''}</button></li>`).join('');
+  let q, exp = '';
+  if (g.done) {
+    q = `<p class="mq">Toca un paso para ver qué fármacos actúan ahí.</p>`;
+    if (g.pick != null) exp = p.drugs.filter((d) => d.n === g.pick).map((d) => `<p><b>${esc(d.d)}</b>: ${esc(d.why)}</p>`).join('') || '<p class="muted">Ninguno de estos fármacos actúa aquí.</p>';
+  } else {
+    q = `<p class="mq"><span class="small muted">Fármaco ${g.k + 1} de ${g.order.length}</span><b class="mdrug">${esc(cur.d)}</b><span class="small muted">¿Dónde actúa?</span></p>`;
+    if (g.ans === 'ok' || g.ans === 'show') exp = `<p>${g.ans === 'ok' ? '✓ ' : 'Era aquí: '}<b>${esc(p.nodes[cur.n].t)}</b>. ${esc(cur.why)}</p>${p.chain ? '<p class="small muted">Todo lo que está debajo se apaga: así se ve el efecto en cascada.</p>' : ''}<div class="actrl"><button class="btn small gold-btn" data-act="mnext" data-p="${pid}">${g.k === g.order.length - 1 ? 'Ver resultado' : 'Siguiente fármaco ▶'}</button></div>`;
+    else if (g.ans === 'bad') exp = `<p>No es ahí. Piensa qué hace <b>${esc(cur.d)}</b> e inténtalo otra vez.</p>`;
+  }
+  g.sec.innerHTML = `<h2>¿Dónde actúa? · ${esc(p.title)}</h2>${q}<ol class="mpath${p.chain ? ' chain' : ''}">${nodes}</ol><div class="mexp" aria-live="polite">${exp}</div>${g.done ? `<div class="actrl"><button class="btn small" data-act="magain" data-p="${pid}">Jugar otra vez</button></div>` : ''}`;
+}
+function pathPick(pid, i) {
+  const g = PG[pid], p = g.p, sfx = (k) => { if (S.settings.vsfx !== false) tones(VSFX[k]); };
+  if (g.done) { g.pick = g.pick === i ? null : i; pathRender(pid); return; }
+  if (g.ans === 'ok' || g.ans === 'show') return;
+  const cur = p.drugs[g.order[g.k]];
+  g.pick = i;
+  if (cur.n === i) { g.ans = 'ok'; if (!g.miss) g.hits++; sfx('ok'); }
+  else { g.miss++; sfx('bad'); g.ans = g.miss >= 2 ? 'show' : 'bad'; }
+  if (g.ans === 'ok' || g.ans === 'show') (g.placed[cur.n] = g.placed[cur.n] || []).push(cur.d);
+  pathRender(pid);
+}
+function pathEnd(pid) {
+  const g = PG[pid], n = g.order.length, r = g.hits / n, tp = S.tp[g.tid] || (S.tp[g.tid] = {});
+  tp.mech = { ...(tp.mech || {}), [pid]: Math.max((tp.mech || {})[pid] || 0, r) };
+  g.done = true; g.pick = null; gain(Math.round(10 + 20 * r), 'Mecanismos ubicados');
+  if (S.settings.vsfx !== false) tones(VSFX[r >= 0.8 ? 'end' : 'recap']);
+  pathRender(pid);
+  g.sec.querySelector('.mq').insertAdjacentHTML('beforebegin', `<p class="mres"><b>${g.hits} de ${n}</b> a la primera. ${r >= 0.8 ? '¡Dominas esta vía!' : 'Repásala: es de lo que más preguntan.'}</p>`);
 }
 
 // ═══════════ Videos: escenas en pixel art con narración, subtítulos, capítulos y pausas con pregunta
@@ -1124,6 +1239,7 @@ function vPlay() {
   if (!VS) return;
   const first = !VS.started;
   VS.playing = true; VS.started = true; vBtn();
+  if (first) vSub('');
   if (first && !$('#vp').classList.contains('cine')) $('#vp').scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
   if (VS.sfx) { try { audio(); } catch (e) { /* sin audio */ } }
   if (first && VS.flat[VS.i].si === 0) { vfx('chapter'); const card = $('#vccard'); if (card) { const x = VS.flat[VS.i]; card.innerHTML = `<span>Capítulo ${x.ci + 1}</span><b>${esc(x.ch)}</b>`; card.classList.remove('on'); void card.offsetWidth; card.classList.add('on'); } }
@@ -1227,7 +1343,7 @@ function mountVideo(el, tid) {
     <div class="vctrl">
       <button class="vb" data-act="vprev" aria-label="Capítulo anterior">⏮</button><button class="vb vmain" data-act="vplay" id="vplaybtn" aria-label="Reproducir">▶</button><button class="vb" data-act="vnext" aria-label="Siguiente capítulo">⏭</button>
       <span class="vtime" id="vtime">0:00 / ${mmss(total)}</span>
-      <button class="vb" data-act="vspeed" aria-label="Velocidad">${VS.speed}×</button><button class="vb" data-act="vvoice" aria-pressed="${VS.voice}">Voz</button><button class="vb" data-act="vcc" aria-pressed="${VS.cc}" aria-label="Conceptos en pantalla">Aa</button><button class="vb" data-act="vsfx" aria-pressed="${VS.sfx}" aria-label="Efectos de sonido">♪</button><button class="vb" data-act="vmusic" aria-pressed="${VS.music}" aria-label="Música de fondo">Lo-fi</button><button class="vb" data-act="vcine" aria-pressed="false" aria-label="Modo cine">⛶</button>
+      <button class="vb" data-act="vspeed" aria-label="Velocidad">${VS.speed}×</button><button class="vb" data-act="vvoice" aria-pressed="${VS.voice}">Voz</button><button class="vb" data-act="vtimbre" aria-label="Tipo de voz">${TIMBRES[timbre()][0]}</button><button class="vb" data-act="vcc" aria-pressed="${VS.cc}" aria-label="Conceptos en pantalla">Aa</button><button class="vb" data-act="vsfx" aria-pressed="${VS.sfx}" aria-label="Efectos de sonido">♪</button><button class="vb" data-act="vmusic" aria-pressed="${VS.music}" aria-label="Música de fondo">Lo-fi</button><button class="vb" data-act="vcine" aria-pressed="false" aria-label="Modo cine">⛶</button>
     </div>
   </div>
   <section class="panel tight"><h2>Capítulos</h2><ol class="vchaps" id="vchaps">${chs.map((c, ci) => `<li><button data-act="vch" data-i="${ci}"><span>${ci + 1}. ${esc(c.ch)}</span><span class="small muted">${mmss(chSecs[ci])}</span></button></li>`).join('')}</ol>
@@ -1246,6 +1362,7 @@ function mountVideo(el, tid) {
   };
   ACT.vspeed = (b) => { VS.speed = SPEEDS[(SPEEDS.indexOf(VS.speed) + 1) % SPEEDS.length]; S.settings.vspeed = VS.speed; save(); b.textContent = VS.speed + '×'; restart(); };
   ACT.vvoice = (b) => { VS.voice = !VS.voice; S.settings.vvoice = VS.voice; save(); b.setAttribute('aria-pressed', VS.voice); if (VS.voice) TTS.broken = false; restart(); };
+  ACT.vtimbre = (b) => { const ks = Object.keys(TIMBRES), k = ks[(ks.indexOf(timbre()) + 1) % ks.length]; S.settings.vtimbre = k; TB_BAD.delete(k); save(); b.textContent = TIMBRES[k][0]; recAudio(tid); restart(); };
   ACT.vcc = (b) => { VS.cc = !VS.cc; S.settings.vcc = VS.cc; save(); b.setAttribute('aria-pressed', VS.cc); vSub(''); };
   ACT.vsfx = (b) => { VS.sfx = !VS.sfx; S.settings.vsfx = VS.sfx; save(); b.setAttribute('aria-pressed', VS.sfx); if (VS.sfx) vfx('pop', 3); };
   ACT.vmusic = (b) => { VS.music = !VS.music; S.settings.vmusic = VS.music; save(); b.setAttribute('aria-pressed', VS.music); if (VS.music && VS.playing) musicStart(); else musicStop(); };

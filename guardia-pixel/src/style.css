@@ -525,3 +525,41 @@ body.cine-on #hud,body.cine-on #tabs{display:none}
 .kc.new{box-shadow:0 0 0 2px rgba(0,0,0,.4),0 0 calc(var(--pulse) * 12px) var(--sc)}
 .vbar i{filter:brightness(calc(1 + var(--pulse) * .35))}
 @media (prefers-reduced-motion:reduce){.vsq::after{display:none}}
+
+/* Etiquétalo: lugares numerados sobre el dibujo y banco de etiquetas */
+.labels .lslot{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;min-width:30px;min-height:30px;padding:2px 6px;font:16px/1 var(--f-ui);color:var(--void);background:var(--gold);border:2px solid var(--gold-3);box-shadow:2px 2px 0 #000}
+.labels .lslot.sel{background:#fff;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan)}
+.labels .lslot.no{animation:lno .4s}
+.labels .lok{border:2px solid var(--ok);color:#fff;animation:kcin .4s ease-out both}
+@keyframes lno{0%,100%{transform:translate(-50%,-50%)}25%{transform:translate(calc(-50% - 5px),-50%);background:var(--bad)}75%{transform:translate(calc(-50% + 5px),-50%);background:var(--bad)}}
+.lbank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.lchip{min-height:40px;padding:6px 10px;font:clamp(14px,3.9vw,17px)/1.1 var(--f-mono);color:var(--ink);background:var(--panel);border:2px solid var(--line-2)}
+.lchip.sel{border-color:var(--cyan);color:#fff;box-shadow:0 0 0 2px var(--cyan)}
+.lchip:disabled{opacity:.3;text-decoration:line-through}
+.awrap.quiz .actrl2 .btn:not([data-act=aquiz]),.awrap.quiz>.actrl,.awrap.quiz .pips{display:none}
+.lhint{color:var(--ink-2)}
+/* ¿Dónde actúa? */
+.mq{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;margin:4px 0 10px}
+.mdrug{font:clamp(20px,6vw,26px)/1.1 var(--f-ui);color:var(--gold);text-shadow:2px 2px 0 #000}
+.mres{text-align:center;color:var(--gold-3)}
+.mpath{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.mpath.chain{gap:0}
+.mnode{width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:8px 10px;background:var(--panel-2);border:3px solid var(--line-2);color:var(--ink);transition:opacity .4s,filter .4s}
+.mnode b{font:15px/1.15 var(--f-ui)}
+.mnode small{font-size:13px;color:var(--ink-2);line-height:1.3}
+.mnode.ok{border-color:var(--ok);background:var(--ok-bg);animation:kcin .35s ease-out}
+.mnode.no{border-color:var(--bad);animation:mno .4s}
+.mnode.hint{border-color:var(--warn);background:var(--warn-bg)}
+.mnode.sel{border-color:var(--cyan)}
+.mnode.dim{opacity:.35;filter:grayscale(1)}
+@keyframes mno{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.mtags{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.mtags em{font:normal 12px/1 var(--f-mono);color:var(--void);background:var(--gold);padding:3px 5px}
+.marr{height:22px;position:relative}
+.marr i{position:absolute;left:50%;width:6px;height:6px;margin-left:-3px;background:var(--gold);animation:mflow 1.2s linear infinite}
+.marr i:nth-child(2){animation-delay:.4s}.marr i:nth-child(3){animation-delay:.8s}
+.marr.off i{animation:none;opacity:0}
+@keyframes mflow{from{top:0;opacity:0}30%{opacity:1}to{top:16px;opacity:0}}
+.mexp{min-height:1.5em;margin-top:10px;line-height:1.45}
+.mexp p{margin:0 0 6px}
+@media (prefers-reduced-motion:reduce){.marr i{animation:none;top:8px}}

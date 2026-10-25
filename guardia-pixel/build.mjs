@@ -12,7 +12,7 @@ const OUT = opt('--out');
 const ONLY = opt('--only') ? new Set(opt('--only').split(',').map((x) => x.trim())) : null;
 const keepTopic = (tid) => !ONLY || ['meta', 'diagnostico'].includes(tid) || ONLY.has(tid);
 
-const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {} };
+const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {} };
 for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('.js')).sort()) {
   const part = (await import(new URL('content/' + f, src))).default;
   // Con --only se cargan solo esos temas, pero los comparadores de todos (una lección puede usar uno ajeno)
@@ -23,7 +23,7 @@ for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('
       const tid = f.replace(/^\d+-|\.js$/g, '');
       v.forEach(([fr, bk], i) => C.cards.push({ id: `${tid}-c${String(i + 1).padStart(2, '0')}`, topic: tid, f: fr, b: bk }));
     } else if (Array.isArray(v)) C[k] = (C[k] || []).concat(v);
-    else if (typeof v === 'object' && ['lessons', 'compares', 'anims'].includes(k)) Object.assign(C[k], v);
+    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths'].includes(k)) Object.assign(C[k], v);
     else C[k] = v;
   }
 }
@@ -56,6 +56,12 @@ for (const tid of Object.keys(C.lessons)) {
   if (L.anim && !C.anims[L.anim]) errs.push(`${tid}: animación ${L.anim} no existe`);
 }
 for (const t of C.topics) if (!C.lessons[t.id] && keepTopic(t.id)) errs.push(`tema ${t.id} sin lección`);
+// “¿Dónde actúa?”: cada fármaco apunta a un nodo que existe y cada vía a temas que existen
+for (const [pid, p] of Object.entries(C.paths)) {
+  if (!p.title || !Array.isArray(p.nodes) || p.nodes.length < 3 || !Array.isArray(p.drugs) || p.drugs.length < 3) errs.push(`vía ${pid}: faltan título, nodos o fármacos`);
+  for (const tid of p.topics || []) if (!C.topics.some((t) => t.id === tid)) errs.push(`vía ${pid}: tema ${tid} no existe`);
+  for (const d of p.drugs || []) if (!(d.n >= 0 && d.n < p.nodes.length) || !d.d || !d.why) errs.push(`vía ${pid}: fármaco ${d.d} mal definido`);
+}
 for (const [tid, L] of Object.entries(C.lessons)) {
   if (!Array.isArray(L.nn) || typeof L.yt !== 'string' || !L.yt) errs.push(`${tid}: faltan videos (nn/yt)`);
   for (const k of ['hook', 'sections', 'mnemo', 'pearl', 'trap', 'guide', 'refs']) if (!L[k]) errs.push(`${tid}: falta ${k}`);

@@ -20,7 +20,11 @@ Los 30 temas tienen:
   teléfono, conceptos clave en pantalla, música lo-fi sincronizada, capítulos, pausas con pregunta, modo cine y maratón por materia (ver `VIDEOS.md`).
 - **Lección** con fisiopatología, diagnóstico diferencial, fármacos clave, “cómo lo preguntan en el
   examen”, mnemotecnia, perla, trampa y caja de “Depende de la guía”.
-- **Animación** paso a paso (30), con reproducción automática, narración y pantalla completa.
+- **Animación** paso a paso (30), con reproducción automática, narración y pantalla completa, y modo
+  **Etiquétalo** (el dibujo sin nombres: tú pones cada etiqueta en su lugar).
+- **¿Dónde actúa?** (`src/content/50-mecanismos.js`): ubica cada fármaco en su vía o diana (SRAA, diuréticos,
+  plaqueta, coagulación, ácido úrico, ácido gástrico, antidiabéticos, hipolipemiantes, FAME); en las cascadas,
+  lo que queda debajo del bloqueo se apaga.
 - **Preguntas** tipo caso clínico con explicación por distractor: 20 por tema de prioridad alta y 15 por
   tema de prioridad media o baja (540 en total), además de tarjetas con repetición espaciada.
 - **Videos de repaso externos** en inglés (Ninja Nerd y Dirty Medicine).
