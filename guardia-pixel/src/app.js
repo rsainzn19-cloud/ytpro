@@ -626,6 +626,7 @@ VIEWS.home = (m) => {
   </section>
   ${S.diag.done ? '' : `<section class="panel cta-diag"><p class="eyebrow">Empieza aquí</p><h2>${diagN ? 'Termina tu diagnóstico' : 'Diagnóstico inicial'}</h2><p class="muted">30 preguntas, 5 por materia, con explicación al momento. Al final ves tus temas débiles en un mapa de calor y el plan se reacomoda día por día hasta el ${fmtLong(addDays(C.exam.date, -1))}.</p>${diagN ? `<div class="seg cy" style="--p:${diagN / 30}"><i></i></div><p class="small muted">${diagN} de 30 respondidas · tu avance se guarda</p>` : ''}<button class="btn gold-btn big" data-act="startDiag">${diagN ? 'Continuar' : 'Empezar'} · unos 25 min</button></section>`}
   <section class="panel"><div class="row"><h2 class="grow">Hoy · ${fmtDay(td)}</h2><span class="dtype">${TYPE_LABEL[dayType(td)]}</span></div>${todayBlocks()}<button class="btn small ghost" data-go="plan" style="align-self:flex-start">Ver el plan completo</button></section>
+  ${mixPanel()}
   <div class="duo">
     <button class="tile" data-go="repaso"><span class="eyebrow">Repaso de hoy</span><span class="n">${cq.due.length + cq.fresh.length}</span><span class="t">tarjetas</span><span class="d">${ed} en el cuaderno de errores</span></button>
     <button class="tile" data-go="ruleta"><span class="eyebrow">Ruleta</span><span class="row" style="gap:4px">${C.subjects.map((s) => subjIcon(s.id, 2)).join('')}</span><span class="t">¿Cuál será tu enfermedad?</span><span class="d">Un caso al azar</span></button>
@@ -634,7 +635,35 @@ VIEWS.home = (m) => {
   ${S.diag.done ? `<section class="panel"><div class="row"><h2 class="grow">Cómo vas por materia</h2><button class="btn small ghost" data-go="diagres">Mapa de calor</button></div>${subjBars()}</section>` : ''}`;
   ACT.startDiag = startDiag;
   ACT.carta = openCarta;
+  ACT.mix = startMix;
 };
+// Ronda mezclada: 10 preguntas revueltas de temas que ya viste; primero las falladas y las nuevas
+function mixPick() {
+  const td = today();
+  let pool = C.topics.filter((t) => hasContent(t.id) && (begun(t.id) || (S.tp[t.id] && S.tp[t.id].done) || answeredIn(t.id) || (S.vid[t.id] && S.vid[t.id].done))).map((t) => t.id);
+  if (pool.length < 3) pool = [...new Set([...pool, ...((S.plan && S.plan.days) || []).filter((d) => d.date <= td).flatMap((d) => d.blocks).filter((b) => b.k === 'topic').map((b) => b.t)])];
+  if (pool.length < 3) pool = [...new Set([...pool, ...C.topics.filter((t) => t.pri === 'alta' && hasContent(t.id)).map((t) => t.id)])];
+  const w = (q) => (S.qs[q.id] ? S.qs[q.id].ok / S.qs[q.id].n : 0.35) + Math.random() * 0.3;
+  const byT = shuffle(pool).map((tid) => bank(tid).map((q) => [w(q), q.id]).sort((a, b) => a[0] - b[0]).map((x) => x[1]));
+  const out = [];
+  for (let r = 0; out.length < 10 && byT.some((l) => l.length > r); r++) for (const l of byT) if (l[r] && out.length < 10) out.push(l[r]);
+  return { qids: shuffle(out), n: pool.length };
+}
+function startMix() {
+  const { qids, n } = mixPick();
+  if (!qids.length) { toast('Todavía no hay preguntas para mezclar'); return; }
+  const first = !(S.mix && S.mix.date === today());
+  startQuiz({ mode: 'mix', title: `Ronda mezclada · ${n} temas`, qids, tab: 'home', back: 'home', onEnd: (qs) => {
+    const ok = qs.res.filter((r) => r && r.ok).length;
+    S.mix = { date: today(), ok, n: qs.qids.length };
+    if (first) gain(15, 'Ronda mezclada del día');
+    save();
+  } });
+}
+function mixPanel() {
+  const done = S.mix && S.mix.date === today();
+  return `<section class="panel"><div class="row"><h2 class="grow">Ronda mezclada</h2><span class="small muted">${done ? `Hoy: ${S.mix.ok}/${S.mix.n}` : '10 preguntas · 8 min'}</span></div><p class="muted small">Preguntas revueltas de los temas que ya viste, primero las que fallaste. Cuesta más que repasar un solo tema, y por eso se queda mejor; además, así viene el examen.</p><button class="btn ${done ? '' : 'gold-btn '}" data-act="mix">${done ? 'Otra ronda' : 'Empezar la ronda de hoy'}</button></section>`;
+}
 function openCarta(el) {
   const d = dailyCard();
   if (d.done) { toast('Ya jugaste la carta de hoy. Mañana sale otra.'); return; }
@@ -730,8 +759,8 @@ VIEWS.topic = (m) => {
     return;
   }
   const hasCase = C.cases.some((c) => c.topic === t.id);
-  const tabs = [['video', 'Video'], ['leccion', 'Lección'], ['anim', 'Animación'], ['preguntas', 'Preguntas'], ['guardia', 'Guardia'], ['tarjetas', 'Tarjetas'], ['jefe', 'Jefe']]
-    .filter(([k]) => (k !== 'anim' || L.anim) && (k !== 'guardia' || hasCase) && (k !== 'video' || L.video));
+  const tabs = [['video', 'Video'], ['leccion', 'Lección'], ['anim', 'Animación'], ['taller', 'Taller'], ['preguntas', 'Preguntas'], ['guardia', 'Guardia'], ['tarjetas', 'Tarjetas'], ['jefe', 'Jefe']]
+    .filter(([k]) => (k !== 'anim' || L.anim) && (k !== 'guardia' || hasCase) && (k !== 'video' || L.video) && (k !== 'taller' || hasTaller(t.id)));
   m.innerHTML = `${head}<div class="ttabs" role="tablist" aria-label="Secciones del tema">${tabs.map(([k, l]) => `<button class="ttab" role="tab" aria-selected="${tab === k}" data-go="topic" data-a="${t.id}" data-b="${k}">${l}</button>`).join('')}</div><div id="tbody" class="stack"></div>`;
   (tabs.some(([k]) => k === tab) ? TOPIC_TABS[tab] : TOPIC_TABS.leccion)($('#tbody'), t, L);
 };
@@ -768,7 +797,7 @@ TOPIC_TABS.leccion = (el, t, L) => {
     tp.read = today(); gain(30, 'Lección leída'); checkTopicDone(t.id); render();
   };
 };
-TOPIC_TABS.anim = (el, t, L) => { mountAnim(el, L.anim, t.id); mountPaths(el, t.id); };
+TOPIC_TABS.anim = (el, t, L) => { mountAnim(el, L.anim, t.id); };
 TOPIC_TABS.video = (el, t) => { mountVideo(el, t.id); };
 TOPIC_TABS.preguntas = (el, t) => {
   const qs = bank(t.id), ans = qs.filter((q) => S.qs[q.id]), ok = ans.filter((q) => S.qs[q.id].last === 1), bad = ans.filter((q) => S.qs[q.id].last === 0);
@@ -917,10 +946,11 @@ function mountAnim(el, id, tid) {
   el.innerHTML = `<h2>${esc(A.title)}</h2><div class="awrap" id="awrap"><div class="stage"><canvas width="160" height="120" aria-hidden="true"></canvas><div class="labels"></div></div>
   <div class="lbank" hidden></div>
   <div class="cap" aria-live="polite"></div>
+  <div class="lbank pbank" hidden></div>
   <div class="actrl"><button class="btn small" data-act="aprev">◀ Paso</button><button class="btn small" data-act="aplay"></button><span class="stepn"></span><button class="btn small gold-btn" data-act="anext">Paso ▶</button></div>
-  <div class="actrl2"><button class="btn small" data-act="aauto" aria-pressed="false">▶ Reproducir todo</button><button class="btn small" data-act="anarr" aria-pressed="false">Narrar</button><button class="btn small" data-act="acine" aria-pressed="false">⛶ Pantalla</button>${qSteps.length ? '<button class="btn small gold-btn" data-act="aquiz">🧩 Etiquétalo</button>' : ''}</div>
+  <div class="actrl2"><button class="btn small" data-act="aauto" aria-pressed="false">▶ Reproducir todo</button><button class="btn small" data-act="anarr" aria-pressed="false">Narrar</button><button class="btn small" data-act="acine" aria-pressed="false">⛶ Pantalla</button>${qSteps.length ? '<button class="btn small gold-btn" data-act="aquiz">🧩 Etiquétalo</button>' : ''}${steps.length >= 3 ? '<button class="btn small gold-btn" data-act="apred">🔮 Predice</button>' : ''}</div>
   <div class="pips" role="group" aria-label="Pasos">${steps.map((_, i) => `<button data-act="apip" data-i="${i}" aria-label="Paso ${i + 1}"></button>`).join('')}</div></div>
-  <p class="small muted">“Reproducir todo” avanza solo; con “Narrar”, una voz lee cada paso. Con “Etiquétalo” los nombres desaparecen y tú los pones: recordar cuesta más que reconocer, y por eso se queda.</p>`;
+  <p class="small muted">“Reproducir todo” avanza solo; con “Narrar”, una voz lee cada paso. Con “Etiquétalo” los nombres desaparecen y tú los pones; con “Predice” eliges qué pasa antes de verlo. Recordar y predecir cuestan más que reconocer, y por eso se queda.</p>`;
   const wrap = el.querySelector('#awrap'), g = Pix(el.querySelector('canvas').getContext('2d'));
   const draw = () => draws[step](g, reduce ? 3 : t);
   const sync = () => {
@@ -989,7 +1019,7 @@ function mountAnim(el, id, tid) {
       const el = wrap.querySelector(`.lslot[data-j="${j}"]`); if (el) el.classList.add('no');
     }
   };
-  const qBtn = (on) => { const b = wrap.querySelector('[data-act=aquiz]'); if (b) b.textContent = on ? '✕ Salir de la prueba' : '🧩 Etiquétalo'; };
+  const qBtn = (on) => { const b = wrap.querySelector('[data-act=aquiz]'); if (b) { b.textContent = on ? '✕ Salir de la prueba' : '🧩 Etiquétalo'; b.classList.toggle('on', on); } };
   const qStop = () => { Q = null; wrap.classList.remove('quiz'); bankEl.hidden = true; qBtn(false); set(step); };
   ACT.aquiz = () => {
     if (Q) { qStop(); return; }
@@ -1010,15 +1040,55 @@ function mountAnim(el, id, tid) {
       <div class="actrl"><button class="btn small gold-btn" data-act="aqagain">Otra vez</button><button class="btn small" data-act="aquiz">Salir</button></div>`;
   };
   ACT.aqagain = () => { Q = { k: 0, hits: 0, tot: 0, miss: 0 }; qEnter(0); };
+  // ── Predice: antes de ver cada paso, eliges qué crees que pasa (título del paso → su explicación)
+  let R = null;
+  const predEl = wrap.querySelector('.pbank');
+  const parts = (i) => {
+    const txt = steps[i].cap.replace(/<[^>]+>/g, '').trim(), cut = txt.indexOf('. ');
+    if (cut < 0) return null;
+    let body = txt.slice(cut + 2).trim();
+    if (body.length > 160) { const end = body.lastIndexOf('. ', 160); body = end > 60 ? body.slice(0, end + 1) : body.slice(0, body.lastIndexOf(' ', 155)) + '…'; }
+    return body.length >= 20 ? { title: txt.slice(0, cut), body } : null;
+  };
+  const rBtn = (on) => { const b = wrap.querySelector('[data-act=apred]'); if (b) { b.textContent = on ? '✕ Salir de Predice' : '🔮 Predice'; b.classList.toggle('on', on); } };
+  const rAsk = () => {
+    while (R.k < steps.length && !parts(R.k)) R.k++;
+    if (R.k >= steps.length) { rEnd(); return; }
+    const me = parts(R.k), pool = shuffle(steps.map((_, i) => i).filter((i) => i !== R.k && parts(i)));
+    const others = [...pool.filter((i) => i !== step), ...pool.filter((i) => i === step)].slice(0, 2);
+    R.opts = shuffle([R.k, ...others]); R.pick = null;
+    predEl.innerHTML = `<div class="pred"><p class="aq">Lo que sigue: <b>${esc(me.title)}</b>. ¿Qué crees que pasa?</p><div class="aopts">${R.opts.map((i) => `<button class="aopt" data-act="apick" data-i="${i}">${esc(parts(i).body)}</button>`).join('')}</div></div>`;
+  };
+  const rEnd = () => {
+    const p = R.n ? R.hits / R.n : 0, tp = S.tp[tid] || (S.tp[tid] = {});
+    tp.pred = Math.max(tp.pred || 0, p); gain(Math.round(8 + 17 * p), 'Predicciones');
+    qfx(p >= 0.8 ? 'end' : 'recap');
+    predEl.innerHTML = `<div class="pred"><p><b>${R.hits} de ${R.n}</b> predicciones correctas (${pct(p)}%). ${p >= 0.8 ? '¡Entiendes la secuencia!' : 'Vuelve a verla con “Narrar” y repite: la segunda vez se arma sola.'}</p><div class="actrl"><button class="btn small gold-btn" data-act="apred">Salir</button></div></div>`;
+  };
+  ACT.apred = () => {
+    if (R) { R = null; wrap.classList.remove('quiz'); predEl.hidden = true; predEl.innerHTML = ''; rBtn(false); set(step); return; }
+    if (Q) qStop();
+    auto = false; narr = false; sync(); hush(); clearLater();
+    R = { k: 1, hits: 0, n: 0 }; wrap.classList.add('quiz'); predEl.hidden = false; rBtn(true);
+    set(0); rAsk(); wrap.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
+  };
+  ACT.apick = (b) => {
+    if (!R || R.pick != null) return;
+    const i = +b.dataset.i; R.pick = i; R.n++;
+    const ok = i === R.k; if (ok) R.hits++;
+    qfx(ok ? 'ok' : 'bad');
+    predEl.querySelectorAll('.aopt').forEach((x) => { const j = +x.dataset.i; x.disabled = true; if (j === R.k) x.classList.add('ok'); else if (j === i) x.classList.add('no'); });
+    setTimeout(() => { if (!R) return; set(R.k); R.k++; rAsk(); }, ok ? 900 : 1800);
+  };
   set(0);
   if (!reduce) loop((ts) => { if (last == null) last = ts; const dt = (ts - last) / 1000; last = ts; if (playing) t += Math.min(dt, 0.1); draw(); });
 }
 
 // ═══════════ ¿Dónde actúa? Ubica cada fármaco en su vía (C.paths, src/content/50-mecanismos.js)
 const PG = {};
-function mountPaths(host, tid) {
+function mountPaths(host, tid, only) {
   for (const [pid, p] of Object.entries(C.paths || {})) {
-    if (!(p.topics || []).includes(tid)) continue;
+    if (!(p.topics || []).includes(tid) || (only && pid !== only)) continue;
     const sec = document.createElement('section');
     sec.className = 'panel mech'; sec.style.marginTop = '14px'; host.appendChild(sec);
     PG[pid] = { p, sec, tid, order: shuffle(p.drugs.map((_, i) => i)), k: 0, hits: 0, miss: 0, done: false, ans: null, pick: null, placed: {} };
@@ -1064,6 +1134,378 @@ function pathEnd(pid) {
   pathRender(pid);
   g.sec.querySelector('.mq').insertAdjacentHTML('beforebegin', `<p class="mres"><b>${g.hits} de ${n}</b> a la primera. ${r >= 0.8 ? '¡Dominas esta vía!' : 'Repásala: es de lo que más preguntan.'}</p>`);
 }
+
+// ═══════════ Taller: algoritmos con casos, lectura de ECG y simuladores (src/content/51-taller.js)
+const wsfx = (k) => { if (S.settings.vsfx !== false) tones(VSFX[k]); };
+const WS = () => S.ws || (S.ws = {});
+// ── Algoritmos: recorres el árbol con un caso; en cada bifurcación eliges y te dice si vas bien
+const AG = {};
+function mountAlgo(host, aid) {
+  algoActs();
+  const A = C.algos[aid], sec = document.createElement('section');
+  sec.className = 'panel algo'; host.appendChild(sec);
+  AG[aid] = { A, sec, free: false, order: shuffle(A.cases.map((_, i) => i)), k: 0, hits: 0, steps: 0, fin: false };
+  algoGo(aid, 0);
+}
+function algoActs() {
+  ACT.agpick = (b) => algoPick(b.dataset.a, +b.dataset.i);
+  ACT.agnext = (b) => algoGo(b.dataset.a, AG[b.dataset.a].k + 1);
+  ACT.agend = (b) => {
+    const g = AG[b.dataset.a], r = g.steps ? g.hits / g.steps : 0;
+    WS()[`algo:${b.dataset.a}`] = Math.max(WS()[`algo:${b.dataset.a}`] || 0, r);
+    gain(Math.round(15 + 25 * r), 'Algoritmo resuelto'); wsfx(r >= 0.8 ? 'end' : 'recap');
+    g.fin = true; algoRender(b.dataset.a);
+  };
+  ACT.agagain = (b) => { const g = AG[b.dataset.a]; Object.assign(g, { free: false, order: shuffle(g.A.cases.map((_, i) => i)), hits: 0, steps: 0 }); algoGo(b.dataset.a, 0); };
+  ACT.agfree = (b) => { AG[b.dataset.a].free = true; algoGo(b.dataset.a, 0); };
+  ACT.agcases = (b) => { const g = AG[b.dataset.a]; if (!g.free) return; Object.assign(g, { free: false, hits: 0, steps: 0 }); algoGo(b.dataset.a, 0); };
+  ACT.agtop = (b) => algoGo(b.dataset.a, 0);
+  ACT.agback = (b) => { const g = AG[b.dataset.a], s = g.trail.pop(); if (s) { g.cur = s.n; g.msg = ''; algoRender(b.dataset.a); } };
+}
+function algoGo(aid, k) { const g = AG[aid]; Object.assign(g, { k, cur: g.A.start, trail: [], miss: 0, msg: '', fin: false }); algoRender(aid); }
+function algoRender(aid) {
+  const g = AG[aid], A = g.A, N = A.nodes, n = N[g.cur], cs = g.free ? null : A.cases[g.order[g.k]];
+  const trail = g.trail.map((s) => `<li class="${s.bad ? 'bad' : ''}"><span>${esc(N[s.n].q)}</span><b>${esc(N[s.n].opts[s.o].t)}</b></li>`).join('');
+  let body;
+  if (g.fin) {
+    const r = g.steps ? g.hits / g.steps : 0;
+    body = `<p class="mres"><b>${g.hits} de ${g.steps}</b> decisiones a la primera (${pct(r)}%). ${r >= 0.8 ? '¡Ya piensas como en el examen!' : 'Repite los casos: el algoritmo se graba a fuerza de recorrerlo.'}</p><div class="actrl"><button class="btn small gold-btn" data-act="agagain" data-a="${aid}">Otra ronda</button><button class="btn small" data-act="agfree" data-a="${aid}">Explorar libre</button></div>`;
+  } else if (n.end) {
+    const last = !g.free && g.k === A.cases.length - 1;
+    body = `<div class="aleaf"><span class="eyebrow">${g.free ? 'Llegas a' : 'Diagnóstico y conducta'}</span><b>${esc(n.end)}</b><p>${esc(n.d)}</p></div>
+      <div class="actrl">${g.free ? `<button class="btn small" data-act="agback" data-a="${aid}">◀ Atrás</button><button class="btn small gold-btn" data-act="agtop" data-a="${aid}">Volver al inicio</button>` : `<button class="btn small gold-btn" data-act="${last ? 'agend' : 'agnext'}" data-a="${aid}">${last ? 'Ver resultado' : 'Siguiente caso ▶'}</button>`}</div>`;
+  } else {
+    const good = cs ? cs.path[g.cur] : -1;
+    body = `<p class="aq">${esc(n.q)}</p>${n.hint ? `<details class="ahint"><summary>Pista</summary><p>${esc(n.hint)}</p></details>` : ''}
+      <div class="aopts">${n.opts.map((o, i) => `<button class="aopt${g.miss >= 2 && i === good ? ' hint' : ''}" data-act="agpick" data-a="${aid}" data-i="${i}">${esc(o.t)}</button>`).join('')}</div>
+      ${g.free && g.trail.length ? `<div class="actrl"><button class="btn small" data-act="agback" data-a="${aid}">◀ Atrás</button></div>` : ''}`;
+  }
+  g.sec.innerHTML = `<div class="row"><h2 class="grow">Algoritmo · ${esc(A.title)}</h2></div>
+    <div class="seg2" role="group" aria-label="Modo"><button class="btn small${g.free ? '' : ' gold-btn'}" data-act="agcases" data-a="${aid}">Con casos</button><button class="btn small${g.free ? ' gold-btn' : ''}" data-act="agfree" data-a="${aid}">Explorar libre</button></div>
+    ${cs && !g.fin ? `<div class="acase"><p class="small muted">Caso ${g.k + 1} de ${A.cases.length}</p><p>${esc(cs.t)}</p><dl>${cs.data.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl></div>` : ''}
+    ${g.free && !g.trail.length ? '<p class="small muted">Recorre el árbol a tu ritmo: toca cualquier opción para ver a dónde lleva.</p>' : ''}
+    ${trail ? `<ol class="atrail">${trail}</ol>` : ''}
+    ${g.msg ? `<p class="amsg">${g.msg}</p>` : ''}${body}`;
+}
+function algoPick(aid, i) {
+  const g = AG[aid], N = g.A.nodes, n = N[g.cur];
+  if (!n || n.end) return;
+  if (g.free) { g.trail.push({ n: g.cur, o: i }); g.cur = n.opts[i].go; g.msg = ''; wsfx('pop'); algoRender(aid); return; }
+  const cs = g.A.cases[g.order[g.k]], good = cs.path[g.cur];
+  if (i === good) {
+    if (!g.miss) g.hits++;
+    g.steps++;
+    const why = cs.why && cs.why[g.cur];
+    g.trail.push({ n: g.cur, o: i, bad: g.miss > 0 }); g.cur = n.opts[i].go; g.miss = 0;
+    g.msg = why ? `✓ ${esc(why)}` : '';
+    wsfx(N[g.cur].end ? 'ok' : 'pop');
+  } else {
+    g.miss++; wsfx('bad');
+    g.msg = g.miss >= 2 ? 'Te marco la correcta: tócala para seguir.' : 'No. Vuelve a mirar los datos del caso.';
+  }
+  algoRender(aid);
+}
+
+// ── ECG sintético: cada latido es una suma de gaussianas (P, Q, R, S, T, U) con valores por derivación y por patrón
+const LEADS = ['I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6'];
+const ECG_BASE = { // P, Q, R, S, T en mV
+  I: [0.1, -0.05, 0.8, -0.1, 0.25], II: [0.15, -0.05, 1.2, -0.15, 0.3], III: [0.05, -0.05, 0.5, -0.2, 0.1],
+  aVR: [-0.1, 0, 0.15, -0.8, -0.2], aVL: [0.05, -0.05, 0.5, -0.3, 0.1], aVF: [0.1, -0.05, 0.8, -0.15, 0.2],
+  V1: [0.08, 0, 0.2, -1.0, 0.05], V2: [0.1, 0, 0.4, -1.4, 0.4], V3: [0.1, 0, 0.8, -0.9, 0.45],
+  V4: [0.1, -0.05, 1.3, -0.5, 0.4], V5: [0.1, -0.08, 1.4, -0.2, 0.3], V6: [0.1, -0.08, 1.1, -0.1, 0.25]
+};
+const gs = (x, c, w) => Math.exp(-0.5 * ((x - c) / w) ** 2);
+const c01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
+function seeded(n) { let a = n >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+// Efecto del potasio sobre el trazo (también lo usa el simulador)
+function kEffects(P, k) {
+  if (k >= 5.5) { P.tw = 0.62; P.tMul = Math.min(3, 1 + (k - 5.5) * 0.9); }
+  if (k >= 6.5) { P.pMul = Math.max(0, 1 - (k - 6.5) / 1.5); P.pr += Math.min(0.08, 0.04 * (k - 6.5)); P.qrsW = 1 + 0.35 * (k - 6.5); }
+  if (k >= 8) { P.pMul = 0; P.qrsW = Math.min(3.2, 1.6 + 0.6 * (k - 8)); P.rate = 58; }
+  if (k < 3.5) {
+    const d = 3.5 - k; P.tMul = Math.max(0.12, 1 - d * 0.6); P.u = Math.min(0.28, 0.06 + d * 0.12); P.qt = 1 + d * 0.1;
+    ['II', 'V4', 'V5', 'V6'].forEach((l) => (P.mod[l] = { ...(P.mod[l] || {}), st: -0.04 * d }));
+  }
+}
+function ecgSpec(id, k) {
+  const P = { id, rate: 72, rhythm: 'sinus', pr: 0.16, qrsW: 1, tw: 1, qt: 1, pMul: 1, tMul: 1, u: 0, mod: {}, seed: (Math.random() * 1e9) | 0 };
+  const m = (leads, f) => leads.forEach((l) => (P.mod[l] = { ...(P.mod[l] || {}), ...f }));
+  const pre = ['V1', 'V2', 'V3', 'V4', 'V5', 'V6'];
+  switch (id) {
+    case 'inf': P.rate = 78; m(['II'], { st: 0.22, tAdd: 0.15 }); m(['III'], { st: 0.3, tAdd: 0.2, q: -0.2 }); m(['aVF'], { st: 0.26, tAdd: 0.18, q: -0.15 }); m(['aVL'], { st: -0.22, t: -0.1 }); m(['I'], { st: -0.05 }); break;
+    case 'ant': P.rate = 84; m(['V1'], { st: 0.15 }); m(['V2'], { st: 0.35, rMul: 0.4, tAdd: 0.3 }); m(['V3'], { st: 0.4, rMul: 0.5, tAdd: 0.35 }); m(['V4'], { st: 0.3, tAdd: 0.25 }); m(['V5'], { st: 0.1 }); m(['III'], { st: -0.1 }); m(['aVF'], { st: -0.08 }); break;
+    case 'lat': P.rate = 80; m(['I'], { st: 0.28, tAdd: 0.15 }); m(['aVL'], { st: 0.3, tAdd: 0.15, q: -0.12 }); m(['V5', 'V6'], { st: 0.26, tAdd: 0.1 }); m(['III'], { st: -0.26, t: -0.08 }); m(['aVF'], { st: -0.1 }); m(['II'], { st: -0.03 }); break;
+    case 'wellens': P.rate = 68; P.tw = 1.1; m(['V1'], { t: -0.15 }); m(['V2'], { t: -0.55, st: 0.03 }); m(['V3'], { t: -0.6, st: 0.02 }); m(['V4'], { t: -0.35 }); break;
+    case 'dewinter': P.rate = 82; P.tw = 0.8; m(pre, { st: -0.24, stUp: true }); [0.4, 1.0, 1.1, 1.0, 0.7, 0.5].forEach((t, i) => m([pre[i]], { t })); m(['aVR'], { st: 0.08 }); break;
+    case 'pericard': P.rate = 96; m(['I', 'II', 'aVF', 'V2', 'V3', 'V4', 'V5', 'V6'], { st: 0.15, prd: -0.06 }); m(['aVL', 'III', 'V1'], { st: 0.06 }); m(['aVR'], { st: -0.12, prd: 0.06 }); break;
+    case 'hiperk': kEffects(P, k || 6.9); break;
+    case 'hipok': kEffects(P, k || 2.4); break;
+    case 'fa': P.rhythm = 'af'; P.rate = 108; break;
+    case 'flutter': P.rhythm = 'flutter'; P.rate = 150; break;
+    case 'bavc': P.rhythm = 'chb'; P.arate = 82; P.rate = 38; P.qrsW = 1.9; P.tMul = -0.7; break;
+    case 'tep': P.rate = 112; m(['I'], { s: -0.5 }); m(['III'], { q: -0.32, t: -0.3 }); m(['V1'], { t: -0.28 }); m(['V2'], { t: -0.38 }); m(['V3'], { t: -0.26 }); break;
+    case 'k': kEffects(P, k); break;
+    default: break;
+  }
+  return P;
+}
+function leadParams(P, l) {
+  const b = ECG_BASE[l], o = P.mod[l] || {};
+  return { p: b[0] * P.pMul, q: o.q ?? b[1], r: b[2] * (o.rMul ?? 1), s: o.s ?? b[3], t: o.t ?? b[4] * P.tMul + (o.tAdd || 0), st: o.st || 0, stUp: !!o.stUp, prd: o.prd || 0, u: (l === 'V2' || l === 'V3' ? 1.2 : 0.8) * P.u };
+}
+function ecgBeats(P, dur) {
+  if (P.beats && P.beats.dur >= dur) return P.beats;
+  const rnd = seeded(P.seed), out = [];
+  if (P.rhythm === 'chb') {
+    for (let t = 0.12; t < dur; t += 60 / P.arate) out.push({ t, p: true, q: false, rr: 1 });
+    for (let t = 0.45; t < dur + 0.5; t += 60 / P.rate) out.push({ t: t - P.pr, p: false, q: true, rr: 60 / P.rate });
+  } else {
+    for (let t = -0.35; t < dur + 0.5;) {
+      const rr = P.rhythm === 'af' ? (60 / P.rate) * (0.62 + 0.76 * rnd()) : 60 / P.rate;
+      out.push({ t, p: P.rhythm === 'sinus', q: true, rr }); t += rr;
+    }
+  }
+  out.dur = dur; P.beats = out; return out;
+}
+function beatV(L, P, u, b) {
+  let v = 0;
+  if (b.p && L.p) v += L.p * gs(u, 0.05, 0.022);
+  if (!b.q) return v;
+  const q0 = P.pr, k = P.qrsW, rr = Math.min(b.rr, 1.6);
+  if (L.prd) v += L.prd * c01((u - 0.09) / 0.012) * c01((q0 - 0.004 - u) / 0.012);
+  v += L.q * gs(u, q0 + 0.008 * k, 0.007 * k) + L.r * gs(u, q0 + 0.03 * k, 0.009 * k) + L.s * gs(u, q0 + 0.052 * k, 0.009 * k);
+  const J = q0 + 0.07 * k, Tp = J + 0.17 * Math.sqrt(rr) * P.qt, tw = 0.05 * Math.sqrt(rr) * P.tw;
+  if (L.st) {
+    const on = c01((u - J + 0.006) / 0.012), off = u < Tp ? 1 : gs(u, Tp, tw * 1.1);
+    v += L.st * on * off * (L.stUp ? Math.max(0, 1 - (u - J) / (Tp - J)) : 1);
+  }
+  v += L.t * gs(u, Tp, tw);
+  if (L.u) v += L.u * gs(u, Tp + 0.17 * Math.sqrt(rr), 0.035);
+  return v;
+}
+function atrialV(P, l, t) {
+  if (P.rhythm === 'af') { const f = { V1: 1.4, II: 1, III: 0.9, aVF: 0.9 }[l] || 0.5; return 0.04 * f * (Math.sin(2 * Math.PI * 5.7 * t + 1.3) + 0.6 * Math.sin(2 * Math.PI * 7.9 * t + 0.4)); }
+  if (P.rhythm === 'flutter') {
+    const ph = (t * 5) % 1, saw = ph < 0.75 ? ph / 0.75 : (1 - ph) / 0.25;
+    const a = { II: -0.22, III: -0.24, aVF: -0.23, V1: 0.14, aVR: 0.12, I: 0.03, aVL: 0.05 }[l] ?? 0.06;
+    return a * (saw - 0.5) * 2;
+  }
+  return 0;
+}
+function ecgV(P, l, t, L) {
+  let v = atrialV(P, l, t);
+  for (const b of P.beats) { const u = t - b.t; if (u > -0.05 && u < 1.3) v += beatV(L, P, u, b); }
+  return v;
+}
+// Dibuja: layout '12' (6 × 2 + tira de DII) o una lista de derivaciones en tiras de 5 s
+function ecgDraw(cv, P, layout, hl = []) {
+  const W = cv.clientWidth || 340, dpr = window.devicePixelRatio || 1;
+  const strips = layout === '12' ? null : layout, cols = strips ? 1 : 2, span = strips ? 5 : 2.5;
+  const mm = W / cols / (span * 25), rowH = Math.round(22 * mm), rows = strips ? strips.length : 7, H = rowH * rows;
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.height = H + 'px';
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.fillStyle = '#0B0E2A'; g.fillRect(0, 0, W, H);
+  for (let x = 0, i = 0; x <= W; x += mm, i++) { g.fillStyle = i % 5 ? 'rgba(255,84,112,.07)' : 'rgba(255,84,112,.22)'; if (i % 5 || mm >= 2.4) g.fillRect(Math.round(x), 0, 1, H); }
+  for (let y = 0, i = 0; y <= H; y += mm, i++) { g.fillStyle = i % 5 ? 'rgba(255,84,112,.07)' : 'rgba(255,84,112,.22)'; if (i % 5 || mm >= 2.4) g.fillRect(0, Math.round(y), W, 1); }
+  ecgBeats(P, 5.2);
+  const panels = strips ? strips.map((l, r) => [l, 0, r, W, 0]) : [...LEADS.map((l, i) => [l, (i < 6 ? 0 : 1) * (W / 2), i % 6, W / 2, i < 6 ? 0 : 2.5]), ['II', 0, 6, W, 0]];
+  for (const [l, x0, r, w, t0] of panels) {
+    const y0 = r * rowH + rowH * 0.58, L = leadParams(P, l), dur = w / (25 * mm), on = hl.includes(l) && !(strips == null && r === 6);
+    if (on) { g.strokeStyle = 'rgba(242,193,78,.95)'; g.lineWidth = 2; g.strokeRect(x0 + 2, r * rowH + 2, w - 4, rowH - 4); }
+    g.strokeStyle = on ? '#FFE9A8' : '#7CFFB2'; g.lineWidth = 1.5; g.lineJoin = 'round'; g.beginPath();
+    const n = Math.ceil(w);
+    for (let i = 0; i <= n; i++) { const t = t0 + (i / n) * dur, y = y0 - ecgV(P, l, t, L) * 10 * mm; if (i) g.lineTo(x0 + i * (w / n), y); else g.moveTo(x0, y); }
+    g.stroke();
+    g.fillStyle = on ? '#F2C14E' : '#C9CEFF'; g.font = `${Math.max(10, Math.round(rowH * 0.2))}px ui-monospace, monospace`;
+    g.fillText(r === 6 && !strips ? 'II (tira)' : l, x0 + 5, r * rowH + Math.max(12, rowH * 0.22));
+    if (!strips && x0 > 0) { g.fillStyle = 'rgba(201,206,255,.35)'; g.fillRect(x0, r * rowH + 4, 1, rowH - 8); }
+  }
+}
+// ── Lee el ECG: patrón al azar del tema, cuatro opciones y explicación con las derivaciones clave resaltadas
+const EG = {};
+function mountEcg(host, ids, key) {
+  if (ids.length < 2) return;
+  ACT.egpick = (b) => {
+    const g = EG[b.dataset.k]; if (g.ans) return;
+    g.ans = b.dataset.id; g.n++;
+    if (g.ans === g.cur) { g.hits++; wsfx('ok'); gain(8); } else wsfx('bad');
+    WS().ecg = (WS().ecg || 0) + (g.ans === g.cur ? 1 : 0);
+    ecgRender(b.dataset.k);
+  };
+  ACT.egnext = (b) => ecgNext(b.dataset.k);
+  const sec = document.createElement('section');
+  sec.className = 'panel ecgq'; host.appendChild(sec);
+  EG[key] = { sec, ids, hits: 0, n: 0, last: null };
+  ecgNext(key);
+}
+function ecgNext(key) {
+  const g = EG[key], all = Object.keys(C.ecg);
+  const pick = shuffle(g.ids.filter((id) => id !== g.last))[0];
+  const others = shuffle(all.filter((id) => id !== pick)), near = others.filter((id) => g.ids.includes(id));
+  g.cur = pick; g.last = pick; g.ans = null; g.P = ecgSpec(pick);
+  g.opts = shuffle([pick, ...[...near, ...others.filter((id) => !near.includes(id))].slice(0, 3)]);
+  ecgRender(key);
+}
+function ecgRender(key) {
+  const g = EG[key], e = C.ecg[g.cur];
+  g.sec.innerHTML = `<div class="row"><h2 class="grow">Lee el ECG</h2>${g.n ? `<span class="small muted">${g.hits}/${g.n}</span>` : ''}</div>
+    <p class="small muted">12 derivaciones a 25 mm/s (DI–aVF a la izquierda, V1–V6 a la derecha) y una tira de DII.</p>
+    <canvas class="ecgcv" aria-label="Electrocardiograma"></canvas>
+    <p class="aq">¿Qué muestra este ECG?</p>
+    <div class="aopts">${g.opts.map((id) => `<button class="aopt${g.ans ? (id === g.cur ? ' ok' : id === g.ans ? ' no' : '') : ''}" data-act="egpick" data-k="${key}" data-id="${id}"${g.ans ? ' disabled' : ''}>${esc(C.ecg[id].name)}</button>`).join('')}</div>
+    ${g.ans ? `<div class="mexp"><p>${g.ans === g.cur ? '✓ ' : ''}<b>${esc(e.name)}.</b> ${esc(e.why)}</p></div><div class="actrl"><button class="btn small gold-btn" data-act="egnext" data-k="${key}">Otro ECG ▶</button></div>` : ''}`;
+  const cv = g.sec.querySelector('canvas');
+  requestAnimationFrame(() => ecgDraw(cv, g.P, '12', g.ans ? e.hl : []));
+}
+
+// ── Simuladores: mueves un valor y ves el efecto
+const SIMS = {
+  potasio: { title: 'Potasio y ECG', topics: ['erc', 'lra', 'dialisis'], mount: simPotasio },
+  tfg: { title: 'ERC: la TFG y lo que cambia', topics: ['erc', 'dialisis'], mount: simTfg },
+  hierro: { title: 'Ferritina y saturación', topics: ['anemias'], mount: simHierro },
+  aortica: { title: 'Estenosis aórtica: velocidad y gravedad', topics: ['aortica'], mount: simAortica }
+};
+function mountSim(host, sid) {
+  const sec = document.createElement('section');
+  sec.className = 'panel sim'; host.appendChild(sec);
+  SIMS[sid].mount(sec);
+}
+function simPotasio(sec) {
+  let k = 4.2, P = null;
+  sec.innerHTML = `<h2>Simulador · Potasio y ECG</h2><label class="sl"><span>Potasio sérico</span><b id="kv"></b><input type="range" min="1.8" max="9" step="0.1" value="${k}" data-inp="simk" aria-label="Potasio sérico"></label>
+    <canvas class="ecgcv" aria-label="Tiras de DII y V3"></canvas><div class="simout" aria-live="polite"></div>`;
+  const cv = sec.querySelector('canvas'), out = sec.querySelector('.simout');
+  const draw = () => {
+    P = ecgSpec('k', k); ecgDraw(cv, P, ['II', 'V3']);
+    sec.querySelector('#kv').textContent = `${k.toFixed(1)} mEq/L`;
+    const st = k < 2.5 ? ['Hipokalemia grave', 'bad', 'T casi planas, ondas U grandes, QT aparente largo. Riesgo de arritmias y debilidad: KCl intravenoso (máximo 10–20 mEq/h por vía periférica) y corrige el magnesio.']
+      : k < 3.5 ? ['Hipokalemia', 'warn', 'T más bajas y aparece la onda U. KCl oral; busca la causa (diuréticos, vómito, diarrea).']
+      : k <= 5.5 ? ['Normal', 'ok', 'P, QRS y T normales.']
+      : k < 6.5 ? ['Hiperkalemia leve a moderada', 'warn', 'Primer signo: T picudas de base estrecha. Suspende lo que sube el K (IECA/ARA II, espironolactona, AINE); quelante y diurético de asa si orina.']
+      : k < 8 ? ['Hiperkalemia grave', 'bad', 'P aplanada, PR largo y QRS que se ensancha. Gluconato de calcio 10% IV ya (estabiliza la membrana), insulina regular 10 U con glucosa, salbutamol nebulizado; después elimina K (diálisis si no responde).']
+        : ['Hiperkalemia crítica', 'bad', 'Sin P y con QRS muy ancho que se funde con la T (onda sinusoidal): paro inminente. Calcio IV repetido y diálisis urgente.'];
+    out.innerHTML = `<p class="chip" style="--sc:var(--${st[1]})">${st[0]}</p><p>${st[2]}</p>`;
+  };
+  CHG.simk = (el) => { k = +el.value; draw(); };
+  requestAnimationFrame(draw);
+}
+function simTfg(sec) {
+  let g = 50, a = 1;
+  sec.innerHTML = `<h2>Simulador · ERC: la TFG y lo que cambia</h2><label class="sl"><span>TFG</span><b id="gv"></b><input type="range" min="5" max="120" step="1" value="${g}" data-inp="simg" aria-label="Tasa de filtración glomerular"></label>
+    <div class="seg2" role="group" aria-label="Albuminuria">${['A1 <30', 'A2 30–300', 'A3 >300'].map((t, i) => `<button class="btn small${i + 1 === a ? ' gold-btn' : ''}" data-act="sima" data-i="${i + 1}">${t}</button>`).join('')}</div>
+    <p class="small muted">Albuminuria en mg/g (cociente albúmina/creatinina).</p><div class="simout" aria-live="polite"></div>`;
+  const out = sec.querySelector('.simout');
+  const draw = () => {
+    sec.querySelector('#gv').textContent = `${g} mL/min/1.73 m²`;
+    sec.querySelectorAll('[data-act=sima]').forEach((b) => b.classList.toggle('gold-btn', +b.dataset.i === a));
+    const gi = g >= 90 ? 0 : g >= 60 ? 1 : g >= 45 ? 2 : g >= 30 ? 3 : g >= 15 ? 4 : 5;
+    // Mapa de calor KDIGO (filas G1 a G5, columnas A1 a A3): verde, amarillo, naranja, rojo
+    const heat = [[0, 1, 2], [0, 1, 2], [1, 2, 3], [2, 3, 3], [3, 3, 3], [3, 3, 3]][gi][a - 1];
+    const risk = [['Riesgo bajo', 'var(--ok)'], ['Riesgo moderado', 'var(--warn)'], ['Riesgo alto', '#FF9B3D'], ['Riesgo muy alto', 'var(--bad)']][heat];
+    const li = [];
+    li.push(g >= 45 ? 'Metformina: dosis completa.' : g >= 30 ? 'Metformina: no la inicies; si ya la toma, reduce la dosis.' : 'Metformina: suspéndela.');
+    li.push(g >= 20 ? 'iSGLT2: se pueden iniciar (TFG de 20 o más) y protegen el riñón.' : 'iSGLT2: no se inician con TFG menor de 20 (si ya los toma, puede seguir).');
+    if (a >= 2) li.push('Albuminuria: IECA o ARA II a dosis máxima tolerada.');
+    if (g < 60) li.push('Busca anemia (Hb) y mide calcio, fósforo, PTH y vitamina D.');
+    if (g < 60) li.push('Evita AINE; ajusta dosis de fármacos de eliminación renal.');
+    if (g < 45) li.push('Vigila el potasio, sobre todo con IECA, ARA II o espironolactona.');
+    if (g < 30) li.push('Acidosis metabólica frecuente: bicarbonato oral si el HCO3 está menor de 18.');
+    if (g < 30 || a === 3) li.push('Envía a nefrología (TFG menor de 30 o albuminuria A3).');
+    if (g < 20) li.push('Prepara la terapia de reemplazo: educación, acceso vascular o catéter de diálisis peritoneal, evaluación para trasplante.');
+    if (g < 15) li.push('Diálisis cuando hay síntomas urémicos, sobrecarga, potasio o acidosis refractarios: se decide por la clínica, no solo por la cifra.');
+    out.innerHTML = `<p><span class="chip">${['G1', 'G2', 'G3a', 'G3b', 'G4', 'G5'][gi]}A${a}</span> <span class="chip" style="--sc:${risk[1]}">${risk[0]}</span></p><ul class="simlist">${li.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`;
+  };
+  CHG.simg = (el) => { g = +el.value; draw(); };
+  ACT.sima = (b) => { a = +b.dataset.i; draw(); };
+  draw();
+}
+function simHierro(sec) {
+  let fe = 60, ts = 15, inf = false;
+  sec.innerHTML = `<h2>Simulador · Ferritina y saturación</h2>
+    <label class="sl"><span>Ferritina</span><b id="fv"></b><input type="range" min="3" max="800" step="1" value="${fe}" data-inp="simfe" aria-label="Ferritina"></label>
+    <label class="sl"><span>Saturación de transferrina</span><b id="tv"></b><input type="range" min="3" max="80" step="1" value="${ts}" data-inp="simts" aria-label="Saturación de transferrina"></label>
+    <div class="seg2" role="group" aria-label="Inflamación"><button class="btn small" data-act="siminf"></button></div><div class="simout" aria-live="polite"></div>`;
+  const out = sec.querySelector('.simout');
+  const draw = () => {
+    sec.querySelector('#fv').textContent = `${fe} ng/mL`; sec.querySelector('#tv').textContent = `${ts}%`;
+    const b = sec.querySelector('[data-act=siminf]'); b.textContent = inf ? 'Con inflamación (PCR alta) ✓' : 'Sin inflamación'; b.classList.toggle('gold-btn', inf);
+    const r = fe < 30 ? ['Ferropenia', 'bad', 'Ferritina menor de 30: los depósitos están vacíos, haya o no inflamación. Hierro y busca dónde se pierde.']
+      : ts > 45 && fe > 300 ? ['Sobrecarga de hierro', 'warn', 'Saturación mayor de 45% con ferritina alta: descarta hemocromatosis (gen HFE).']
+      : inf && fe <= 100 && ts < 20 ? ['Probable mixta: ferropenia más inflamación', 'warn', 'Con inflamación, una ferritina de hasta ~100 todavía puede ser ferropenia: la inflamación la sube.']
+      : inf && ts < 20 ? ['Anemia de la inflamación', 'warn', 'Ferritina alta con saturación baja: la hepcidina atrapa el hierro. Trata la causa; el hierro oral no se absorbe.']
+      : ts < 20 ? ['No concluyente', 'warn', 'Saturación baja con ferritina mayor de 30 y sin inflamación aparente: pide PCR; con ferritina de 30 a 45 aún puede ser ferropenia temprana (la AGA usa menos de 45).']
+        : ['Hierro suficiente', 'ok', 'Depósitos y transporte normales: la anemia, si la hay, es por otra causa.'];
+    out.innerHTML = `<p class="chip" style="--sc:var(--${r[1]})">${r[0]}</p><p>${esc(r[2])}</p>
+      <div class="gauges"><div><span>Depósitos (ferritina)</span><i style="--p:${Math.min(1, fe / 400)}"></i></div><div><span>Transporte (saturación)</span><i style="--p:${Math.min(1, ts / 60)}"></i></div></div>`;
+  };
+  CHG.simfe = (el) => { fe = +el.value; draw(); };
+  CHG.simts = (el) => { ts = +el.value; draw(); };
+  ACT.siminf = () => { inf = !inf; draw(); };
+  draw();
+}
+function simAortica(sec) {
+  let v = 3.2, last = null;
+  sec.innerHTML = `<h2>Simulador · Estenosis aórtica</h2><label class="sl"><span>Velocidad máxima del chorro</span><b id="vv"></b><input type="range" min="1.2" max="5.5" step="0.1" value="${v}" data-inp="simv" aria-label="Velocidad máxima"></label>
+    <div class="stage simstage"><canvas width="160" height="80" aria-hidden="true"></canvas></div><div class="simout" aria-live="polite"></div>`;
+  const cv = sec.querySelector('canvas'), g = cv.getContext('2d'), out = sec.querySelector('.simout');
+  const rnd = seeded(7), parts = Array.from({ length: 40 }, () => [rnd() * 160, 20 + rnd() * 40]);
+  const frame = (dt) => {
+    const open = Math.max(4, 34 - (v - 1.2) * 7), sp = 18 + v * 22;
+    g.fillStyle = '#0B0E2A'; g.fillRect(0, 0, 160, 80);
+    g.fillStyle = '#7A2E44'; g.fillRect(0, 10, 160, 6); g.fillRect(0, 64, 160, 6);
+    g.fillStyle = '#F2C14E'; g.fillRect(76, 16, 6, 24 - open / 2); g.fillRect(76, 40 + open / 2, 6, 24 - open / 2);
+    for (const p of parts) {
+      const nearV = Math.abs(p[0] - 79) < 30, s = nearV ? sp : sp * 0.35;
+      p[0] += s * dt; if (p[0] > 160) { p[0] = 0; p[1] = 20 + Math.random() * 40; }
+      let y = p[1]; if (p[0] > 60 && p[0] < 100) y = 40 + (p[1] - 40) * (open / 40);
+      g.fillStyle = p[0] > 82 ? '#FF8FA3' : '#C9CEFF'; g.fillRect(Math.round(p[0]), Math.round(y), 2, 2);
+    }
+  };
+  const draw = () => {
+    const pk = Math.round(4 * v * v), sev = v < 2.6 ? ['Sin estenosis significativa (esclerosis)', 'ok'] : v < 3 ? ['Estenosis leve', 'ok'] : v < 4 ? ['Estenosis moderada', 'warn'] : v < 5 ? ['Estenosis grave', 'bad'] : ['Estenosis muy grave', 'bad'];
+    sec.querySelector('#vv').textContent = `${v.toFixed(1)} m/s`;
+    out.innerHTML = `<p><span class="chip" style="--sc:var(--${sev[1]})">${sev[0]}</span></p><p>Gradiente máximo ≈ 4 × V² = <b>${pk} mmHg</b>. Grave: velocidad de 4 m/s o más, gradiente medio de 40 mmHg o más y área menor de 1 cm².</p>
+      <p>${v >= 4 ? 'Si hay síntomas (angina, síncope, disnea) o la FEVI baja de 50%: reemplazo valvular, TAVI en mayores o de alto riesgo quirúrgico y cirugía en jóvenes de bajo riesgo. Sin síntomas: vigilancia estrecha o prueba de esfuerzo para desenmascararlos.' : 'Vigilancia con ecocardiograma periódico; el tratamiento médico no frena la estenosis.'}</p>`;
+    frame(0);
+  };
+  CHG.simv = (el) => { v = +el.value; draw(); };
+  draw();
+  if (!reduce) loop((ts) => { if (last == null) last = ts; const dt = Math.min((ts - last) / 1000, 0.1); last = ts; frame(dt); });
+}
+
+// ── Pestaña Taller del tema y vista con todo (Más → Taller)
+const algosOf = (tid) => Object.keys(C.algos || {}).filter((id) => C.algos[id].topics.includes(tid));
+const ecgOf = (tid) => Object.keys(C.ecg || {}).filter((id) => C.ecg[id].topics.includes(tid));
+const simsOf = (tid) => Object.keys(SIMS).filter((id) => SIMS[id].topics.includes(tid));
+const pathsOf = (tid) => Object.keys(C.paths || {}).filter((id) => C.paths[id].topics.includes(tid));
+const hasTaller = (tid) => !!(algosOf(tid).length || ecgOf(tid).length >= 2 || simsOf(tid).length || pathsOf(tid).length);
+TOPIC_TABS.taller = (el, t) => {
+  el.innerHTML = '<p class="muted">Practica con las manos: decide en algoritmos con casos, lee ECG, mueve valores y ubica fármacos. Cuenta para tu XP.</p>';
+  algosOf(t.id).forEach((id) => mountAlgo(el, id));
+  mountEcg(el, ecgOf(t.id), t.id);
+  simsOf(t.id).forEach((id) => mountSim(el, id));
+  mountPaths(el, t.id);
+};
+VIEWS.taller = (m) => {
+  const a = route.a;
+  if (a) {
+    m.innerHTML = `<button class="btn small ghost" data-go="taller" style="align-self:flex-start">← Taller</button><div id="tool" class="stack"></div>`;
+    const el = $('#tool'), [kind, id] = a.split(':');
+    if (kind === 'algo' && C.algos[id]) mountAlgo(el, id);
+    else if (kind === 'ecg') mountEcg(el, Object.keys(C.ecg), 'all');
+    else if (kind === 'sim' && SIMS[id]) mountSim(el, id);
+    else if (kind === 'path' && C.paths[id]) { const tid = C.paths[id].topics[0]; mountPaths(el, tid, id); }
+    return;
+  }
+  const best = (k) => (WS()[k] != null ? ` · mejor ${pct(WS()[k])}%` : '');
+  const tile = (go, t, d) => `<button class="tile" data-go="taller" data-a="${go}"><span class="t">${esc(t)}</span><span class="d">${esc(d)}</span></button>`;
+  m.innerHTML = `<button class="btn small ghost" data-go="mas" style="align-self:flex-start">← Más</button><h1>Taller</h1>
+  <p class="muted">Lo que más se parece a las preguntas del parcial: decidir el siguiente paso, leer un estudio y ubicar un fármaco.</p>
+  <h2>Algoritmos con casos</h2><div class="tools">${Object.entries(C.algos).map(([id, A]) => tile('algo:' + id, A.title, `${A.cases.length} casos${best('algo:' + id)}`)).join('')}</div>
+  <h2>Lee el estudio</h2><div class="tools">${tile('ecg:all', 'Lee el ECG', `${Object.keys(C.ecg).length} patrones al azar`)}${tile('algo:gaso', 'Gasometría paso a paso', `${C.algos.gaso.cases.length} casos`)}</div>
+  <h2>Simuladores</h2><div class="tools">${Object.entries(SIMS).map(([id, s]) => tile('sim:' + id, s.title, 'Mueve el valor y mira qué cambia')).join('')}</div>
+  <h2>¿Dónde actúa?</h2><div class="tools">${Object.entries(C.paths).map(([id, p]) => tile('path:' + id, p.title, `${p.drugs.length} fármacos`)).join('')}</div>`;
+};
 
 // ═══════════ Videos: escenas en pixel art con narración, subtítulos, capítulos y pausas con pregunta
 let VS = null, VAUTO = false, VQUEUE = [];
@@ -1317,6 +1759,7 @@ function vEnd() {
 // Gancho para la herramienta de vista previa (tools/preview.cjs): solo existe con #preview en la URL
 if (location.hash === '#preview') window.__gp = { show: (i) => { VS.started = true; vBtn(); vShow(i); document.querySelectorAll('#vslide [data-r]').forEach((r) => r.classList.add('on')); const x = VS.flat[VS.i]; vSub(''); sentences(x.sc.say).forEach((t) => keyTerms(t, x.sc.v).forEach(vConcept)); if (x.sc.v.k === 'quiz') document.querySelectorAll('#vslide .vopt').forEach((b, j) => j === x.sc.v.a && b.classList.add('ok')); return VS.flat.length; },
   // Frases que se graban por tema (tools/narrate): video, explicaciones de quiz, repasos y pasos de la animación
+  ecg: (id, k) => { const cv = document.createElement('canvas'); cv.style.width = '358px'; document.body.appendChild(cv); const P = ecgSpec(id, k); P.seed = 42; ecgDraw(cv, P, '12', []); const u = cv.toDataURL(); cv.remove(); return u; },
   mu: () => ({ url: MU.url, paused: MU.el ? MU.el.paused : null, t: MU.el ? MU.el.currentTime : null, src: MU.el ? MU.el.src.slice(0, 30) : null, beat: musicBeat() }),
   render: () => musicRender(),
   terms: (tid) => vFlat(tid).map((x) => sentences(x.sc.say).map((t) => keyTerms(t, x.sc.v).map((k) => k.w).join(' + ')).filter(Boolean).join(' | ')),
@@ -1623,11 +2066,13 @@ function makeCardSession(tid) {
 VIEWS.repaso = (m) => {
   const cq = cardQueue(), ed = errorsDue(), all = Object.keys(S.err).filter((id) => QMAP[id]).length, tot = cq.due.length + cq.fresh.length;
   m.innerHTML = `<h1>Repaso</h1>
+  ${mixPanel()}
   <section class="panel"><h2>Tarjetas</h2><p class="muted">${cq.due.length} para repasar y ${cq.fresh.length} nuevas hoy (máximo 20 nuevas al día). Vuelven a 1, 2, 4, 7 y 12 días según qué tan bien te las sepas.</p><button class="btn gold-btn big" data-act="cardsAll"${tot ? '' : ' disabled'}>${tot ? 'Repasar tarjetas' : 'Al día por hoy'}</button></section>
   <section class="panel"><h2>Cuaderno de errores</h2><p class="muted">${ed.length} para hoy · ${all} en total. Cada pregunta que fallas regresa en 1, 3 y 7 días; a la tercera vez que la aciertas, sale del cuaderno.</p><button class="btn gold-btn big" data-act="errToday"${ed.length ? '' : ' disabled'}>${ed.length ? `Repasar las ${ed.length} de hoy` : 'Nada pendiente hoy'}</button>${all ? '<button class="btn" data-go="errores">Ver el cuaderno completo</button>' : ''}</section>
   <section class="panel"><h2>Videos</h2><p class="muted">Un video por tema con narración, subtítulos y pausas para preguntarte. Ideal para el camino o antes de dormir.</p><button class="btn" data-go="videos">Abrir videos</button></section>
   <section class="panel"><h2>Perlas para el final</h2><p class="muted">Mnemotecnias, perlas y trampas de todos los temas disponibles en una sola página. Para la noche del 9 de noviembre.</p><button class="btn" data-go="perlas">Abrir perlas</button></section>`;
   ACT.cardsAll = () => { FS = makeCardSession(null); go('tarjetas'); };
+  ACT.mix = startMix;
   ACT.errToday = () => startQuiz({ mode: 'errors', title: 'Cuaderno de errores', qids: shuffle(ed), tab: 'repaso', back: 'repaso' });
 };
 VIEWS.videos = (m) => {
@@ -1693,7 +2138,7 @@ VIEWS.perlas = (m) => {
 VIEWS.mas = (m) => {
   const tiles = [
     ['plan', 'Plan', 'Día por día hasta el parcial'], ['diag', 'Diagnóstico', S.diag.done ? 'Ver tu mapa de calor' : '30 preguntas para empezar'],
-    ['sim', 'Simulacro', 'Con reloj, como el examen'], ['calc', 'Calculadoras', 'Escalas que te explican el resultado'],
+    ['sim', 'Simulacro', 'Con reloj, como el examen'], ['taller', 'Taller', 'Algoritmos, ECG, gasometría y simuladores'], ['calc', 'Calculadoras', 'Escalas que te explican el resultado'],
     ['comp', 'Comparadores', 'Lado a lado: × '], ['ruleta', 'Ruleta', '¿Cuál será tu enfermedad?'],
     ['videos', 'Videos', 'Un video por tema, con voz'], ['perlas', 'Perlas', 'Repaso final de un vistazo'], ['logros', 'Logros', `${Object.keys(S.ach).length} de ${ACH.length}`],
     ['ajustes', 'Ajustes', 'Sonido, reloj y respaldo']

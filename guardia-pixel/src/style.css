@@ -536,7 +536,9 @@ body.cine-on #hud,body.cine-on #tabs{display:none}
 .lchip{min-height:40px;padding:6px 10px;font:clamp(14px,3.9vw,17px)/1.1 var(--f-mono);color:var(--ink);background:var(--panel);border:2px solid var(--line-2)}
 .lchip.sel{border-color:var(--cyan);color:#fff;box-shadow:0 0 0 2px var(--cyan)}
 .lchip:disabled{opacity:.3;text-decoration:line-through}
-.awrap.quiz .actrl2 .btn:not([data-act=aquiz]),.awrap.quiz>.actrl,.awrap.quiz .pips{display:none}
+.awrap.quiz .actrl2 .btn:not(.on),.awrap.quiz>.actrl,.awrap.quiz .pips{display:none}
+.lbank .pred{width:100%;display:flex;flex-direction:column;gap:6px}
+.lbank .pred p{margin:0}
 .lhint{color:var(--ink-2)}
 /* ¿Dónde actúa? */
 .mq{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;margin:4px 0 10px}
@@ -563,3 +565,42 @@ body.cine-on #hud,body.cine-on #tabs{display:none}
 .mexp{min-height:1.5em;margin-top:10px;line-height:1.45}
 .mexp p{margin:0 0 6px}
 @media (prefers-reduced-motion:reduce){.marr i{animation:none;top:8px}}
+
+/* Taller: algoritmos */
+.seg2{display:flex;flex-wrap:wrap;gap:6px}
+.acase{background:var(--panel-2);border:2px solid var(--line-2);padding:10px;display:flex;flex-direction:column;gap:6px}
+.acase p{margin:0}
+.acase dl{margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:4px 10px}
+.acase dl div{display:flex;flex-direction:column}
+.acase dt{font:12px/1.2 var(--f-mono);color:var(--ink-3)}
+.acase dd{margin:0;font:600 15px/1.25 var(--f-body);color:var(--ink)}
+.atrail{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.atrail li{display:flex;flex-direction:column;padding:4px 8px;border-left:4px solid var(--ok);background:rgba(98,227,140,.06)}
+.atrail li.bad{border-left-color:var(--warn)}
+.atrail span{font-size:12px;color:var(--ink-3)}
+.atrail b{font-size:14px}
+.aq{font:600 16px/1.35 var(--f-body);margin:6px 0 2px}
+.ahint summary{cursor:pointer;color:var(--cyan);font-size:14px}
+.ahint p{margin:4px 0;font-size:14px;color:var(--ink-2)}
+.aopts{display:flex;flex-direction:column;gap:6px}
+.aopt{text-align:left;padding:10px 12px;min-height:44px;background:var(--panel);border:3px solid var(--line-2);color:var(--ink);font:15px/1.3 var(--f-body)}
+.aopt.hint{border-color:var(--warn);background:var(--warn-bg)}
+.aopt.ok{border-color:var(--ok);background:var(--ok-bg)}
+.aopt.no{border-color:var(--bad);background:var(--bad-bg)}
+.amsg{margin:4px 0;color:var(--gold-3)}
+.aleaf{border:3px solid var(--gold);background:rgba(242,193,78,.08);padding:10px;display:flex;flex-direction:column;gap:4px}
+.aleaf b{font:18px/1.2 var(--f-ui);color:var(--gold)}
+.aleaf p{margin:0}
+/* Taller: ECG y simuladores */
+.ecgcv{width:100%;display:block;border:3px solid var(--line)}
+.sl{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 10px}
+.sl span{font-size:14px;color:var(--ink-2)}
+.sl b{font:16px/1 var(--f-mono);color:var(--gold)}
+.sl input{grid-column:1/-1;width:100%;accent-color:var(--gold);height:32px}
+.simout p{margin:6px 0}
+.simlist{margin:6px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.gauges{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.gauges div{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:8px;font-size:13px;color:var(--ink-2)}
+.gauges i{height:14px;border:2px solid var(--line-2);background:linear-gradient(90deg,var(--gold) calc(var(--p) * 100%),transparent 0)}
+.simstage{aspect-ratio:2/1}
+.simstage canvas{width:100%;height:100%;image-rendering:pixelated}

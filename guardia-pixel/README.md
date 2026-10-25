@@ -21,7 +21,13 @@ Los 30 temas tienen:
 - **Lección** con fisiopatología, diagnóstico diferencial, fármacos clave, “cómo lo preguntan en el
   examen”, mnemotecnia, perla, trampa y caja de “Depende de la guía”.
 - **Animación** paso a paso (30), con reproducción automática, narración y pantalla completa, y modo
-  **Etiquétalo** (el dibujo sin nombres: tú pones cada etiqueta en su lugar).
+  **Etiquétalo** (el dibujo sin nombres: tú pones cada etiqueta en su lugar) y **Predice** (antes de cada paso
+  eliges qué pasa).
+- **Taller** (pestaña del tema y Más → Taller; `src/content/51-taller.js`): algoritmos con casos (anemia,
+  reperfusión, LRA, glomerulopatías, TEP, dolor articular, diarrea y gasometría; el build comprueba que cada caso
+  llegue a su diagnóstico), **Lee el ECG** (13 patrones generados en el teléfono, con las derivaciones clave
+  resaltadas al responder) y simuladores (potasio y ECG, TFG y ERC, ferritina y saturación, estenosis aórtica).
+- **Ronda mezclada** diaria (Inicio y Repaso): 10 preguntas revueltas de los temas que ya viste.
 - **¿Dónde actúa?** (`src/content/50-mecanismos.js`): ubica cada fármaco en su vía o diana (SRAA, diuréticos,
   plaqueta, coagulación, ácido úrico, ácido gástrico, antidiabéticos, hipolipemiantes, FAME); en las cascadas,
   lo que queda debajo del bloqueo se apaga.

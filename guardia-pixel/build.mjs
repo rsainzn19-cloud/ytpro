@@ -12,7 +12,7 @@ const OUT = opt('--out');
 const ONLY = opt('--only') ? new Set(opt('--only').split(',').map((x) => x.trim())) : null;
 const keepTopic = (tid) => !ONLY || ['meta', 'diagnostico'].includes(tid) || ONLY.has(tid);
 
-const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {} };
+const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {}, algos: {}, ecg: {} };
 for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('.js')).sort()) {
   const part = (await import(new URL('content/' + f, src))).default;
   // Con --only se cargan solo esos temas, pero los comparadores de todos (una lección puede usar uno ajeno)
@@ -23,7 +23,7 @@ for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('
       const tid = f.replace(/^\d+-|\.js$/g, '');
       v.forEach(([fr, bk], i) => C.cards.push({ id: `${tid}-c${String(i + 1).padStart(2, '0')}`, topic: tid, f: fr, b: bk }));
     } else if (Array.isArray(v)) C[k] = (C[k] || []).concat(v);
-    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths'].includes(k)) Object.assign(C[k], v);
+    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg'].includes(k)) Object.assign(C[k], v);
     else C[k] = v;
   }
 }
@@ -56,6 +56,25 @@ for (const tid of Object.keys(C.lessons)) {
   if (L.anim && !C.anims[L.anim]) errs.push(`${tid}: animación ${L.anim} no existe`);
 }
 for (const t of C.topics) if (!C.lessons[t.id] && keepTopic(t.id)) errs.push(`tema ${t.id} sin lección`);
+// Algoritmos: cada opción lleva a un nodo que existe y cada caso, siguiendo su camino, llega a su hoja
+for (const [aid, A] of Object.entries(C.algos)) {
+  const N = A.nodes || {};
+  if (!N[A.start]) errs.push(`algoritmo ${aid}: inicio ${A.start} no existe`);
+  for (const tid of A.topics || []) if (!C.topics.some((t) => t.id === tid)) errs.push(`algoritmo ${aid}: tema ${tid} no existe`);
+  for (const [nid, n] of Object.entries(N)) {
+    if (!n.end && !(n.q && n.opts && n.opts.length >= 2)) errs.push(`algoritmo ${aid}: nodo ${nid} sin pregunta u opciones`);
+    for (const o of n.opts || []) if (!N[o.go]) errs.push(`algoritmo ${aid}: ${nid} → ${o.go} no existe`);
+  }
+  (A.cases || []).forEach((cs, i) => {
+    let cur = A.start, guard = 0;
+    while (N[cur] && !N[cur].end && guard++ < 20) { const k = cs.path[cur]; if (k == null || !N[cur].opts[k]) { errs.push(`algoritmo ${aid}, caso ${i + 1}: sin respuesta en ${cur}`); return; } cur = N[cur].opts[k].go; }
+    if (cur !== cs.end) errs.push(`algoritmo ${aid}, caso ${i + 1}: el camino llega a ${cur}, no a ${cs.end}`);
+  });
+}
+for (const [eid, e] of Object.entries(C.ecg)) {
+  if (!e.name || !e.why) errs.push(`ECG ${eid}: falta nombre o explicación`);
+  for (const tid of e.topics || []) if (!C.topics.some((t) => t.id === tid)) errs.push(`ECG ${eid}: tema ${tid} no existe`);
+}
 // “¿Dónde actúa?”: cada fármaco apunta a un nodo que existe y cada vía a temas que existen
 for (const [pid, p] of Object.entries(C.paths)) {
   if (!p.title || !Array.isArray(p.nodes) || p.nodes.length < 3 || !Array.isArray(p.drugs) || p.drugs.length < 3) errs.push(`vía ${pid}: faltan título, nodos o fármacos`);
