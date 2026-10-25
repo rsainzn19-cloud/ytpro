@@ -45,7 +45,9 @@ El reproductor agrega, sin tocar los guiones: efectos 8-bit (cambio de escena, c
 aparece, cifra clave, trampa, perla, mnemotecnia, tic-tac del quiz, acierto/error y final; botón “♪”),
 tarjeta de capítulo, “Repaso relámpago” al final de cada capítulo (con las cifras, listas, algoritmos y
 comparadores que se vieron), “3 cosas para recordar” al final, racha de aciertos en los quizzes y, en la franja inferior,
-los conceptos centrales de lo que se va narrando (botón “Aa”).
+los conceptos centrales de lo que se va narrando (botón “Aa”) y música lo-fi de fondo a 80 BPM (botón “Lo-fi”):
+se genera en el teléfono al abrir el video (sin archivos), suena como `<audio>` igual que la voz, y el marco,
+los conceptos, los puntos que aparecen y los cambios de escena caen en su pulso.
 
 ## Animaciones
 

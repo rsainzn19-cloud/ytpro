@@ -17,7 +17,7 @@ node build.mjs
 Los 30 temas tienen:
 
 - **Video completo** (≈6–9 min, ~210 min en total): escenas en pixel art, narración con la voz del
-  teléfono, conceptos clave en pantalla, capítulos, pausas con pregunta, modo cine y maratón por materia (ver `VIDEOS.md`).
+  teléfono, conceptos clave en pantalla, música lo-fi sincronizada, capítulos, pausas con pregunta, modo cine y maratón por materia (ver `VIDEOS.md`).
 - **Lección** con fisiopatología, diagnóstico diferencial, fármacos clave, “cómo lo preguntan en el
   examen”, mnemotecnia, perla, trampa y caja de “Depende de la guía”.
 - **Animación** paso a paso (30), con reproducción automática, narración y pantalla completa.

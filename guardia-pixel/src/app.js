@@ -114,6 +114,102 @@ function vfx(name, k = 0) {
   tones(VSFX[name]);
 }
 
+// ───── Música de fondo del video: lo-fi tranquilo a 80 BPM, generado una sola vez en el teléfono (sin archivos).
+// Suena como <audio> (igual que la voz, también en modo silencio) y los efectos visuales caen en su pulso.
+const BPM = 80, BEAT = 60 / BPM, LOOP = 32 * 4 * BEAT;
+const MU = { el: null, url: null, busy: null, want: false, ct: 0, at: 0 };
+function wavURL(data, sr) {
+  const n = data.length, b = new ArrayBuffer(44 + n * 2), v = new DataView(b);
+  const str = (o, x) => { for (let i = 0; i < x.length; i++) v.setUint8(o + i, x.charCodeAt(i)); };
+  str(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); str(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); str(36, 'data'); v.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, data[i])) * 32767, true);
+  return URL.createObjectURL(new Blob([b], { type: 'audio/wav' }));
+}
+function musicRender() {
+  if (MU.busy) return MU.busy;
+  const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext, tail = 4;
+  let ac = null, sr = 22050;
+  for (const r of [22050, 44100]) { try { ac = new OAC(1, Math.ceil((LOOP + tail) * r), r); sr = r; break; } catch (e) { /* otra tasa */ } }
+  if (!ac) return (MU.busy = Promise.resolve(null));
+  const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
+  const out = ac.createGain(), warm = ac.createBiquadFilter();
+  warm.type = 'lowpass'; warm.frequency.value = 4200; out.gain.value = 1; out.connect(warm).connect(ac.destination);
+  const noise = ac.createBuffer(1, Math.floor(sr * 0.5), sr), nd = noise.getChannelData(0);
+  for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+  const env = (g, t, a, peak, d) => { g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); };
+  // Eco suave para los arpegios
+  const dl = ac.createDelay(2), fb = ac.createGain(), wet = ac.createGain();
+  dl.delayTime.value = BEAT * 0.75; fb.gain.value = 0.32; wet.gain.value = 0.5; dl.connect(fb).connect(dl); dl.connect(wet).connect(out);
+  const pad = ac.createBiquadFilter(); pad.type = 'lowpass'; pad.frequency.value = 2200; pad.connect(out);
+  // Fa maj7 – Mi m7 – Re m7 – Do maj7: misma tonalidad (Do) que los efectos del video
+  const CH = [[53, 57, 60, 64], [52, 55, 59, 62], [50, 53, 57, 60], [48, 52, 55, 59]], ROOT = [41, 40, 38, 36];
+  const ARP = [[0, 2, 1, 3, -1, 2, 1, -1], [3, -1, 2, 1, 0, -1, 2, -1], [0, 1, 2, 3, 2, -1, 1, -1], [2, -1, 3, -1, 1, 0, -1, -1]];
+  const tone = (type, f, t, a, peak, d, dest, det = 0) => { const o = ac.createOscillator(), g = ac.createGain(); o.type = type; o.frequency.value = f; o.detune.value = det; env(g, t, a, peak, d); o.connect(g).connect(dest); o.start(t); o.stop(t + a + d + 0.05); };
+  const bus = (type, fq) => { const f = ac.createBiquadFilter(); f.type = type; f.frequency.value = fq; f.connect(out); return f; };
+  const HAT = bus('highpass', 7000), RIM = bus('bandpass', 1900), DUST = bus('highpass', 2500), ARPF = bus('lowpass', 2400);
+  ARPF.connect(dl);
+  const hit = (t, peak, d, dest) => { const sN = ac.createBufferSource(), g = ac.createGain(); sN.buffer = noise; env(g, t, 0.002, peak, d); sN.connect(g).connect(dest); sN.start(t, Math.random() * 0.3); sN.stop(t + d + 0.05); };
+  for (let bar = 0; bar < 32; bar++) {
+    const t0 = bar * 4 * BEAT, c = CH[bar % 4], sec = bar >> 3;
+    c.forEach((m) => { tone('triangle', hz(m), t0, 0.5, 0.07, 4 * BEAT + 0.4, pad, -7); tone('sawtooth', hz(m), t0, 0.5, 0.025, 4 * BEAT + 0.4, pad, 7); });
+    tone('triangle', hz(ROOT[bar % 4] + 12), t0, 0.01, 0.11, 1.6 * BEAT, out); tone('triangle', hz(ROOT[bar % 4] + (bar % 2 ? 19 : 24)), t0 + 2.5 * BEAT, 0.01, 0.08, 1.2 * BEAT, out);
+    for (const k of [0, 2]) {
+      const t = t0 + k * BEAT, o = ac.createOscillator(), g = ac.createGain();
+      o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(55, t + 0.12); env(g, t, 0.003, 0.14, 0.22);
+      o.connect(g).connect(out); o.start(t); o.stop(t + 0.35);
+    }
+    for (let e = 0; e < 8; e++) hit(t0 + e * BEAT / 2 + (e % 2 ? 0.035 : 0), e % 2 ? 0.06 : 0.03, 0.04, HAT);
+    if (sec >= 1) for (const k of [1, 3]) hit(t0 + k * BEAT, 0.1, 0.09, RIM);
+    if (sec >= 1) ARP[(bar + sec) % 4].forEach((ix, e) => {
+      if (ix < 0 || (sec === 3 && e > 5)) return;
+      tone('square', hz(c[ix] + 12), t0 + e * BEAT / 2, 0.005, 0.05, 0.42, ARPF);
+    });
+    for (let k = 0; k < 6; k++) hit(t0 + Math.random() * 4 * BEAT, 0.015 + Math.random() * 0.015, 0.004, DUST);
+  }
+  MU.busy = new Promise((res) => {
+    let fired = false;
+    const fin = (buf) => {
+      if (fired) return; fired = true;
+      if (!buf) { res(null); return; }
+      const all = buf.getChannelData(0), n = Math.round(LOOP * sr), d = all.slice(0, n);
+      for (let i = n; i < all.length; i++) d[i - n] += all[i];   // la cola del final entra al inicio: el bucle no salta
+      let pk = 0; for (let i = 0; i < n; i++) pk = Math.max(pk, Math.abs(d[i]));
+      const k = pk ? 0.4 / pk : 1; for (let i = 0; i < n; i++) d[i] *= k;   // volumen fijo de fondo, debajo de la voz
+      res(wavURL(d, sr));
+    };
+    ac.oncomplete = (e) => fin(e.renderedBuffer);
+    try { const p = ac.startRendering(); if (p && p.then) p.then(fin, () => fin(null)); } catch (e) { fin(null); }
+  });
+  return MU.busy;
+}
+// Se llama desde el toque de ▶: desbloquea el <audio> aunque la pista aún se esté generando
+function musicStart() {
+  if (!VS || !VS.music) return;
+  MU.want = true;
+  if (!MU.el) { MU.el = new Audio(); MU.el.loop = true; MU.el.preload = 'auto'; MU.el.setAttribute('playsinline', ''); }
+  const play = () => { try { const p = MU.el.play(); if (p && p.catch) p.catch(() => {}); } catch (e) { /* sin música */ } };
+  if (MU.url) { if (MU.el.src !== MU.url) MU.el.src = MU.url; play(); return; }
+  MU.el.src = MU.mute || (MU.mute = wavURL(new Float32Array(2205), 22050)); play();
+  musicRender().then((url) => { if (!url) return; MU.url = url; if (MU.want && VS && VS.playing && VS.music) { MU.el.src = url; play(); } });
+}
+function musicStop() { MU.want = false; if (MU.el) try { MU.el.pause(); } catch (e) { /* nada */ } }
+// Posición en pulsos (interpolada entre lecturas de currentTime), o null si la música no suena
+function musicBeat() {
+  const el = MU.el;
+  if (!el || el.paused || !MU.url || el.src !== MU.url) return null;
+  const now = performance.now(), ct = el.currentTime;
+  if (ct !== MU.ct) { MU.ct = ct; MU.at = now; }
+  return (ct + Math.min(0.5, (now - MU.at) / 1000)) / BEAT;
+}
+// Retraso (ms) para que algo que tocaba en `ms` caiga en el siguiente pulso (step = 0.5 → corcheas)
+function musicSnap(ms, step = 0.5) {
+  const b = musicBeat();
+  if (b == null) return ms;
+  const at = b + ms / 1000 / BEAT;
+  return Math.max(0, (Math.ceil(at / step - 0.02) * step - b) * BEAT * 1000);
+}
+
 // ───── Sprites (cuadrícula de texto → SVG nítido)
 const SPR = {
   heart: ['.XX...XX.', 'XWXX.XXXX', 'XXXXXXXXX', 'XXXXXXXXX', '.XXXXXXX.', '..XXXXX..', '...XXX...', '....X....'],
@@ -310,8 +406,19 @@ function availFrom(t) {
   if (mn >= 5) return addDays(C.exam.classes[5], 1);
   return null;
 }
-const topicCost = (t, f = 1) => Math.max(15, Math.round((f * P_BASE[t.pri] * (1.2 - 0.5 * mastery(t.id))) / 5) * 5);
-const topicScore = (t) => P_W[t.pri] * (1.25 - mastery(t.id)) - t.n * 0.001;
+// Tema empezado y sin terminar: ya leíste la lección, viste (parte de) el video o contestaste preguntas
+function begun(tid) {
+  const tp = S.tp[tid] || {}, v = S.vid[tid] || {};
+  return !tp.done && !!(tp.read || v.done || v.pos || answeredIn(tid));
+}
+// Lo que ya llevas de un tema empezado se descuenta de su bloque
+function partLeft(tid) {
+  const tp = S.tp[tid] || {}, v = S.vid[tid] || {};
+  return Math.max(0.5, 1 - (tp.read ? 0.25 : 0) - (v.done ? 0.2 : v.pos ? 0.1 : 0) - Math.min(0.2, answeredIn(tid) * 0.02));
+}
+const topicCost = (t, f = 1) => Math.max(15, Math.round((f * partLeft(t.id) * P_BASE[t.pri] * (1.2 - 0.5 * mastery(t.id))) / 5) * 5);
+// Lo ya empezado va primero; después, prioridad y puntos débiles
+const topicScore = (t) => (begun(t.id) ? 10 : 0) + P_W[t.pri] * (1.25 - mastery(t.id)) - t.n * 0.001;
 // Arma los días desde `from`. Con f < 1 los bloques de tema se acortan para que la primera vuelta
 // de los 30 temas quepa antes del examen; buildPlan prueba de f = 1 hacia abajo.
 function planDays(from, last, firstOn0, pending, f) {
@@ -336,11 +443,12 @@ function planDays(from, last, firstOn0, pending, f) {
       add('review', '', Math.max(10, Math.min(30, 10 + 5 * due.length, Math.round(S.settings.budget[type] * 0.2 / 5) * 5)), '', due);
     }
     while (rem >= 15) {
-      const av = pending.filter((t) => !sched.has(t.id) && (!availFrom(t) || d >= availFrom(t)));
+      const av = pending.filter((t) => !sched.has(t.id) && (!availFrom(t) || d >= availFrom(t) || begun(t.id)));
       if (!av.length) break;
       av.sort((a, b) => topicScore(b) - topicScore(a));
-      // El de mayor prioridad si cabe al menos el 60% de su tiempo; si no, el siguiente que quepa completo.
-      const t = topicCost(av[0], f) * 0.6 <= rem ? av[0] : av.find((x) => topicCost(x, f) <= rem);
+      // El de mayor prioridad si cabe al menos el 60% de su tiempo; si no, el siguiente que quepa completo
+      // (pero un tema nuevo no se mete antes de uno que ya empezaste).
+      const t = topicCost(av[0], f) * 0.6 <= rem ? av[0] : av.find((x) => topicCost(x, f) <= rem && (begun(x.id) || !begun(av[0].id)));
       if (!t) break;
       const cost = topicCost(t, f);
       add('topic', t.id, Math.min(cost, rem)); sched.add(t.id); firstOn[t.id] = d;
@@ -389,7 +497,7 @@ function topicParts(tid) {
 function blockInfo(b) {
   const t = TOP[b.t];
   switch (b.k) {
-    case 'topic': return { title: `Tema ${t.n} · ${t.title}`, sub: topicParts(t.id), go: ['topic', t.id] };
+    case 'topic': return { title: `Tema ${t.n} · ${t.title}`, sub: (begun(t.id) ? 'Continúa lo que empezaste · ' : '') + topicParts(t.id), go: ['topic', t.id] };
     case 'second': return { title: `2ª vuelta · ${t.title}`, sub: b.title, go: ['topic', t.id] };
     case 'quick': return { title: `Perlas rápidas · ${t.title}`, sub: 'No alcanzó el tiempo para la vuelta completa', go: ['topic', t.id] };
     case 'review': return { title: 'Repaso espaciado', sub: b.x && b.x.length ? 'Toca: ' + b.x.map((id) => TOP[id].title).join(', ') : 'Tarjetas y cuaderno de errores del día', go: ['repaso'] };
@@ -582,7 +690,7 @@ VIEWS.plan = (m) => {
   m.innerHTML = `
   <button class="btn small ghost" data-go="home" style="align-self:flex-start">← Inicio</button>
   <h1>Plan hasta el parcial</h1>
-  <p class="muted">Ordenado por prioridad y por tus puntos débiles. Los temas de las semanas 5 y 6 aparecen después de su clase (27 oct y 3 nov). El 7 y 8 de noviembre son de simulacro.</p>
+  <p class="muted">Ordenado por prioridad y por tus puntos débiles. Lo que ya empezaste va primero. Los temas nuevos de las semanas 5 y 6 aparecen después de su clase (27 oct y 3 nov). El 7 y 8 de noviembre son de simulacro.</p>
   <section class="panel"><h2>¿Cuánto tiempo tienes al día?</h2><div class="budget">${sel('wk', 'Lun, mié a vie (después del hospital)')}${sel('tue', 'Martes académico')}${sel('we', 'Sábado y domingo')}</div><button class="btn" data-act="replan">Rehacer el plan desde hoy</button>${S.diag.done ? '' : '<p class="small muted">Haz el diagnóstico para que el plan use tus temas débiles; por ahora solo usa la prioridad.</p>'}</section>
   ${left.length ? `<div class="note"><b>Con este tiempo no alcanza la vuelta completa de ${left.length} tema(s)</b>: ${left.map((id) => esc(TOP[id].title)).join(', ')}. Quedaron como “perlas rápidas” el ${fmtDay(C.exam.sim[1])}. Si puedes, sube tu tiempo diario.</div>` : `<div class="note"><b>Los ${C.topics.length} temas entran en el plan antes del examen.</b>${(S.plan.fit || 1) < 1 ? ' Para que quepan, los bloques de tema son más cortos de lo ideal: prioriza preguntas y perlas, y si puedes sube tu tiempo diario.' : ''}</div>`}
   <ol class="days">${days.map((d) => dayCard(d, d.date === td ? 'today' : d.date < td ? 'past' : '')).join('')}</ol>`;
@@ -883,7 +991,7 @@ function recSceneSecs(tid, sc) {
 const videoSecs = (tid) => (hasVideo(tid) ? vFlat(tid).reduce((a, x) => a + (recSceneSecs(tid, x.sc) || sceneSecs(x.sc)), 0) : 0);
 const vMin = (tid) => Math.max(1, Math.round(videoSecs(tid) / 60));
 const mmss = (s) => `${Math.floor(s / 60)}:${pad(Math.floor(s % 60))}`;
-function stopVideo() { hush(); clearLater(); if (CINE) setCine(CINE, false); if (VS) VS.dead = true; VS = null; }
+function stopVideo() { hush(); clearLater(); musicStop(); if (CINE) setCine(CINE, false); if (VS) VS.dead = true; VS = null; }
 document.addEventListener('visibilitychange', () => { if (document.hidden && VS && VS.playing) vPause(); });
 
 function vCmp(v) {
@@ -960,7 +1068,7 @@ function vConcept(term) {
 function vCaption(s, secs) {
   if (!VS) return;
   const v = VS.flat[VS.i].sc.v;
-  keyTerms(s, v).forEach((t) => { const at = Math.max(0, t.i * secs * 1000 - 150); if (at < 60) vConcept(t); else later(() => vConcept(t), at); });
+  keyTerms(s, v).forEach((t) => { const at = musicSnap(Math.max(0, t.i * secs * 1000 - 150)); if (at < 60) vConcept(t); else later(() => vConcept(t), at); });
 }
 // Mensajes del reproductor (quiz, final): una línea tranquila en la franja
 function vSub(s) {
@@ -1020,18 +1128,20 @@ function vPlay() {
   if (VS.sfx) { try { audio(); } catch (e) { /* sin audio */ } }
   if (first && VS.flat[VS.i].si === 0) { vfx('chapter'); const card = $('#vccard'); if (card) { const x = VS.flat[VS.i]; card.innerHTML = `<span>Capítulo ${x.ci + 1}</span><b>${esc(x.ch)}</b>`; card.classList.remove('on'); void card.offsetWidth; card.classList.add('on'); } }
   if (VS.voice) pickVoice();
+  musicStart();
   if (VS.phase === 'wait') vQuizWait(); else vStep();
 }
-function vPause() { if (!VS) return; VS.playing = false; hush(); clearLater(); vBtn(); }
+function vPause() { if (!VS) return; VS.playing = false; hush(); clearLater(); musicStop(); vBtn(); }
 function vStep() {
   if (!VS || !VS.playing) return;
   const x = VS.flat[VS.i];
   if (VS.sent >= VS.sents.length) {
     if (VS.phase === 'say' && x.sc.v.k === 'quiz') { VS.phase = 'wait'; vQuizWait(); return; }
-    later(() => vGo(VS.i + 1), 650 / VS.speed); return;
+    later(() => vGo(VS.i + 1), musicSnap(650 / VS.speed)); return;
   }
-  const s = VS.sents[VS.sent];
-  vReveal(); vProgress();
+  const s = VS.sents[VS.sent], rv = musicSnap(0);
+  if (rv > 40) later(vReveal, rv); else vReveal();
+  vProgress();
   const next = () => { if (!VS || !VS.playing) return; VS.sent++; vStep(); };
   let dur = VS.voice ? playRec(VS.tid, s, VS.speed, next) : false;
   if (dur === false) {
@@ -1071,7 +1181,7 @@ function vQuizReveal(k) {
 }
 function vEnd() {
   const tid = VS.tid, prev = S.vid[tid] || {}, first = !prev.done;
-  VS.playing = false; hush(); clearLater(); vBtn();
+  VS.playing = false; hush(); clearLater(); musicStop(); vBtn();
   S.vid[tid] = { done: prev.done || today(), pos: 0, n: (prev.n || 0) + 1 };
   if (first) gain(40, 'Video completo'); else save();
   vfx('end');
@@ -1091,6 +1201,8 @@ function vEnd() {
 // Gancho para la herramienta de vista previa (tools/preview.cjs): solo existe con #preview en la URL
 if (location.hash === '#preview') window.__gp = { show: (i) => { VS.started = true; vBtn(); vShow(i); document.querySelectorAll('#vslide [data-r]').forEach((r) => r.classList.add('on')); const x = VS.flat[VS.i]; vSub(''); sentences(x.sc.say).forEach((t) => keyTerms(t, x.sc.v).forEach(vConcept)); if (x.sc.v.k === 'quiz') document.querySelectorAll('#vslide .vopt').forEach((b, j) => j === x.sc.v.a && b.classList.add('ok')); return VS.flat.length; },
   // Frases que se graban por tema (tools/narrate): video, explicaciones de quiz, repasos y pasos de la animación
+  mu: () => ({ url: MU.url, paused: MU.el ? MU.el.paused : null, t: MU.el ? MU.el.currentTime : null, src: MU.el ? MU.el.src.slice(0, 30) : null, beat: musicBeat() }),
+  render: () => musicRender(),
   terms: (tid) => vFlat(tid).map((x) => sentences(x.sc.say).map((t) => keyTerms(t, x.sc.v).map((k) => k.w).join(' + ')).filter(Boolean).join(' | ')),
   segs: (tid) => {
     const out = [], seen = new Set();
@@ -1104,18 +1216,18 @@ function mountVideo(el, tid) {
   const st = S.vid[tid] || {}, startI = st.pos > 0 && st.pos < flat.length ? st.pos : 0;
   const chStart = chs.map((_, ci) => flat.findIndex((x) => x.ci === ci));
   const chSecs = chs.map((_, ci) => flat.reduce((a, x, k) => a + (x.ci === ci ? secs[k] : 0), 0));
-  VS = { tid, flat, secs, total, chStart, i: startI, sent: 0, sents: [], phase: 'say', playing: false, started: false, speed: vRate(), voice: S.settings.vvoice !== false, cc: S.settings.vcc !== false, sfx: S.settings.vsfx !== false, combo: 0, t: 0, picked: null };
+  VS = { tid, flat, secs, total, chStart, i: startI, sent: 0, sents: [], phase: 'say', playing: false, started: false, speed: vRate(), voice: S.settings.vvoice !== false, cc: S.settings.vcc !== false, sfx: S.settings.vsfx !== false, music: S.settings.vmusic !== false, combo: 0, t: 0, picked: null };
   let acc = 0;
   const ticks = chSecs.slice(0, -1).map((s) => { acc += s; return `<b style="left:${(acc / total) * 100}%"></b>`; }).join('');
   el.innerHTML = `<div class="vp" id="vp" style="--sc:${SUBJ[t.subj].color}">
     <div class="vscreen" id="vscreen"><div class="vsq" id="vsq"><canvas width="160" height="160" aria-hidden="true"></canvas><div class="vlabels" id="vlabels"></div><div class="vslide" id="vslide"></div><span class="vchip" id="vchip"></span><div class="vccard" id="vccard" aria-hidden="true"></div><div class="vcombo" id="vcombo" aria-live="polite"></div></div>
       <div class="vcap" id="vsub" aria-live="polite"></div>
-      <button class="vbig" data-act="vplay" id="vbig"><span class="pl">▶</span>${startI ? 'Continuar el video' : 'Ver el video'}<small>${mmss(total)} · ${chs.length} capítulos · con voz y subtítulos</small></button></div>
+      <button class="vbig" data-act="vplay" id="vbig"><span class="pl">▶</span>${startI ? 'Continuar el video' : 'Ver el video'}<small>${mmss(total)} · ${chs.length} capítulos · con voz y música</small></button></div>
     <div class="vbar" id="vbar" data-act="vseek" role="progressbar" aria-label="Avance del video">${ticks}<i id="vfill"></i></div>
     <div class="vctrl">
       <button class="vb" data-act="vprev" aria-label="Capítulo anterior">⏮</button><button class="vb vmain" data-act="vplay" id="vplaybtn" aria-label="Reproducir">▶</button><button class="vb" data-act="vnext" aria-label="Siguiente capítulo">⏭</button>
       <span class="vtime" id="vtime">0:00 / ${mmss(total)}</span>
-      <button class="vb" data-act="vspeed" aria-label="Velocidad">${VS.speed}×</button><button class="vb" data-act="vvoice" aria-pressed="${VS.voice}">Voz</button><button class="vb" data-act="vcc" aria-pressed="${VS.cc}" aria-label="Conceptos en pantalla">Aa</button><button class="vb" data-act="vsfx" aria-pressed="${VS.sfx}" aria-label="Efectos de sonido">♪</button><button class="vb" data-act="vcine" aria-pressed="false" aria-label="Modo cine">⛶</button>
+      <button class="vb" data-act="vspeed" aria-label="Velocidad">${VS.speed}×</button><button class="vb" data-act="vvoice" aria-pressed="${VS.voice}">Voz</button><button class="vb" data-act="vcc" aria-pressed="${VS.cc}" aria-label="Conceptos en pantalla">Aa</button><button class="vb" data-act="vsfx" aria-pressed="${VS.sfx}" aria-label="Efectos de sonido">♪</button><button class="vb" data-act="vmusic" aria-pressed="${VS.music}" aria-label="Música de fondo">Lo-fi</button><button class="vb" data-act="vcine" aria-pressed="false" aria-label="Modo cine">⛶</button>
     </div>
   </div>
   <section class="panel tight"><h2>Capítulos</h2><ol class="vchaps" id="vchaps">${chs.map((c, ci) => `<li><button data-act="vch" data-i="${ci}"><span>${ci + 1}. ${esc(c.ch)}</span><span class="small muted">${mmss(chSecs[ci])}</span></button></li>`).join('')}</ol>
@@ -1136,12 +1248,20 @@ function mountVideo(el, tid) {
   ACT.vvoice = (b) => { VS.voice = !VS.voice; S.settings.vvoice = VS.voice; save(); b.setAttribute('aria-pressed', VS.voice); if (VS.voice) TTS.broken = false; restart(); };
   ACT.vcc = (b) => { VS.cc = !VS.cc; S.settings.vcc = VS.cc; save(); b.setAttribute('aria-pressed', VS.cc); vSub(''); };
   ACT.vsfx = (b) => { VS.sfx = !VS.sfx; S.settings.vsfx = VS.sfx; save(); b.setAttribute('aria-pressed', VS.sfx); if (VS.sfx) vfx('pop', 3); };
+  ACT.vmusic = (b) => { VS.music = !VS.music; S.settings.vmusic = VS.music; save(); b.setAttribute('aria-pressed', VS.music); if (VS.music && VS.playing) musicStart(); else musicStop(); };
   ACT.vcine = (b) => { const on = !$('#vp').classList.contains('cine'); setCine($('#vp'), on); b.setAttribute('aria-pressed', on); b.textContent = on ? '✕' : '⛶'; };
   ACT.vpick = (b) => vQuizReveal(+b.dataset.k);
   ACT.vagain = () => { S.vid[tid].pos = 0; save(); VAUTO = true; go('topic', { a: tid, b: 'video' }); };
   ACT.vqstop = () => { VQUEUE = []; clearLater(); toast('Maratón detenido'); vSub(''); const p = document.querySelector('.vs-end p'); if (p) p.remove(); };
   vShow(startI);
-  if (!reduce) { let last = null; loop((ts) => { if (!VS) return; if (last == null) last = ts; VS.t += Math.min((ts - last) / 1000, 0.1); last = ts; vDraw(VS.t); }); }
+  const vp = $('#vp');
+  if (!reduce) { let last = null; loop((ts) => {
+    if (!VS) return; if (last == null) last = ts; VS.t += Math.min((ts - last) / 1000, 0.1); last = ts; vDraw(VS.t);
+    // Pulso de la música: el marco y el concepto nuevo respiran con cada tiempo (más en el primero del compás)
+    const b = musicBeat(), p = b == null ? 0 : Math.exp(-(b % 1) * 5) * (Math.floor(b) % 4 === 0 ? 1 : 0.5);
+    if (Math.abs(p - (VS.pl || 0)) > 0.01) { VS.pl = p; vp.style.setProperty('--pulse', p.toFixed(3)); }
+  }); }
+  if (VS.music) setTimeout(musicRender, 500);
   if (VAUTO) { VAUTO = false; vPlay(); }
 }
 
