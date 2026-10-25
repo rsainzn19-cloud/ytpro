@@ -605,3 +605,5 @@ body.cine-on #hud,body.cine-on #tabs{display:none}
 .simstage{aspect-ratio:2/1}
 .simstage canvas{width:100%;height:100%;image-rendering:pixelated}
 .smearcv{width:100%;display:block;image-rendering:pixelated;border:3px solid var(--line);background:#0B0E2A;aspect-ratio:4/3}
+.mvid{width:100%;aspect-ratio:4/5;display:block;background:#000;border:3px solid var(--line)}
+.mclip .mbox,.panel>.mbox{margin-top:8px}

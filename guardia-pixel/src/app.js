@@ -1672,6 +1672,17 @@ VIEWS.taller = (m) => {
 
 // ═══════════ Videos: escenas en pixel art con narración, subtítulos, capítulos y pausas con pregunta
 let VS = null, VAUTO = false, VQUEUE = [];
+// Clips “en 1 minuto” (motion graphics con voz y lo-fi, tools/motion): un MP4 por tema
+const MOTION = C.motion || {};
+function clipBox(box, tid) {
+  const m = MOTION[tid]; if (!m || !box) return;
+  box.hidden = false;
+  box.innerHTML = `<video class="mvid" src="${esc(m.url)}" controls playsinline preload="auto" aria-label="${esc(m.title)}"></video>`;
+  const v = box.querySelector('video');
+  v.addEventListener('ended', () => { const st = S.vid[tid] || (S.vid[tid] = {}); if (!st.clip) { st.clip = today(); gain(10, 'Resumen en 1 minuto'); } else save(); }, { once: true });
+  try { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); } catch (e) { /* se reproduce con el botón */ }
+  box.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+}
 const hasVideo = (tid) => !!(C.lessons[tid] && C.lessons[tid].video);
 // Ideas clave que se ven en pantalla en un grupo de escenas (cifras, listas, algoritmos, mnemotecnias, comparadores)
 function vKeys(scs) {
@@ -1953,12 +1964,14 @@ function mountVideo(el, tid) {
       <button class="vb" data-act="vspeed" aria-label="Velocidad">${VS.speed}×</button><button class="vb" data-act="vvoice" aria-pressed="${VS.voice}">Voz</button><button class="vb" data-act="vtimbre" aria-label="Tipo de voz">${TIMBRES[timbre()][0]}</button><button class="vb" data-act="vcc" aria-pressed="${VS.cc}" aria-label="Conceptos en pantalla">Aa</button><button class="vb" data-act="vsfx" aria-pressed="${VS.sfx}" aria-label="Efectos de sonido">♪</button><button class="vb" data-act="vmusic" aria-pressed="${VS.music}" aria-label="Música de fondo">Lo-fi</button><button class="vb" data-act="vcine" aria-pressed="false" aria-label="Modo cine">⛶</button>
     </div>
   </div>
+  ${MOTION[tid] ? `<section class="panel tight mclip"><div class="row"><h2 class="grow">Resumen en 1 minuto</h2><span class="small muted">${mmss(MOTION[tid].dur)}</span></div><p class="small muted">${esc(MOTION[tid].title)}: el mecanismo central animado, para repasar rápido o antes del examen.</p><button class="btn gold-btn" data-act="mclip">▶ Ver el resumen</button><div class="mbox" hidden></div></section>` : ''}
   <section class="panel tight"><h2>Capítulos</h2><ol class="vchaps" id="vchaps">${chs.map((c, ci) => `<li><button data-act="vch" data-i="${ci}"><span>${ci + 1}. ${esc(c.ch)}</span><span class="small muted">${mmss(chSecs[ci])}</span></button></li>`).join('')}</ol>
   <p class="small muted">${VOICE[tid] ? 'La narración está grabada: sube el volumen. Con “Voz” apagada, el video avanza solo con subtítulos.' : TTS.ok ? 'La voz es la de tu teléfono. ¿No se escucha? Sube el volumen o apaga “Voz” y sigue con subtítulos.' : 'Este navegador no tiene voz: el video avanza con subtítulos.'} ${VQUEUE.length ? `Maratón: quedan ${VQUEUE.length} video(s) después de este.` : ''}</p></section>`;
   VS.g = Pix(el.querySelector('canvas').getContext('2d'));
   recAudio(tid);
   const restart = () => { if (VS.playing) { hush(); clearLater(); if (VS.phase === 'wait') vQuizWait(); else vStep(); } };
   ACT.vplay = () => (VS.playing ? vPause() : vPlay());
+  ACT.mclip = () => { vPause(); clipBox(el.querySelector('.mclip .mbox'), tid); };
   ACT.vprev = () => { const ci = VS.flat[VS.i].ci, s0 = VS.chStart[ci]; vGo(VS.i > s0 || VS.sent > 0 ? s0 : VS.chStart[Math.max(0, ci - 1)]); };
   ACT.vnext = () => { const ci = VS.flat[VS.i].ci; if (ci + 1 < VS.chStart.length) vGo(VS.chStart[ci + 1]); else vGo(VS.flat.length); };
   ACT.vch = (b) => { vGo(VS.chStart[+b.dataset.i]); if (!VS.playing) vPlay(); };
@@ -2249,7 +2262,10 @@ VIEWS.videos = (m) => {
     const min = ts.reduce((a, t) => a + vMin(t.id), 0);
     return `<section class="panel" style="--sc:${s.color}"><div class="row">${subjIcon(s.id, 2)}<h2 class="grow">${esc(s.name)}</h2><button class="btn small" data-act="vmara" data-s="${s.id}">Maratón · ${min} min</button></div>
     <ul class="vlist">${ts.map((t) => `<li><button class="vitem" data-act="vopen" data-t="${t.id}"><span class="vth" aria-hidden="true">▶</span><span class="tt">${esc(t.title)}<small>Tema ${t.n} · ${vMin(t.id)} min · ${status(t.id)}</small></span></button></li>`).join('')}</ul></section>`;
-  }).join('')}`;
+  }).join('')}
+  ${Object.keys(MOTION).length ? `<section class="panel"><h2>Resúmenes en 1 minuto</h2><p class="muted small">El mecanismo central de cada tema en motion graphics, con voz. Para repasar en el camino o la noche antes.</p><div class="mbox" hidden></div>
+    <ul class="vlist">${C.topics.filter((t) => MOTION[t.id]).map((t) => `<li><button class="vitem" data-act="mopen" data-t="${t.id}"><span class="vth" aria-hidden="true">⚡</span><span class="tt">${esc(MOTION[t.id].title)}<small>Tema ${t.n} · ${mmss(MOTION[t.id].dur)}${S.vid[t.id] && S.vid[t.id].clip ? ' · Visto ✓' : ''}</small></span></button></li>`).join('')}</ul></section>` : ''}`;
+  ACT.mopen = (b) => clipBox(m.querySelector('.mbox'), b.dataset.t);
   ACT.vopen = (b) => { VQUEUE = []; VAUTO = true; go('topic', { a: b.dataset.t, b: 'video' }); };
   ACT.vmara = (b) => {
     const ts = vt.filter((t) => t.subj === b.dataset.s), pend = ts.filter((t) => !(S.vid[t.id] && S.vid[t.id].done)), list = (pend.length ? pend : ts).map((t) => t.id);

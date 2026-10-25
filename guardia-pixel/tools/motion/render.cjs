@@ -15,6 +15,7 @@ if (!tid) { console.error('Falta el tema'); process.exit(1); }
   await page.addScriptTag({ path: path.join(here, 'kit.js') });
   await page.addScriptTag({ path: path.join(here, 'clips', tid + '.js') });
   const says = await page.evaluate(() => CLIP.scenes.map((s) => s.say));
+  const title = await page.evaluate(() => CLIP.title);
   // 1. Narración por escena
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'motion-'));
   fs.writeFileSync(path.join(tmp, 'say.json'), JSON.stringify(says));
@@ -64,6 +65,7 @@ if (!tid) { console.error('Falta el tema'); process.exit(1); }
   fs.mkdirSync(path.join(root, 'motion'), { recursive: true });
   const out = path.join(root, 'motion', tid + '.mp4');
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', vid, '-i', aud, '-c:v', 'copy', '-c:a', 'copy', '-shortest', '-movflags', '+faststart', out]);
+  fs.writeFileSync(path.join(root, 'motion', tid + '.json'), JSON.stringify({ dur: +total.toFixed(1), title: await (async () => title)() }));
   fs.rmSync(tmp, { recursive: true, force: true });
   console.log(`${out} · ${total.toFixed(1)} s · ${(fs.statSync(out).size / 1048576).toFixed(1)} MB`, errs.length ? '\nERRORES:\n' + errs.join('\n') : '');
 })();

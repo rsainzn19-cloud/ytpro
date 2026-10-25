@@ -32,6 +32,16 @@ for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('
 C.voice = {};
 try { for (const f of readdirSync(new URL('voice/', src)).filter((f) => f.endsWith('.json'))) { const tid = f.replace(/\.json$/, ''); if (C.lessons[tid]) C.voice[tid] = JSON.parse(read('voice/' + f)); } } catch (e) { /* sin grabaciones */ }
 
+// Clips “en 1 minuto”: motion/<tema>.json ({dur, title}) y, si ya se subieron como assets, motion/assets.json ({tema: url})
+C.motion = {};
+try {
+  const root = new URL('./motion/', import.meta.url), urls = (() => { try { return JSON.parse(readFileSync(new URL('assets.json', root), 'utf8')); } catch (e) { return {}; } })();
+  for (const f of readdirSync(root).filter((f) => f.endsWith('.json') && f !== 'assets.json')) {
+    const tid = f.replace(/\.json$/, '');
+    if (C.lessons[tid] && readdirSync(root).includes(tid + '.mp4')) C.motion[tid] = { ...JSON.parse(readFileSync(new URL(f, root), 'utf8')), url: urls[tid] || `motion/${tid}.mp4` };
+  }
+} catch (e) { /* sin clips */ }
+
 // ───── Validación
 const errs = [], warns = [];
 const topics = new Map(C.topics.map((t) => [t.id, t]));
