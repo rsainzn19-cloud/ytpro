@@ -26,8 +26,11 @@ Los 30 temas tienen:
 - **Taller** en los 30 temas (pestaña del tema y Más → Taller; `src/content/51-taller.js`): 15 algoritmos con
   casos (anemia, reperfusión, LRA, glomerulopatías, TEP, dolor articular, diarrea, gasometría, sangrado,
   pancreatitis, hipófisis, hipertensión pulmonar, leucemias, linfomas y disfagia; el build comprueba que cada caso
-  llegue a su diagnóstico), **Lee el ECG** (13 patrones generados en el teléfono, con las derivaciones clave
-  resaltadas al responder), **Lee el frotis** (11 hallazgos en pixel art, con las células clave marcadas) y simuladores (potasio y ECG, TFG y ERC, ferritina y saturación, estenosis aórtica).
+  llegue a su diagnóstico), **Taller de electros** (26 patrones generados en el teléfono, `51-taller.js` +
+  `52-auscultacion.js`: lectura guiada en 5 pasos —frecuencia, ritmo, P, QRS y diagnóstico, con las respuestas
+  calculadas del propio trazo—, modo rápido y galería con las derivaciones clave resaltadas), **Taller de soplos**
+  (12 ruidos y soplos sintetizados en el teléfono: fonocardiograma sincronizado, mapa de los 5 focos —el soplo baja
+  lejos de donde nace—, maniobras de Valsalva, cuclillas y handgrip, y modo Identifica con casos), **Lee el frotis** (11 hallazgos en pixel art, con las células clave marcadas) y simuladores (potasio y ECG, TFG y ERC, ferritina y saturación, estenosis aórtica).
 - **Tu progreso en tu cuenta**: con las capacidades `db` y `user`, el estado se guarda en un documento privado
   (`data/users/<id>/progreso`) y se sincroniza entre dispositivos; gana el progreso más reciente y un dispositivo
   nuevo toma el de la cuenta. Fuera de Claude, todo sigue funcionando solo con el navegador.

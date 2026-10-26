@@ -12,7 +12,7 @@ const OUT = opt('--out');
 const ONLY = opt('--only') ? new Set(opt('--only').split(',').map((x) => x.trim())) : null;
 const keepTopic = (tid) => !ONLY || ['meta', 'diagnostico'].includes(tid) || ONLY.has(tid);
 
-const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {}, algos: {}, ecg: {}, frotis: {} };
+const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {}, algos: {}, ecg: {}, frotis: {}, soplos: {} };
 for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('.js')).sort()) {
   const part = (await import(new URL('content/' + f, src))).default;
   // Con --only se cargan solo esos temas, pero los comparadores de todos (una lección puede usar uno ajeno)
@@ -23,7 +23,7 @@ for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('
       const tid = f.replace(/^\d+-|\.js$/g, '');
       v.forEach(([fr, bk], i) => C.cards.push({ id: `${tid}-c${String(i + 1).padStart(2, '0')}`, topic: tid, f: fr, b: bk }));
     } else if (Array.isArray(v)) C[k] = (C[k] || []).concat(v);
-    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg', 'frotis'].includes(k)) Object.assign(C[k], v);
+    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg', 'frotis', 'soplos'].includes(k)) Object.assign(C[k], v);
     else C[k] = v;
   }
 }
@@ -85,6 +85,11 @@ for (const [aid, A] of Object.entries(C.algos)) {
 for (const [eid, e] of [...Object.entries(C.ecg), ...Object.entries(C.frotis)]) {
   if (!e.name || !e.why) errs.push(`ECG ${eid}: falta nombre o explicación`);
   for (const tid of e.topics || []) if (!C.topics.some((t) => t.id === tid)) errs.push(`ECG ${eid}: tema ${tid} no existe`);
+}
+const FOCOS = ['aortico', 'pulmonar', 'erb', 'tricuspideo', 'mitral'];
+for (const [sid, e] of Object.entries(C.soplos)) {
+  if (!e.name || !e.why || !e.caso || !e.short || !FOCOS.includes(e.foco)) errs.push(`soplo ${sid}: faltan nombre, explicación, caso o foco válido`);
+  for (const tid of e.topics || []) if (!C.topics.some((t) => t.id === tid)) errs.push(`soplo ${sid}: tema ${tid} no existe`);
 }
 // “¿Dónde actúa?”: cada fármaco apunta a un nodo que existe y cada vía a temas que existen
 for (const [pid, p] of Object.entries(C.paths)) {

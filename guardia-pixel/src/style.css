@@ -607,3 +607,23 @@ body.cine-on #hud,body.cine-on #tabs{display:none}
 .smearcv{width:100%;display:block;image-rendering:pixelated;border:3px solid var(--line);background:#0B0E2A;aspect-ratio:4/3}
 .mvid{width:100%;aspect-ratio:4/5;display:block;background:#000;border:3px solid var(--line)}
 .mclip .mbox,.panel>.mbox{margin-top:8px}
+/* Taller de electros y de soplos */
+.egal{display:flex;flex-wrap:wrap;gap:6px}
+.egal .chip{cursor:pointer;min-height:36px;white-space:normal;text-align:left}
+.hsgrid{display:grid;grid-template-columns:1fr;gap:10px;align-items:center}
+.chestbox{max-width:300px;width:100%;justify-self:center}
+.hscv{width:100%;display:block;border:3px solid var(--line)}
+.chest{width:100%;display:block}
+.chest .ctor{fill:#2A2350;stroke:#6B5FB0;stroke-width:2}
+.chest .ccla,.chest .crib{fill:none;stroke:#6B5FB0;stroke-width:2;opacity:.55}
+.chest .cste{fill:#3A3270;stroke:#6B5FB0;stroke-width:1.5}
+.chest .cfoco{cursor:pointer}
+.chest .cfoco circle{fill:rgba(77,184,255,.18);stroke:#4DB8FF;stroke-width:2}
+.chest .cfoco.src circle{fill:rgba(255,143,177,.35);stroke:#FF8FB1}
+.chest .cfoco.on circle{fill:#F2C14E;stroke:#FFE9A8;stroke-width:3}
+.chest .ctx{fill:#C9CEFF;font:10px ui-monospace,monospace;pointer-events:none}
+.chest .cirr{fill:none;stroke:#FF8FB1;stroke-width:3;stroke-dasharray:5 4}
+.hsdl{margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px 10px}
+.hsdl div{display:flex;flex-direction:column}
+.hsdl dt{font:12px/1.2 var(--f-mono);color:var(--ink-3)}
+.hsdl dd{margin:0;font:600 15px/1.3 var(--f-body);color:var(--ink)}

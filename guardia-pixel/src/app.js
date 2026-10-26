@@ -613,7 +613,7 @@ const STATIC_CHG = {
 };
 function go(v, p = {}) { clearTimers(); route = { v, ...p }; render(); window.scrollTo(0, 0); }
 function render() {
-  stopLoops(); stopVideo();
+  stopLoops(); stopVideo(); hsStop();
   if (SY.pending && !(QS && !QS.finished)) { const o = SY.pending; SY.pending = null; const plan = S.plan; S = normalize(o); S.plan = plan; SIG = sig(S); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignorar */ } buildPlan(); toast('Tu progreso se actualizó desde otro dispositivo'); }
   ACT = { ...STATIC }; CHG = { ...STATIC_CHG };
   const m = $('#main'); m.innerHTML = '';
@@ -1321,13 +1321,28 @@ function ecgSpec(id, k) {
     case 'bavc': P.rhythm = 'chb'; P.arate = 82; P.rate = 38; P.qrsW = 1.9; P.tMul = -0.7; break;
     case 'tep': P.rate = 112; m(['I'], { s: -0.5 }); m(['III'], { q: -0.32, t: -0.3 }); m(['V1'], { t: -0.28 }); m(['V2'], { t: -0.38 }); m(['V3'], { t: -0.26 }); break;
     case 'k': kEffects(P, k); break;
+    case 'bradi': P.rate = 44; break;
+    case 'taqui': P.rate = 118; break;
+    case 'bav1': P.rate = 64; P.pr = 0.32; break;
+    case 'mobitz1': P.rate = 72; P.prSeq = [0.16, 0.25, 0.31, null]; break;
+    case 'mobitz2': P.rate = 80; P.prSeq = [0.17, 0.17, null]; P.qrsW = 1.9; break;
+    case 'tsv': P.rhythm = 'svt'; P.rate = 182; break;
+    case 'tv': P.rhythm = 'vt'; P.rate = 168; P.qrsW = 2.3; P.tMul = -1.1; m(['V1', 'V2', 'V3'], { rMul: 0.3, s: -1.7 }); m(['I', 'V5', 'V6', 'aVL'], { rMul: 1.3, s: -0.05, q: 0 }); break;
+    case 'wpw': P.pr = 0.13; P.delta = 0.32; P.qrsW = 1.4; P.tMul = 0.7; ['I', 'II', 'III', 'aVR', 'aVL', 'aVF', ...pre].forEach((l) => m([l], { q: 0 })); m(['V1'], { rMul: 2.5, s: -0.7 }); break;
+    case 'brd': P.qrsW = 1.35; P.ext = 0.035; m(['V1'], { r2: 0.75, s: -0.45, t: -0.2 }); m(['V2'], { r2: 0.6, s: -0.8, t: -0.12 }); m(['I', 'V5', 'V6', 'aVL'], { s2: -0.35 }); break;
+    case 'bri': P.qrsW = 1.75; P.ext = 0.02;
+      m(['V1'], { rMul: 0.15, s: -1.5, st: 0.18, t: 0.4 }); m(['V2'], { rMul: 0.2, s: -1.9, st: 0.24, t: 0.5 }); m(['V3'], { rMul: 0.25, s: -1.5, st: 0.16, t: 0.4 });
+      m(['I', 'aVL', 'V5', 'V6'], { q: 0, s: 0, r2: 0.7, st: -0.08, t: -0.3 }); m(['V4'], { s: -0.3, t: -0.15 }); m(['II', 'aVF'], { t: 0.08 }); break;
+    case 'hvi': P.rate = 70; m(['V1'], { s: -1.7, t: 0.12 }); m(['V2'], { s: -2.1 }); m(['V5'], { rMul: 1.6, st: -0.12, t: -0.3 }); m(['V6'], { rMul: 1.75, st: -0.12, t: -0.28 }); m(['I', 'aVL'], { rMul: 1.4, st: -0.06, t: -0.15 }); break;
+    case 'posterior': P.rate = 80; m(['V1'], { rMul: 3.2, s: -0.35, st: -0.22, t: 0.35 }); m(['V2'], { rMul: 2.6, s: -0.6, st: -0.28, t: 0.45 }); m(['V3'], { rMul: 1.3, s: -0.5, st: -0.2, t: 0.4 }); break;
+    case 'qtlargo': P.rate = 64; P.qt = 2.1; P.tw = 1.4; break;
     default: break;
   }
   return P;
 }
 function leadParams(P, l) {
   const b = ECG_BASE[l], o = P.mod[l] || {};
-  return { p: b[0] * P.pMul, q: o.q ?? b[1], r: b[2] * (o.rMul ?? 1), s: o.s ?? b[3], t: o.t ?? b[4] * P.tMul + (o.tAdd || 0), st: o.st || 0, stUp: !!o.stUp, prd: o.prd || 0, u: (l === 'V2' || l === 'V3' ? 1.2 : 0.8) * P.u };
+  return { p: b[0] * P.pMul, q: o.q ?? b[1], r: b[2] * (o.rMul ?? 1), s: o.s ?? b[3], r2: o.r2 || 0, s2: o.s2 || 0, t: o.t ?? b[4] * P.tMul + (o.tAdd || 0), st: o.st || 0, stUp: !!o.stUp, prd: o.prd || 0, u: (l === 'V2' || l === 'V3' ? 1.2 : 0.8) * P.u };
 }
 function ecgBeats(P, dur) {
   if (P.beats && P.beats.dur >= dur) return P.beats;
@@ -1338,7 +1353,8 @@ function ecgBeats(P, dur) {
   } else {
     for (let t = -0.35; t < dur + 0.5;) {
       const rr = P.rhythm === 'af' ? (60 / P.rate) * (0.62 + 0.76 * rnd()) : 60 / P.rate;
-      out.push({ t, p: P.rhythm === 'sinus', q: true, rr }); t += rr;
+      const pr = P.prSeq ? P.prSeq[out.length % P.prSeq.length] : P.pr; // Mobitz: PR por latido (null = P que no conduce)
+      out.push({ t, p: P.rhythm === 'sinus', q: pr != null, rr, pr: pr ?? P.pr }); t += rr;
     }
   }
   out.dur = dur; P.beats = out; return out;
@@ -1347,10 +1363,13 @@ function beatV(L, P, u, b) {
   let v = 0;
   if (b.p && L.p) v += L.p * gs(u, 0.05, 0.022);
   if (!b.q) return v;
-  const q0 = P.pr, k = P.qrsW, rr = Math.min(b.rr, 1.6);
+  const q0 = b.pr ?? P.pr, k = P.qrsW, rr = Math.min(b.rr, 1.6);
   if (L.prd) v += L.prd * c01((u - 0.09) / 0.012) * c01((q0 - 0.004 - u) / 0.012);
   v += L.q * gs(u, q0 + 0.008 * k, 0.007 * k) + L.r * gs(u, q0 + 0.03 * k, 0.009 * k) + L.s * gs(u, q0 + 0.052 * k, 0.009 * k);
-  const J = q0 + 0.07 * k, Tp = J + 0.17 * Math.sqrt(rr) * P.qt, tw = 0.05 * Math.sqrt(rr) * P.tw;
+  if (L.r2) v += L.r2 * gs(u, q0 + 0.075 * k, 0.011 * k); // R′ (rama derecha) o muesca de la R (rama izquierda)
+  if (L.s2) v += L.s2 * gs(u, q0 + 0.08 * k, 0.016 * k); // S ancha y empastada
+  if (P.delta && L.r > 0) v += P.delta * Math.min(L.r, 1.2) * c01((u - q0 + 0.045) / 0.065) * (u < q0 + 0.02 ? 1 : gs(u, q0 + 0.02, 0.02)); // onda delta
+  const J = q0 + (0.07 + (P.ext || 0)) * k, Tp = J + 0.17 * Math.sqrt(rr) * P.qt, tw = 0.05 * Math.sqrt(rr) * P.tw;
   if (L.st) {
     const on = c01((u - J + 0.006) / 0.012), off = u < Tp ? 1 : gs(u, Tp, tw * 1.1);
     v += L.st * on * off * (L.stUp ? Math.max(0, 1 - (u - J) / (Tp - J)) : 1);
@@ -1441,6 +1460,294 @@ function readerRender(key) {
     ${g.ans ? `<div class="mexp"><p>${g.ans === g.cur ? '✓ ' : ''}<b>${esc(e.name)}.</b> ${esc(e.why)}</p></div><div class="actrl"><button class="btn small gold-btn" data-act="egnext" data-k="${key}">${R.next}</button></div>` : ''}`;
   const cv = g.sec.querySelector('canvas');
   requestAnimationFrame(() => R.draw(cv, g, !!g.ans));
+}
+// ── Taller de electros: lectura guiada (frecuencia, ritmo, P, QRS y diagnóstico), modo rápido y galería
+const ECG_STEPS = [
+  ['Frecuencia ventricular', ['Menos de 60', '60 a 100', 'Más de 100'], 'Cuenta los QRS de la tira de DII (10 s) y multiplica por 6, o divide 300 entre los cuadros grandes que hay de R a R.'],
+  ['Ritmo', ['Regular', 'Irregular'], 'Compara las distancias de R a R a lo largo de la tira.'],
+  ['Ondas P', ['Una P antes de cada QRS', 'Hay P que no conducen', 'No hay P (o hay ondas f o F)'], 'Busca la P en DII y en V1 antes de cada QRS; marcha P con P para ver cuáles se quedan sin QRS.'],
+  ['QRS', ['Estrecho (menos de 3 cuadritos)', 'Ancho (3 cuadritos o más)'], 'A 25 mm/s, 3 cuadritos chicos son 120 ms.']
+];
+const FACTS = {};
+function ecgFacts(id) {
+  if (FACTS[id]) return FACTS[id];
+  const P = ecgSpec(id), n = ecgBeats(P, 60).filter((b) => b.q && b.t >= 0 && b.t < 60).length;
+  return (FACTS[id] = [n < 60 ? 0 : n <= 100 ? 1 : 2, P.rhythm === 'af' || P.prSeq ? 1 : 0, P.rhythm === 'chb' || P.prSeq ? 1 : P.rhythm === 'sinus' && P.pMul > 0.2 ? 0 : 2, P.qrsW >= 1.35 ? 1 : 0]);
+}
+const LAB = {};
+function mountEcgLab(host, ids, key) {
+  if (ids.length < 2) return;
+  const g = LAB[key] = LAB[key] || { mode: 'guia', hits: 0, n: 0, gal: ids[0] };
+  g.ids = ids;
+  ACT.lbmode = (b) => { LAB[b.dataset.k].mode = b.dataset.m; labRender(b.dataset.k); };
+  ACT.lbstep = (b) => {
+    const g = LAB[b.dataset.k], i = +b.dataset.i;
+    if (g.pend != null || g.done) return;
+    if (g.step < 4) {
+      const ok = i === g.facts[g.step];
+      g.trail.push({ s: g.step, i, ok }); g.n++;
+      if (ok) { g.hits++; g.step++; wsfx('pop'); } else { g.pend = i; wsfx('bad'); }
+    } else {
+      g.done = g.opts[i]; g.n++;
+      const ok = g.done === g.cur;
+      if (ok) { g.hits++; wsfx('ok'); gain(g.trail.every((x) => x.ok) ? 12 : 8); } else wsfx('bad');
+      WS().ecglab = Math.max(WS().ecglab || 0, g.n >= 10 ? g.hits / g.n : 0);
+    }
+    labRender(b.dataset.k);
+  };
+  ACT.lbgo = (b) => { const g = LAB[b.dataset.k]; g.pend = null; g.step++; labRender(b.dataset.k); };
+  ACT.lbnext = (b) => { labNew(b.dataset.k); labRender(b.dataset.k); };
+  ACT.lbgal = (b) => { LAB[b.dataset.k].gal = b.dataset.id; labRender(b.dataset.k); };
+  g.sec = document.createElement('div'); g.sec.className = 'stack'; host.appendChild(g.sec);
+  if (!g.cur || !ids.includes(g.cur)) labNew(key);
+  labRender(key);
+}
+function labNew(key) {
+  const g = LAB[key], pick = shuffle(g.ids.filter((id) => id !== g.cur))[0], f = ecgFacts(pick);
+  const same = (id) => ecgFacts(id).filter((x, i) => x === f[i]).length;
+  const others = shuffle(Object.keys(C.ecg).filter((id) => id !== pick)).sort((a, b) => same(b) - same(a));
+  g.cur = pick; g.P = ecgSpec(pick); g.facts = f; g.step = 0; g.trail = []; g.pend = null; g.done = null;
+  g.opts = shuffle([pick, others[0], others[1], shuffle(others.slice(2))[0]]);
+}
+function labRender(key) {
+  const g = LAB[key], modes = [['guia', 'Lectura guiada'], ['rapido', 'Rápido'], ['galeria', 'Galería']];
+  g.sec.innerHTML = `<section class="panel"><div class="row"><h2 class="grow">Taller de electros</h2>${g.n ? `<span class="small muted">${g.hits}/${g.n}</span>` : ''}</div>
+    <div class="seg2" role="group" aria-label="Modo">${modes.map(([m, l]) => `<button class="btn small${g.mode === m ? ' gold-btn' : ''}" data-act="lbmode" data-k="${key}" data-m="${m}">${l}</button>`).join('')}</div></section><div class="lbody stack"></div>`;
+  const body = g.sec.querySelector('.lbody');
+  if (g.mode === 'rapido') { mountEcg(body, g.ids, 'lab' + key); return; }
+  const sec = document.createElement('section'); sec.className = 'panel ecgq'; body.appendChild(sec);
+  if (g.mode === 'galeria') {
+    const e = C.ecg[g.gal];
+    sec.innerHTML = `<p class="small muted">Toca un patrón: se resalta dónde mirar.</p>
+      <div class="egal">${g.ids.map((id) => `<button class="chip${id === g.gal ? ' fill' : ''}" style="--sc:var(--cyan)" data-act="lbgal" data-k="${key}" data-id="${id}">${esc(C.ecg[id].name)}</button>`).join('')}</div>
+      <canvas class="ecgcv" aria-label="Electrocardiograma: ${esc(e.name)}"></canvas><div class="mexp"><p><b>${esc(e.name)}.</b> ${esc(e.why)}</p></div>`;
+    const cv = sec.querySelector('canvas'), P = ecgSpec(g.gal);
+    requestAnimationFrame(() => ecgDraw(cv, P, '12', e.hl));
+    return;
+  }
+  const e = C.ecg[g.cur], s = g.step, st = ECG_STEPS[s];
+  const trail = g.trail.map((x) => `<li${x.ok ? '' : ' class="bad"'}><span>${ECG_STEPS[x.s][0]}</span><b>${x.ok ? '✓ ' : '✗ '}${esc(ECG_STEPS[x.s][1][x.ok ? x.i : g.facts[x.s]])}</b></li>`).join('');
+  let q;
+  if (s < 4) {
+    const marks = (i) => (g.pend == null ? '' : i === g.facts[s] ? ' ok' : i === g.pend ? ' no' : '');
+    q = `<p class="aq">Paso ${s + 1} de 5 · ${st[0]}</p>
+      <div class="aopts">${st[1].map((o, i) => `<button class="aopt${marks(i)}" data-act="lbstep" data-k="${key}" data-i="${i}"${g.pend != null ? ' disabled' : ''}>${esc(o)}</button>`).join('')}</div>
+      ${g.pend != null ? `<div class="mexp"><p>${esc(st[2])}</p></div><div class="actrl"><button class="btn small gold-btn" data-act="lbgo" data-k="${key}">Sigue ▶</button></div>` : `<p class="small muted">${esc(st[2])}</p>`}`;
+  } else {
+    const marks = (id) => (!g.done ? '' : id === g.cur ? ' ok' : id === g.done ? ' no' : '');
+    q = `<p class="aq">Paso 5 de 5 · Con eso, ¿qué es?</p>
+      <div class="aopts">${g.opts.map((id, i) => `<button class="aopt${marks(id)}" data-act="lbstep" data-k="${key}" data-i="${i}"${g.done ? ' disabled' : ''}>${esc(C.ecg[id].name)}</button>`).join('')}</div>
+      ${g.done ? `<div class="mexp"><p>${g.done === g.cur ? '✓ ' : ''}<b>${esc(e.name)}.</b> ${esc(e.why)}</p><p class="small muted">Lo resaltado en amarillo es donde se ve.</p></div><div class="actrl"><button class="btn small gold-btn" data-act="lbnext" data-k="${key}">Otro ECG ▶</button></div>` : ''}`;
+  }
+  sec.innerHTML = `<p class="small muted">Léelo como en la guardia, en orden: frecuencia, ritmo, P, QRS y luego el diagnóstico.</p>
+    <canvas class="ecgcv" aria-label="Electrocardiograma"></canvas>${trail ? `<ol class="atrail">${trail}</ol>` : ''}${q}`;
+  const cv = sec.querySelector('canvas');
+  requestAnimationFrame(() => ecgDraw(cv, g.P, '12', g.done ? e.hl : []));
+}
+
+// ── Taller de soplos: ruidos cardiacos sintetizados en el teléfono (S1, S2, soplos, chasquidos, galopes y frote).
+// Cada sonido es un WAV que se repite en un <audio> (suena en modo silencio). El fonocardiograma sigue al audio.
+// Se oye más fuerte en su foco: tocar otro foco vuelve a sintetizar con menos soplo (y S1 o S2 según la zona).
+const HS_SR = 22050, HS_T = 0.8333, HS_N = 4; // 72 lpm, 4 ciclos por bucle
+const FOCOS = { aortico: ['Aórtico', 82, 64], pulmonar: ['Pulmonar', 118, 64], erb: ['Erb', 118, 88], tricuspideo: ['Tricuspídeo', 108, 122], mitral: ['Mitral', 148, 136] };
+const MANIOBRAS = { // multiplicador de intensidad del soplo; en el prolapso mueve el clic
+  basal: ['En reposo', {}], valsalva: ['Valsalva', { ea: 0.55, mch: 1.7, im: 0.65, civ: 0.65, ia: 0.65, em: 0.65, cia: 0.7, pvm: 1.2, s3: 0.6, s4: 0.6 }],
+  cuclillas: ['Cuclillas', { ea: 1.35, mch: 0.45, im: 1.25, civ: 1.2, ia: 1.25, em: 1.1, pvm: 0.8 }], handgrip: ['Handgrip', { ea: 0.65, mch: 0.55, im: 1.45, civ: 1.4, ia: 1.45, pvm: 0.8 }]
+};
+const FLAB = { aortico: [-14, 4, 'end'], pulmonar: [14, 4, 'start'], erb: [14, 4, 'start'], tricuspideo: [-14, 4, 'end'], mitral: [0, 24, 'middle'] }; // rótulos sin encimarse
+const PVM_CLICK = { basal: 0.17, valsalva: 0.11, cuclillas: 0.22, handgrip: 0.21 };
+function hsBand(n, f0, q, seed) { // ruido blanco filtrado pasa-banda (biquad RBJ), normalizado a pico 1
+  const rnd = seeded(seed), w = (2 * Math.PI * f0) / HS_SR, al = Math.sin(w) / (2 * q), a0 = 1 + al;
+  const b0 = al / a0, b2 = -al / a0, a1 = (-2 * Math.cos(w)) / a0, a2 = (1 - al) / a0, out = new Float32Array(n);
+  let x1 = 0, x2 = 0, y1 = 0, y2 = 0, mx = 1e-6;
+  for (let i = 0; i < n; i++) { const x = rnd() * 2 - 1, y = b0 * x + b2 * x2 - a1 * y1 - a2 * y2; x2 = x1; x1 = x; y2 = y1; y1 = y; out[i] = y; mx = Math.max(mx, Math.abs(y)); }
+  for (let i = 0; i < n; i++) out[i] /= mx;
+  return out;
+}
+const diamond = (p, a, b, pk) => (p < a || p > b ? 0 : p < pk ? (p - a) / (pk - a) : (b - p) / (b - pk));
+const edge = (p, a, b, r = 0.012) => c01((p - a) / r) * c01((b - p) / r);
+function hsSynth(id, man = 'basal', at = null) {
+  const n = Math.round(HS_SR * HS_T * HS_N), out = new Float32Array(n), e = C.soplos[id];
+  const fo = FOCOS[at || e.foco], src = FOCOS[e.foco], d = Math.hypot(fo[1] - src[1], fo[2] - src[2]);
+  const near = 0.22 + 0.78 * Math.exp(-((d / 42) ** 2)), base = fo[2] < 100 ? 1 : 0.6, apex = fo[2] < 100 ? 0.6 : 1;
+  const mul = (MANIOBRAS[man][1][id] ?? 1) * near;
+  // Ruidos: senoides amortiguadas (graves de verdad, más un armónico para que se oigan en la bocina del teléfono)
+  const thump = (t0, f, amp, dur) => {
+    for (let c = 0; c < HS_N; c++) {
+      const s0 = Math.round((c * HS_T + t0) * HS_SR), len = Math.round(dur * HS_SR);
+      for (let i = 0; i < len && s0 + i < n; i++) {
+        const t = i / HS_SR, env = c01(t / 0.004) * Math.exp(-t / (dur / 4));
+        out[s0 + i] += amp * env * (Math.sin(2 * Math.PI * f * t) + 0.45 * Math.sin(2 * Math.PI * f * 2.7 * t + 0.6));
+      }
+    }
+  };
+  const s1 = id === 'em' ? 1.35 : 1, a2 = id === 'ea' ? 0.35 : 1;
+  thump(0, 95, 0.42 * s1 * apex, 0.1); thump(0.022, 120, 0.3 * s1 * apex, 0.09);
+  if (id === 'cia') { thump(0.32, 170, 0.36 * base, 0.07); thump(0.375, 150, 0.3 * base, 0.07); }
+  else { thump(0.32, 170, 0.36 * a2 * base, 0.07); thump(0.335, 150, 0.16 * base, 0.06); }
+  if (id === 's3') thump(0.47, 62, 0.42, 0.09);
+  if (id === 's4') thump(0.755, 62, 0.4, 0.08);
+  if (id === 'em') thump(0.395, 340, 0.24 * near, 0.03); // chasquido de apertura
+  const ck = PVM_CLICK[man];
+  if (id === 'pvm') thump(ck, 420, 0.3 * near, 0.025); // clic mesosistólico
+  // Soplos: ruido filtrado con su envolvente dentro del ciclo
+  const M = {
+    ea: [190, 0.8, 0.5, (p) => diamond(p, 0.06, 0.29, 0.15)],
+    mch: [210, 0.8, 0.46, (p) => diamond(p, 0.07, 0.3, 0.2)],
+    im: [430, 1.1, 0.3, (p) => edge(p, 0.035, 0.32) * 0.95],
+    civ: [260, 0.9, 0.42, (p) => edge(p, 0.03, 0.315) * 0.9],
+    pvm: [420, 1.1, 0.3, (p) => (p > ck + 0.025 && p < 0.315 ? 0.35 + 0.65 * (p - ck) / (0.315 - ck) : 0) * edge(p, ck + 0.02, 0.315)],
+    ia: [560, 1.3, 0.3, (p) => (p > 0.335 ? Math.exp(-(p - 0.335) / 0.13) * edge(p, 0.335, 0.66, 0.008) : 0)],
+    em: [110, 0.9, 0.5, (p) => (p > 0.42 && p < 0.6 ? 0.85 * Math.exp(-(p - 0.42) / 0.12) : 0) + (p > 0.62 && p < 0.835 ? 0.3 + 0.7 * (p - 0.62) / 0.21 : 0) * edge(p, 0.62, 0.83)],
+    cia: [300, 0.9, 0.16, (p) => diamond(p, 0.07, 0.26, 0.15)],
+    roce: [700, 0.7, 0.32, (p) => Math.max(edge(p, 0.08, 0.25, 0.02), edge(p, 0.4, 0.52, 0.02) * 0.8, edge(p, 0.71, 0.8, 0.02) * 0.9)]
+  }[id];
+  if (M) {
+    const [f0, q, amp, env] = M, nz = hsBand(n, f0, q, 7 + id.length), nz2 = id === 'ea' || id === 'mch' || id === 'civ' || id === 'roce' ? hsBand(n, f0 * 2.2, 1.2, 99) : null;
+    for (let i = 0; i < n; i++) {
+      const p = (i / HS_SR) % HS_T;
+      let v = env(p); if (!v) continue;
+      if (id === 'roce') v *= 0.55 + 0.45 * Math.sin(2 * Math.PI * 23 * (i / HS_SR)) ** 2; // aspereza
+      out[i] += amp * mul * v * (nz2 ? 0.7 * nz[i] + 0.45 * nz2[i] : nz[i]);
+    }
+  }
+  for (let i = 0; i < n; i++) out[i] = Math.tanh(2.3 * out[i]) * 0.92; // más volumen sin recortar feo
+  return out;
+}
+const HS = { el: null, url: null, id: null, man: 'basal', at: null, raf: null, data: null };
+function hsStop() {
+  if (HS.raf) cancelAnimationFrame(HS.raf); HS.raf = null;
+  if (HS.el) { HS.el.pause(); }
+}
+function hsPlay(id, man, at, keep) {
+  const t = keep && HS.el ? HS.el.currentTime : 0;
+  HS.data = hsSynth(id, man, at); HS.id = id; HS.man = man; HS.at = at;
+  if (HS.url) URL.revokeObjectURL(HS.url);
+  HS.url = wavURL(HS.data, HS_SR);
+  if (!HS.el) { HS.el = new Audio(); HS.el.loop = true; HS.el.setAttribute('playsinline', ''); }
+  HS.el.src = HS.url;
+  try { HS.el.currentTime = t; } catch (e) { /* aún sin metadatos */ }
+  const p = HS.el.play(); if (p && p.catch) p.catch(() => toast('Toca ▶ otra vez para escuchar'));
+}
+// Fonocardiograma de 2 ciclos con la línea de reproducción; sístole y diástole marcadas
+function hsDraw(cv, data, reveal) {
+  const W = cv.clientWidth || 340, H = 120, dpr = window.devicePixelRatio || 1;
+  cv.width = Math.round(W * dpr); cv.height = H * dpr; cv.style.height = H + 'px';
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.fillStyle = '#0B0E2A'; g.fillRect(0, 0, W, H);
+  const span = 2 * HS_T, x = (s) => (s / span) * W;
+  for (let c = 0; c < 2; c++) {
+    g.fillStyle = 'rgba(77,184,255,.10)'; g.fillRect(x(c * HS_T), 0, x(0.32), H);
+    g.fillStyle = '#8790CC'; g.font = '11px ui-monospace, monospace';
+    g.fillText('sístole', x(c * HS_T + 0.08), 13); g.fillText('diástole', x(c * HS_T + 0.48), 13);
+  }
+  if (reveal && data) {
+    const per = (span * HS_SR) / W;
+    g.fillStyle = '#7CFFB2';
+    for (let px = 0; px < W; px++) {
+      let mx = 0; for (let i = Math.floor(px * per); i < (px + 1) * per; i++) mx = Math.max(mx, Math.abs(data[i] || 0));
+      const h = Math.min(H / 2 - 18, mx * (H / 2 - 18) * 1.25); g.fillRect(px, H / 2 + 6 - h, 1, Math.max(1, 2 * h));
+    }
+    g.fillStyle = '#F2C14E'; g.font = '11px ui-monospace, monospace';
+    for (let c = 0; c < 2; c++) { g.fillText('S1', x(c * HS_T) + 2, H - 4); g.fillText('S2', x(c * HS_T + 0.32) + 2, H - 4); }
+  } else {
+    g.fillStyle = '#C9CEFF'; g.font = '13px ui-sans-serif, system-ui'; g.textAlign = 'center';
+    g.fillText('El fonocardiograma aparece al responder', W / 2, H / 2 + 10); g.textAlign = 'left';
+  }
+  if (HS.el && !HS.el.paused) { const px = x(HS.el.currentTime % span); g.fillStyle = '#FF5470'; g.fillRect(px, 18, 2, H - 24); }
+}
+// Tórax con los 5 focos; el foco del soplo y su irradiación se marcan al responder (o siempre en modo aprende)
+function chestSVG(key, at, show) {
+  const e = show ? C.soplos[show] : null, f = e ? FOCOS[e.foco] : null;
+  const irr = e && /car[oó]tida/i.test(e.irradia) ? `<path d="M${f[1]} ${f[2] - 8} L${f[1] - 6} 22" class="cirr"/><text x="${f[1] - 54}" y="18" class="ctx" text-anchor="middle">carótidas</text>`
+    : e && /axila/i.test(e.irradia) ? `<path d="M${f[1] + 8} ${f[2]} L186 114" class="cirr"/><text x="182" y="104" class="ctx" text-anchor="middle">axila</text>` : '';
+  return `<svg class="chest" viewBox="0 0 200 180" role="group" aria-label="Focos de auscultación">
+    <path d="M30 170 L38 40 Q60 20 100 24 Q140 20 162 40 L170 170 Z" class="ctor"/><path d="M58 34 Q80 40 96 38 M104 38 Q120 40 142 34" class="ccla"/>
+    <rect x="94" y="40" width="12" height="96" rx="4" class="cste"/>
+    ${[60, 84, 108, 132].map((y) => `<path d="M44 ${y} Q70 ${y + 8} 92 ${y} M108 ${y} Q130 ${y + 8} 156 ${y}" class="crib"/>`).join('')}
+    ${irr}
+    ${Object.entries(FOCOS).map(([k, [l, x, y]]) => `<g class="cfoco${k === at ? ' on' : ''}${e && k === e.foco ? ' src' : ''}" data-act="hsat" data-k="${key}" data-f="${k}" role="button" aria-label="Foco ${l}"><circle cx="${x}" cy="${y}" r="10"/><text x="${x + FLAB[k][0]}" y="${y + FLAB[k][1]}" class="ctx" text-anchor="${FLAB[k][2]}">${l}</text></g>`).join('')}
+  </svg>`;
+}
+const HL = {};
+function mountSoplos(host, ids, key) {
+  if (ids.length < 2) return;
+  const g = HL[key] = HL[key] || { mode: 'aprende', hits: 0, n: 0, sel: ids[0] };
+  g.ids = ids;
+  ACT.hsmode = (b) => { const g = HL[b.dataset.k]; g.mode = b.dataset.m; hsStop(); hsNew(b.dataset.k); hsRender(b.dataset.k); };
+  ACT.hssel = (b) => { const g = HL[b.dataset.k]; g.sel = b.dataset.id; g.at = C.soplos[g.sel].foco; g.man = 'basal'; hsStop(); hsRender(b.dataset.k); };
+  ACT.hsplay = (b) => {
+    const g = HL[b.dataset.k], id = g.mode === 'aprende' ? g.sel : g.cur;
+    if (HS.el && !HS.el.paused && HS.id === id) hsStop(); else { hsPlay(id, g.man, g.at, false); hsLoop(b.dataset.k); }
+    hsButtons(b.dataset.k);
+  };
+  ACT.hsman = (b) => { const g = HL[b.dataset.k]; g.man = b.dataset.m; hsRetune(b.dataset.k); };
+  ACT.hsat = (b) => { const g = HL[b.dataset.k]; g.at = b.dataset.f; hsRetune(b.dataset.k); };
+  ACT.hspick = (b) => {
+    const g = HL[b.dataset.k]; if (g.ans) return;
+    g.ans = b.dataset.id; g.n++;
+    if (g.ans === g.cur) { g.hits++; wsfx('ok'); gain(8); } else wsfx('bad');
+    WS().soplos = Math.max(WS().soplos || 0, g.n >= 8 ? g.hits / g.n : 0);
+    hsRender(b.dataset.k);
+  };
+  ACT.hsnext = (b) => { hsStop(); hsNew(b.dataset.k); hsRender(b.dataset.k); };
+  g.sec = document.createElement('section'); g.sec.className = 'panel hslab'; host.appendChild(g.sec);
+  hsNew(key); hsRender(key);
+}
+function hsNew(key) {
+  const g = HL[key];
+  g.cur = shuffle(g.ids.filter((id) => id !== g.cur))[0]; g.ans = null; g.man = 'basal';
+  g.at = g.mode === 'aprende' ? C.soplos[g.sel].foco : C.soplos[g.cur].foco;
+  const others = shuffle(Object.keys(C.soplos).filter((id) => id !== g.cur)), near = others.filter((id) => g.ids.includes(id));
+  g.opts = shuffle([g.cur, ...[...near, ...others.filter((id) => !near.includes(id))].slice(0, 3)]);
+}
+function hsRetune(key) { // cambia maniobra o foco sin perder el compás
+  const g = HL[key], id = g.mode === 'aprende' ? g.sel : g.cur, on = HS.el && !HS.el.paused && HS.id === id;
+  if (on) hsPlay(id, g.man, g.at, true); else HS.data = hsSynth(id, g.man, g.at);
+  hsButtons(key);
+  if (!on) { const cv = g.sec.querySelector('canvas'); hsDraw(cv, HS.data, g.mode === 'aprende' || !!g.ans); }
+}
+function hsButtons(key) {
+  const g = HL[key], sec = g.sec, id = g.mode === 'aprende' ? g.sel : g.cur, on = HS.el && !HS.el.paused && HS.id === id;
+  const pb = sec.querySelector('.hsplay'); if (pb) { pb.textContent = on ? '■ Detener' : '▶ Escuchar'; pb.setAttribute('aria-pressed', on); }
+  sec.querySelectorAll('[data-act="hsman"]').forEach((b) => b.classList.toggle('gold-btn', b.dataset.m === g.man));
+  const ch = sec.querySelector('.chestbox'); if (ch) ch.innerHTML = chestSVG(key, g.at, g.mode === 'aprende' ? g.sel : g.ans ? g.cur : null);
+  const lab = sec.querySelector('.hsat'); if (lab) lab.textContent = `Escuchas en el foco ${FOCOS[g.at][0].toLowerCase()} · ${MANIOBRAS[g.man][0].toLowerCase()}`;
+}
+function hsLoop(key) {
+  const g = HL[key], cv = g.sec.querySelector('canvas');
+  if (HS.raf) cancelAnimationFrame(HS.raf);
+  const f = () => { if (!cv.isConnected || !HS.el || HS.el.paused) { HS.raf = null; hsDraw(cv, HS.data, g.mode === 'aprende' || !!g.ans); return; } hsDraw(cv, HS.data, g.mode === 'aprende' || !!g.ans); HS.raf = requestAnimationFrame(f); };
+  HS.raf = requestAnimationFrame(f);
+}
+function hsRender(key) {
+  const g = HL[key], learn = g.mode === 'aprende', id = learn ? g.sel : g.cur, e = C.soplos[id];
+  const modes = [['aprende', 'Escucha y aprende'], ['identifica', 'Identifica']];
+  const ctrl = `<div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn gold-btn hsplay" data-act="hsplay" data-k="${key}">▶ Escuchar</button><span class="small muted hsat"></span></div>
+    <div class="seg2" role="group" aria-label="Maniobra">${Object.entries(MANIOBRAS).map(([m, [l]]) => `<button class="btn small" data-act="hsman" data-k="${key}" data-m="${m}">${l}</button>`).join('')}</div>`;
+  const desc = (x) => `<dl class="hsdl">${[['Dónde', FOCOS[x.foco][0] + (x.irradia ? ' → ' + x.irradia : '')], ['Cuándo', x.momento], ['Cómo suena', x.tono], ['Maniobras', x.maniobras]].filter(([, v]) => v && v !== '—').map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>`;
+  let body;
+  if (learn) {
+    body = `<div class="egal">${g.ids.map((s) => `<button class="chip${s === g.sel ? ' fill' : ''}" style="--sc:#FF8FB1" data-act="hssel" data-k="${key}" data-id="${s}">${esc(C.soplos[s].name)}</button>`).join('')}</div>
+      <p class="aq">${esc(e.name)} <span class="small muted">· ${esc(e.short)}</span></p>${ctrl}
+      <div class="hsgrid"><div class="chestbox"></div><canvas class="hscv" aria-label="Fonocardiograma"></canvas></div>${desc(e)}<div class="mexp"><p>${esc(e.why)}</p></div>
+      <p class="small muted">Toca otro foco: el soplo baja lejos de donde nace. Prueba las maniobras.</p>`;
+  } else {
+    body = `<div class="acase"><p>${esc(e.caso)}</p></div>${ctrl}
+      <div class="hsgrid"><div class="chestbox"></div><canvas class="hscv" aria-label="Fonocardiograma"></canvas></div>
+      <p class="small muted">Empiezas en el foco donde se oye mejor. Muévete entre focos y usa las maniobras si dudas.</p>
+      <p class="aq">¿Qué escuchas?</p>
+      <div class="aopts">${g.opts.map((s) => `<button class="aopt${g.ans ? (s === g.cur ? ' ok' : s === g.ans ? ' no' : '') : ''}" data-act="hspick" data-k="${key}" data-id="${s}"${g.ans ? ' disabled' : ''}>${esc(C.soplos[s].name)}</button>`).join('')}</div>
+      ${g.ans ? `${desc(e)}<div class="mexp"><p>${g.ans === g.cur ? '✓ ' : ''}<b>${esc(e.name)}.</b> ${esc(e.why)}</p></div><div class="actrl"><button class="btn small gold-btn" data-act="hsnext" data-k="${key}">Otro paciente ▶</button></div>` : ''}`;
+  }
+  g.sec.innerHTML = `<div class="row"><h2 class="grow">Taller de soplos</h2>${g.n ? `<span class="small muted">${g.hits}/${g.n}</span>` : ''}</div>
+    <p class="small muted">🎧 Mejor con audífonos: los ruidos del corazón son graves y la bocina del teléfono los apaga.</p>
+    <div class="seg2" role="group" aria-label="Modo">${modes.map(([m, l]) => `<button class="btn small${g.mode === m ? ' gold-btn' : ''}" data-act="hsmode" data-k="${key}" data-m="${m}">${l}</button>`).join('')}</div>${body}`;
+  HS.data = hsSynth(id, g.man, g.at);
+  hsButtons(key);
+  const cv = g.sec.querySelector('canvas');
+  requestAnimationFrame(() => hsDraw(cv, HS.data, learn || !!g.ans));
+  if (HS.el && !HS.el.paused && HS.id === id) hsLoop(key);
 }
 // ── Frotis en pixel art: un campo de microscopio de 160 × 120 con células dibujadas punto por punto
 function smearDraw(cv, id, seed, mark) {
@@ -1638,12 +1945,14 @@ const algosOf = (tid) => Object.keys(C.algos || {}).filter((id) => C.algos[id].t
 const ecgOf = (tid) => Object.keys(C.ecg || {}).filter((id) => C.ecg[id].topics.includes(tid));
 const smearOf = (tid) => Object.keys(C.frotis || {}).filter((id) => C.frotis[id].topics.includes(tid));
 const simsOf = (tid) => Object.keys(SIMS).filter((id) => SIMS[id].topics.includes(tid));
+const soplosOf = (tid) => Object.keys(C.soplos || {}).filter((id) => C.soplos[id].topics.includes(tid));
 const pathsOf = (tid) => Object.keys(C.paths || {}).filter((id) => C.paths[id].topics.includes(tid));
-const hasTaller = (tid) => !!(algosOf(tid).length || ecgOf(tid).length >= 2 || smearOf(tid).length >= 2 || simsOf(tid).length || pathsOf(tid).length);
+const hasTaller = (tid) => !!(algosOf(tid).length || ecgOf(tid).length >= 2 || smearOf(tid).length >= 2 || soplosOf(tid).length >= 2 || simsOf(tid).length || pathsOf(tid).length);
 TOPIC_TABS.taller = (el, t) => {
-  el.innerHTML = '<p class="muted">Practica con las manos: decide en algoritmos con casos, lee ECG, mueve valores y ubica fármacos. Cuenta para tu XP.</p>';
+  el.innerHTML = '<p class="muted">Practica con las manos: decide en algoritmos con casos, lee ECG, escucha soplos, mueve valores y ubica fármacos. Cuenta para tu XP.</p>';
   algosOf(t.id).forEach((id) => mountAlgo(el, id));
-  mountEcg(el, ecgOf(t.id), t.id);
+  mountEcgLab(el, ecgOf(t.id), t.id);
+  mountSoplos(el, soplosOf(t.id), t.id);
   mountReader(el, 'frotis', smearOf(t.id), t.id);
   simsOf(t.id).forEach((id) => mountSim(el, id));
   mountPaths(el, t.id);
@@ -1654,7 +1963,8 @@ VIEWS.taller = (m) => {
     m.innerHTML = `<button class="btn small ghost" data-go="taller" style="align-self:flex-start">← Taller</button><div id="tool" class="stack"></div>`;
     const el = $('#tool'), [kind, id] = a.split(':');
     if (kind === 'algo' && C.algos[id]) mountAlgo(el, id);
-    else if (kind === 'ecg') mountEcg(el, Object.keys(C.ecg), 'all');
+    else if (kind === 'ecg') mountEcgLab(el, Object.keys(C.ecg), 'all');
+    else if (kind === 'soplos') mountSoplos(el, Object.keys(C.soplos), 'all');
     else if (kind === 'frotis') mountReader(el, 'frotis', Object.keys(C.frotis), 'all');
     else if (kind === 'sim' && SIMS[id]) mountSim(el, id);
     else if (kind === 'path' && C.paths[id]) { const tid = C.paths[id].topics[0]; mountPaths(el, tid, id); }
@@ -1665,7 +1975,7 @@ VIEWS.taller = (m) => {
   m.innerHTML = `<button class="btn small ghost" data-go="mas" style="align-self:flex-start">← Más</button><h1>Taller</h1>
   <p class="muted">Lo que más se parece a las preguntas del parcial: decidir el siguiente paso, leer un estudio y ubicar un fármaco.</p>
   <h2>Algoritmos con casos</h2><div class="tools">${Object.entries(C.algos).map(([id, A]) => tile('algo:' + id, A.title, `${A.cases.length} casos${best('algo:' + id)}`)).join('')}</div>
-  <h2>Lee el estudio</h2><div class="tools">${tile('ecg:all', 'Lee el ECG', `${Object.keys(C.ecg).length} patrones al azar`)}${tile('frotis:all', 'Lee el frotis', `${Object.keys(C.frotis).length} hallazgos al azar`)}${tile('algo:gaso', 'Gasometría paso a paso', `${C.algos.gaso.cases.length} casos`)}</div>
+  <h2>Lee y escucha</h2><div class="tools">${tile('ecg:all', 'Taller de electros', `${Object.keys(C.ecg).length} patrones · lectura guiada${best('ecglab')}`)}${tile('soplos:all', 'Taller de soplos', `${Object.keys(C.soplos).length} ruidos y soplos para escuchar${best('soplos')}`)}${tile('frotis:all', 'Lee el frotis', `${Object.keys(C.frotis).length} hallazgos al azar`)}${tile('algo:gaso', 'Gasometría paso a paso', `${C.algos.gaso.cases.length} casos`)}</div>
   <h2>Simuladores</h2><div class="tools">${Object.entries(SIMS).map(([id, s]) => tile('sim:' + id, s.title, 'Mueve el valor y mira qué cambia')).join('')}</div>
   <h2>¿Dónde actúa?</h2><div class="tools">${Object.entries(C.paths).map(([id, p]) => tile('path:' + id, p.title, `${p.drugs.length} fármacos`)).join('')}</div>`;
 };
@@ -1934,6 +2244,7 @@ function vEnd() {
 if (location.hash === '#preview') window.__gp = { show: (i) => { VS.started = true; vBtn(); vShow(i); document.querySelectorAll('#vslide [data-r]').forEach((r) => r.classList.add('on')); const x = VS.flat[VS.i]; vSub(''); sentences(x.sc.say).forEach((t) => keyTerms(t, x.sc.v).forEach(vConcept)); if (x.sc.v.k === 'quiz') document.querySelectorAll('#vslide .vopt').forEach((b, j) => j === x.sc.v.a && b.classList.add('ok')); return VS.flat.length; },
   // Frases que se graban por tema (tools/narrate): video, explicaciones de quiz, repasos y pasos de la animación
   smear: (id) => { const cv = document.createElement('canvas'); smearDraw(cv, id, 42, true); return cv.toDataURL(); },
+  facts: (id) => ecgFacts(id), hsraw: (id, man, at) => Array.from(hsSynth(id, man, at), (v) => Math.round(v * 32767)), hs: (id, man, at) => { const d = hsSynth(id, man, at); let mx = 0, e = 0; for (const v of d) { mx = Math.max(mx, Math.abs(v)); e += v * v; } return [mx, Math.sqrt(e / d.length)]; },
   ecg: (id, k) => { const cv = document.createElement('canvas'); cv.style.width = '358px'; document.body.appendChild(cv); const P = ecgSpec(id, k); P.seed = 42; ecgDraw(cv, P, '12', []); const u = cv.toDataURL(); cv.remove(); return u; },
   mu: () => ({ url: MU.url, paused: MU.el ? MU.el.paused : null, t: MU.el ? MU.el.currentTime : null, src: MU.el ? MU.el.src.slice(0, 30) : null, beat: musicBeat() }),
   render: () => musicRender(),
