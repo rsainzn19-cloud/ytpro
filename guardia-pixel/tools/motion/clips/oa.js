@@ -96,8 +96,8 @@
         const a = ease(T.f(1, 0, 0.25));
         layer(a * MK.g.globalAlpha, () => { MK.g.save(); MK.g.translate(0, (1 - a) * 30); knee(t, wear, rx, ease(T.f(1, 0.4, 0.6)) > 0 ? [lm * ease(T.f(1, 0.4, 0.6)), ll * ease(T.f(1, 0.4, 0.6))] : null); MK.g.restore(); });
         with_(ease(T.f(1, 0.4, 0.6)), () => { text('Carga', 150, 182, { size: 24, color: C.gold }); text('Carga', 450, 182, { size: 24, color: C.gold }); });
-        with_(ease(T.f(1, 0.55, 0.75)), () => { text('Medial', 170, 880, { size: 28, color: C.ink2 }); text('Lateral', 430, 880, { size: 28, color: C.ink2 }); });
-        if (k >= 2) with_(ease(T.f(2, 0.55, 0.75)), () => text('se estrecha', 170, 918, { size: 24, color: C.red }));
+        with_(ease(T.f(1, 0.55, 0.75)), () => { text('Medial', 170, 862, { size: 28, color: C.ink2 }); text('Lateral', 430, 862, { size: 28, color: C.ink2 }); });
+        if (k >= 2) with_(ease(T.f(2, 0.55, 0.75)), () => text('se estrecha', 170, 895, { size: 24, color: C.red }));
         if (k === 2) { g.save(); ring(190, 552, 70, t, { color: C.red }); g.restore(); }
       });
       // 3 · Dolor mecánico
@@ -123,11 +123,11 @@
       // 5 · Manos
       with_(dimFor(5), () => {
         const ha = ease(T.f(5, 0, 0.25)), nod = ease(T.f(5, 0.25, 0.55));
-        layer(ha * MK.g.globalAlpha, () => hand(165, 1290, 1.05, 1, nod));
-        const s = 1.05, dip = 1290 - s * (178 + 0.8 * 165), pip = 1290 - s * (178 + 0.45 * 165);
+        layer(ha * MK.g.globalAlpha, () => hand(165, 1252, 0.95, 1, nod));
+        const s = 0.95, dip = 1252 - s * (178 + 0.8 * 165), pip = 1252 - s * (178 + 0.45 * 165);
         lab('Heberden · IFD', 345, dip, 270, dip, ease(T.f(5, 0.35, 0.5)), C.gold);
         lab('Bouchard · IFP', 345, pip, 270, pip, ease(T.f(5, 0.6, 0.75)), C.pink);
-        lab('Base del pulgar', 345, 1250, 250, 1258, ease(T.f(5, 0.8, 0.92)), C.red);
+        lab('Base del pulgar', 345, 1225, 232, 1225, ease(T.f(5, 0.8, 0.92)), C.red);
       });
       // 6 · Tratamiento
       if (k >= 6) {
