@@ -71,14 +71,14 @@
       let u = ((t * speed + k / n) % 1) * L, i = 0;
       while (i < segs.length - 1 && u > segs[i]) { u -= segs[i]; i++; }
       const f = u / segs[i], x = lerp(pts[i][0], pts[i + 1][0], f), y = lerp(pts[i][1], pts[i + 1][1], f);
-      g.fillStyle = col; g.globalAlpha = (o.alpha ?? 1); g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); g.globalAlpha = 1;
+      const a0 = g.globalAlpha; g.fillStyle = col; g.globalAlpha = o.alpha ?? a0; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); g.globalAlpha = a0;
     }
   }
   // Anillo que pulsa para señalar algo
   function ring(x, y, r, t, o = {}) {
     const ph = (t * (o.speed || 1.2)) % 1;
-    g.strokeStyle = o.color || C.gold; g.lineWidth = 6 * (1 - ph); g.globalAlpha = 1 - ph;
-    g.beginPath(); g.arc(x, y, r * (1 + ph * 0.5), 0, Math.PI * 2); g.stroke(); g.globalAlpha = 1;
+    const a0 = g.globalAlpha; g.strokeStyle = o.color || C.gold; g.lineWidth = 6 * (1 - ph); g.globalAlpha = a0 * (1 - ph);
+    g.beginPath(); g.arc(x, y, r * (1 + ph * 0.5), 0, Math.PI * 2); g.stroke(); g.globalAlpha = a0;
   }
   // Sello rojo de bloqueo con el nombre del fármaco
   function block(label, x, y, prog) {

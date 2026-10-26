@@ -154,7 +154,7 @@ export default {
 </ul>` }
       ],
       mnemo: { t: 'Complemento bajo: “PoLiMeroS”', d: 'Postinfecciosa, Lupus, Membranoproliferativa (y crioglobulinemia). IgA, anti-MBG y ANCA tienen complemento normal.' },
-      pearl: 'Hematuria a los 1–2 días de una faringitis = IgA (C3 normal). Hematuria a las 2–3 semanas = postestreptocócica (C3 bajo).',
+      pearl: 'Hematuria a los 1–2 días de una faringitis = IgA (C3 normal). Hematuria a las 1–3 semanas (3–6 si fue impétigo) = postestreptocócica (C3 bajo).',
       trap: 'Un adulto con hemoptisis y GN rápidamente progresiva no puede esperar resultados: recambio plasmático y pulsos de esteroides en cuanto se sospecha (anti-MBG o ANCA), y biopsia urgente.',
       guide: [
         'Biopsia en membranosa: KDIGO 2021 acepta no biopsiar a un adulto con nefrótico, anti-PLA2R positivo y TFG normal. Muchos profesores siguen enseñando “biopsia a todo nefrótico adulto”. ⚠️ Pregunta cuál prefieren en el examen.',

@@ -4,11 +4,11 @@ window.CLIP = {
   topic: 'hp', title: 'Hipertensión pulmonar en 1 minuto', sub: 'PAPm mayor de 20 y los 5 grupos, de un vistazo', color: '#62E38C',
   scenes: [
     { say: 'La hipertensión pulmonar, en un minuto.', min: 3.5 },
-    { say: 'Se define como una presión media de la arteria pulmonar mayor de veinte milímetros de mercurio, medida por cateterismo derecho.' },
-    { say: 'Grupo uno, hipertensión arterial pulmonar: más endotelina y menos óxido nítrico y prostaciclina, y la arteriola se cierra. Piensa en esclerosis sistémica.' },
-    { say: 'Grupo dos, el corazón izquierdo: la presión de la aurícula izquierda se transmite hacia atrás. Es la causa más común.' },
-    { say: 'Grupo tres, el pulmón y la hipoxia: EPOC, enfermedad intersticial o apnea del sueño, con vasoconstricción hipóxica.' },
-    { say: 'Grupo cuatro, coágulos crónicos después de un TEP; se buscan con gammagrama ventilación perfusión. Y grupo cinco, mecanismos múltiples.' },
+    { say: 'Es una presión media de la arteria pulmonar mayor de veinte milímetros de mercurio, medida por cateterismo derecho.' },
+    { say: 'Grupo uno, la arterial pulmonar: más endotelina y menos óxido nítrico y prostaciclina, y la arteriola se cierra. Piensa en esclerosis sistémica.' },
+    { say: 'Grupo dos, el corazón izquierdo: la presión se transmite hacia atrás. Es la causa más común.' },
+    { say: 'Grupo tres, el pulmón y la hipoxia: EPOC, enfermedad intersticial o apnea del sueño.' },
+    { say: 'Grupo cuatro, coágulos crónicos tras un TEP: se buscan con gammagrama. Y grupo cinco, mecanismos múltiples.' },
     { say: 'En todos, el ventrículo derecho primero se hipertrofia, luego se dilata y falla: eso define el pronóstico.' },
     { say: 'El tratamiento va por grupo: vasodilatadores pulmonares en el uno; en el dos y el tres, tratar la causa; en el cuatro, anticoagular y endarterectomía.' },
     { say: 'Trampa: sildenafil en hipertensión pulmonar por insuficiencia cardiaca izquierda. No está indicado y puede causar edema pulmonar.', min: 7 }
@@ -47,13 +47,14 @@ window.CLIP = {
       organ(shapes.lungs, 915, 330, 0.55, 1);
       g.lineCap = 'round'; g.strokeStyle = '#4A6FD8'; g.lineWidth = 46; g.beginPath(); g.moveTo(700, 380); g.quadraticCurveTo(720, 300, 915, 318); g.stroke();
       g.strokeStyle = '#1B2350'; g.lineWidth = 28; g.beginPath(); g.moveTo(700, 380); g.quadraticCurveTo(720, 300, 915, 318); g.stroke();
-      const rx = lerp(72, 112, dil), ry = lerp(96, 118, dil), wall = lerp(18, 36, hyp) * (1 - 0.5 * dil);
-      g.fillStyle = C.organ; g.beginPath(); g.ellipse(690, 455, rx + wall, ry + wall, 0, 0, Math.PI * 2); g.fill();
-      g.fillStyle = '#2A1530'; g.beginPath(); g.ellipse(690, 455, rx, ry, 0, 0, Math.PI * 2); g.fill();
-      text('VD', 690, 468, { size: 36, color: 'rgba(244,241,255,0.7)' });
+      const rx = lerp(70, 98, dil), ry = lerp(88, 104, dil), wall = lerp(16, 32, hyp) * (1 - 0.5 * dil);
+      g.fillStyle = C.organ; g.beginPath(); g.ellipse(690, 440, rx + wall, ry + wall, 0, 0, Math.PI * 2); g.fill();
+      g.fillStyle = '#2A1530'; g.beginPath(); g.ellipse(690, 440, rx, ry, 0, 0, Math.PI * 2); g.fill();
+      text('VD', 705, 452, { size: 36, color: 'rgba(244,241,255,0.7)' });
       // catéter que entra al VD y a la arteria pulmonar
       const cp = ease(T.f(1, 0.1, 0.45));
-      if (cp > 0) {
+      if (cp > 0 && T.f(2, 0, 0.2) < 1) {
+        g.globalAlpha = 1 - ease(T.f(2, 0, 0.2));
         g.strokeStyle = '#E8ECFF'; g.lineWidth = 5; g.setLineDash([]); g.beginPath();
         const pts = [[600, 585], [640, 520], [690, 470], [705, 400], [740, 335], [820, 312]];
         const n = Math.round(cp * 50);
@@ -72,7 +73,7 @@ window.CLIP = {
         const pr = ease(T.f(6, 0.1 + i * 0.27, 0.25 + i * 0.27));
         with_(pr, () => { text(s, 925, 455 + i * 44, { size: 26, color: i === 2 ? C.red : C.gold }); });
       });
-      if (k === 6) { g.save(); ring(690, 455, 110, t, { color: C.gold }); g.restore(); }
+      if (k === 6) { g.save(); ring(690, 440, 100, t, { color: C.gold }); g.restore(); }
     });
 
     // ── Tarjetas de los 5 grupos
@@ -87,7 +88,7 @@ window.CLIP = {
         text(sub1, x, top + 190, { size: 21, color: C.ink2, weight: 600, maxW: 290 });
         if (sub2) text(sub2, x, top + 218, { size: 21, color: C.dim, weight: 600, maxW: 290 });
         const tp = ease(T.f(7, 0.1 + n * 0.14, 0.22 + n * 0.14));
-        if (tp > 0) with_(tp, () => { g.strokeStyle = 'rgba(98,227,140,0.35)'; g.lineWidth = 2; g.beginPath(); g.moveTo(x - 125, top + 236); g.lineTo(x + 125, top + 236); g.stroke(); text(tx, x, top + 258, { size: 21, color: C.green, weight: 700, maxW: 296 }); });
+        if (tp > 0) with_(tp, () => { g.strokeStyle = 'rgba(98,227,140,0.35)'; g.lineWidth = 2; g.beginPath(); g.moveTo(x - 125, top + 236); g.lineTo(x + 125, top + 236); g.stroke(); text(tx, x, top + 258, { size: 19, color: C.green, weight: 700, maxW: 296 }); });
       });
     };
     // íconos (dibujados alrededor de 0,0)
@@ -100,12 +101,8 @@ window.CLIP = {
     with_(dimOf(2), () => card(1, 200, R1, ease(T.f(2, 0, 0.18)), C.purple, art, 'HAP', 'endotelina ↑ · NO y PGI₂ ↓', 'esclerosis sistémica', 'vasodilatadores pulmonares'));
     with_(dimOf(3), () => card(2, 540, R1, ease(T.f(3, 0, 0.18)), C.red, heartL, 'Corazón izquierdo', 'la causa más común', 'presión de AI hacia atrás', 'tratar el corazón'));
     with_(dimOf(4), () => card(3, 880, R1, ease(T.f(4, 0, 0.18)), C.cyan, lung, 'Pulmón e hipoxia', 'EPOC, intersticial, apnea', 'vasoconstricción hipóxica', 'O₂ y tratar el pulmón'));
-    with_(dimOf(5), () => card(4, 370, R2, ease(T.f(5, 0, 0.15)), C.blue, clot, 'Coágulos crónicos', 'HPTEC, tras un TEP', 'búscalos con gammagrama V/Q', 'anticoagular + endarterectomía'));
+    with_(dimOf(5), () => card(4, 370, R2, ease(T.f(5, 0, 0.15)), C.blue, clot, 'Coágulos crónicos', 'HPTEC, tras un TEP', 'gammagrama V/Q', 'anticoagular, endarterectomía'));
     with_(dimOf(5), () => card(5, 710, R2, ease(T.f(5, 0.6, 0.75)), C.gold, multi, 'Multifactorial', 'sarcoidosis, hemólisis', 'ERC en diálisis', 'tratar la causa'));
-    if (k >= 2 && k <= 5) {
-      const pos = { 2: [210, R1 + 78], 3: [550, R1 + 78], 4: [890, R1 + 78], 5: [380, R2 + 78] }[k];
-      g.save(); ring(pos[0], pos[1], 70, t, { color: C.gold }); g.restore();
-    }
 
     // ── Trampa
     if (k === 8) {
