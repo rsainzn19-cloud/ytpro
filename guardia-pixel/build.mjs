@@ -38,7 +38,8 @@ try {
   const root = new URL('./motion/', import.meta.url), urls = (() => { try { return JSON.parse(readFileSync(new URL('assets.json', root), 'utf8')); } catch (e) { return {}; } })();
   for (const f of readdirSync(root).filter((f) => f.endsWith('.json') && f !== 'assets.json')) {
     const tid = f.replace(/\.json$/, '');
-    if (C.lessons[tid] && readdirSync(root).includes(tid + '.mp4')) C.motion[tid] = { ...JSON.parse(readFileSync(new URL(f, root), 'utf8')), url: urls[tid] || `motion/${tid}.mp4` };
+    const web = (() => { try { return readdirSync(new URL('web/', root)); } catch (e) { return []; } })();
+    if (C.lessons[tid] && (urls[tid] || web.includes(tid + '.mp4'))) C.motion[tid] = { ...JSON.parse(readFileSync(new URL(f, root), 'utf8')), url: urls[tid] || `motion/web/${tid}.mp4` };
   }
 } catch (e) { /* sin clips */ }
 
