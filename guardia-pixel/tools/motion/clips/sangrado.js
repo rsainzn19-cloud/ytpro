@@ -25,16 +25,16 @@
   for (let row = 0; row < 3; row++) for (let i = 0; i < 7 - row * 2; i++) PLUG.push([GAP0 + 40 + row * 30 + i * 30, WALL - 10 - row * 24]);
 
   window.CLIP = {
-    topic: 'sangrado', title: 'Hemostasia en 1 minuto', sub: 'Plaqueta contra factor, y qué mide el TP y el TTPa', color: '#FF5470',
+    topic: 'sangrado', title: 'Hemostasia en\u00a01\u00a0minuto', sub: 'Del tapón plaquetario a la red de fibrina', color: '#FF5470',
     scenes: [
       { say: 'La hemostasia primaria y la secundaria, en un minuto.', min: 3.5 },
       { say: 'Cuando se rompe un vaso, la sangre se fuga y queda expuesto el colágeno de la pared.' },
       { say: 'El factor de von Willebrand se pega al colágeno y atrapa a las plaquetas por su receptor. Eso es la adhesión.' },
-      { say: 'Las plaquetas se activan y se unen entre sí con fibrinógeno: se forma el tapón plaquetario. Es la hemostasia primaria, y tarda segundos.' },
-      { say: 'Después viene la secundaria, la cascada de factores. La vía extrínseca, factor tisular y siete, se mide con el te pe. La intrínseca, doce, once, nueve y ocho, con el te te pe a.' },
+      { say: 'Las plaquetas se activan y se unen con fibrinógeno: es el tapón plaquetario. Esa es la hemostasia primaria, en segundos.' },
+      { say: 'La secundaria es la cascada de factores. La extrínseca, factor tisular y siete, se mide con el te pe; la intrínseca, doce, once, nueve y ocho, con el te te pe a.' },
       { say: 'Las dos llegan a la vía común: diez, cinco y dos. La trombina convierte el fibrinógeno en fibrina, una red que sella el tapón.' },
-      { say: 'En la clínica: si falla la plaqueta, sangran la piel y las mucosas, de inmediato. Si falla el factor, sangra lo profundo y tarde, como las articulaciones.' },
-      { say: 'Perla: menorragia y epistaxis con plaquetas normales, piensa en von Willebrand. Un niño con hemartrosis y te te pe a alargado, piensa en hemofilia.', min: 7 }
+      { say: 'Si falla la plaqueta, sangran piel y mucosas, de inmediato. Si falla un factor, sangra lo profundo y tarde, como las articulaciones.' },
+      { say: 'Perla: menorragia y epistaxis con plaquetas normales es von Willebrand. Un niño con hemartrosis y te te pe a alargado es hemofilia.', min: 7 }
     ],
     draw(t, T) {
       const { text, pill, arrow, ring, titleCard, headline, bg } = MK;

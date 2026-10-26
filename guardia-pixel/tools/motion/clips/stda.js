@@ -1,7 +1,7 @@
 // Úlcera y STDA en 1 minuto (tema stda). Corte de la pared gástrica: ácido contra defensa, los dos agresores,
 // la úlcera que sangra y el manejo (Glasgow-Blatchford, reanimación, IBP IV y endoscopia en 24 h).
 window.CLIP = {
-  topic: 'stda', title: 'Úlcera y STDA en 1 minuto', sub: 'Ácido contra defensa, y qué hacer cuando la úlcera sangra', color: '#FF8FA3',
+  topic: 'stda', title: 'STDA en 1 minuto', sub: 'Úlcera: ácido contra defensa, y qué hacer cuando sangra', color: '#FF8FA3',
   scenes: [
     { say: 'Úlcera péptica y sangrado alto, en un minuto.', min: 3.5 },
     { say: 'Tu estómago produce ácido todo el día. Lo protege el moco con bicarbonato, sostenido por las prostaglandinas.' },
@@ -30,9 +30,9 @@ window.CLIP = {
     const acid = k >= 6 ? lerp(1, 0.3, ease(T.f(6, 0.35, 0.55))) : 1;
     const bleed = k >= 6 ? 1 - ease(T.f(6, 0.75, 0.95)) : 1;
     const crater = () => {
-      const d = lerp(0, yVes - 6 - (yMuc - 60), ulc), w = lerp(20, 105, ulc);
-      g.moveTo(UX - w - 30, yMuc - 70); g.bezierCurveTo(UX - w, yMuc - 20, UX - w * 0.55, yMuc - 60 + d, UX, yMuc - 60 + d);
-      g.bezierCurveTo(UX + w * 0.55, yMuc - 60 + d, UX + w, yMuc - 20, UX + w + 30, yMuc - 70); g.closePath();
+      const d = lerp(0, yVes - 6 - (yMuc - 52), ulc), w = lerp(15, 70, ulc);
+      g.moveTo(UX - w - 22, yMuc - 52); g.bezierCurveTo(UX - w, yMuc - 30, UX - w * 0.6, yMuc - 52 + d, UX, yMuc - 52 + d);
+      g.bezierCurveTo(UX + w * 0.6, yMuc - 52 + d, UX + w, yMuc - 30, UX + w + 22, yMuc - 52);
     };
 
     // 1 · Pared gástrica: ácido, moco con bicarbonato, epitelio (célula parietal) y vaso
@@ -70,14 +70,15 @@ window.CLIP = {
         const x = X0 + 30 + ((i * 173) % 680), ph = (t * 0.28 + i * 0.37) % 1;
         const deep = ulc > 0 && Math.abs(x - UX) < 80 ? lerp(0, 150, ulc) : 0;
         const y = Y0 + 20 + ph * (yMuc - 70 - Y0 + deep);
+        if (t >= T.s(3) && x > 820 && y < 390) continue;
         g.globalAlpha *= 1; g.fillStyle = C.orange;
         with_(a * Math.min(1, ph * 5, (1 - ph) * 5), () => { g.beginPath(); g.arc(x, y, 8, 0, 7); g.fill(); });
       }
       // leyenda a la izquierda
-      with_(ease(T.f(1, 0.15, 0.4)), () => pill('Ácido', 165, 300, 1, { fill: C.orange, size: 30, noPop: true }));
-      with_(ease(T.f(1, 0.4, 0.6)), () => { text('Moco +', 165, 440, { size: 28, color: C.cyan }); text('bicarbonato', 165, 474, { size: 28, color: C.cyan }); });
-      with_(ease(T.f(1, 0.55, 0.75)), () => { text('Célula', 165, 520, { size: 26, color: C.purple }); text('parietal', 165, 552, { size: 26, color: C.purple }); });
-      with_(ease(T.f(1, 0.65, 0.85)), () => text('Vaso', 165, yVes, { size: 28, color: C.pink }));
+      with_(ease(T.f(1, 0.15, 0.4)), () => pill('Ácido', 155, 300, 1, { fill: C.orange, size: 30, noPop: true }));
+      with_(ease(T.f(1, 0.4, 0.6)), () => { text('Moco +', 155, 440, { size: 28, color: C.cyan }); text('bicarbonato', 155, 474, { size: 28, color: C.cyan }); });
+      with_(ease(T.f(1, 0.55, 0.75)), () => { text('Célula', 155, 520, { size: 26, color: C.purple }); text('parietal', 155, 552, { size: 26, color: C.purple }); });
+      with_(ease(T.f(1, 0.65, 0.85)), () => text('Vaso', 155, yVes, { size: 28, color: C.pink }));
     });
 
     // 2 · H. pylori: ureasa → amoníaco, inflama
@@ -119,7 +120,7 @@ window.CLIP = {
 
     // 5 · Glasgow-Blatchford
     with_(dimFor(5), () => {
-      with_(ease(T.f(5, 0, 0.15)), () => text('Glasgow-Blatchford', 540, 885, { size: 36, color: C.gold }));
+      with_(ease(T.f(5, 0, 0.15)), () => text('Glasgow-Blatchford', 540, 888, { size: 36, color: C.gold }));
       const items = [['BUN · Hb', 330, 952], ['PAS · FC', 750, 952], ['Melena · síncope', 330, 1020], ['Hepatopatía · IC', 750, 1020]];
       items.forEach(([l, x, y], i) => pill(l, x, y, ease(T.f(5, 0.12 + i * 0.1, 0.27 + i * 0.1)), { fill: '#3B4590', color: C.ink, size: 28 }));
       pill('0–1 puntos → ambulatorio', 540, 1095, ease(T.f(5, 0.75, 0.92)), { fill: C.green, size: 30 });
@@ -133,7 +134,6 @@ window.CLIP = {
       block('IBP', 321, 516, ease(T.f(6, 0.3, 0.45)));
       arrow(618, 1205, 738, 1205, T.f(6, 0.6, 0.7), { color: C.ink2, width: 6 });
       pill('Endoscopia ≤24 h', 885, 1205, ease(T.f(6, 0.68, 0.82)), { fill: C.cyan, size: 28 });
-      with_(ease(T.f(6, 0.8, 0.95)), () => text('y hemostasia', 885, 1270, { size: 24, color: C.ink2, weight: 600 }));
     }
 
     // 7 · Perla y trampa
@@ -146,7 +146,8 @@ window.CLIP = {
         text('Toda úlcera, hasta demostrar lo contrario', 540, 560, { size: 34, color: C.ink2, weight: 600 });
         with_(ease(T.f(7, 0.4, 0.55)), () => {
           text('Primero reanima', 540, 800, { size: 70, color: C.red });
-          text('Endoscopia antes de 6 h no baja la mortalidad. Sin ácido tranexámico.', 540, 900, { size: 34, color: C.ink2, weight: 600, maxW: 860 });
+          text('Endoscopia antes de 6 h no baja la mortalidad', 540, 890, { size: 34, color: C.ink2, weight: 600, maxW: 900 });
+          text('Y nada de ácido tranexámico', 540, 945, { size: 34, color: C.ink2, weight: 600 });
         });
       });
     }

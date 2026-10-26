@@ -2,7 +2,10 @@
 // la mitad izquierda se vuelve nefrótica (podocito) y la derecha nefrítica (inflamación). Abajo: hallazgos, C3 y el reloj.
 (() => {
   const X0 = 245, X1 = 1035, XM = 640;
-  const Y = { lum0: 200, lum1: 320, en0: 330, en1: 350, gbm0: 362, gbm1: 392, pd0: 404, pd1: 436, pb0: 440, pb1: 470, bw0: 482, bw1: 560 };
+  const Y = { lum0: 195, lum1: 335, en0: 350, en1: 370, gbm0: 382, gbm1: 414, pd0: 426, pd1: 460, pb0: 464, pb1: 496, bw0: 508, bw1: 600 };
+  const RX = 760;
+  // Etiqueta con fondo oscuro para que se lea sobre las partículas
+  function tag(str, x, y, col) { const g = MK.g; g.font = '700 26px "Inter Display", Inter, sans-serif'; const w = g.measureText(str).width + 28; MK.rr(x - w / 2, y - 20, w, 40, 20); g.fillStyle = 'rgba(11,14,42,0.8)'; g.fill(); MK.text(str, x, y, { size: 26, color: col, shadow: false }); }
 
   // Barrera glomerular en corte. nef: fusión de pedicelos (mitad izquierda); nit: inflamación (mitad derecha); rup: rotura capilar
   function barrier(t, nef, nit, rup) {
@@ -46,7 +49,7 @@
     g.fillStyle = '#1B2560'; rr(X0, Y.bw0, X1 - X0, Y.bw1 - Y.bw0, 20); g.fill();
     // Rotura capilar en la mitad nefrítica
     if (rup > 0) {
-      const w = lerp(0, 56, rup), cx = 850;
+      const w = lerp(0, 56, rup), cx = RX;
       g.fillStyle = '#3A1220'; g.beginPath();
       g.moveTo(cx - w / 2, Y.en0); g.lineTo(cx + w / 2, Y.en0); g.lineTo(cx + w / 2 - 8, Y.gbm1); g.lineTo(cx + w / 2 + 4, Y.pb1); g.lineTo(cx - w / 2 - 4, Y.pb1); g.lineTo(cx - w / 2 + 8, Y.gbm1); g.closePath(); g.fill();
     }
@@ -65,7 +68,7 @@
     // Eritrocitos que caen por la rotura (nefrítico)
     if (rup > 0) MK.with_(rup, () => {
       for (let i = 0; i < 4; i++) {
-        const u = (t * 0.35 + i / 4) % 1, x = 850 + Math.sin(i * 2.3) * 14 + (u > 0.6 ? (i - 1.5) * 60 * (u - 0.6) : 0), y = lerp(Y.lum1 - 30, Y.bw1 - 20, u);
+        const u = (t * 0.35 + i / 4) % 1, x = RX + Math.sin(i * 2.3) * 14 + (u > 0.6 ? (i - 1.5) * 60 * (u - 0.6) : 0), y = lerp(Y.lum1 - 30, Y.bw1 - 20, u);
         g.fillStyle = C.blood; g.beginPath(); g.ellipse(x, y, 18, 11, 0.3, 0, 7); g.fill();
       }
     });
@@ -107,37 +110,35 @@
         with_(a, () => {
           g.save(); g.translate(0, (1 - a) * 30); barrier(t, nef, nit, rup); g.restore();
         });
-        const labs = [['Sangre', 260], ['Endotelio', 340], ['Membrana basal', 377], ['Podocito', 437], ['Orina', 521]];
+        const labs = [['Sangre', 265], ['Endotelio', 360], ['Membrana basal', 398], ['Podocito', 470], ['Orina', 554]];
         labs.forEach(([s, y], i) => with_(ease(T.f(1, 0.15 + i * 0.1, 0.35 + i * 0.1)), () => text(s, 40, y, { size: 24, color: C.ink2, align: 'left', weight: 600 })));
-        if (k === 1) with_(ease(T.f(1, 0.6, 0.8)), () => text('Pasan agua y solutos pequeños', XM, 521, { size: 26, color: C.cyan }));
+        if (k === 1) with_(ease(T.f(1, 0.6, 0.8)), () => tag('Pasan agua y solutos pequeños', XM, 554, C.cyan));
         // Divisor entre las dos mitades
-        with_(ease(T.f(2, 0, 0.15)), () => { g.strokeStyle = 'rgba(244,241,255,0.55)'; g.lineWidth = 3; g.setLineDash([10, 10]); g.beginPath(); g.moveTo(XM, 188); g.lineTo(XM, 572); g.stroke(); g.setLineDash([]); });
-        if (k >= 2) with_(ease(T.f(2, 0.4, 0.6)), () => text('Fuga de albúmina', 442, 521, { size: 26, color: C.gold }));
+        with_(ease(T.f(2, 0, 0.15)), () => { g.strokeStyle = 'rgba(244,241,255,0.55)'; g.lineWidth = 3; g.setLineDash([10, 10]); g.beginPath(); g.moveTo(XM, 188); g.lineTo(XM, 612); g.stroke(); g.setLineDash([]); });
+        if (k >= 2) with_(ease(T.f(2, 0.4, 0.6)), () => tag('Fuga de albúmina', 442, 554, C.gold));
         if (k >= 3) {
-          with_(ease(T.f(3, 0.6, 0.8)), () => text('Pasan eritrocitos', 960, 521, { size: 24, color: C.pink }));
-          [[720, 0.1], [930, 0.2], [1000, 0.3]].forEach(([x, d]) => neutro(x, lerp(230, 296, ease(T.f(3, d, d + 0.3))), ease(T.f(3, d, d + 0.15))));
-          pill('C3', 790, 262, ease(T.f(3, 0.15, 0.35)), { fill: C.gold, size: 24 });
+          with_(ease(T.f(3, 0.6, 0.8)), () => tag('Pasan eritrocitos', 912, 554, C.pink));
+          [[680, 0.1], [900, 0.2], [990, 0.3]].forEach(([x, d]) => neutro(x, lerp(235, 306, ease(T.f(3, d, d + 0.3))), ease(T.f(3, d, d + 0.15))));
+          pill('C3', 835, 262, ease(T.f(3, 0.15, 0.35)), { fill: C.gold, size: 24 });
         }
-        if (k === 2) { g.save(); ring(442, 420, 70, t, { color: C.green }); g.restore(); }
+        if (k === 2) { g.save(); ring(442, 444, 70, t, { color: C.green }); g.restore(); }
       });
 
       // 2 · Hallazgos del nefrótico
       with_(dimFor(2), () => {
-        pill('Nefrótico', 442, 615, ease(T.f(2, 0.3, 0.45)), { fill: C.gold, size: 34 });
+        pill('Nefrótico', 442, 655, ease(T.f(2, 0.3, 0.45)), { fill: C.gold, size: 34 });
         ['Proteína >3.5 g/día', 'Albúmina <3 g/dL', 'Edema intenso', 'Lípidos altos'].forEach((s, i) =>
-          with_(ease(T.f(2, 0.45 + i * 0.1, 0.6 + i * 0.1)), () => text(s, 442, 690 + i * 55, { size: 30, maxW: 380 })));
+          with_(ease(T.f(2, 0.45 + i * 0.1, 0.6 + i * 0.1)), () => text(s, 442, 722 + i * 50, { size: 30, maxW: 380 })));
       });
       // 3 · Hallazgos del nefrítico
       with_(dimFor(3), () => {
-        pill('Nefrítico', 837, 615, ease(T.f(3, 0.5, 0.62)), { fill: C.red, color: '#fff', size: 34 });
+        pill('Nefrítico', 837, 655, ease(T.f(3, 0.5, 0.62)), { fill: C.red, color: '#fff', size: 34 });
         ['Hematuria dismórfica', 'Cilindros hemáticos', 'HTA y oliguria', 'Creatinina sube'].forEach((s, i) =>
-          with_(ease(T.f(3, 0.6 + i * 0.08, 0.72 + i * 0.08)), () => text(s, 837, 690 + i * 55, { size: 30, maxW: 380 })));
+          with_(ease(T.f(3, 0.6 + i * 0.08, 0.72 + i * 0.08)), () => text(s, 837, 722 + i * 50, { size: 30, maxW: 380 })));
       });
       // 4 · Complemento
       with_(dimFor(4), () => {
-        const a = ease(T.f(4, 0, 0.2));
-        with_(a, () => { arrow(837, 875, 837, 935, a, { color: C.red, width: 6 }); });
-        const box = (x, w, col, pr) => { if (pr <= 0) return; with_(pr, () => { rr(x, 950, w, 140, 26); g.fillStyle = 'rgba(20,26,66,0.9)'; g.fill(); g.lineWidth = 4; g.strokeStyle = col; g.stroke(); }); };
+                const box = (x, w, col, pr) => { if (pr <= 0) return; with_(pr, () => { rr(x, 950, w, 140, 26); g.fillStyle = 'rgba(20,26,66,0.9)'; g.fill(); g.lineWidth = 4; g.strokeStyle = col; g.stroke(); }); };
         const l = ease(T.f(4, 0.15, 0.35)), r = ease(T.f(4, 0.6, 0.8));
         box(60, 465, C.red, l); box(555, 465, C.green, r);
         with_(l, () => { text('C3 bajo', 292, 982, { size: 30, color: C.red }); text('PoLiMeroS', 292, 1026, { size: 40, color: C.gold }); text('Postinfecciosa · Lupus · GNMP', 292, 1066, { size: 24, color: C.ink2, weight: 600 }); });
@@ -174,7 +175,7 @@
       if (k === 7) {
         const a = ease(T.f(7, 0, 0.12));
         with_(a, () => {
-          g.fillStyle = 'rgba(11,14,42,0.9)'; g.fillRect(0, 0, MK.W, MK.H);
+          g.fillStyle = 'rgba(11,14,42,0.94)'; g.fillRect(0, 0, MK.W, MK.H);
           headline(heads[7], t - T.s(7), C.gold);
           text('Hemoptisis + GNRP', 540, 440, { size: 68, color: C.red });
           text('No esperes la biopsia: pulsos de esteroide y recambio plasmático de inmediato (anti-MBG o ANCA)', 540, 545, { size: 34, color: C.ink2, weight: 600, maxW: 860 });

@@ -4,11 +4,11 @@ window.CLIP = {
   topic: 'sca', title: 'SCA en 1 minuto', sub: 'De la placa al trombo, y por qué el tiempo es miocardio', color: '#FF5470',
   scenes: [
     { say: 'El síndrome coronario agudo, en un minuto.', min: 3.5 },
-    { say: 'Todo empieza con una placa: el colesterol ele de ele entra a la pared de la coronaria y forma un núcleo de grasa, cubierto por una capa fibrosa.' },
-    { say: 'Si esa capa se rompe, las plaquetas se pegan y forman un trombo blanco que tapa la arteria solo en parte. Es el síndrome sin elevación del ese te: hay infradesnivel.' },
-    { say: 'Si además la fibrina atrapa eritrocitos, se forma un trombo rojo que cierra la arteria por completo. El miocardio empieza a morir y el ese te se eleva.' },
-    { say: 'Tiempo es miocardio. Con elevación del ese te, reperfunde ya: angioplastia primaria si llega en ciento veinte minutos o menos; si no, fibrinólisis en los primeros diez minutos.' },
-    { say: 'Sin elevación del ese te no hay fibrinólisis: se estratifica el riesgo con troponina y GRACE, y se decide cuándo cateterizar. Si el riesgo es alto, antes de veinticuatro horas.' },
+    { say: 'Todo empieza con una placa: el colesterol entra a la pared de la coronaria y forma un núcleo de grasa con una capa fibrosa.' },
+    { say: 'Si la capa se rompe, las plaquetas forman un trombo blanco que tapa la arteria en parte: es el síndrome sin elevación del ese te.' },
+    { say: 'Si la fibrina atrapa eritrocitos, el trombo rojo cierra la arteria por completo. El miocardio muere y el ese te se eleva.' },
+    { say: 'Tiempo es miocardio: reperfunde ya. Angioplastia primaria si llega en ciento veinte minutos o menos; si no, fibrinólisis en diez minutos.' },
+    { say: 'Sin elevación del ese te, nunca fibrinólisis: estratifica con troponina y GRACE; si el riesgo es alto, cateterismo antes de veinticuatro horas.' },
     { say: 'El stent abre la arteria y regresa el flujo. La aspirina más un inhibidor P dos Y doce evitan que las plaquetas vuelvan a agregarse.' },
     { say: 'Perla: con elevación del ese te nunca esperes la troponina, el electro basta. Y sin elevación, la fibrinólisis siempre es la respuesta incorrecta.', min: 7 }
   ],
@@ -36,7 +36,7 @@ window.CLIP = {
     const bell = (x, w) => { const u = (x - PX) / w; return Math.abs(u) >= 1 ? 0 : 0.5 + 0.5 * Math.cos(Math.PI * u); };
     const yP = (x) => base - Hp * bell(x, PW);
     const yW = (x) => yP(x) - Hw * bell(x, PW * 0.72);
-    const yR = (x) => yW(x) - Hr * Math.pow(bell(x, PW * 0.8), 0.35);
+    const yR = (x) => yW(x) - Hr * Math.pow(bell(x, PW * 0.8), 0.2);
     const band = (fa, fb, col) => {
       g.beginPath();
       for (let i = 0; i <= 60; i++) { const x = PX - PW + (2 * PW * i) / 60; const y = fa(x); if (i) g.lineTo(x, y); else g.moveTo(x, y); }
@@ -149,7 +149,7 @@ window.CLIP = {
         for (let x = X0 - 80; x < X1; x += 34) { g.beginPath(); g.moveTo(x, MY + MH); g.lineTo(x + 60, MY); g.stroke(); }
         const isch = ease(T.f(2, 0.5, 0.85)), nec = ease(T.f(3, 0.5, 0.85));
         const xs = lerp(680, 900, st);
-        if (isch > 0) { g.fillStyle = `rgba(180,140,255,${0.45 * isch * (1 - nec)})`; g.fillRect(680, MY, X1 - 680, MH); }
+        if (isch > 0) { g.fillStyle = `rgba(120,80,200,${0.55 * isch * (1 - nec)})`; g.fillRect(680, MY, X1 - 680, MH); }
         if (nec > 0) { g.fillStyle = `rgba(40,18,40,${0.85 * nec})`; g.fillRect(xs, MY, X1 - xs, MH); }
         g.restore();
         text('Miocardio', 190, MY + MH / 2, { size: 28, color: C.ink });
@@ -232,14 +232,13 @@ window.CLIP = {
       with_(ease(T.f(4, 0.55, 0.65)), () => text('si no llega a tiempo:', 790, 1108, { size: 24, color: C.dim, weight: 600 }));
       pill('Fibrinólisis', 790, 1162, ease(T.f(4, 0.62, 0.75)), { fill: C.orange, size: 28 });
       with_(ease(T.f(4, 0.7, 0.82)), () => text('≤ 10 min', 790, 1228, { size: 46, color: C.gold }));
-      if (k === 4) { g.save(); ring(790, 1052, 90, t, { color: C.gold }); g.restore(); }
     });
 
     // ── Perla
     if (k === 7) {
       const a = ease(T.f(7, 0, 0.15));
       with_(a, () => {
-        g.fillStyle = 'rgba(11,14,42,0.9)'; g.fillRect(0, 0, MK.W, MK.H);
+        bg(t); g.fillStyle = 'rgba(11,14,42,0.35)'; g.fillRect(0, 0, MK.W, MK.H);
         headline(heads[7], t - T.s(7), C.gold);
         text('IAMCEST: no esperes', 540, 430, { size: 64, color: C.gold });
         text('la troponina', 540, 505, { size: 64, color: C.gold });
