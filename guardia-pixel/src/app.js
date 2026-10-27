@@ -854,10 +854,16 @@ function compareHTML(cid) {
   return `<div class="cmp"><div class="cmp-h"><span class="a">${esc(c.a)}</span><span class="x">×</span><span class="b">${esc(c.b)}</span></div>${c.rows.map(([k, a, b]) => `<div class="cmp-r"><span class="k">${esc(k)}</span><div class="v"><span>${esc(a)}</span><span>${esc(b)}</span></div></div>`).join('')}</div>`;
 }
 TOPIC_TABS.leccion = (el, t, L) => {
-  const read = S.tp[t.id] && S.tp[t.id].read;
+  const read = S.tp[t.id] && S.tp[t.id].read, B = C.libro && C.libro[t.id], cap = B && S.settings.lec !== 'repaso';
+  // Dos formas de leer: el capítulo completo (estilo libro, con índice) o el repaso para el examen
+  const body = cap ? `<nav class="toc" aria-label="Índice del capítulo"><b>Índice</b><ol>${B.secs.map((s, i) => `<li><button class="lnk" data-act="toc" data-i="${i}">${esc(s.h)}</button></li>`).join('')}</ol></nav>
+  ${B.secs.map((s, i) => `<section class="lsec cap" id="cap-${i}"><h3>${esc(s.h)}</h3>${s.html.replace(/<table class="mini">/g, '<div class="tablewrap"><table class="mini">').replace(/<\/table>/g, '</table></div>')}</section>`).join('')}
+  <p class="small muted">¿Lo quieres en corto? Cambia a <b>Repaso</b> arriba: lo esencial para el examen, con mnemotecnia, perla y trampa.</p>`
+    : `${L.sections.map((s) => `<section class="lsec"><h3>${esc(s.h)}</h3>${s.html}</section>`).join('')}`;
   el.innerHTML = `${L.video ? `<button class="btn gold-btn big vcta" data-act="vgo">▶ Ver el video del tema · ${vMin(t.id)} min${S.vid[t.id] && S.vid[t.id].done ? ' · visto ✓' : ''}</button>` : ''}<p class="hook">${esc(L.hook)}</p>
+  ${B ? `<div class="seg2" role="group" aria-label="Cómo leer"><button class="btn small${cap ? ' gold-btn' : ''}" data-act="lecmode" data-m="libro" aria-pressed="${!!cap}">📖 Capítulo completo</button><button class="btn small${cap ? '' : ' gold-btn'}" data-act="lecmode" data-m="repaso" aria-pressed="${!cap}">⚡ Repaso para el examen</button></div>` : ''}
   <div class="row">${L.anim ? `<button class="btn small" data-go="topic" data-a="${t.id}" data-b="anim">Ver la animación</button>` : ''}<button class="btn small" data-go="topic" data-a="${t.id}" data-b="preguntas">Ir a las preguntas</button></div>
-  ${L.sections.map((s) => `<section class="lsec"><h3>${esc(s.h)}</h3>${s.html}</section>`).join('')}
+  ${body}
   ${(L.compare || []).map((cid) => `<section class="lsec"><h3>Comparador</h3>${compareHTML(cid)}</section>`).join('')}
   ${guiaHTML(t.id)}
   <div class="box mnemo gold">${GEMS}<span class="lab">Mnemotecnia</span><span class="big">${esc(L.mnemo.t)}</span><p>${esc(L.mnemo.d)}</p></div>
@@ -865,9 +871,11 @@ TOPIC_TABS.leccion = (el, t, L) => {
   <div class="box trap"><span class="lab">Trampa típica</span><p>${esc(L.trap)}</p></div>
   <div class="box guide"><span class="lab">⚠️ Depende de la guía</span><ul>${L.guide.map((g) => `<li>${esc(g)}</li>`).join('')}</ul></div>
   ${videosHTML(L)}
-  <details class="refs"><summary>Referencias</summary><ol>${L.refs.map((r) => `<li>${esc(r)}</li>`).join('')}</ol></details>
+  <details class="refs"><summary>Referencias</summary><ol>${[...L.refs, ...((B && B.refs) || [])].map((r) => `<li>${esc(r)}</li>`).join('')}</ol></details>
   <button class="btn ${read ? '' : 'gold-btn'} big" data-act="readDone" ${read ? 'disabled' : ''}>${read ? 'Lección leída ✓' : 'Marcar como leída · +30 XP'}</button>`;
   ACT.vgo = () => { VQUEUE = []; VAUTO = true; go('topic', { a: t.id, b: 'video' }); };
+  ACT.lecmode = (b) => { S.settings.lec = b.dataset.m; save(); render(); };
+  ACT.toc = (b) => { const x = document.getElementById('cap-' + b.dataset.i); if (x) x.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); };
   ACT.readDone = () => {
     const tp = S.tp[t.id] || (S.tp[t.id] = {});
     if (tp.read) return;

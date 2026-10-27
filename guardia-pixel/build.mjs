@@ -12,7 +12,7 @@ const OUT = opt('--out');
 const ONLY = opt('--only') ? new Set(opt('--only').split(',').map((x) => x.trim())) : null;
 const keepTopic = (tid) => !ONLY || ['meta', 'diagnostico'].includes(tid) || ONLY.has(tid);
 
-const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {}, algos: {}, ecg: {}, frotis: {}, soplos: {}, guias: {}, chuletas: {} };
+const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {}, algos: {}, ecg: {}, frotis: {}, soplos: {}, guias: {}, chuletas: {}, libro: {} };
 for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('.js')).sort()) {
   const part = (await import(new URL('content/' + f, src))).default;
   // Con --only se cargan solo esos temas, pero los comparadores de todos (una lección puede usar uno ajeno)
@@ -26,7 +26,7 @@ for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('
       // Guías de la rotación: varias fuentes pueden complementar el mismo tema
       for (const [tid, G] of Object.entries(v)) (C.guias[tid] = C.guias[tid] || []).push(G);
     } else if (Array.isArray(v)) C[k] = (C[k] || []).concat(v);
-    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg', 'frotis', 'soplos', 'chuletas'].includes(k)) Object.assign(C[k], v);
+    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg', 'frotis', 'soplos', 'chuletas', 'libro'].includes(k)) Object.assign(C[k], v);
     else C[k] = v;
   }
 }
@@ -97,6 +97,11 @@ for (const [tid, list] of Object.entries(C.guias)) {
     if (!G.src?.name || !Array.isArray(G.puntos) || !G.puntos.length) errs.push(`guía ${tid}: faltan fuente o puntos`);
     (G.cards || []).forEach(([fr, bk]) => C.cards.push({ id: `${tid}-g${String(++n).padStart(2, '0')}`, topic: tid, f: fr, b: bk }));
   }
+}
+// Capítulo completo (estilo libro): secciones con título y HTML
+for (const [tid, B] of Object.entries(C.libro)) {
+  if (!topics.has(tid)) errs.push(`libro: tema ${tid} no existe`);
+  if (!Array.isArray(B.secs) || B.secs.length < 6 || B.secs.some((x) => !x.h || !x.html)) errs.push(`libro ${tid}: faltan secciones (mínimo 6, cada una con h y html)`);
 }
 const FOCOS = ['aortico', 'pulmonar', 'erb', 'tricuspideo', 'mitral'];
 for (const [sid, e] of Object.entries(C.soplos)) {
