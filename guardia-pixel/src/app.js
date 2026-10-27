@@ -859,6 +859,7 @@ TOPIC_TABS.leccion = (el, t, L) => {
   <div class="row">${L.anim ? `<button class="btn small" data-go="topic" data-a="${t.id}" data-b="anim">Ver la animación</button>` : ''}<button class="btn small" data-go="topic" data-a="${t.id}" data-b="preguntas">Ir a las preguntas</button></div>
   ${L.sections.map((s) => `<section class="lsec"><h3>${esc(s.h)}</h3>${s.html}</section>`).join('')}
   ${(L.compare || []).map((cid) => `<section class="lsec"><h3>Comparador</h3>${compareHTML(cid)}</section>`).join('')}
+  ${guiaHTML(t.id)}
   <div class="box mnemo gold">${GEMS}<span class="lab">Mnemotecnia</span><span class="big">${esc(L.mnemo.t)}</span><p>${esc(L.mnemo.d)}</p></div>
   <div class="box pearl"><span class="lab">Perla de examen</span><p>${esc(L.pearl)}</p></div>
   <div class="box trap"><span class="lab">Trampa típica</span><p>${esc(L.trap)}</p></div>
@@ -873,6 +874,14 @@ TOPIC_TABS.leccion = (el, t, L) => {
     tp.read = today(); gain(30, 'Lección leída'); checkTopicDone(t.id); render();
   };
 };
+// Lo que agrega la guía de la rotación (contenido propio, en HTML) y dónde difiere de las guías actuales
+function guiaHTML(tid) {
+  const G = C.guias && C.guias[tid]; if (!G) return '';
+  return `<section class="lsec guia"><h3>📒 De tu guía de la rotación</h3><p class="small muted">${esc(G.src.name)} · lo que agrega a esta lección.</p>
+    <ul>${G.puntos.map((p) => `<li>${p}</li>`).join('')}</ul>
+    ${G.ojo && G.ojo.length ? `<div class="box guide"><span class="lab">Ojo: tu guía vs las guías actuales</span><ul>${G.ojo.map((o) => `<li>${o}</li>`).join('')}</ul></div>` : ''}
+    <a class="small" href="${esc(G.src.url)}" target="_blank" rel="noopener">Abrir tu guía en Drive ↗</a></section>`;
+}
 TOPIC_TABS.anim = (el, t, L) => { mountAnim(el, L.anim, t.id); };
 TOPIC_TABS.video = (el, t) => { mountVideo(el, t.id); };
 TOPIC_TABS.preguntas = (el, t) => {
@@ -1510,12 +1519,17 @@ function labNew(key) {
   g.opts = shuffle([pick, others[0], others[1], shuffle(others.slice(2))[0]]);
 }
 function labRender(key) {
-  const g = LAB[key], modes = [['guia', 'Lectura guiada'], ['rapido', 'Rápido'], ['galeria', 'Galería']];
+  const g = LAB[key], modes = [['guia', 'Lectura guiada'], ['rapido', 'Rápido'], ['galeria', 'Galería'], ...(C.chuletas && C.chuletas.ecg ? [['chuleta', 'Chuleta']] : [])];
   g.sec.innerHTML = `<section class="panel"><div class="row"><h2 class="grow">Taller de electros</h2>${g.n ? `<span class="small muted">${g.hits}/${g.n}</span>` : ''}</div>
     <div class="seg2" role="group" aria-label="Modo">${modes.map(([m, l]) => `<button class="btn small${g.mode === m ? ' gold-btn' : ''}" data-act="lbmode" data-k="${key}" data-m="${m}">${l}</button>`).join('')}</div></section><div class="lbody stack"></div>`;
   const body = g.sec.querySelector('.lbody');
   if (g.mode === 'rapido') { mountEcg(body, g.ids, 'lab' + key); return; }
   const sec = document.createElement('section'); sec.className = 'panel ecgq'; body.appendChild(sec);
+  if (g.mode === 'chuleta') {
+    const H = C.chuletas.ecg;
+    sec.innerHTML = `<h3>${esc(H.title)}</h3><p class="small muted">${esc(H.src.name)}</p><div class="lsec">${H.html}</div>`;
+    return;
+  }
   if (g.mode === 'galeria') {
     const e = C.ecg[g.gal];
     sec.innerHTML = `<p class="small muted">Toca un patrón: se resalta dónde mirar.</p>

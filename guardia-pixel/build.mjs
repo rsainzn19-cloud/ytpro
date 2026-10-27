@@ -12,7 +12,7 @@ const OUT = opt('--out');
 const ONLY = opt('--only') ? new Set(opt('--only').split(',').map((x) => x.trim())) : null;
 const keepTopic = (tid) => !ONLY || ['meta', 'diagnostico'].includes(tid) || ONLY.has(tid);
 
-const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {}, algos: {}, ecg: {}, frotis: {}, soplos: {} };
+const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {}, algos: {}, ecg: {}, frotis: {}, soplos: {}, guias: {}, chuletas: {} };
 for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('.js')).sort()) {
   const part = (await import(new URL('content/' + f, src))).default;
   // Con --only se cargan solo esos temas, pero los comparadores de todos (una lección puede usar uno ajeno)
@@ -23,7 +23,7 @@ for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('
       const tid = f.replace(/^\d+-|\.js$/g, '');
       v.forEach(([fr, bk], i) => C.cards.push({ id: `${tid}-c${String(i + 1).padStart(2, '0')}`, topic: tid, f: fr, b: bk }));
     } else if (Array.isArray(v)) C[k] = (C[k] || []).concat(v);
-    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg', 'frotis', 'soplos'].includes(k)) Object.assign(C[k], v);
+    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg', 'frotis', 'soplos', 'guias', 'chuletas'].includes(k)) Object.assign(C[k], v);
     else C[k] = v;
   }
 }
@@ -85,6 +85,12 @@ for (const [aid, A] of Object.entries(C.algos)) {
 for (const [eid, e] of [...Object.entries(C.ecg), ...Object.entries(C.frotis)]) {
   if (!e.name || !e.why) errs.push(`ECG ${eid}: falta nombre o explicación`);
   for (const tid of e.topics || []) if (!C.topics.some((t) => t.id === tid)) errs.push(`ECG ${eid}: tema ${tid} no existe`);
+}
+// Guías de la rotación: tarjetas con id estable por tema; cada punto con fuente
+for (const [tid, G] of Object.entries(C.guias)) {
+  if (!topics.has(tid)) { errs.push(`guía: tema ${tid} no existe`); continue; }
+  if (!G.src?.name || !Array.isArray(G.puntos) || !G.puntos.length) errs.push(`guía ${tid}: faltan fuente o puntos`);
+  (G.cards || []).forEach(([fr, bk], i) => C.cards.push({ id: `${tid}-g${String(i + 1).padStart(2, '0')}`, topic: tid, f: fr, b: bk }));
 }
 const FOCOS = ['aortico', 'pulmonar', 'erb', 'tricuspideo', 'mitral'];
 for (const [sid, e] of Object.entries(C.soplos)) {

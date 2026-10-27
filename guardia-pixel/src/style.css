@@ -627,3 +627,7 @@ body.cine-on #hud,body.cine-on #tabs{display:none}
 .hsdl div{display:flex;flex-direction:column}
 .hsdl dt{font:12px/1.2 var(--f-mono);color:var(--ink-3)}
 .hsdl dd{margin:0;font:600 15px/1.3 var(--f-body);color:var(--ink)}
+/* De tu guía de la rotación */
+.lsec.guia{border-left:4px solid var(--cyan);padding-left:12px}
+.lsec.guia ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.lsec.guia a{color:var(--cyan)}

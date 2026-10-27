@@ -31,6 +31,10 @@ Los 30 temas tienen:
   calculadas del propio trazo—, modo rápido y galería con las derivaciones clave resaltadas), **Taller de soplos**
   (12 ruidos y soplos sintetizados en el teléfono: fonocardiograma sincronizado, mapa de los 5 focos —el soplo baja
   lejos de donde nace—, maniobras de Valsalva, cuclillas y handgrip, y modo Identifica con casos), **Lee el frotis** (11 hallazgos en pixel art, con las células clave marcadas) y simuladores (potasio y ECG, TFG y ERC, ferritina y saturación, estenosis aórtica).
+- **Guías de la rotación** (`src/content/60-guia-cardio.js`, de la “Guía Cardio” de Ximena Cors, EMIS 5): en las lecciones
+  de SCC, SCA, valvulopatía aórtica y mitral, TEP e HP, un recuadro “De tu guía de la rotación” con lo que la guía agrega,
+  “Ojo: tu guía vs las guías actuales” donde difiere, 32 tarjetas y 21 preguntas; y la “Chuleta” de ECG y arritmias en el
+  Taller de electros. Insuficiencia cardiaca no es tema del parcial y no se agregó.
 - **Tu progreso en tu cuenta**: con las capacidades `db` y `user`, el estado se guarda en un documento privado
   (`data/users/<id>/progreso`) y se sincroniza entre dispositivos; gana el progreso más reciente y un dispositivo
   nuevo toma el de la cuenta. Fuera de Claude, todo sigue funcionando solo con el navegador.
