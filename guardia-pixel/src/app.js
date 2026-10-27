@@ -876,11 +876,10 @@ TOPIC_TABS.leccion = (el, t, L) => {
 };
 // Lo que agrega la guía de la rotación (contenido propio, en HTML) y dónde difiere de las guías actuales
 function guiaHTML(tid) {
-  const G = C.guias && C.guias[tid]; if (!G) return '';
-  return `<section class="lsec guia"><h3>📒 De tu guía de la rotación</h3><p class="small muted">${esc(G.src.name)} · lo que agrega a esta lección.</p>
+  return ((C.guias && C.guias[tid]) || []).map((G) => `<section class="lsec guia"><h3>📒 ${esc(G.src.short || 'De tu guía de la rotación')}</h3><p class="small muted">${esc(G.src.name)} · lo que agrega a esta lección.</p>
     <ul>${G.puntos.map((p) => `<li>${p}</li>`).join('')}</ul>
-    ${G.ojo && G.ojo.length ? `<div class="box guide"><span class="lab">Ojo: tu guía vs las guías actuales</span><ul>${G.ojo.map((o) => `<li>${o}</li>`).join('')}</ul></div>` : ''}
-    <a class="small" href="${esc(G.src.url)}" target="_blank" rel="noopener">Abrir tu guía en Drive ↗</a></section>`;
+    ${G.ojo && G.ojo.length ? `<div class="box guide"><span class="lab">Ojo: ${esc(G.src.vs || 'tu guía')} vs las guías actuales</span><ul>${G.ojo.map((o) => `<li>${o}</li>`).join('')}</ul></div>` : ''}
+    <a class="small" href="${esc(G.src.url)}" target="_blank" rel="noopener">Abrirlo en Drive ↗</a></section>`).join('');
 }
 TOPIC_TABS.anim = (el, t, L) => { mountAnim(el, L.anim, t.id); };
 TOPIC_TABS.video = (el, t) => { mountVideo(el, t.id); };

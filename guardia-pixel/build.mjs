@@ -22,8 +22,11 @@ for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('
       // Tarjetas: [frente, reverso] → objetos con id estable por tema
       const tid = f.replace(/^\d+-|\.js$/g, '');
       v.forEach(([fr, bk], i) => C.cards.push({ id: `${tid}-c${String(i + 1).padStart(2, '0')}`, topic: tid, f: fr, b: bk }));
+    } else if (k === 'guias') {
+      // Guías de la rotación: varias fuentes pueden complementar el mismo tema
+      for (const [tid, G] of Object.entries(v)) (C.guias[tid] = C.guias[tid] || []).push(G);
     } else if (Array.isArray(v)) C[k] = (C[k] || []).concat(v);
-    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg', 'frotis', 'soplos', 'guias', 'chuletas'].includes(k)) Object.assign(C[k], v);
+    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg', 'frotis', 'soplos', 'chuletas'].includes(k)) Object.assign(C[k], v);
     else C[k] = v;
   }
 }
@@ -87,10 +90,13 @@ for (const [eid, e] of [...Object.entries(C.ecg), ...Object.entries(C.frotis)]) 
   for (const tid of e.topics || []) if (!C.topics.some((t) => t.id === tid)) errs.push(`ECG ${eid}: tema ${tid} no existe`);
 }
 // Guías de la rotación: tarjetas con id estable por tema; cada punto con fuente
-for (const [tid, G] of Object.entries(C.guias)) {
+for (const [tid, list] of Object.entries(C.guias)) {
   if (!topics.has(tid)) { errs.push(`guía: tema ${tid} no existe`); continue; }
-  if (!G.src?.name || !Array.isArray(G.puntos) || !G.puntos.length) errs.push(`guía ${tid}: faltan fuente o puntos`);
-  (G.cards || []).forEach(([fr, bk], i) => C.cards.push({ id: `${tid}-g${String(i + 1).padStart(2, '0')}`, topic: tid, f: fr, b: bk }));
+  let n = 0;
+  for (const G of list) {
+    if (!G.src?.name || !Array.isArray(G.puntos) || !G.puntos.length) errs.push(`guía ${tid}: faltan fuente o puntos`);
+    (G.cards || []).forEach(([fr, bk]) => C.cards.push({ id: `${tid}-g${String(++n).padStart(2, '0')}`, topic: tid, f: fr, b: bk }));
+  }
 }
 const FOCOS = ['aortico', 'pulmonar', 'erb', 'tricuspideo', 'mitral'];
 for (const [sid, e] of Object.entries(C.soplos)) {

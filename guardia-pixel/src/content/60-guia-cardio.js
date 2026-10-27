@@ -1,7 +1,7 @@
 // Complemento de la “Guía Cardio” de la rotación (Ximena Cors Cepeda, EMIS 5; Google Drive).
 // guias.<tema>: { puntos (HTML), ojo (dónde tu guía difiere de las guías actuales), cards [frente, reverso] }
 // Se muestra en la lección como “De tu guía de la rotación”; las preguntas se suman al banco del tema.
-const SRC = { name: 'Guía Cardio · Ximena Cors Cepeda (EMIS 5)', url: 'https://docs.google.com/document/d/1KD6KncWKFzExg3jRxPwSSYhywjqoqJN6KhAD_fr6TWk/edit' };
+const SRC = { short: 'De tu Guía Cardio', vs: 'tu guía', name: 'Guía Cardio · Ximena Cors Cepeda (EMIS 5)', url: 'https://docs.google.com/document/d/1KD6KncWKFzExg3jRxPwSSYhywjqoqJN6KhAD_fr6TWk/edit' };
 const REF = 'Guía Cardio de la rotación (X. Cors) + guías actuales';
 const C = { subj: 'cardio' };
 const q = (topic, o) => ({ ...C, topic, ref: REF, ...o });
