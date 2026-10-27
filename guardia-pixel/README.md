@@ -31,11 +31,14 @@ Los 30 temas tienen:
   calculadas del propio trazo—, modo rápido y galería con las derivaciones clave resaltadas), **Taller de soplos**
   (12 ruidos y soplos sintetizados en el teléfono: fonocardiograma sincronizado, mapa de los 5 focos —el soplo baja
   lejos de donde nace—, maniobras de Valsalva, cuclillas y handgrip, y modo Identifica con casos), **Lee el frotis** (11 hallazgos en pixel art, con las células clave marcadas) y simuladores (potasio y ECG, TFG y ERC, ferritina y saturación, estenosis aórtica).
-- **Guías de la rotación** (carpeta “4. Interna” de Drive): `60-guia-cardio.js` (Guía Cardio), `61-guia-gastro.js`
-  (Guía Gastro) y `62-resumen-1p.js` (presentación “1P MI”). En la lección de cada tema que tocan, un recuadro con lo que
-  agregan y “Ojo: … vs las guías actuales” donde difieren; además tarjetas, preguntas y la “Chuleta” de ECG en el Taller de
-  electros. Un tema puede tener varias fuentes (`guias.<tema>` se acumula en el build). Lo que no es del temario
-  (IC, EII, hepatitis, cirrosis, infecto) no se agregó.
+- **Capítulo completo (estilo libro)** en los 30 temas (`70-libro-cardio.js` … `75-libro-reuma.js`; clave `libro.<tema>`):
+  definición, epidemiología, etiología, fisiopatología, clínica, diagnóstico, diferencial, tratamiento, complicaciones y
+  pronóstico, con índice. En la lección se elige “📖 Capítulo completo” o “⚡ Repaso para el examen” (se recuerda en ajustes).
+- **Guías de la rotación** (carpeta “4. Interna” de Drive): `60-guia-cardio.js`, `61-guia-gastro.js`, `62-resumen-1p.js`
+  y `63-guias-nefro-hemato-endo.js`. Su contenido está integrado en los capítulos; además, en la lección de cada tema, un
+  recuadro con lo que agregan y “Ojo: … vs las guías actuales” donde difieren, tarjetas, preguntas y la “Chuleta” de ECG.
+  Un tema puede tener varias fuentes (`guias.<tema>` se acumula en el build). Neumo, Infecto y la mayor parte del 2P
+  (IC, arritmias, tiroides, suprarrenal, EII, hígado, asma, EPOC, neumonía, TB, VIH) no son del temario y no se agregaron.
 - **Tu progreso en tu cuenta**: con las capacidades `db` y `user`, el estado se guarda en un documento privado
   (`data/users/<id>/progreso`) y se sincroniza entre dispositivos; gana el progreso más reciente y un dispositivo
   nuevo toma el de la cuenta. Fuera de Claude, todo sigue funcionando solo con el navegador.
