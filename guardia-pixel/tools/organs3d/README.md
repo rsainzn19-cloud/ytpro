@@ -18,5 +18,7 @@ El contenido está en `src/content/80-organos3d.js` (`cond3d.<tema>`); el visor,
 
 ## Publicar
 
-`vendor/three3d.js` y `models3d/*.glb` se publican como archivos junto a la página (rutas relativas). Si se suben como
+La página publicada no sirve `.glb`, así que `python3 -I tools/organs3d/web.py models3d` genera `models3d/web/<órgano>.json`
+(el mismo glTF en JSON con el búfer en base64; carpeta ignorada en git). `vendor/three3d.js` y `models3d/web/*.json` se
+publican como archivos junto a la página (rutas relativas). Si se suben como
 assets, poner sus URL en `models3d/assets.json` (`{ "heart": "/_blob/…" }`) y el build las usa.

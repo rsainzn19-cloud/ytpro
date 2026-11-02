@@ -5818,7 +5818,7 @@ const O3BUF = {};
 function o3fetch(k, prog) {
   if (O3BUF[k]) return O3BUF[k];
   return (O3BUF[k] = (async () => {
-    const r = await fetch(O3URL[k] || 'models3d/' + O3[k].file);
+    const r = await fetch(O3URL[k] || 'models3d/web/' + O3[k].file.replace(/\.glb$/, '.json')); // glTF en JSON (ver tools/organs3d/web.py)
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const total = +r.headers.get('content-length') || 0, rd = r.body && r.body.getReader ? r.body.getReader() : null;
     if (!rd) return r.arrayBuffer();
