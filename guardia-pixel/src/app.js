@@ -613,7 +613,7 @@ const STATIC_CHG = {
 };
 function go(v, p = {}) { clearTimers(); route = { v, ...p }; render(); window.scrollTo(0, 0); }
 function render() {
-  stopLoops(); stopVideo(); hsStop();
+  stopLoops(); stopVideo(); hsStop(); for (const k in O3G) o3stop(k);
   if (SY.pending && !(QS && !QS.finished)) { const o = SY.pending; SY.pending = null; const plan = S.plan; S = normalize(o); S.plan = plan; SIG = sig(S); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignorar */ } buildPlan(); toast('Tu progreso se actualizó desde otro dispositivo'); }
   ACT = { ...STATIC }; CHG = { ...STATIC_CHG };
   const m = $('#main'); m.innerHTML = '';
@@ -2001,6 +2001,223 @@ VIEWS.taller = (m) => {
   <h2>¿Dónde actúa?</h2><div class="tools">${Object.entries(C.paths).map(([id, p]) => tile('path:' + id, p.title, `${p.drugs.length} fármacos`)).join('')}</div>`;
 };
 
+// ═══════════ Órganos en 3D que complementan el video (modelos de OrganUI / BodyParts3D, componentes MIT):
+// el órgano del tema con lo afectado en rojo, etapas de la enfermedad, toque para explicar y recorrido narrado.
+// three.js (vendor/three3d.js) y el GLB se descargan solo al abrir el visor.
+const O3 = C.organs3d || {}, CO = C.cond3d || {}, O3URL = C.o3urls || {};
+let O3LIB = null;
+const o3lib = () => O3LIB || (O3LIB = import(new URL('vendor/three3d.js', document.baseURI).href).catch((e) => { O3LIB = null; throw e; }));
+const O3BUF = {};
+function o3fetch(k, prog) {
+  if (O3BUF[k]) return O3BUF[k];
+  return (O3BUF[k] = (async () => {
+    const r = await fetch(O3URL[k] || 'models3d/' + O3[k].file);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const total = +r.headers.get('content-length') || 0, rd = r.body && r.body.getReader ? r.body.getReader() : null;
+    if (!rd) return r.arrayBuffer();
+    const parts = []; let got = 0;
+    for (;;) { const { done, value } = await rd.read(); if (done) break; parts.push(value); got += value.length; if (total) prog(Math.min(95, Math.round((got / total) * 95))); }
+    const out = new Uint8Array(got); let off = 0;
+    for (const p of parts) { out.set(p, off); off += p.length; }
+    return out.buffer;
+  })().catch((e) => { delete O3BUF[k]; throw e; }));
+}
+const O3G = {}, O3COL = { 1: '#e5484d', 2: '#ff9f1c' }; // afectado (rojo) y causa (naranja)
+// Hallazgos de la escala y etapa actuales (la etapa agrega o cambia los de su órgano)
+function o3find(g) {
+  const sc = g.D.scales[g.sc], st = g.D.stages && g.D.stages[g.stg];
+  return { ...sc.find, ...((st && st.find && st.find[sc.organ]) || {}) };
+}
+function o3mount(host, tid) {
+  const D = CO[tid]; if (!host || !D) return;
+  const g = O3G[tid] = { tid, D, sc: 0, stg: 0, sel: null, tour: false, open: false, E: null, host };
+  ACT.o3go = () => { g.open = true; o3render(tid); o3load(tid); };
+  ACT.o3sc = (b) => { o3stop(tid); g.sc = +b.dataset.i; g.sel = null; o3render(tid); o3load(tid); };
+  ACT.o3stg = (b) => { g.stg = +b.dataset.i; g.sel = null; o3ui(tid); if (g.E) g.E.paint(); };
+  ACT.o3pick = (b) => { o3stop(tid); o3select(tid, b.dataset.id, true); };
+  ACT.o3view = (b) => { if (g.E) g.E.view(+b.dataset.i); };
+  ACT.o3tour = () => (g.tour ? o3stop(tid) : o3tour(tid));
+  o3render(tid);
+}
+function o3render(tid) {
+  const g = O3G[tid], D = g.D, sc = D.scales[g.sc], M = O3[sc.organ];
+  if (!g.open) {
+    g.host.innerHTML = `<section class="panel tight o3"><div class="row"><h2 class="grow">🫀 Míralo en 3D</h2><span class="small muted">${D.scales.map((x) => esc(O3[x.organ].name)).join(' · ')}</span></div>
+      <p class="small muted"><b>${esc(D.title)}.</b> ${esc(D.sum)}</p>
+      <button class="btn gold-btn" data-act="o3go">▶ Abrir el modelo 3D</button>
+      <p class="small muted">Gíralo con el dedo y toca lo rojo. Descarga ~${Math.max(1, Math.round(D.scales.reduce((a, x) => a + (O3[x.organ].kb || 0), 0) / 1024)) || 2} MB la primera vez.</p></section>`;
+    return;
+  }
+  g.host.innerHTML = `<section class="panel tight o3"><div class="row"><h2 class="grow">🫀 ${esc(D.title)}</h2></div>
+    ${D.scales.length > 1 ? `<div class="seg2" role="group" aria-label="Órgano">${D.scales.map((x, i) => `<button class="btn small${i === g.sc ? ' gold-btn' : ''}" data-act="o3sc" data-i="${i}">${esc(O3[x.organ].name)}</button>`).join('')}</div>` : ''}
+    <div class="o3stgs"></div>
+    <div class="o3cv" role="img" aria-label="Modelo 3D: ${esc(M.name)}"><div class="o3msg">Cargando el modelo…</div></div>
+    <div class="o3views"></div>
+    <div class="o3card" aria-live="polite"></div>
+    <div class="row"><button class="btn small gold-btn o3tourb" data-act="o3tour">▶ Recorrido narrado</button></div>
+    <div class="o3leg"></div>
+    <p class="tiny muted">Modelo: ${esc(M.credit || 'BodyParts3D')} (${esc(M.lic || '')}), adaptado por OrganUI. Ilustrativo, no diagnóstico.</p></section>`;
+  o3ui(tid);
+}
+// Etapas, leyenda y tarjeta (sin tocar el canvas)
+function o3ui(tid) {
+  const g = O3G[tid]; if (!g.open) return;
+  const D = g.D, sec = g.host, sc = D.scales[g.sc], M = O3[sc.organ], F = o3find(g), st = D.stages && D.stages[g.stg];
+  const stg = sec.querySelector('.o3stgs');
+  if (stg) stg.innerHTML = D.stages ? `<div class="o3chips" role="group" aria-label="Etapa">${D.stages.map((x, i) => `<button class="o3chip${i === g.stg ? ' on' : ''}" data-act="o3stg" data-i="${i}"><b>${esc(x.l)}</b><span>${esc(x.t)}</span></button>`).join('')}</div><p class="small">${esc(st.s)}</p>` : '';
+  const ids = Object.keys(F).sort((a, b) => F[b][0] - F[a][0]);
+  const leg = sec.querySelector('.o3leg');
+  if (leg) leg.innerHTML = ids.map((id) => `<button class="o3item${id === g.sel ? ' on' : ''}" data-act="o3pick" data-id="${id}"><i style="background:${O3COL[F[id][0]] || (M.st[id] || [])[1] || '#aaa'}"></i>${esc(F[id][1])}${F[id][0] ? ` <span class="tiny" style="color:${O3COL[F[id][0]]}">${F[id][0] === 2 ? 'causa' : 'afectado'}</span>` : ''}</button>`).join('');
+  const card = sec.querySelector('.o3card'), f = g.sel && F[g.sel];
+  if (card) card.innerHTML = f ? `<b>${esc(f[1])}</b><p>${esc(f[2])}</p>` : `<p class="small muted">${D.stages ? '' : esc(D.sum) + ' '}Toca una estructura en el modelo o en la lista.</p>`;
+  const vw = sec.querySelector('.o3views');
+  if (vw) vw.innerHTML = M.views.length > 1 ? M.views.slice(0, 6).map((v, i) => `<button class="lnk tiny" data-act="o3view" data-i="${i}">${esc(v.n)}</button>`).join(' · ') : '';
+}
+async function o3load(tid) {
+  const g = O3G[tid], sc = g.D.scales[g.sc], key = sc.organ, M = O3[key], box = g.host.querySelector('.o3cv');
+  if (g.E) { g.E.dispose(); g.E = null; }
+  const msg = (t) => { const m = box && box.querySelector('.o3msg'); if (m) m.textContent = t; };
+  try {
+    const [L, buf] = await Promise.all([o3lib(), o3fetch(key, (p) => msg(`Descargando el modelo… ${p}%`))]);
+    if (!box.isConnected || O3G[tid] !== g || g.D.scales[g.sc].organ !== key) return;
+    msg('Preparando…');
+    const gltf = await new L.GLTFLoader().parseAsync(buf.slice(0), '');
+    if (!box.isConnected) return;
+    g.E = o3engine(L, gltf.scene, box, g, M, sc);
+    const m = box.querySelector('.o3msg'); if (m) m.remove();
+  } catch (e) {
+    msg(/WebGL|context/i.test(String(e && e.message)) ? 'Tu dispositivo no pudo abrir gráficos 3D.' : 'No se pudo cargar el modelo. Revisa tu conexión y vuelve a abrirlo.');
+  }
+}
+function o3engine(L, scene, box, g, M, sc) {
+  const known = new Set(Object.keys(M.st)), meshes = new Map(), ctx = new Set(sc.ctx || []);
+  scene.traverse((o) => {
+    if (!o.isMesh) return;
+    let id = null;
+    for (let n = o; n; n = n.parent) if (known.has(n.name)) { id = n.name; break; }
+    if (!id) return;
+    o.material = o.material && o.material.isMeshStandardMaterial ? o.material.clone() : new L.MeshStandardMaterial();
+    o.userData.base = new L.Color((M.st[id] || [])[1] || '#c9b8a8');
+    (meshes.get(id) || meshes.set(id, []).get(id)).push(o);
+  });
+  const canvas = document.createElement('canvas'); canvas.className = 'o3canvas';
+  box.prepend(canvas);
+  const renderer = new L.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  const stage = new L.Scene();
+  stage.add(new L.AmbientLight('#ffffff', 0.8), new L.HemisphereLight('#fffcf3', '#a49b8f', 1.6));
+  for (const [p, i, c] of [[[-4, 6, 6], 2.6, '#fff5e6'], [[5, 1, -4], 1.8, '#e1edff'], [[-3, -3, 0], 0.45, '#ffffff']]) { const d = new L.DirectionalLight(c, i); d.position.set(...p); stage.add(d); }
+  stage.add(scene);
+  const cam = new L.PerspectiveCamera(34, 1, 0.01, 100), orbit = new L.OrbitControls(cam, canvas);
+  orbit.enablePan = false; orbit.enableDamping = !reduce; orbit.rotateSpeed = 0.7; orbit.autoRotate = !reduce; orbit.autoRotateSpeed = 1.1;
+  const boxOf = (ids) => { const b = new L.Box3(); for (const id of ids) for (const m of meshes.get(id) || []) b.expandByObject(m); return b; };
+  const all = new L.Box3().setFromObject(scene), R = all.getSize(new L.Vector3()).length() / 2;
+  cam.near = R / 200; cam.far = R * 30; orbit.minDistance = R * 0.15; orbit.maxDistance = R * 6;
+  const fit = (b, dir) => {
+    const c = b.getCenter(new L.Vector3()), r = Math.max(b.getSize(new L.Vector3()).length() / 2, R * 0.08);
+    const dist = clamp(r / Math.sin(((cam.fov * Math.PI) / 180) / 2) / Math.min(1, cam.aspect) * 1.05, orbit.minDistance, orbit.maxDistance);
+    return { c, p: dir.clone().normalize().multiplyScalar(dist).add(c) };
+  };
+  let anim = null;
+  const fly = (to, ms = 650) => { anim = { t0: performance.now(), ms, c0: orbit.target.clone(), p0: cam.position.clone(), c1: to.c, p1: to.p }; };
+  const dirOf = (name) => { const v = M.views.find((x) => x.n === name) || M.views[0]; return new L.Vector3(...v.d); };
+  const home = () => {
+    const ids = sc.focus || null, v = M.views.find((x) => x.n === M.def) || M.views[0];
+    return fit(ids ? boxOf(ids) : v.ids ? boxOf(v.ids) : all, new L.Vector3(...v.d));
+  };
+  const size = () => {
+    const w = box.clientWidth, h = box.clientHeight; if (!w || !h) return;
+    renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix();
+  };
+  size();
+  { const h = home(); orbit.target.copy(h.c); cam.position.copy(h.p); orbit.update(); }
+  const grey = new L.Color('#8a90a6');
+  const paint = () => {
+    const F = o3find(g);
+    for (const [id, ms] of meshes) {
+      const f = F[id], on = id === g.sel;
+      for (const m of ms) {
+        const mat = m.material; m.visible = true; m.renderOrder = 0;
+        if (f) {
+          mat.color.copy(f[0] ? new L.Color(O3COL[f[0]]) : m.userData.base); mat.transparent = false; mat.opacity = 1; mat.depthWrite = true;
+          mat.emissive.set(on ? '#f2c14e' : f[0] === 2 ? '#6a3a00' : f[0] ? '#5a0d10' : '#000000'); mat.emissiveIntensity = on ? 0.55 : 1;
+        } else if (ctx.has(id)) {
+          mat.color.copy(m.userData.base); mat.transparent = true; mat.opacity = 0.55; mat.depthWrite = true; mat.emissive.set('#000000');
+        } else {
+          if ((M.st[id] || [])[3] === 0) { m.visible = false; continue; }
+          mat.color.copy(m.userData.base).lerp(grey, 0.55); mat.transparent = true; mat.opacity = 0.13; mat.depthWrite = false; mat.emissive.set('#000000'); m.renderOrder = 1;
+        }
+        mat.needsUpdate = true;
+      }
+    }
+  };
+  paint();
+  // Tocar (sin arrastrar) selecciona la estructura citada más cercana
+  const ray = new L.Raycaster(), pt = new L.Vector2(); let down = null;
+  canvas.addEventListener('pointerdown', (e) => { down = [e.clientX, e.clientY]; orbit.autoRotate = false; o3stop(g.tid); });
+  canvas.addEventListener('pointerup', (e) => {
+    if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) return;
+    const r = canvas.getBoundingClientRect(); pt.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(pt, cam);
+    const F = o3find(g), hit = ray.intersectObjects([...meshes.entries()].filter(([id]) => F[id]).flatMap(([, ms]) => ms), false)[0];
+    if (!hit) return;
+    for (const [id, ms] of meshes) if (ms.includes(hit.object)) { o3select(g.tid, id, false); break; }
+  });
+  const ro = new ResizeObserver(size); ro.observe(box);
+  let raf = 0, dead = false;
+  const tick = (now) => {
+    if (dead) return;
+    if (!canvas.isConnected) { E.dispose(); return; }
+    if (anim) {
+      const t = Math.min(1, (now - anim.t0) / anim.ms), k = t * t * (3 - 2 * t);
+      orbit.target.lerpVectors(anim.c0, anim.c1, k); cam.position.lerpVectors(anim.p0, anim.p1, k);
+      if (t === 1) anim = null;
+    }
+    // Lo afectado “late” suavemente
+    const pulse = 0.55 + 0.45 * Math.sin(now / 320), F = o3find(g);
+    for (const [id, ms] of meshes) if (F[id] && F[id][0] && id !== g.sel) for (const m of ms) m.material.emissiveIntensity = reduce ? 1 : pulse * 1.6;
+    orbit.update();
+    if (!document.hidden) renderer.render(stage, cam);
+    raf = requestAnimationFrame(tick);
+  };
+  raf = requestAnimationFrame(tick);
+  const E = {
+    paint,
+    focus: (id) => { const b = boxOf([id]); if (b.isEmpty()) return; const dir = cam.position.clone().sub(orbit.target); orbit.autoRotate = false; fly(fit(b.expandByScalar(R * 0.12), dir)); },
+    view: (i) => { const v = M.views[i]; if (!v) return; orbit.autoRotate = false; fly(fit(v.ids ? boxOf(v.ids) : all, new L.Vector3(...v.d))); },
+    home: () => fly(home()),
+    dispose: () => { if (dead) return; dead = true; cancelAnimationFrame(raf); ro.disconnect(); orbit.dispose(); renderer.dispose(); scene.traverse((o) => { if (o.isMesh) { o.geometry.dispose(); o.material.dispose(); } }); }
+  };
+  return E;
+}
+function o3select(tid, id, fly) {
+  const g = O3G[tid]; if (!g) return;
+  g.sel = id; o3ui(tid);
+  if (g.E) { g.E.paint(); if (fly) g.E.focus(id); }
+}
+// Recorrido: cada etapa y cada estructura (primero lo afectado), con la voz del teléfono si está disponible
+function o3tour(tid) {
+  const g = O3G[tid]; if (!g || !g.E) return;
+  g.tour = true; const b = g.host.querySelector('.o3tourb'); if (b) b.textContent = '■ Detener';
+  const tok = (g.tok = (g.tok || 0) + 1), stages = g.D.stages ? g.D.stages.map((_, i) => i) : [g.stg], voice = TTS.ok && S.settings.vvoice !== false;
+  const say = (t, next) => { if (!g.tour || g.tok !== tok) return; if (voice) speak(t, 1, () => g.tour && g.tok === tok && setTimeout(next, 350)); else setTimeout(next, Math.max(2500, estSecs(t) * 1000)); };
+  const steps = [];
+  for (const si of stages) {
+    steps.push(() => { g.stg = si; g.sel = null; o3ui(tid); g.E.paint(); g.E.home(); const st = g.D.stages && g.D.stages[si]; return st ? `${st.l}. ${st.s}` : `${g.D.title}. ${g.D.sum}`; });
+    const Fs = { ...g.D.scales[g.sc].find, ...((g.D.stages && g.D.stages[si].find && g.D.stages[si].find[g.D.scales[g.sc].organ]) || {}) };
+    for (const id of Object.keys(Fs).sort((a, c) => Fs[c][0] - Fs[a][0]))
+      steps.push(() => { o3select(tid, id, true); const f = o3find(g)[id] || Fs[id]; return `${f[1]}. ${f[2]}`; });
+  }
+  let k = 0;
+  const next = () => { if (!g.tour || g.tok !== tok) return; if (k >= steps.length) { o3stop(tid); if (g.E) g.E.home(); return; } say(steps[k++](), next); };
+  next();
+}
+function o3stop(tid) {
+  const g = O3G[tid]; if (!g || !g.tour) return;
+  g.tour = false; g.tok = (g.tok || 0) + 1; hush();
+  const b = g.host.querySelector('.o3tourb'); if (b) b.textContent = '▶ Recorrido narrado';
+}
+
 // ═══════════ Videos: escenas en pixel art con narración, subtítulos, capítulos y pausas con pregunta
 let VS = null, VAUTO = false, VQUEUE = [];
 // Clips “en 1 minuto” (motion graphics con voz y lo-fi, tools/motion): un MP4 por tema
@@ -2297,6 +2514,7 @@ function mountVideo(el, tid) {
     </div>
   </div>
   ${MOTION[tid] ? `<section class="panel tight mclip"><div class="row"><h2 class="grow">Resumen en 1 minuto</h2><span class="small muted">${mmss(MOTION[tid].dur)}</span></div><p class="small muted">${esc(MOTION[tid].title)}: el mecanismo central animado, para repasar rápido o antes del examen.</p><button class="btn gold-btn" data-act="mclip">▶ Ver el resumen</button><div class="mbox" hidden></div></section>` : ''}
+  ${CO[tid] ? '<div class="o3host"></div>' : ''}
   <section class="panel tight"><h2>Capítulos</h2><ol class="vchaps" id="vchaps">${chs.map((c, ci) => `<li><button data-act="vch" data-i="${ci}"><span>${ci + 1}. ${esc(c.ch)}</span><span class="small muted">${mmss(chSecs[ci])}</span></button></li>`).join('')}</ol>
   <p class="small muted">${VOICE[tid] ? 'La narración está grabada: sube el volumen. Con “Voz” apagada, el video avanza solo con subtítulos.' : TTS.ok ? 'La voz es la de tu teléfono. ¿No se escucha? Sube el volumen o apaga “Voz” y sigue con subtítulos.' : 'Este navegador no tiene voz: el video avanza con subtítulos.'} ${VQUEUE.length ? `Maratón: quedan ${VQUEUE.length} video(s) después de este.` : ''}</p></section>`;
   VS.g = Pix(el.querySelector('canvas').getContext('2d'));
@@ -2304,6 +2522,7 @@ function mountVideo(el, tid) {
   const restart = () => { if (VS.playing) { hush(); clearLater(); if (VS.phase === 'wait') vQuizWait(); else vStep(); } };
   ACT.vplay = () => (VS.playing ? vPause() : vPlay());
   ACT.mclip = () => { vPause(); clipBox(el.querySelector('.mclip .mbox'), tid); };
+  o3mount(el.querySelector('.o3host'), tid);
   ACT.vprev = () => { const ci = VS.flat[VS.i].ci, s0 = VS.chStart[ci]; vGo(VS.i > s0 || VS.sent > 0 ? s0 : VS.chStart[Math.max(0, ci - 1)]); };
   ACT.vnext = () => { const ci = VS.flat[VS.i].ci; if (ci + 1 < VS.chStart.length) vGo(VS.chStart[ci + 1]); else vGo(VS.flat.length); };
   ACT.vch = (b) => { vGo(VS.chStart[+b.dataset.i]); if (!VS.playing) vPlay(); };

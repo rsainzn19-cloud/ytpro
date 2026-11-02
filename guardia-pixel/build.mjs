@@ -2,7 +2,7 @@
 // Uso: node build.mjs                       → index.html con los 30 temas
 //      node build.mjs --only sca,scc --out /ruta/prueba.html
 //        → compila solo esos temas (más meta y diagnóstico) para probarlos sin depender del resto.
-import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 
 const src = new URL('./src/', import.meta.url);
 const read = (p) => readFileSync(new URL(p, src), 'utf8');
@@ -12,7 +12,7 @@ const OUT = opt('--out');
 const ONLY = opt('--only') ? new Set(opt('--only').split(',').map((x) => x.trim())) : null;
 const keepTopic = (tid) => !ONLY || ['meta', 'diagnostico'].includes(tid) || ONLY.has(tid);
 
-const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {}, algos: {}, ecg: {}, frotis: {}, soplos: {}, guias: {}, chuletas: {}, libro: {} };
+const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {}, algos: {}, ecg: {}, frotis: {}, soplos: {}, guias: {}, chuletas: {}, libro: {}, cond3d: {} };
 for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('.js')).sort()) {
   const part = (await import(new URL('content/' + f, src))).default;
   // Con --only se cargan solo esos temas, pero los comparadores de todos (una lección puede usar uno ajeno)
@@ -26,7 +26,7 @@ for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('
       // Guías de la rotación: varias fuentes pueden complementar el mismo tema
       for (const [tid, G] of Object.entries(v)) (C.guias[tid] = C.guias[tid] || []).push(G);
     } else if (Array.isArray(v)) C[k] = (C[k] || []).concat(v);
-    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg', 'frotis', 'soplos', 'chuletas', 'libro'].includes(k)) Object.assign(C[k], v);
+    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg', 'frotis', 'soplos', 'chuletas', 'libro', 'cond3d'].includes(k)) Object.assign(C[k], v);
     else C[k] = v;
   }
 }
@@ -34,6 +34,14 @@ for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('
 // Narración grabada: src/voice/<tema>.json → C.voice (mapa hash de frase → [inicio, fin] en audio/<tema>.mp3)
 C.voice = {};
 try { for (const f of readdirSync(new URL('voice/', src)).filter((f) => f.endsWith('.json'))) { const tid = f.replace(/\.json$/, ''); if (C.lessons[tid]) C.voice[tid] = JSON.parse(read('voice/' + f)); } } catch (e) { /* sin grabaciones */ }
+
+// Órganos 3D (OrganUI / BodyParts3D): metadatos de models3d/organs.json y, si ya se subieron como assets, sus URL
+C.organs3d = {}; C.o3urls = {};
+try {
+  C.organs3d = JSON.parse(readFileSync(new URL('./models3d/organs.json', import.meta.url), 'utf8'));
+  for (const M of Object.values(C.organs3d)) try { M.kb = Math.round(statSync(new URL('./models3d/' + M.file, import.meta.url)).size / 1024); } catch (e) { M.kb = 0; }
+  try { C.o3urls = JSON.parse(readFileSync(new URL('./models3d/assets.json', import.meta.url), 'utf8')); } catch (e) { /* se sirven desde models3d/ */ }
+} catch (e) { /* sin modelos */ }
 
 // Clips “en 1 minuto”: motion/<tema>.json ({dur, title}) y, si ya se subieron como assets, motion/assets.json ({tema: url})
 C.motion = {};
@@ -102,6 +110,21 @@ for (const [tid, list] of Object.entries(C.guias)) {
 for (const [tid, B] of Object.entries(C.libro)) {
   if (!topics.has(tid)) errs.push(`libro: tema ${tid} no existe`);
   if (!Array.isArray(B.secs) || B.secs.length < 6 || B.secs.some((x) => !x.h || !x.html)) errs.push(`libro ${tid}: faltan secciones (mínimo 6, cada una con h y html)`);
+}
+// Complemento 3D: cada estructura citada existe en su modelo
+for (const [tid, D] of Object.entries(C.cond3d)) {
+  if (!topics.has(tid)) errs.push(`3D: tema ${tid} no existe`);
+  const orgs = new Set();
+  for (const sc of D.scales || []) {
+    const M = C.organs3d[sc.organ];
+    if (!M) { errs.push(`3D ${tid}: órgano ${sc.organ} no existe`); continue; }
+    orgs.add(sc.organ);
+    for (const id of [...Object.keys(sc.find || {}), ...(sc.focus || []), ...(sc.ctx || [])]) if (!M.st[id]) errs.push(`3D ${tid}: ${sc.organ} no tiene ${id}`);
+  }
+  for (const st of D.stages || []) for (const [o, f] of Object.entries(st.find || {})) {
+    if (!orgs.has(o)) errs.push(`3D ${tid}: la etapa ${st.l} usa ${o}, que no está en sus escalas`);
+    else for (const id of Object.keys(f)) if (!C.organs3d[o].st[id]) errs.push(`3D ${tid}: ${o} no tiene ${id}`);
+  }
 }
 const FOCOS = ['aortico', 'pulmonar', 'erb', 'tricuspideo', 'mitral'];
 for (const [sid, e] of Object.entries(C.soplos)) {

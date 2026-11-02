@@ -39,6 +39,9 @@ Los 30 temas tienen:
   recuadro con lo que agregan y “Ojo: … vs las guías actuales” donde difieren, tarjetas, preguntas y la “Chuleta” de ECG.
   Un tema puede tener varias fuentes (`guias.<tema>` se acumula en el build). Neumo, Infecto y la mayor parte del 2P
   (IC, arritmias, tiroides, suprarrenal, EII, hígado, asma, EPOC, neumonía, TB, VIH) no son del temario y no se agregaron.
+- **🫀 Míralo en 3D** en la pestaña Video de los 30 temas: el órgano del tema (modelos de OrganUI / BodyParts3D) con lo
+  afectado en rojo y la causa en naranja, etapas de la enfermedad, explicación al tocar y recorrido narrado
+  (`src/content/80-organos3d.js`; ver `tools/organs3d/README.md`).
 - **Tu progreso en tu cuenta**: con las capacidades `db` y `user`, el estado se guarda en un documento privado
   (`data/users/<id>/progreso`) y se sincroniza entre dispositivos; gana el progreso más reciente y un dispositivo
   nuevo toma el de la cuenta. Fuera de Claude, todo sigue funcionando solo con el navegador.
