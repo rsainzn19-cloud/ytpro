@@ -42,6 +42,11 @@ Los 30 temas tienen:
 - **🫀 Míralo en 3D** en la pestaña Video de los 30 temas: el órgano del tema (modelos de OrganUI / BodyParts3D) con lo
   afectado en rojo y la causa en naranja, etapas de la enfermedad, explicación al tocar y recorrido narrado
   (`src/content/80-organos3d.js`; ver `tools/organs3d/README.md`).
+- **🧩 Entiéndelo desde cero** (`src/content/85-desde-cero.js`; clave `facil.<tema>`): al inicio de la lección de
+  Anemias y de Paciente con sangrado, una explicación paso a paso con analogías (la fábrica de la médula, la bodega y
+  los camiones del hierro, los dos tiempos de la hemostasia) y un visual interactivo en cada paso, con una pregunta de
+  comprobación y +20 XP al terminar. Incluye la **cascada interactiva** (TP/TTPa/plaquetas/fibrinógeno por enfermedad y
+  anticoagulante, con modo “Ponme a prueba”) y el **mapa de anemias** (VCM + reticulocitos), también en el Taller.
 - **Tu progreso en tu cuenta**: con las capacidades `db` y `user`, el estado se guarda en un documento privado
   (`data/users/<id>/progreso`) y se sincroniza entre dispositivos; gana el progreso más reciente y un dispositivo
   nuevo toma el de la cuenta. Fuera de Claude, todo sigue funcionando solo con el navegador.

@@ -12,7 +12,7 @@ const OUT = opt('--out');
 const ONLY = opt('--only') ? new Set(opt('--only').split(',').map((x) => x.trim())) : null;
 const keepTopic = (tid) => !ONLY || ['meta', 'diagnostico'].includes(tid) || ONLY.has(tid);
 
-const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {}, algos: {}, ecg: {}, frotis: {}, soplos: {}, guias: {}, chuletas: {}, libro: {}, cond3d: {} };
+const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {}, algos: {}, ecg: {}, frotis: {}, soplos: {}, guias: {}, chuletas: {}, libro: {}, cond3d: {}, facil: {} };
 for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('.js')).sort()) {
   const part = (await import(new URL('content/' + f, src))).default;
   // Con --only se cargan solo esos temas, pero los comparadores de todos (una lección puede usar uno ajeno)
@@ -26,7 +26,7 @@ for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('
       // Guías de la rotación: varias fuentes pueden complementar el mismo tema
       for (const [tid, G] of Object.entries(v)) (C.guias[tid] = C.guias[tid] || []).push(G);
     } else if (Array.isArray(v)) C[k] = (C[k] || []).concat(v);
-    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg', 'frotis', 'soplos', 'chuletas', 'libro', 'cond3d'].includes(k)) Object.assign(C[k], v);
+    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg', 'frotis', 'soplos', 'chuletas', 'libro', 'cond3d', 'facil'].includes(k)) Object.assign(C[k], v);
     else C[k] = v;
   }
 }
@@ -110,6 +110,16 @@ for (const [tid, list] of Object.entries(C.guias)) {
 for (const [tid, B] of Object.entries(C.libro)) {
   if (!topics.has(tid)) errs.push(`libro: tema ${tid} no existe`);
   if (!Array.isArray(B.secs) || B.secs.length < 6 || B.secs.some((x) => !x.h || !x.html)) errs.push(`libro ${tid}: faltan secciones (mínimo 6, cada una con h y html)`);
+}
+// Desde cero: pasos con título y texto; visual conocido; la respuesta de control existe
+const FVIS = ['fabrica', 'tamano', 'hierro', 'hemolisis', 'mapa', 'tiempos', 'donde', 'cascada'];
+for (const [tid, D] of Object.entries(C.facil)) {
+  if (!topics.has(tid)) errs.push(`desde cero: tema ${tid} no existe`);
+  (D.steps || []).forEach((st, i) => {
+    if (!st.h || !st.html) errs.push(`desde cero ${tid} paso ${i + 1}: falta título o texto`);
+    if (st.vis && !FVIS.includes(st.vis)) errs.push(`desde cero ${tid} paso ${i + 1}: visual ${st.vis} no existe`);
+    if (st.check && !(st.check.a >= 0 && st.check.a < st.check.opts.length && st.check.why)) errs.push(`desde cero ${tid} paso ${i + 1}: pregunta mal definida`);
+  });
 }
 // Complemento 3D: cada estructura citada existe en su modelo
 for (const [tid, D] of Object.entries(C.cond3d)) {

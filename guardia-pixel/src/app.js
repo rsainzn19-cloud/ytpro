@@ -861,6 +861,7 @@ TOPIC_TABS.leccion = (el, t, L) => {
   <p class="small muted">¿Lo quieres en corto? Cambia a <b>Repaso</b> arriba: lo esencial para el examen, con mnemotecnia, perla y trampa.</p>`
     : `${L.sections.map((s) => `<section class="lsec"><h3>${esc(s.h)}</h3>${s.html}</section>`).join('')}`;
   el.innerHTML = `${L.video ? `<button class="btn gold-btn big vcta" data-act="vgo">▶ Ver el video del tema · ${vMin(t.id)} min${S.vid[t.id] && S.vid[t.id].done ? ' · visto ✓' : ''}</button>` : ''}<p class="hook">${esc(L.hook)}</p>
+  ${C.facil && C.facil[t.id] ? '<div class="fchost"></div>' : ''}
   ${B ? `<div class="seg2" role="group" aria-label="Cómo leer"><button class="btn small${cap ? ' gold-btn' : ''}" data-act="lecmode" data-m="libro" aria-pressed="${!!cap}">📖 Capítulo completo</button><button class="btn small${cap ? '' : ' gold-btn'}" data-act="lecmode" data-m="repaso" aria-pressed="${!cap}">⚡ Repaso para el examen</button></div>` : ''}
   <div class="row">${L.anim ? `<button class="btn small" data-go="topic" data-a="${t.id}" data-b="anim">Ver la animación</button>` : ''}<button class="btn small" data-go="topic" data-a="${t.id}" data-b="preguntas">Ir a las preguntas</button></div>
   ${body}
@@ -875,6 +876,7 @@ TOPIC_TABS.leccion = (el, t, L) => {
   <button class="btn ${read ? '' : 'gold-btn'} big" data-act="readDone" ${read ? 'disabled' : ''}>${read ? 'Lección leída ✓' : 'Marcar como leída · +30 XP'}</button>`;
   ACT.vgo = () => { VQUEUE = []; VAUTO = true; go('topic', { a: t.id, b: 'video' }); };
   ACT.lecmode = (b) => { S.settings.lec = b.dataset.m; save(); render(); };
+  facilMount(el.querySelector('.fchost'), t.id);
   ACT.toc = (b) => { const x = document.getElementById('cap-' + b.dataset.i); if (x) x.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); };
   ACT.readDone = () => {
     const tp = S.tp[t.id] || (S.tp[t.id] = {});
@@ -1851,7 +1853,9 @@ const SIMS = {
   potasio: { title: 'Potasio y ECG', topics: ['erc', 'lra', 'dialisis'], mount: simPotasio },
   tfg: { title: 'ERC: la TFG y lo que cambia', topics: ['erc', 'dialisis'], mount: simTfg },
   hierro: { title: 'Ferritina y saturación', topics: ['anemias'], mount: simHierro },
-  aortica: { title: 'Estenosis aórtica: velocidad y gravedad', topics: ['aortica'], mount: simAortica }
+  aortica: { title: 'Estenosis aórtica: velocidad y gravedad', topics: ['aortica'], mount: simAortica },
+  cascada: { title: 'Cascada de coagulación: qué alarga el TP o el TTPa', topics: ['sangrado'], mount: (sec) => { sec.innerHTML = '<h2>Simulador · Cascada de coagulación</h2><p class="small muted">Elige el problema y mira qué factores fallan y qué prueba se altera; o ponte a prueba.</p><div class="fvbox"></div>'; fvCascada(sec.querySelector('.fvbox')); } },
+  mapaanemia: { title: 'Mapa de la anemia: VCM y reticulocitos', topics: ['anemias', 'hemoliticas'], mount: (sec) => { sec.innerHTML = '<h2>Simulador · Mapa de la anemia</h2><div class="fvbox"></div>'; fvMapa(sec.querySelector('.fvbox')); } }
 };
 function mountSim(host, sid) {
   const sec = document.createElement('section');
@@ -1959,6 +1963,208 @@ function simAortica(sec) {
   CHG.simv = (el) => { v = +el.value; draw(); };
   draw();
   if (!reduce) loop((ts) => { if (last == null) last = ts; const dt = Math.min((ts - last) / 1000, 0.1); last = ts; frame(dt); });
+}
+
+// ═══════════ “Entiéndelo desde cero”: pasos con analogías, un visual interactivo y una pregunta de control
+// Contenido en C.facil (src/content/85-desde-cero.js); los visuales están aquí (FACIL_VIS) y dos se usan también en el Taller.
+const FV_ARROW = '<span class="fvar" aria-hidden="true"><i></i><i></i><i></i></span>';
+// Anemia: la fábrica (riñón → médula → reticulocitos → sangre → bazo) con los tres mecanismos
+const FAB_SCN = {
+  ok: ['Todo bien', [], 'normal', 'Entra materia prima, llega la orden (EPO) y salen reticulocitos que reponen a los que el bazo recicla. Hb normal.'],
+  materia: ['Falta materia prima', ['mp'], 'low', 'Sin hierro, B12 o folato la fábrica no puede terminar los eritrocitos: <b>reticulocitos bajos</b>. Hierro → micro; B12/folato → macro.'],
+  epo: ['Falta la orden (EPO)', ['ri'], 'low', 'El riñón enfermo (ERC) no manda EPO: la fábrica está sana pero parada. <b>Reticulocitos bajos</b>, normocítica.'],
+  medula: ['Fábrica dañada', ['me'], 'low', 'Aplasia, leucemia, metástasis o fármacos: aunque sobre materia prima no se produce. <b>Reticulocitos bajos</b> y a veces bajan también leucocitos y plaquetas.'],
+  destruye: ['Se destruyen', ['bz'], 'high', 'Hemólisis: el bazo (o los vasos) los rompen antes de los 120 días. La fábrica acelera: <b>reticulocitos altos</b>, LDH y bilirrubina altas.'],
+  pierde: ['Se pierden', ['fu'], 'high', 'Sangrado: se van por la fuga. Si es agudo, la fábrica acelera (<b>reticulocitos altos</b> a los 3–5 días); si es crónico, se acaba el hierro y termina en ferropenia.']
+};
+function fvFabrica(box) {
+  let k = 'ok';
+  const draw = () => {
+    const [, bad, flow, txt] = FAB_SCN[k], on = (id) => (bad.includes(id) ? ' bad' : '');
+    box.innerHTML = `<div class="fab fl-${flow}">
+      <div class="fnode${on('ri')}"><b>🫘 Riñón</b><span>manda EPO</span></div>${FV_ARROW}
+      <div class="fnode big${on('me')}"><b>🏭 Médula</b><span>fábrica</span><em class="${on('mp').trim()}">+ hierro · B12 · folato</em></div>${FV_ARROW}
+      <div class="fnode"><b>🔴 Reticulocitos</b><span>${flow === 'low' ? 'bajos' : flow === 'high' ? 'altos' : 'normales'}</span></div>${FV_ARROW}
+      <div class="fnode${on('fu')}"><b>🩸 Sangre</b><span>viven 120 días</span>${bad.includes('fu') ? '<em class="bad">💧 fuga</em>' : ''}</div>${FV_ARROW}
+      <div class="fnode${on('bz')}"><b>♻️ Bazo</b><span>recicla los viejos</span></div></div>
+      <div class="fvbtns">${Object.entries(FAB_SCN).map(([id, s]) => `<button class="o3chip${id === k ? ' on' : ''}" data-act="fvfab" data-k="${id}">${esc(s[0])}</button>`).join('')}</div>
+      <p class="fvout">${txt}</p>`;
+  };
+  ACT.fvfab = (b) => { k = b.dataset.k; draw(); };
+  draw();
+}
+function fvTamano(box) {
+  box.innerHTML = `<div class="rbcs">
+    <figure><i class="rbc micro"></i><figcaption><b>Micro (&lt;80)</b>Poca hemoglobina: pequeño y pálido. <em>Falta hierro</em> (o talasemia).</figcaption></figure>
+    <figure><i class="rbc"></i><figcaption><b>Normal (80–100)</b>Disco con centro pálido de 1/3.</figcaption></figure>
+    <figure><i class="rbc macro"></i><figcaption><b>Macro (&gt;100)</b>Creció sin dividirse: <em>falta B12 o folato</em> (o alcohol, hígado).</figcaption></figure></div>`;
+}
+// Hierro: la bodega (ferritina), los camiones (transferrina/TIBC), su carga (saturación) y el candado (hepcidina)
+const HIE_SCN = {
+  normal: ['Normal', 6, 4, 0.35, false, ['N', 'N', 'N', 'N'], 'Bodega con hierro, camiones normales y medio cargados.'],
+  ferro: ['Ferropenia', 0, 7, 0.08, false, ['↓↓', '↓', '↑', '↓↓'], 'La bodega está vacía (ferritina baja) y el hígado manda más camiones a buscar hierro (TIBC alta) que regresan casi vacíos (saturación baja). Tratamiento: hierro y buscar la pérdida.'],
+  infla: ['Inflamación', 8, 3, 0.1, true, ['N/↑', '↓', '↓', '↓'], 'Hay hierro guardado (ferritina normal o alta: además sube con la inflamación), pero la hepcidina cierra la bodega: pocos camiones (TIBC baja) y vacíos. El hierro oral no sirve: se trata la causa.'],
+  talas: ['Talasemia menor', 6, 4, 0.35, false, ['N', 'N', 'N', 'N'], 'El hierro está completo: el problema es la fábrica de globinas. Microcitosis marcada con muchos eritrocitos (Mentzer <13) → electroforesis de hemoglobina. ¡No le des hierro!']
+};
+function fvHierro(box) {
+  let k = 'ferro';
+  const draw = () => {
+    const [, shelf, trucks, load, lock, ar, txt] = HIE_SCN[k];
+    box.innerHTML = `<div class="hie"><div class="hbod"><b>Bodega (ferritina)</b><div class="hgrid">${Array.from({ length: 10 }, (_, i) => `<i class="${i < shelf ? 'on' : ''}"></i>`).join('')}</div>${lock ? '<span class="hlock">🔒 hepcidina</span>' : ''}</div>
+      <div class="htrk"><b>Camiones (transferrina) y su carga (saturación)</b><div>${Array.from({ length: trucks }, () => `<span class="truck"><span>🚚</span><i style="--p:${load}"></i></span>`).join('')}</div></div></div>
+      <table class="mini hnums"><tr><th>Ferritina</th><th>Hierro</th><th>TIBC</th><th>Saturación</th></tr><tr>${ar.map((a) => `<td class="${a.includes('↓') ? 'dn' : a.includes('↑') ? 'up' : ''}">${a}</td>`).join('')}</tr></table>
+      <div class="fvbtns">${Object.entries(HIE_SCN).map(([id, s]) => `<button class="o3chip${id === k ? ' on' : ''}" data-act="fvhie" data-k="${id}">${esc(s[0])}</button>`).join('')}</div><p class="fvout">${txt}</p>`;
+  };
+  ACT.fvhie = (b) => { k = b.dataset.k; draw(); };
+  draw();
+}
+function fvHemolisis(box) {
+  let c = null;
+  const draw = () => {
+    box.innerHTML = `<div class="hemo"><span class="rbc broken"></span><div class="hemochips"><span class="up">LDH ↑</span><span class="up">Bilirrubina indirecta ↑</span><span class="dn">Haptoglobina ↓</span><span class="up">Reticulocitos ↑</span></div></div>
+      <p class="small"><b>Siguiente: Coombs directo.</b> ¿Tiene anticuerpos pegados?</p>
+      <div class="fvbtns"><button class="o3chip${c === 1 ? ' on' : ''}" data-act="fvcoombs" data-k="1">Coombs positivo</button><button class="o3chip${c === 0 ? ' on' : ''}" data-act="fvcoombs" data-k="0">Coombs negativo</button></div>
+      <p class="fvout">${c === 1 ? 'Inmune: <b>autoinmune caliente</b> (IgG, esferocitos; LES, LLC, fármacos → prednisona) o <b>por frío</b> (IgM + C3; Mycoplasma, mononucleosis → evitar el frío, rituximab), o reacción transfusional.' : c === 0 ? 'No inmune: eritrocito defectuoso (<b>esferocitosis</b>, <b>G6PD</b> tras sulfas o habas, <b>falciforme</b>, talasemia) o roto por fuera: <b>esquistocitos</b> = microangiopatía (PTT, SUH, CID) o válvula mecánica.' : 'Elige un resultado.'}</p>`;
+  };
+  ACT.fvcoombs = (b) => { c = +b.dataset.k; draw(); };
+  draw();
+}
+// Mapa de la anemia: VCM × reticulocitos → causas probables y siguiente estudio
+const MAP_CELLS = {
+  'micro-bajo': ['Microcítica · no se fabrica', 'Ferropenia (la más común), inflamación crónica avanzada, talasemia, sideroblástica (plomo, alcohol).', 'Ferritina (y PCR). Si es normal: electroforesis de Hb.'],
+  'micro-alto': ['Microcítica · regenerativa', 'Talasemia o hemoglobinopatía con hemólisis compensada.', 'Electroforesis de hemoglobina, frotis (dianocitos).'],
+  'normo-bajo': ['Normocítica · no se fabrica', 'ERC (falta EPO), inflamación temprana, hipotiroidismo, médula dañada (aplasia, leucemia, metástasis), anemia mixta.', 'Creatinina, PCR, TSH, frotis; si bajan otras líneas: médula ósea.'],
+  'normo-alto': ['Normocítica · regenerativa', 'Sangrado agudo (días después) o hemólisis.', 'LDH, bilirrubina indirecta, haptoglobina; busca sangrado; Coombs directo.'],
+  'macro-bajo': ['Macrocítica · no se fabrica', 'Déficit de B12 o folato (megaloblástica: neutrófilos hipersegmentados), alcohol, hepatopatía, hipotiroidismo, fármacos (metotrexato, hidroxiurea), mielodisplasia.', 'B12, folato, ácido metilmalónico; frotis.'],
+  'macro-alto': ['Macrocítica · regenerativa', 'Reticulocitosis: los reticulocitos son grandes y suben el VCM (hemólisis o sangrado).', 'Datos de hemólisis y Coombs.']
+};
+const MAP_PRE = [['Ferropenia', 70, 0.6], ['Talasemia menor', 64, 1.2], ['ERC', 90, 0.5], ['Sangrado agudo', 92, 3.2], ['Hemólisis', 98, 4], ['Déficit de B12', 112, 0.5], ['Alcohol', 104, 0.8]];
+function fvMapa(box) {
+  let vcm = 85, ret = 1;
+  box.innerHTML = `<label class="sl"><span>VCM (tamaño)</span><b class="mv"></b><input type="range" min="60" max="120" step="1" value="${vcm}" data-inp="fvvcm" aria-label="VCM"></label>
+    <label class="sl"><span>Índice de reticulocitos (producción)</span><b class="mr"></b><input type="range" min="0.2" max="5" step="0.1" value="${ret}" data-inp="fvret" aria-label="Índice de reticulocitos"></label>
+    <div class="amap" role="img" aria-label="Mapa de anemias"><span></span><b>Micro &lt;80</b><b>Normo</b><b>Macro &gt;100</b>
+      ${['alto', 'bajo'].map((r) => `<b class="rl">${r === 'alto' ? 'Retic altos (≥2)' : 'Retic bajos (&lt;2)'}</b>${['micro', 'normo', 'macro'].map((cc) => `<i data-c="${cc}-${r}">${esc(MAP_CELLS[`${cc}-${r}`][0].split(' · ')[1])}</i>`).join('')}`).join('')}</div>
+    <div class="fvout" aria-live="polite"></div>
+    <div class="fvbtns">${MAP_PRE.map(([n], i) => `<button class="o3chip" data-act="fvpre" data-i="${i}">${esc(n)}</button>`).join('')}</div>`;
+  const upd = () => {
+    const key = `${vcm < 80 ? 'micro' : vcm > 100 ? 'macro' : 'normo'}-${ret < 2 ? 'bajo' : 'alto'}`, c = MAP_CELLS[key];
+    box.querySelector('.mv').textContent = `${vcm} fL`; box.querySelector('.mr').textContent = ret.toFixed(1);
+    box.querySelectorAll('.amap i').forEach((x) => x.classList.toggle('on', x.dataset.c === key));
+    box.querySelector('.fvout').innerHTML = `<b>${esc(c[0])}</b><p>${esc(c[1])}</p><p class="small"><b>Pide:</b> ${esc(c[2])}</p>`;
+  };
+  CHG.fvvcm = (el) => { vcm = +el.value; upd(); };
+  CHG.fvret = (el) => { ret = +el.value; upd(); };
+  ACT.fvpre = (b) => { const p = MAP_PRE[+b.dataset.i]; vcm = p[1]; ret = p[2]; box.querySelector('[data-inp=fvvcm]').value = vcm; box.querySelector('[data-inp=fvret]').value = ret; upd(); };
+  upd();
+}
+// Coagulación: los dos tiempos (tapón de plaquetas y malla de fibrina)
+function fvTiempos(box) {
+  let st = 0;
+  const L = ['La herida: la sangre se sale', '1 · Tapón de plaquetas (segundos)', '2 · Malla de fibrina (minutos)'];
+  const draw = () => {
+    box.innerHTML = `<svg class="ttv st${st}" viewBox="0 0 320 140" role="img" aria-label="${L[st]}">
+      <rect x="0" y="0" width="320" height="58" fill="#3a1520"/><rect x="0" y="58" width="130" height="16" fill="#b45a68"/><rect x="190" y="58" width="190" height="16" fill="#b45a68"/>
+      <text x="8" y="20" class="ttl">Dentro del vaso</text><text x="8" y="132" class="ttl">Tejido</text>
+      <g class="leak">${[0, 1, 2, 3, 4].map((i) => `<circle cx="${150 + i * 6}" cy="${84 + i * 9}" r="4" fill="#e5484d" style="animation-delay:${i * 0.25}s"/>`).join('')}</g>
+      <g class="plt">${[[138, 62], [150, 60], [162, 63], [174, 61], [144, 70], [158, 71], [170, 69], [182, 66]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="7" ry="4" fill="#9b7be0"/>`).join('')}</g>
+      <g class="fib">${[[130, 56, 190, 76], [130, 76, 190, 56], [135, 66, 188, 66], [140, 54, 180, 78], [180, 54, 140, 78]].map(([a, b2, c, d]) => `<line x1="${a}" y1="${b2}" x2="${c}" y2="${d}" stroke="#f2c14e" stroke-width="2"/>`).join('')}</g>
+      <text x="200" y="110" class="ttl">${st === 0 ? 'Fuga' : st === 1 ? 'Ladrillos: plaquetas + vWF' : 'Cemento: fibrina'}</text></svg>
+      <div class="fvbtns">${L.map((l, i) => `<button class="o3chip${i === st ? ' on' : ''}" data-act="fvtt" data-i="${i}">${esc(l)}</button>`).join('')}</div>
+      <p class="fvout">${st === 0 ? 'Se rompe el vaso y la sangre sale.' : st === 1 ? 'Las plaquetas se pegan al colágeno con el <b>factor de von Willebrand</b> y se juntan: tapón blando. Si faltan plaquetas o vWF → <b>petequias y sangrado de mucosas</b>.' : 'La cascada fabrica <b>trombina</b>, que convierte el fibrinógeno en <b>fibrina</b>: una malla que refuerza el tapón. Si falta un factor → el tapón se deshace: <b>hemartrosis y sangrado tardío</b>.'}</p>`;
+  };
+  ACT.fvtt = (b) => { st = +b.dataset.i; draw(); };
+  draw();
+}
+function fvDonde(box) {
+  box.innerHTML = `<div class="donde"><div><b>Falla el tapón</b><span class="dbig">🟣</span><p>Plaquetas bajas, von Willebrand, aspirina, uremia</p><ul><li>Petequias y púrpura</li><li>Encías, nariz, menstruación</li><li>Sangra <b>en seguida</b></li></ul></div>
+    <div><b>Falla el cemento</b><span class="dbig">🦵</span><p>Hemofilias, warfarina, hígado, déficit de vitamina K</p><ul><li>Hemartrosis</li><li>Hematomas musculares profundos</li><li>Sangra <b>horas después</b></li></ul></div></div>`;
+}
+// Cascada interactiva: elige el problema → cajas afectadas y resultado de plaquetas, TP, TTPa y fibrinógeno
+const CZ_F = [['ext', 'Vía extrínseca · la mide el TP', ['VII']], ['int', 'Vía intrínseca · la mide el TTPa', ['XII', 'XI', 'IX', 'VIII']], ['com', 'Vía común · la miden los dos', ['X', 'V', 'II', 'Fib']], ['tap', 'Tapón · plaquetas', ['Plaq', 'vWF']]];
+const CZ_N = { II: 'II (trombina)', Fib: 'Fibrinógeno', Plaq: 'Plaquetas', vWF: 'von Willebrand' };
+const CZ = {
+  normal: ['Normal', [], ['N', 'N', 'N', 'N'], 'Todo funciona: tapón y cemento.', ''],
+  warf: ['Warfarina / falta de vit. K', ['II', 'VII', 'IX', 'X'], ['N', '↑↑', 'N/↑', 'N'], 'Sin vitamina K no se activan II, VII, IX y X. El VII dura menos en sangre: el <b>TP (INR)</b> se alarga primero. WEPT.', 'Vitamina K; si sangra grave: complejo protrombínico + vitamina K IV.'],
+  hnf: ['Heparina no fraccionada', ['II', 'X', 'IX', 'XI', 'XII'], ['N', 'N/↑', '↑↑', 'N'], 'Potencia la antitrombina, que apaga la trombina (II) y el Xa: se alarga el <b>TTPa</b>. HINT.', 'Suspender; protamina. Vigila TIH (plaquetas que caen a los 5–10 días).'],
+  hemoA: ['Hemofilia A', ['VIII'], ['N', 'N', '↑↑', 'N'], 'Falta el factor VIII (hombres, ligada al X): solo el <b>TTPa</b> largo; la mezcla corrige. Hemartrosis.', 'Reponer factor VIII; emicizumab como profilaxis; desmopresina si es leve.'],
+  hemoB: ['Hemofilia B', ['IX'], ['N', 'N', '↑↑', 'N'], 'Falta el factor IX: igual que la A, pero con otro factor (Christmas).', 'Reponer factor IX.'],
+  vwf: ['Von Willebrand', ['vWF', 'VIII'], ['N', 'N', 'N/↑', 'N'], 'Falta el pegamento de las plaquetas (y el vWF transporta al VIII, que baja un poco). Plaquetas <b>normales</b> en número pero no se pegan: sangrado de mucosas.', 'Desmopresina (tipo 1); concentrado de vWF; ácido tranexámico.'],
+  pti: ['PTI', ['Plaq'], ['↓↓', 'N', 'N', 'N'], 'Anticuerpos destruyen las plaquetas: <b>solo bajan las plaquetas</b>; TP y TTPa normales. Petequias.', 'Prednisona si <30 mil o hay sangrado; IgIV si urge subirlas.'],
+  higado: ['Hepatopatía avanzada', ['VII', 'X', 'V', 'II', 'IX', 'XI', 'Fib', 'Plaq'], ['↓', '↑↑', '↑', 'N/↓'], 'El hígado fabrica casi todos los factores: se alargan TP (primero) y TTPa. El VIII es normal (se hace fuera del hígado). Plaquetas bajas por el bazo grande.', 'Vitamina K (no siempre corrige); plasma o complejo protrombínico si sangra.'],
+  cid: ['CID', ['VII', 'X', 'V', 'II', 'Fib', 'VIII', 'IX', 'Plaq'], ['↓↓', '↑↑', '↑↑', '↓↓'], 'Se coagula en todos lados y se <b>gasta todo</b>: plaquetas y fibrinógeno bajos, TP y TTPa largos, dímero D alto, esquistocitos.', 'Tratar la causa (sepsis, trauma, LPA, obstétrica); plasma, crioprecipitado y plaquetas si sangra.'],
+  axa: ['Apixabán / rivaroxabán', ['X'], ['N', 'N/↑', 'N/↑', 'N'], 'Bloquean el factor Xa. El TP y el TTPa cambian poco: se mide anti-Xa.', 'Andexanet alfa o complejo protrombínico.'],
+  dabi: ['Dabigatrán', ['II'], ['N', 'N/↑', '↑', 'N'], 'Bloquea la trombina (II): se alarga sobre todo el TTPa y el tiempo de trombina.', 'Idarucizumab; se puede dializar.'],
+  aspi: ['Aspirina / clopidogrel', ['Plaq'], ['N', 'N', 'N', 'N'], 'Las plaquetas están en número normal pero no funcionan: <b>ninguna prueba de rutina se altera</b>.', 'Suspender si se puede; plaquetas en casos seleccionados.']
+};
+const CZ_LAB = ['Plaquetas', 'TP / INR', 'TTPa', 'Fibrinógeno'];
+function fvCascada(box) {
+  let k = 'warf', reto = null, pick = null;
+  const draw = () => {
+    const sc = CZ[reto || k], bad = new Set(sc[1]), show = !reto || pick != null;
+    const res = sc[2].map((v, i) => `<div class="czr ${v.includes('↑') || v.includes('↓') ? 'alt' : ''}"><span>${CZ_LAB[i]}</span><b>${v === 'N' ? 'Normal' : v}</b></div>`).join('');
+    const opts = reto ? (box._opts || []) : [];
+    box.innerHTML = `${reto ? '<p class="aq">🎯 Reto: ¿qué problema da estos resultados?</p>' : ''}
+      <div class="czres">${res}</div>
+      <div class="cz${show ? '' : ' hidebad'}">${CZ_F.map(([id, lab, fs]) => `<div class="czrow czr-${id}"><span class="czlab">${lab}</span><div>${fs.map((f, i) => `${i ? '<i>→</i>' : ''}<b class="${bad.has(f) ? 'bad' : ''}">${esc(CZ_N[f] || f)}</b>`).join('')}${id === 'com' ? '<i>→</i><b class="fibrina">fibrina</b>' : ''}</div></div>`).join('')}</div>
+      ${reto ? `<div class="aopts">${opts.map((o) => `<button class="aopt${pick != null ? (o === reto ? ' ok' : o === pick ? ' no' : '') : ''}" data-act="czpick" data-k="${o}"${pick != null ? ' disabled' : ''}>${esc(CZ[o][0])}</button>`).join('')}</div>` : ''}
+      ${show ? `<div class="fvout"><b>${esc(sc[0])}.</b> ${sc[3]}${sc[4] ? `<p class="small"><b>Tratamiento:</b> ${esc(sc[4])}</p>` : ''}</div>` : ''}
+      ${reto ? `<div class="row"><button class="btn small gold-btn" data-act="czreto">${pick != null ? 'Otro reto ▶' : 'Cambiar reto'}</button><button class="btn small" data-act="czsalir">Salir del reto</button></div>`
+        : `<div class="fvbtns">${Object.entries(CZ).map(([id, s]) => `<button class="o3chip${id === k ? ' on' : ''}" data-act="czk" data-k="${id}">${esc(s[0])}</button>`).join('')}</div><button class="btn small gold-btn" data-act="czreto">🎯 Ponme a prueba</button>`}`;
+  };
+  ACT.czk = (b) => { k = b.dataset.k; draw(); };
+  ACT.czreto = () => {
+    const ids = Object.keys(CZ).filter((x) => x !== 'normal' && x !== reto);
+    reto = shuffle(ids)[0]; pick = null;
+    box._opts = shuffle([reto, ...shuffle(ids.filter((x) => x !== reto && CZ[x][2].join() !== CZ[reto][2].join())).slice(0, 3)]);
+    draw();
+  };
+  ACT.czpick = (b) => { pick = b.dataset.k; if (pick === reto) { wsfx('ok'); gain(5); } else wsfx('bad'); draw(); };
+  ACT.czsalir = () => { reto = null; pick = null; draw(); };
+  draw();
+}
+const FACIL_VIS = { fabrica: fvFabrica, tamano: fvTamano, hierro: fvHierro, hemolisis: fvHemolisis, mapa: fvMapa, tiempos: fvTiempos, donde: fvDonde, cascada: fvCascada };
+const FC = {};
+function facilMount(el, tid) {
+  const D = C.facil && C.facil[tid]; if (!D || !el) return;
+  const g = FC[tid] = FC[tid] || { i: 0, open: false, ans: {} };
+  ACT.fcopen = () => { g.open = true; facilRender(el, tid); el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); };
+  ACT.fcclose = () => { g.open = false; facilRender(el, tid); };
+  ACT.fcgo = (b) => { g.i = clamp(g.i + +b.dataset.d, 0, D.steps.length - 1); facilRender(el, tid); el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); };
+  ACT.fcdot = (b) => { g.i = +b.dataset.i; facilRender(el, tid); };
+  // Responder no vuelve a dibujar el paso: el visual conserva lo que el usuario eligió
+  ACT.fcans = (b) => {
+    const st = D.steps[g.i]; if (g.ans[g.i] != null) return;
+    g.ans[g.i] = +b.dataset.i; wsfx(+b.dataset.i === st.check.a ? 'ok' : 'bad');
+    const box = el.querySelector('.fccheck'); if (box) box.innerHTML = fcCheckHTML(st, g.ans[g.i]);
+    const dot = el.querySelectorAll('.fcdots button')[g.i]; if (dot) dot.classList.add('seen');
+  };
+  ACT.fcdone = () => {
+    const done = S.facil || (S.facil = {});
+    if (!done[tid]) { done[tid] = today(); gain(20, 'Lo entendiste desde cero'); }
+    g.open = false; g.i = 0; facilRender(el, tid);
+  };
+  facilRender(el, tid);
+}
+function fcCheckHTML(st, a) {
+  return `<p class="aq">✋ Compruébalo: ${esc(st.check.q)}</p><div class="aopts">${st.check.opts.map((o, i) => `<button class="aopt${a != null ? (i === st.check.a ? ' ok' : i === a ? ' no' : '') : ''}" data-act="fcans" data-i="${i}"${a != null ? ' disabled' : ''}>${esc(o)}</button>`).join('')}</div>${a != null ? `<p class="fvout">${a === st.check.a ? '✓ ' : ''}${esc(st.check.why)}</p>` : ''}`;
+}
+function facilRender(el, tid) {
+  const D = C.facil[tid], g = FC[tid], done = S.facil && S.facil[tid];
+  if (!g.open) {
+    el.innerHTML = `<section class="panel facil"><div class="row"><h2 class="grow">🧩 ¿No le entiendes? Empieza desde cero</h2>${done ? '<span class="chip" style="--sc:var(--ok)">Hecho ✓</span>' : ''}</div>
+      <p>${esc(D.intro)}</p><p class="small muted">${D.steps.length} pasos cortos con dibujos que puedes tocar · ~10 min</p>
+      <button class="btn gold-btn" data-act="fcopen">${done ? 'Repasar' : 'Empezar'} ▶</button></section>`;
+    return;
+  }
+  const st = D.steps[g.i], a = g.ans[g.i], last = g.i === D.steps.length - 1;
+  el.innerHTML = `<section class="panel facil"><div class="row"><h2 class="grow">🧩 ${esc(D.title)}</h2><button class="btn small ghost" data-act="fcclose" aria-label="Cerrar">✕</button></div>
+    <div class="fcdots" role="group" aria-label="Pasos">${D.steps.map((_, i) => `<button class="${i === g.i ? 'on' : g.ans[i] != null ? 'seen' : ''}" data-act="fcdot" data-i="${i}" aria-label="Paso ${i + 1}"></button>`).join('')}</div>
+    <h3>${esc(st.h)}</h3><div class="lsec cap">${st.html.replace(/<table class="mini">/g, '<div class="tablewrap"><table class="mini">').replace(/<\/table>/g, '</table></div>')}</div>
+    ${st.vis ? '<div class="fvbox"></div>' : ''}
+    ${st.check ? `<div class="fccheck">${fcCheckHTML(st, a)}</div>` : ''}
+    <div class="row fcnav"><button class="btn small" data-act="fcgo" data-d="-1"${g.i ? '' : ' disabled'}>◀ Anterior</button><span class="small muted grow" style="text-align:center">${g.i + 1} de ${D.steps.length}</span>${last ? '<button class="btn small gold-btn" data-act="fcdone">Terminar ✓</button>' : '<button class="btn small gold-btn" data-act="fcgo" data-d="1">Siguiente ▶</button>'}</div></section>`;
+  if (st.vis && FACIL_VIS[st.vis]) FACIL_VIS[st.vis](el.querySelector('.fvbox'));
 }
 
 // ── Pestaña Taller del tema y vista con todo (Más → Taller)

@@ -658,3 +658,81 @@ body.cine-on #hud,body.cine-on #tabs{display:none}
 .o3item .tiny{margin-left:auto;color:#ff8f93}
 .o3item.on{border-color:var(--gold)}
 .tiny{font-size:12px}
+/* Desde cero (anemias, coagulopatías) */
+.facil{border-color:var(--cyan)}
+.fcdots{display:flex;gap:6px;flex-wrap:wrap}
+.fcdots button{width:22px;height:10px;border:2px solid var(--line-2);background:var(--panel);padding:0;cursor:pointer}
+.fcdots button.seen{background:var(--line-2)}
+.fcdots button.on{background:var(--gold);border-color:var(--gold)}
+.fvbox{background:var(--panel-2);border:2px solid var(--line-2);padding:10px;display:flex;flex-direction:column;gap:8px}
+.fvbtns{display:flex;flex-wrap:wrap;gap:6px}
+.fvout{margin:0;background:var(--panel);border-left:4px solid var(--cyan);padding:8px 10px;line-height:1.45}
+.fvout p{margin:4px 0 0}
+.fccheck{display:flex;flex-direction:column;gap:6px}
+.fcnav{align-items:center}
+.fab{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.fnode{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;background:var(--panel);border:2px solid var(--line-2);font-size:13px;text-align:center;min-width:76px}
+.fnode b{font:600 14px/1.2 var(--f-body)}
+.fnode span{color:var(--ink-3);font-size:12px}
+.fnode em{font-style:normal;font-size:12px;color:var(--ok)}
+.fnode em.bad,.fnode.bad em{color:#ff8f93}
+.fnode.bad{border-color:#e5484d;background:rgba(229,72,77,.15)}
+.fvar{display:inline-flex;gap:3px;align-items:center;width:26px;justify-content:center}
+.fvar i{width:5px;height:5px;background:#e5484d;border-radius:50%;opacity:.25;animation:fvdot 1.2s infinite}
+.fvar i:nth-child(2){animation-delay:.2s}.fvar i:nth-child(3){animation-delay:.4s}
+.fl-low .fvar i{animation-duration:3s}.fl-high .fvar i{animation-duration:.5s}
+@keyframes fvdot{50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.fvar i,.leak circle{animation:none!important;opacity:1}}
+.rbcs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rbcs figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.rbcs figcaption{font-size:13px;line-height:1.35}.rbcs figcaption b{display:block;font-size:14px}.rbcs em{font-style:normal;color:var(--gold-3)}
+.rbc{display:block;width:46px;height:46px;border-radius:50%;background:radial-gradient(circle,#f3c4cc 0 30%,#d4485f 34% 100%)}
+.rbc.micro{width:30px;height:30px;background:radial-gradient(circle,#f8dde2 0 52%,#e07a8c 56% 100%)}
+.rbc.macro{width:62px;height:56px;background:radial-gradient(circle,#e3a2ae 0 18%,#c8344e 22% 100%)}
+.hie{display:flex;flex-direction:column;gap:8px}
+.hbod,.htrk{display:flex;flex-direction:column;gap:4px;font-size:13px}
+.hgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;max-width:260px}
+.hgrid i{height:16px;background:var(--panel);border:1px solid var(--line-2)}
+.hgrid i.on{background:#c77d3a;border-color:#e3a15f}
+.hlock{font-size:13px;color:var(--gold-3)}
+.htrk div{display:flex;flex-wrap:wrap;gap:6px}
+.truck{display:inline-flex;flex-direction:column;align-items:center;gap:2px}
+.truck span{font-size:22px;line-height:1}
+.truck i{display:block;width:26px;height:5px;background:linear-gradient(90deg,#c77d3a calc(var(--p)*100%),var(--panel) 0);border:1px solid var(--line-2)}
+.hnums{min-width:0!important;font-size:13px}.hnums th{font-size:13px;padding:6px 4px;text-align:center}.hnums td{text-align:center;font-weight:600}
+.hnums td.up,.hemochips .up{color:#ff8f93}.hnums td.dn,.hemochips .dn{color:#7ec8ff}
+.hemo{display:flex;align-items:center;gap:12px}
+.rbc.broken{width:46px;height:46px;flex:none;background:radial-gradient(circle,#f3c4cc 0 30%,#d4485f 34% 100%);clip-path:polygon(0 0,45% 0,55% 30%,40% 55%,60% 100%,0 100%,0 0,100% 0,100% 100%,70% 100%,52% 58%,68% 32%,58% 0)}
+.hemochips{display:flex;flex-wrap:wrap;gap:6px}
+.hemochips span{padding:3px 8px;border:2px solid currentColor;font:600 13px/1.2 var(--f-body)}
+.amap{display:grid;grid-template-columns:84px repeat(3,1fr);gap:3px;font-size:12px}
+.amap>b{font:600 12px/1.2 var(--f-body);color:var(--ink-3);text-align:center;align-self:end}
+.amap>b.rl{text-align:left;align-self:center}
+.amap i{font-style:normal;background:var(--panel);border:2px solid var(--line-2);padding:8px 4px;text-align:center;min-height:42px;display:grid;place-items:center}
+.amap i.on{background:var(--gold);color:#0b0e2a;border-color:var(--gold-3);font-weight:700}
+.ttv{width:100%;max-width:420px;background:#24141c;border:2px solid var(--line-2)}
+.ttv .ttl{fill:#d9d3e8;font:11px ui-monospace,monospace}
+.ttv .plt,.ttv .fib{opacity:0;transition:opacity .5s}
+.ttv.st1 .plt,.ttv.st2 .plt,.ttv.st2 .fib{opacity:1}
+.ttv.st1 .leak,.ttv.st2 .leak{opacity:.15}
+.ttv.st2 .leak{opacity:0}
+.leak circle{animation:leak 1.6s infinite}
+@keyframes leak{0%{transform:translateY(-14px);opacity:0}30%{opacity:1}100%{transform:translateY(18px);opacity:0}}
+.donde{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.donde>div{background:var(--panel);border:2px solid var(--line-2);padding:8px;font-size:14px}
+.donde p{margin:4px 0;color:var(--ink-3);font-size:13px}.donde ul{margin:0;padding-left:18px}
+.dbig{font-size:28px;display:block}
+.czres{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.czr{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;background:var(--panel);border:2px solid var(--line-2);font-size:12px;text-align:center}
+.czr b{font:700 16px/1.1 var(--f-body)}
+.czr.alt{border-color:#e5484d}.czr.alt b{color:#ff8f93}
+.cz{display:flex;flex-direction:column;gap:6px}
+.czrow{display:flex;flex-direction:column;gap:3px}
+.czlab{font:12px/1.2 var(--f-mono);color:var(--ink-3)}
+.czrow>div{display:flex;flex-wrap:wrap;align-items:center;gap:3px}
+.czrow i{font-style:normal;color:var(--ink-3)}
+.czrow b{padding:4px 7px;background:var(--panel);border:2px solid var(--line-2);font:600 13px/1.2 var(--f-body)}
+.czrow b.bad{border-color:#e5484d;background:rgba(229,72,77,.22);color:#ffd3d4;text-decoration:line-through}
+.czrow b.fibrina{border-color:var(--gold);color:var(--gold-3)}
+.cz.hidebad b.bad{border-color:var(--line-2);background:var(--panel);color:inherit;text-decoration:none}
+.czr-ext b{border-color:#5aa0d8}.czr-int b{border-color:#b07ad8}
