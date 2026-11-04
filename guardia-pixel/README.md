@@ -42,6 +42,11 @@ Los 30 temas tienen:
 - **🫀 Míralo en 3D** en la pestaña Video de los 30 temas: el órgano del tema (modelos de OrganUI / BodyParts3D) con lo
   afectado en rojo y la causa en naranja, etapas de la enfermedad, explicación al tocar y recorrido narrado
   (`src/content/80-organos3d.js`; ver `tools/organs3d/README.md`).
+- **🧭 Abordajes del temario** (`src/content/90-abordajes.js`; clave `abordajes`, en el orden de la lista del parcial):
+  un abordaje por cada uno de los 30 renglones de la lista que mandó el grupo, con su redacción. Trae los pasos en el orden
+  en que se hacen (con ramas “si… →”), cada punto que pide el renglón, “Así lo preguntan” y el reto “Ordena los pasos”
+  (+15 XP la primera vez). Se entra desde Temario y desde la lección de cada tema. Leucemias y Linfoproliferativos no
+  vienen en esa lista y se marcan como “No viene en tu lista”.
 - **🧩 Entiéndelo desde cero** (`src/content/85-desde-cero.js`; clave `facil.<tema>`): al inicio de la lección de
   Anemias y de Paciente con sangrado, una explicación paso a paso con analogías (la fábrica de la médula, la bodega y
   los camiones del hierro, los dos tiempos de la hemostasia) y un visual interactivo en cada paso, con una pregunta de

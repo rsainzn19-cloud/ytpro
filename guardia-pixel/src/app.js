@@ -631,7 +631,7 @@ function hud() {
   </div>`;
 }
 const TABS = [['home', 'Inicio', 'home'], ['temario', 'Temario', 'book'], ['guardia', 'Guardia', 'monitor'], ['repaso', 'Repaso', 'cards'], ['mas', 'Más', 'grid']];
-const TAB_OF = { home: 'home', diag: 'home', diagres: 'home', plan: 'home', temario: 'temario', topic: 'temario', guardia: 'guardia', caso: 'guardia', repaso: 'repaso', tarjetas: 'repaso', errores: 'repaso', perlas: 'repaso', videos: 'repaso' };
+const TAB_OF = { home: 'home', diag: 'home', diagres: 'home', plan: 'home', temario: 'temario', topic: 'temario', abordajes: 'temario', guardia: 'guardia', caso: 'guardia', repaso: 'repaso', tarjetas: 'repaso', errores: 'repaso', perlas: 'repaso', videos: 'repaso' };
 function nav() {
   const cur = route.v === 'quiz' ? (QS && QS.tab) || 'home' : TAB_OF[route.v] || 'mas';
   $('#tabs').innerHTML = `<div class="tabs-in">${TABS.map(([v, l, ic]) => `<button class="tab" data-go="${v}"${cur === v ? ' aria-current="page"' : ''}>${icon(ic, cur === v ? '#F2C14E' : '#8790CC', 2)}<span>${l}</span></button>`).join('')}</div>`;
@@ -807,14 +807,78 @@ VIEWS.plan = (m) => {
 // ═══════════ Temario y tema
 function topicItem(t) {
   const m = mastery(t.id), kn = known(t.id);
-  return `<li><button class="titem" data-go="topic" data-a="${t.id}"><span class="num">${pad(t.n)}</span><span><span class="tt">${esc(t.title)}</span><span class="meta">${subjChip(t.subj)}<span class="pri ${t.pri}">${t.pri}</span><span class="small muted">Sem ${t.weeks.join('–')}</span>${hasContent(t.id) ? '' : `<span class="locked">${icon('lock', '#8790CC', 1)} Sin lección</span>`}</span><span class="mbar"><span class="seg ${kn ? (m < 0.45 ? 'bad' : m < 0.7 ? '' : 'ok') : ''}" style="--p:${kn ? m : 0}"><i></i></span><span>${kn ? pct(m) + '%' : 'sin datos'}</span></span></span></button></li>`;
+  return `<li><button class="titem" data-go="topic" data-a="${t.id}"><span class="num">${pad(t.n)}</span><span><span class="tt">${esc(t.title)}</span><span class="meta">${subjChip(t.subj)}<span class="pri ${t.pri}">${t.pri}</span><span class="small muted">Sem ${t.weeks.join('–')}</span>${inList(t.id) ? '' : '<span class="chip" style="--sc:#8790CC">No viene en tu lista</span>'}${hasContent(t.id) ? '' : `<span class="locked">${icon('lock', '#8790CC', 1)} Sin lección</span>`}</span><span class="mbar"><span class="seg ${kn ? (m < 0.45 ? 'bad' : m < 0.7 ? '' : 'ok') : ''}" style="--p:${kn ? m : 0}"><i></i></span><span>${kn ? pct(m) + '%' : 'sin datos'}</span></span></span></button></li>`;
 }
 VIEWS.temario = (m) => {
   const f = route.a && route.a !== 'all' ? route.a : 'all';
   const list = C.topics.filter((t) => f === 'all' || t.subj === f);
   m.innerHTML = `<h1>Temario</h1><p class="muted">Semanas 1 a 6 · 30 temas en orden de prioridad. Neumología no entra en este parcial.</p>
+  ${ABS.length ? `<button class="abcta gold" data-go="abordajes">${GEMS}<span class="h">🧭 Abordajes del temario</span><span class="s">Los ${ABS.length} renglones de tu lista del parcial, paso a paso · ${ABS.filter((a) => abDone(a.id)).length}/${ABS.length} ordenados</span></button>` : ''}
   <div class="filters" role="toolbar" aria-label="Filtrar por materia"><button class="chip${f === 'all' ? ' fill' : ''}" style="--sc:var(--gold)" data-go="temario" data-a="all" aria-pressed="${f === 'all'}">Todas</button>${C.subjects.map((s) => `<button class="chip${f === s.id ? ' fill' : ''}" style="--sc:${s.color}" data-go="temario" data-a="${s.id}" aria-pressed="${f === s.id}">${subjIcon(s.id, 1)} ${esc(s.short)}</button>`).join('')}</div>
   <ul class="tlist">${list.map(topicItem).join('')}</ul>`;
+};
+// ═══════════ Abordajes del temario (C.abordajes en src/content/90-abordajes.js): un abordaje por renglón de la lista
+// del parcial, con los pasos en orden, cada punto que pide el renglón y el reto de ordenar los pasos.
+const ABS = C.abordajes || [];
+const abOf = (tid) => ABS.filter((a) => a.topics.includes(tid));
+const inList = (tid) => !ABS.length || ABS.some((a) => a.topics.includes(tid));
+const abDone = (id) => !!(S.abord && S.abord[id]);
+let AB = null; // reto en curso: { id, order, next, miss, bad }
+function abFlowHTML(A) {
+  return `<ol class="abflow">${A.pasos.map((p, i) => `<li><span class="abn" aria-hidden="true">${i + 1}</span><div class="abt"><b>${esc(p.h)}</b><p>${p.t}</p>${p.si ? `<ul class="absi">${p.si.map(([c, d]) => `<li><span class="c">${c}</span><span class="d">${d}</span></li>`).join('')}</ul>` : ''}</div></li>`).join('')}</ol>`;
+}
+function abGameHTML(A) {
+  const g = AB, n = A.pasos.length, fin = g.next >= n;
+  return `<section class="panel abgame"><h2>🔀 Ordena los pasos</h2>
+    <p class="small muted">${fin ? '' : `Toca el paso ${g.next + 1} de ${n}.`} Errores: <b>${g.miss}</b></p>
+    ${g.next ? `<ol class="abdone">${A.pasos.slice(0, g.next).map((p) => `<li>${esc(p.h)}</li>`).join('')}</ol>` : ''}
+    ${fin ? `<p class="mres"><b>${g.miss === 0 ? '¡Perfecto, sin errores!' : g.miss <= 2 ? '¡Bien! Casi a la primera.' : 'Listo. Repítelo hasta hacerlo sin errores.'}</b></p>
+      <div class="row"><button class="btn gold-btn" data-act="abplay">Otra vez</button><button class="btn" data-act="abview">Ver los pasos</button></div>`
+    : `<div class="abopts">${g.order.filter((i) => i >= g.next).map((i) => `<button class="btn abopt${g.bad === i ? ' no' : ''}" data-act="abpick" data-i="${i}">${esc(A.pasos[i].h)}</button>`).join('')}</div>
+      <button class="btn small ghost" data-act="abview">Rendirme y ver los pasos</button>`}
+  </section>`;
+}
+VIEWS.abordajes = (m) => {
+  const A = ABS.find((a) => a.id === route.a);
+  if (!A) {
+    const nd = ABS.filter((a) => abDone(a.id)).length;
+    m.innerHTML = `<button class="btn small ghost" data-go="temario" style="align-self:flex-start">← Temario</button>
+    <h1>🧭 Abordajes del temario</h1><p class="muted">Tu lista del parcial, renglón por renglón. Cada abordaje trae los pasos en el orden en que se hacen, lo que pide cada punto del renglón, cómo lo preguntan y un reto para ordenar los pasos de memoria.</p>
+    <div class="meter" style="grid-template-columns:72px 1fr auto"><span>Ordenados</span><div class="seg ok" style="--p:${nd / ABS.length}"><i></i></div><span>${nd}/${ABS.length}</span></div>
+    ${[...new Set(ABS.map((a) => a.subj))].map((sid) => SUBJ[sid]).map((s) => { const l = ABS.filter((a) => a.subj === s.id); return l.length ? `<section class="absubj" style="--sc:${s.color}"><h2>${subjIcon(s.id, 2)} ${esc(s.name)}</h2><ul class="ablist">${l.map((a) => `<li><button class="abitem" data-go="abordajes" data-a="${a.id}"><span class="n">${ABS.indexOf(a) + 1}</span><span class="tx">${esc(a.tema)}<small>${a.pasos.length} pasos${a.cubre ? ` · ${a.cubre.length} puntos` : ''}</small></span>${abDone(a.id) ? '<span class="chip" style="--sc:var(--ok)">✓</span>' : ''}</button></li>`).join('')}</ul></section>` : ''; }).join('')}`;
+    return;
+  }
+  const k = ABS.indexOf(A), prev = ABS[k - 1], next = ABS[k + 1];
+  if (AB && AB.id !== A.id) AB = null;
+  const tabs = A.topics.filter((tid) => TOP[tid]);
+  m.innerHTML = `<button class="btn small ghost" data-go="abordajes" style="align-self:flex-start">← Abordajes</button>
+  <div class="thead"><div class="row">${subjChip(A.subj)}<span class="small muted">Renglón ${k + 1} de ${ABS.length} de tu lista</span>${abDone(A.id) ? '<span class="chip" style="--sc:var(--ok)">Ordenado ✓</span>' : ''}</div><h1>🧭 ${esc(A.tema)}</h1></div>
+  <div class="row">${tabs.map((tid) => `<button class="btn small" data-go="topic" data-a="${tid}">📖 Lección: ${esc(TOP[tid].title)}</button>${hasTaller(tid) ? `<button class="btn small" data-go="topic" data-a="${tid}" data-b="taller">🧪 Casos en el Taller</button>` : ''}`).join('')}</div>
+  <div id="abbody"></div>
+  <nav class="row abnav">${prev ? `<button class="btn small" data-go="abordajes" data-a="${prev.id}">← ${esc(prev.tema.split(':')[0])}</button>` : ''}<span class="grow"></span>${next ? `<button class="btn small" data-go="abordajes" data-a="${next.id}">${esc(next.tema.split(':')[0])} →</button>` : ''}</nav>`;
+  const body = $('#abbody');
+  const draw = () => {
+    if (AB) { body.innerHTML = abGameHTML(A); return; }
+    body.innerHTML = `<button class="btn gold-btn big" data-act="abplay">🔀 Ponme a prueba: ordena los ${A.pasos.length} pasos</button>
+    <section class="panel"><h2>Los pasos, en orden</h2>${abFlowHTML(A)}</section>
+    ${A.cubre ? `<section class="panel"><h2>Lo que pide tu temario, punto por punto</h2><div class="abcubre">${A.cubre.map(([h, t]) => `<div class="box abbox"><span class="lab">${esc(h)}</span><p>${t}</p></div>`).join('')}</div></section>` : ''}
+    <div class="box pearl"><span class="lab">Así lo preguntan</span><p>${A.examen}</p></div>`;
+  };
+  ACT.abplay = () => { AB = { id: A.id, order: shuffle(A.pasos.map((_, i) => i)), next: 0, miss: 0, bad: null }; draw(); body.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); };
+  ACT.abview = () => { AB = null; draw(); };
+  ACT.abpick = (b) => {
+    const i = +b.dataset.i;
+    if (i === AB.next) {
+      AB.next++; AB.bad = null; wsfx('ok');
+      if (AB.next >= A.pasos.length) {
+        const first = !abDone(A.id);
+        (S.abord || (S.abord = {}))[A.id] = today();
+        if (first) gain(15, 'Abordaje ordenado'); else save();
+      }
+    } else { AB.miss++; AB.bad = i; wsfx('bad'); }
+    draw();
+  };
+  draw();
 };
 function planDateOf(tid) {
   const d = S.plan && S.plan.days.find((x) => x.blocks.some((b) => (b.k === 'topic' || b.k === 'quick') && b.t === tid));
@@ -861,6 +925,7 @@ TOPIC_TABS.leccion = (el, t, L) => {
   <p class="small muted">¿Lo quieres en corto? Cambia a <b>Repaso</b> arriba: lo esencial para el examen, con mnemotecnia, perla y trampa.</p>`
     : `${L.sections.map((s) => `<section class="lsec"><h3>${esc(s.h)}</h3>${s.html}</section>`).join('')}`;
   el.innerHTML = `${L.video ? `<button class="btn gold-btn big vcta" data-act="vgo">▶ Ver el video del tema · ${vMin(t.id)} min${S.vid[t.id] && S.vid[t.id].done ? ' · visto ✓' : ''}</button>` : ''}<p class="hook">${esc(L.hook)}</p>
+  ${abOf(t.id).map((a) => `<button class="abcta" data-go="abordajes" data-a="${a.id}"><span class="h">🧭 Abordaje del temario${abDone(a.id) ? ' ✓' : ''}</span><span class="s">${esc(a.tema)}</span></button>`).join('')}
   ${C.facil && C.facil[t.id] ? '<div class="fchost"></div>' : ''}
   ${B ? `<div class="seg2" role="group" aria-label="Cómo leer"><button class="btn small${cap ? ' gold-btn' : ''}" data-act="lecmode" data-m="libro" aria-pressed="${!!cap}">📖 Capítulo completo</button><button class="btn small${cap ? '' : ' gold-btn'}" data-act="lecmode" data-m="repaso" aria-pressed="${!cap}">⚡ Repaso para el examen</button></div>` : ''}
   <div class="row">${L.anim ? `<button class="btn small" data-go="topic" data-a="${t.id}" data-b="anim">Ver la animación</button>` : ''}<button class="btn small" data-go="topic" data-a="${t.id}" data-b="preguntas">Ir a las preguntas</button></div>

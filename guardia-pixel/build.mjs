@@ -57,6 +57,7 @@ try {
 // ───── Validación
 const errs = [], warns = [];
 const topics = new Map(C.topics.map((t) => [t.id, t]));
+const SUBJ_IDS = new Set(C.subjects.map((s) => s.id));
 const seen = new Set();
 for (const q of C.questions) {
   if (seen.has(q.id)) errs.push(`id repetido: ${q.id}`);
@@ -120,6 +121,20 @@ for (const [tid, D] of Object.entries(C.facil)) {
     if (st.vis && !FVIS.includes(st.vis)) errs.push(`desde cero ${tid} paso ${i + 1}: visual ${st.vis} no existe`);
     if (st.check && !(st.check.a >= 0 && st.check.a < st.check.opts.length && st.check.why)) errs.push(`desde cero ${tid} paso ${i + 1}: pregunta mal definida`);
   });
+}
+// Abordajes del temario: ids únicos, temas existentes, pasos con título y texto
+{
+  const seen = new Set();
+  for (const A of C.abordajes || []) {
+    if (!A.id || seen.has(A.id)) errs.push(`abordaje: id repetido o vacío (${A.id})`);
+    seen.add(A.id);
+    if (!SUBJ_IDS.has(A.subj)) errs.push(`abordaje ${A.id}: materia ${A.subj} no existe`);
+    if (!A.tema || !A.examen) errs.push(`abordaje ${A.id}: falta tema o examen`);
+    for (const tid of A.topics || []) if (!topics.has(tid)) errs.push(`abordaje ${A.id}: tema ${tid} no existe`);
+    if (!Array.isArray(A.pasos) || A.pasos.length < 5) errs.push(`abordaje ${A.id}: mínimo 5 pasos`);
+    (A.pasos || []).forEach((p, i) => { if (!p.h || !p.t) errs.push(`abordaje ${A.id} paso ${i + 1}: falta título o texto`); });
+    if (new Set((A.pasos || []).map((p) => p.h)).size !== (A.pasos || []).length) errs.push(`abordaje ${A.id}: títulos de paso repetidos`);
+  }
 }
 // Complemento 3D: cada estructura citada existe en su modelo
 for (const [tid, D] of Object.entries(C.cond3d)) {
