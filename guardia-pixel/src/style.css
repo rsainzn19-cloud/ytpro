@@ -774,3 +774,17 @@ body.cine-on #hud,body.cine-on #tabs{display:none}
 @media (prefers-reduced-motion:reduce){.abopt.no{animation:none}}
 .abdone{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px;color:var(--ok);font-size:15px}
 .abnav{margin-top:4px}
+
+/* Simuladores de cardio por tema */
+.xsim .o3chip.on,.xsim .o3chip[aria-pressed="true"]{border-color:var(--gold);background:var(--panel-2)}
+.xsctl{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px}
+.xsctl .sl b{font-size:13px;text-align:right;white-space:normal;line-height:1.25}
+.xsdots{display:flex;gap:4px}
+.xsdots i{flex:1;height:6px;background:var(--line)}
+.xsdots i.on{background:var(--gold)}
+.xshs{display:grid;grid-template-columns:minmax(0,120px) minmax(0,1fr);gap:10px;align-items:center}
+.xschest .chest{max-width:120px}
+.xsman{display:flex;flex-wrap:wrap;gap:6px}
+.xsplay{width:100%}
+.xsctl .sl{grid-template-columns:minmax(0,1fr)}
+.xsctl .sl b{text-align:left}

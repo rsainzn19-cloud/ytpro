@@ -12,7 +12,7 @@ const OUT = opt('--out');
 const ONLY = opt('--only') ? new Set(opt('--only').split(',').map((x) => x.trim())) : null;
 const keepTopic = (tid) => !ONLY || ['meta', 'diagnostico'].includes(tid) || ONLY.has(tid);
 
-const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {}, algos: {}, ecg: {}, frotis: {}, soplos: {}, guias: {}, chuletas: {}, libro: {}, cond3d: {}, facil: {} };
+const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {}, algos: {}, ecg: {}, frotis: {}, soplos: {}, guias: {}, chuletas: {}, libro: {}, cond3d: {}, facil: {}, ecgsim: {}, hssim: {} };
 for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('.js')).sort()) {
   const part = (await import(new URL('content/' + f, src))).default;
   // Con --only se cargan solo esos temas, pero los comparadores de todos (una lección puede usar uno ajeno)
@@ -26,7 +26,7 @@ for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('
       // Guías de la rotación: varias fuentes pueden complementar el mismo tema
       for (const [tid, G] of Object.entries(v)) (C.guias[tid] = C.guias[tid] || []).push(G);
     } else if (Array.isArray(v)) C[k] = (C[k] || []).concat(v);
-    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg', 'frotis', 'soplos', 'chuletas', 'libro', 'cond3d', 'facil'].includes(k)) Object.assign(C[k], v);
+    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg', 'frotis', 'soplos', 'chuletas', 'libro', 'cond3d', 'facil', 'ecgsim', 'hssim'].includes(k)) Object.assign(C[k], v);
     else C[k] = v;
   }
 }
@@ -134,6 +134,26 @@ for (const [tid, D] of Object.entries(C.facil)) {
     if (!Array.isArray(A.pasos) || A.pasos.length < 5) errs.push(`abordaje ${A.id}: mínimo 5 pasos`);
     (A.pasos || []).forEach((p, i) => { if (!p.h || !p.t) errs.push(`abordaje ${A.id} paso ${i + 1}: falta título o texto`); });
     if (new Set((A.pasos || []).map((p) => p.h)).size !== (A.pasos || []).length) errs.push(`abordaje ${A.id}: títulos de paso repetidos`);
+  }
+}
+// Simuladores de cardio: derivaciones, tipos de soplo y focos conocidos; cada etapa con texto
+{
+  const LD = new Set(['I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6']);
+  const MT = new Set(['diam', 'holo', 'holoR', 'early', 'civ', 'decres', 'gs', 'rumble', 'presis', 'roce']);
+  const FO = new Set(['aortico', 'pulmonar', 'erb', 'tricuspideo', 'mitral']);
+  for (const [kind, set] of [['ECG', C.ecgsim], ['soplos', C.hssim]]) for (const [tid, D] of Object.entries(set)) {
+    if (!topics.has(tid)) errs.push(`simulador ${kind}: tema ${tid} no existe`);
+    for (const sc of D.scen || []) {
+      if (!sc.stages?.length) errs.push(`simulador ${kind} ${tid}/${sc.id}: sin etapas`);
+      if (kind === 'soplos' && !FO.has(sc.foco)) errs.push(`simulador soplos ${tid}/${sc.id}: foco ${sc.foco}`);
+      (sc.stages || []).forEach((st, i) => {
+        const w = `simulador ${kind} ${tid}/${sc.id} etapa ${i + 1}`;
+        if (!st.l || !st.t) errs.push(`${w}: falta título o texto`);
+        for (const l of [...Object.keys(st.m || {}), ...(st.hl || [])]) if (!LD.has(l)) errs.push(`${w}: derivación ${l}`);
+        for (const mr of st.s?.mur || []) if (!MT.has(mr[0])) errs.push(`${w}: soplo ${mr[0]}`);
+        if (st.foco && !FO.has(st.foco)) errs.push(`${w}: foco ${st.foco}`);
+      });
+    }
   }
 }
 // Complemento 3D: cada estructura citada existe en su modelo

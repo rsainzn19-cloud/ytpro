@@ -42,6 +42,11 @@ Los 30 temas tienen:
 - **🫀 Míralo en 3D** en la pestaña Video de los 30 temas: el órgano del tema (modelos de OrganUI / BodyParts3D) con lo
   afectado en rojo y la causa en naranja, etapas de la enfermedad, explicación al tocar y recorrido narrado
   (`src/content/80-organos3d.js`; ver `tools/organs3d/README.md`).
+- **Simuladores de cardio** en el Taller de los 6 temas de cardio (`src/content/53-simuladores-cardio.js`; claves
+  `ecgsim` y `hssim`): un **ECG de 12 derivaciones** que cambia al mover un control (infarto por arteria en el tiempo,
+  prueba de esfuerzo, TEP del pequeño al masivo, hipertensión pulmonar, estenosis/insuficiencia aórtica y mitral) y un
+  **simulador de soplos** que se escucha y se dibuja (gravedad, maniobras: inspiración, Valsalva, cuclillas, handgrip;
+  complicaciones del infarto por día, angina, TEP, HP). También en Más → Taller → Simuladores de cardio.
 - **🧭 Abordajes del temario** (`src/content/90-abordajes.js`; clave `abordajes`, en el orden de la lista del parcial):
   un abordaje por cada uno de los 30 renglones de la lista que mandó el grupo, con su redacción. Trae los pasos en el orden
   en que se hacen (con ramas “si… →”), cada punto que pide el renglón, “Así lo preguntan” y el reto “Ordena los pasos”

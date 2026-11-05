@@ -1425,7 +1425,7 @@ function ecgSpec(id, k) {
 }
 function leadParams(P, l) {
   const b = ECG_BASE[l], o = P.mod[l] || {};
-  return { p: b[0] * P.pMul, q: o.q ?? b[1], r: b[2] * (o.rMul ?? 1), s: o.s ?? b[3], r2: o.r2 || 0, s2: o.s2 || 0, t: o.t ?? b[4] * P.tMul + (o.tAdd || 0), st: o.st || 0, stUp: !!o.stUp, prd: o.prd || 0, u: (l === 'V2' || l === 'V3' ? 1.2 : 0.8) * P.u };
+  return { p: (o.p ?? b[0]) * P.pMul, pt: (o.pt || 0) * P.pMul, q: o.q ?? b[1], r: b[2] * (o.rMul ?? 1), s: o.s ?? b[3], r2: o.r2 || 0, s2: o.s2 || 0, t: o.t ?? b[4] * P.tMul + (o.tAdd || 0), st: o.st || 0, stUp: !!o.stUp, prd: o.prd || 0, u: (l === 'V2' || l === 'V3' ? 1.2 : 0.8) * P.u };
 }
 function ecgBeats(P, dur) {
   if (P.beats && P.beats.dur >= dur) return P.beats;
@@ -1444,7 +1444,9 @@ function ecgBeats(P, dur) {
 }
 function beatV(L, P, u, b) {
   let v = 0;
-  if (b.p && L.p) v += L.p * gs(u, 0.05, 0.022);
+  if (b.p) { const pw = P.pW || 1; // P ancha y bimodal (aurícula izquierda) con su componente final
+    if (L.p) v += L.p * gs(u, 0.05 - (L.pt ? 0.012 * pw : 0), 0.022 * (L.pt ? 0.8 : 1) * pw);
+    if (L.pt) v += L.pt * gs(u, 0.05 + 0.024 * pw, 0.018 * pw); }
   if (!b.q) return v;
   const q0 = b.pr ?? P.pr, k = P.qrsW, rr = Math.min(b.rr, 1.6);
   if (L.prd) v += L.prd * c01((u - 0.09) / 0.012) * c01((q0 - 0.004 - u) / 0.012);
@@ -2239,9 +2241,11 @@ const smearOf = (tid) => Object.keys(C.frotis || {}).filter((id) => C.frotis[id]
 const simsOf = (tid) => Object.keys(SIMS).filter((id) => SIMS[id].topics.includes(tid));
 const soplosOf = (tid) => Object.keys(C.soplos || {}).filter((id) => C.soplos[id].topics.includes(tid));
 const pathsOf = (tid) => Object.keys(C.paths || {}).filter((id) => C.paths[id].topics.includes(tid));
-const hasTaller = (tid) => !!(algosOf(tid).length || ecgOf(tid).length >= 2 || smearOf(tid).length >= 2 || soplosOf(tid).length >= 2 || simsOf(tid).length || pathsOf(tid).length);
+const hasTaller = (tid) => !!((C.ecgsim && C.ecgsim[tid]) || (C.hssim && C.hssim[tid]) || algosOf(tid).length || ecgOf(tid).length >= 2 || smearOf(tid).length >= 2 || soplosOf(tid).length >= 2 || simsOf(tid).length || pathsOf(tid).length);
 TOPIC_TABS.taller = (el, t) => {
   el.innerHTML = '<p class="muted">Practica con las manos: decide en algoritmos con casos, lee ECG, escucha soplos, mueve valores y ubica fármacos. Cuenta para tu XP.</p>';
+  mountEcgSim(el, t.id);
+  mountHsSim(el, t.id);
   algosOf(t.id).forEach((id) => mountAlgo(el, id));
   mountEcgLab(el, ecgOf(t.id), t.id);
   mountSoplos(el, soplosOf(t.id), t.id);
@@ -2259,6 +2263,8 @@ VIEWS.taller = (m) => {
     else if (kind === 'soplos') mountSoplos(el, Object.keys(C.soplos), 'all');
     else if (kind === 'frotis') mountReader(el, 'frotis', Object.keys(C.frotis), 'all');
     else if (kind === 'sim' && SIMS[id]) mountSim(el, id);
+    else if (kind === 'xecg' && ECGSIM[id]) mountEcgSim(el, id);
+    else if (kind === 'xhs' && HSSIM[id]) mountHsSim(el, id);
     else if (kind === 'path' && C.paths[id]) { const tid = C.paths[id].topics[0]; mountPaths(el, tid, id); }
     return;
   }
@@ -2268,10 +2274,147 @@ VIEWS.taller = (m) => {
   <p class="muted">Lo que más se parece a las preguntas del parcial: decidir el siguiente paso, leer un estudio y ubicar un fármaco.</p>
   <h2>Algoritmos con casos</h2><div class="tools">${Object.entries(C.algos).map(([id, A]) => tile('algo:' + id, A.title, `${A.cases.length} casos${best('algo:' + id)}`)).join('')}</div>
   <h2>Lee y escucha</h2><div class="tools">${tile('ecg:all', 'Taller de electros', `${Object.keys(C.ecg).length} patrones · lectura guiada${best('ecglab')}`)}${tile('soplos:all', 'Taller de soplos', `${Object.keys(C.soplos).length} ruidos y soplos para escuchar${best('soplos')}`)}${tile('frotis:all', 'Lee el frotis', `${Object.keys(C.frotis).length} hallazgos al azar`)}${tile('algo:gaso', 'Gasometría paso a paso', `${C.algos.gaso.cases.length} casos`)}</div>
+  <h2>Simuladores de cardio</h2><div class="tools">${Object.entries(ECGSIM).map(([id, d]) => tile('xecg:' + id, d.title.replace('Simulador de ECG · ', 'ECG · '), TOP[id].title)).join('')}${Object.entries(HSSIM).map(([id, d]) => tile('xhs:' + id, d.title.replace('Simulador de soplos · ', 'Soplos · '), TOP[id].title)).join('')}</div>
   <h2>Simuladores</h2><div class="tools">${Object.entries(SIMS).map(([id, s]) => tile('sim:' + id, s.title, 'Mueve el valor y mira qué cambia')).join('')}</div>
   <h2>¿Dónde actúa?</h2><div class="tools">${Object.entries(C.paths).map(([id, p]) => tile('path:' + id, p.title, `${p.drugs.length} fármacos`)).join('')}</div>`;
 };
 
+// ═══════════ Simuladores de cardio por tema (C.ecgsim y C.hssim en src/content/53-simuladores-cardio.js):
+// un control (tiempo, gravedad, etapa) mueve el ECG de 12 derivaciones o el sonido del corazón en vivo.
+const ECGSIM = C.ecgsim || {}, HSSIM = C.hssim || {};
+const XS = {}; // estado por simulador (no se guarda): escenario, etapa, maniobra, foco
+const XS_MAN = [['basal', 'En reposo'], ['insp', 'Inspiración'], ['valsalva', 'Valsalva'], ['cuclillas', 'Cuclillas'], ['handgrip', 'Handgrip']];
+const XS_MUR = { diam: [190, 0.8, 1], holo: [430, 1.1], holoR: [330, 1], early: [430, 1.1], civ: [260, 0.9, 1], decres: [560, 1.3], gs: [640, 1.3], rumble: [110, 0.9], presis: [110, 0.9], roce: [700, 0.7, 1] };
+function xsEnv(type, a, b, pk) {
+  switch (type) {
+    case 'diam': return (p) => diamond(p, a, b, pk);
+    case 'early': return (p) => (p < a || p > b ? 0 : edge(p, a, b) * (1 - 0.85 * (p - a) / (b - a)));
+    case 'decres': case 'gs': return (p) => (p < a || p > b ? 0 : Math.exp(-(p - a) / ((b - a) / 2.2)) * edge(p, a, b, 0.008));
+    case 'rumble': return (p) => (p < a || p > b ? 0 : (0.55 + 0.45 * Math.exp(-(p - a) / 0.1)) * edge(p, a, b, 0.02));
+    case 'presis': return (p) => (p < a || p > b ? 0 : (0.3 + 0.7 * (p - a) / (b - a)) * edge(p, a, b));
+    case 'roce': return (p) => Math.max(edge(p, 0.08, 0.25, 0.02), edge(p, 0.4, 0.52, 0.02) * 0.8, edge(p, 0.71, 0.8, 0.02) * 0.9);
+    default: return (p) => edge(p, a, b) * 0.95; // holosistólicos
+  }
+}
+const XNZ = {};
+function xsSynth(s, man, mm) {
+  const n = Math.round(HS_SR * HS_T * HS_N), out = new Float32Array(n), ins = man === 'insp';
+  const thump = (t0, f, amp, dur) => {
+    for (let c = 0; c < HS_N; c++) {
+      const s0 = Math.round((c * HS_T + t0) * HS_SR), len = Math.round(dur * HS_SR);
+      for (let i = 0; i < len && s0 + i < n; i++) { const t = i / HS_SR, env = c01(t / 0.004) * Math.exp(-t / (dur / 4)); out[s0 + i] += amp * env * (Math.sin(2 * Math.PI * f * t) + 0.45 * Math.sin(2 * Math.PI * f * 2.7 * t + 0.6)); }
+    }
+  };
+  const s1 = s.s1 ?? 1; thump(0, 95, 0.42 * s1, 0.1); thump(0.022, 120, 0.3 * s1, 0.09);
+  // S2: A2 y P2; al inspirar el desdoblamiento se abre (fisiológico), se cierra (paradójico) o no cambia (fijo)
+  let sp = s.split ?? 0.015; if (ins) sp = s.para ? Math.max(0.004, sp - 0.025) : s.fixed ? sp : sp + 0.03;
+  thump(s.para ? 0.32 + sp : 0.32, 170, 0.36 * (s.a2 ?? 1), 0.07); thump(s.para ? 0.32 : 0.32 + sp, 150, 0.36 * (s.p2 ?? 0.45), 0.06);
+  if (s.s3) thump(0.47, 62, 0.42 * s.s3, 0.09);
+  if (s.s4) thump(0.755, 62, 0.42 * s.s4, 0.08);
+  if (s.ec) thump(0.065, 520, 0.3 * s.ec * (s.ecR && ins ? 0.35 : 1), 0.022);
+  if (s.os) thump(s.os[0], 340, s.os[1], 0.03);
+  for (const [type, amp, a, b, pk] of s.mur || []) {
+    const [f0, q, rough] = XS_MUR[type], env = xsEnv(type, a, b, pk), mul = amp * (mm[man] ?? 1);
+    const nz = XNZ[f0] || (XNZ[f0] = hsBand(n, f0, q, 11 + f0)), nz2 = rough ? XNZ.r || (XNZ.r = hsBand(n, 420, 1.2, 99)) : null;
+    for (let i = 0; i < n; i++) {
+      const p = (i / HS_SR) % HS_T; let v = env(p); if (!v) continue;
+      if (type === 'roce') v *= 0.55 + 0.45 * Math.sin(2 * Math.PI * 23 * (i / HS_SR)) ** 2;
+      out[i] += mul * v * (nz2 ? 0.7 * nz[i] + 0.45 * nz2[i] : nz[i]);
+    }
+  }
+  for (let i = 0; i < n; i++) out[i] = Math.tanh(2.3 * out[i]) * 0.92;
+  return out;
+}
+// Encabezado común: escenarios, control deslizante con flechas y etiqueta de la etapa
+function xsHead(key, D, g) {
+  const sc = D.scen[g.sc], n = sc.stages.length;
+  return `<h2>${esc(D.title)}</h2>
+  ${D.scen.length > 1 ? `<div class="o3chips" role="group" aria-label="Escenario">${D.scen.map((s, k) => `<button class="o3chip${k === g.sc ? ' on' : ''}" data-act="xsscen" data-k="${key}" data-i="${k}" aria-pressed="${k === g.sc}">${esc(s.l)}<span>${esc(s.sub)}</span></button>`).join('')}</div>` : `<p class="small muted">${esc(sc.l)} · ${esc(sc.sub)}</p>`}
+  ${n > 1 ? `<div class="xsctl"><button class="btn small" data-act="xsstep" data-k="${key}" data-d="-1" aria-label="Etapa anterior">◀</button>
+    <label class="sl"><span>${esc(sc.slider)}</span><b class="xslab"></b><input type="range" min="0" max="${n - 1}" step="1" value="${g.i}" data-inp="xsrange" data-k="${key}" aria-label="${esc(sc.slider)}"></label>
+    <button class="btn small" data-act="xsstep" data-k="${key}" data-d="1" aria-label="Etapa siguiente">▶</button></div>
+    <div class="xsdots" aria-hidden="true">${sc.stages.map((_, k) => `<i class="${k <= g.i ? 'on' : ''}"></i>`).join('')}</div>` : ''}`;
+}
+function xsBind() {
+  ACT.xsscen = (b) => { const g = XS[b.dataset.k]; g.sc = +b.dataset.i; g.i = 0; g.man = 'basal'; g.build(); };
+  ACT.xsstep = (b) => { const g = XS[b.dataset.k], n = g.D.scen[g.sc].stages.length; g.i = clamp(g.i + +b.dataset.d, 0, n - 1); const r = g.sec.querySelector('[data-inp=xsrange]'); if (r) r.value = g.i; g.upd(); };
+  CHG.xsrange = (el) => { const g = XS[el.dataset.k]; if (+el.value === g.i) return; g.i = +el.value; g.upd(); };
+  ACT.xsman = (b) => { const g = XS[b.dataset.k]; g.man = b.dataset.m; g.upd(); };
+  ACT.xsplay = (b) => { const g = XS[b.dataset.k]; if (HS.el && !HS.el.paused && HS.id === b.dataset.k) hsStop(); else g.play(false); g.upd(); };
+}
+function xsStageInfo(g, st) {
+  const sc = g.D.scen[g.sc], n = sc.stages.length, lab = g.sec.querySelector('.xslab');
+  if (lab) lab.textContent = `${g.i + 1}/${n} · ${st.l}`;
+  g.sec.querySelectorAll('.xsdots i').forEach((d, k) => d.classList.toggle('on', k <= g.i));
+}
+function mountEcgSim(host, tid) {
+  const D = ECGSIM[tid]; if (!D) return;
+  const key = 'xe:' + tid, sec = document.createElement('section'); sec.className = 'panel sim xsim'; host.appendChild(sec);
+  const g = XS[key] = XS[key] || { sc: 0, i: 0, seed: (Math.random() * 1e9) | 0 };
+  Object.assign(g, { D, sec });
+  xsBind();
+  g.build = () => {
+    sec.innerHTML = `${xsHead(key, D, g)}<canvas class="ecgcv" aria-label="Electrocardiograma de 12 derivaciones"></canvas>
+      <p class="small muted">12 derivaciones a 25 mm/s y tira de DII. En dorado, donde está el cambio.</p><div class="simout" aria-live="polite"></div>`;
+    requestAnimationFrame(g.upd);
+  };
+  g.upd = () => {
+    const st = D.scen[g.sc].stages[g.i], P = ecgSpec('normal');
+    P.seed = g.seed; Object.assign(P, st.P || {});
+    for (const [l, f] of Object.entries(st.m || {})) P.mod[l] = { ...f };
+    const cv = sec.querySelector('canvas'); if (!cv || !cv.isConnected) return;
+    ecgDraw(cv, P, '12', st.hl || []);
+    xsStageInfo(g, st);
+    sec.querySelector('.simout').innerHTML = `<p class="chip" style="--sc:var(--gold)">${esc(st.l)}</p><p>${st.t}</p>`;
+  };
+  g.build();
+}
+function mountHsSim(host, tid) {
+  const D = HSSIM[tid]; if (!D) return;
+  const key = 'xh:' + tid, sec = document.createElement('section'); sec.className = 'panel sim xsim'; host.appendChild(sec);
+  const g = XS[key] = XS[key] || { sc: 0, i: 0, man: 'basal' };
+  Object.assign(g, { D, sec });
+  xsBind();
+  const cur = () => { const sc = D.scen[g.sc], st = sc.stages[g.i]; return { sc, st, foco: st.foco || sc.foco, mm: st.man || sc.man || {} }; };
+  const playing = () => HS.el && !HS.el.paused && HS.id === key;
+  const loop = () => {
+    if (HS.raf) cancelAnimationFrame(HS.raf);
+    const f = () => { const cv = sec.querySelector('canvas'); if (!cv || !cv.isConnected) { HS.raf = null; return; } hsDraw(cv, HS.data, true); if (playing()) HS.raf = requestAnimationFrame(f); else HS.raf = null; };
+    HS.raf = requestAnimationFrame(f);
+  };
+  g.play = (keep) => {
+    const { st, mm } = cur(), t = keep && HS.el ? HS.el.currentTime : 0;
+    HS.data = xsSynth(st.s, g.man, mm); HS.id = key;
+    if (HS.url) URL.revokeObjectURL(HS.url);
+    HS.url = wavURL(HS.data, HS_SR);
+    if (!HS.el) { HS.el = new Audio(); HS.el.loop = true; HS.el.setAttribute('playsinline', ''); }
+    HS.el.src = HS.url; try { HS.el.currentTime = t; } catch (e) { /* aún sin metadatos */ }
+    const p = HS.el.play(); if (p && p.catch) p.catch((e) => { if (!e || e.name !== 'AbortError') toast('Toca ▶ otra vez para escuchar'); }); // cambiar de maniobra interrumpe la carga anterior
+    loop();
+  };
+  g.build = () => {
+    sec.innerHTML = `${xsHead(key, D, g)}
+      <div class="xshs"><div class="xschest"></div><div class="stack" style="gap:8px;min-width:0"><button class="btn gold-btn xsplay" data-act="xsplay" data-k="${key}"></button>
+      <div class="xsman" role="group" aria-label="Maniobra">${XS_MAN.map(([m, l]) => `<button class="btn small" data-act="xsman" data-k="${key}" data-m="${m}">${l}</button>`).join('')}</div></div></div>
+      <canvas class="hscv" aria-label="Fonocardiograma"></canvas><p class="small muted">Usa audífonos: los ruidos graves (S3, S4, retumbo) casi no salen por la bocina del teléfono.</p>
+      <div class="simout" aria-live="polite"></div>`;
+    requestAnimationFrame(g.upd);
+  };
+  g.upd = () => {
+    const { sc, st, foco, mm } = cur();
+    if (!sec.querySelector('canvas')) return;
+    xsStageInfo(g, st);
+    sec.querySelector('.xschest').innerHTML = chestSVG(key, foco, null).replace(/ data-act="hsat"[^>]*?role="button"/g, '');
+    sec.querySelectorAll('[data-act=xsman]').forEach((b) => { b.classList.toggle('gold-btn', b.dataset.m === g.man); b.setAttribute('aria-pressed', b.dataset.m === g.man); });
+    const pb = sec.querySelector('.xsplay'); pb.textContent = playing() ? '■ Detener' : '▶ Escuchar';
+    if (playing()) g.play(true); else { HS.data = xsSynth(st.s, g.man, mm); hsDraw(sec.querySelector('canvas'), HS.data, true); }
+    const ef = g.man === 'basal' ? '' : (() => { const v = g.man === 'insp' ? mm.insp : mm[g.man];
+      const sdesc = g.man === 'insp' ? (st.s.para ? 'El S2 se cierra al inspirar (paradójico).' : st.s.fixed ? 'El S2 no cambia con la respiración (fijo).' : 'El S2 se desdobla más al inspirar.') : '';
+      return `<p class="small"><b>${XS_MAN.find((x) => x[0] === g.man)[1]}:</b> ${v == null || !st.s.mur ? 'el soplo no cambia' : v > 1.05 ? 'el soplo <b>sube</b>' : v < 0.95 ? 'el soplo <b>baja</b>' : 'el soplo casi no cambia'}. ${sdesc}</p>`; })();
+    sec.querySelector('.simout').innerHTML = `<p class="row" style="gap:6px;flex-wrap:wrap"><span class="chip" style="--sc:var(--gold)">${esc(st.l)}</span>${(st.f || []).map((x) => `<span class="chip" style="--sc:var(--cyan)">${esc(x)}</span>`).join('')}</p><p>${st.t}</p>${ef}<p class="small muted">Foco: ${esc(FOCOS[foco][0])}${sc.l ? '' : ''}</p>`;
+  };
+  g.build();
+}
 // ═══════════ Órganos en 3D que complementan el video (modelos de OrganUI / BodyParts3D, componentes MIT):
 // el órgano del tema con lo afectado en rojo, etapas de la enfermedad, toque para explicar y recorrido narrado.
 // three.js (vendor/three3d.js) y el GLB se descargan solo al abrir el visor.
