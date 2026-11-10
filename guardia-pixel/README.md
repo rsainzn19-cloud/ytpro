@@ -42,13 +42,19 @@ Los 30 temas tienen:
 - **🫀 Míralo en 3D** en la pestaña Video de los 30 temas: el órgano del tema (modelos de OrganUI / BodyParts3D) con lo
   afectado en rojo y la causa en naranja, etapas de la enfermedad, explicación al tocar y recorrido narrado
   (`src/content/80-organos3d.js`; ver `tools/organs3d/README.md`).
+- **Endocrinología por semana del curso** (resumen 1P y Guía Endocrino de Drive): S1 `hipofnf` (adenoma no funcionante,
+  hipopituitarismo, diabetes insípida y SIADH; `40-hipofnf.js`), S2 `hipofisis` (funcionantes), S3–S4 `dm2` (diabetes y
+  antidiabéticos), S5 `cad` (cetoacidosis y estado hiperosmolar; `41-cad.js`), S6 `insulina` (insulinoterapia;
+  `42-insulina.js`); dislipidemia y síndrome metabólico (`smdl`) es S7. Cada tema nuevo trae lección, video narrado,
+  preguntas, tarjetas, recuadro de la guía con “Ojo” vs el consenso actual y su abordaje. Al filtrar el Temario por
+  materia, los temas salen en orden de semana.
 - **Simuladores de cardio** en el Taller de los 6 temas de cardio (`src/content/53-simuladores-cardio.js`; claves
   `ecgsim` y `hssim`): un **ECG de 12 derivaciones** que cambia al mover un control (infarto por arteria en el tiempo,
   prueba de esfuerzo, TEP del pequeño al masivo, hipertensión pulmonar, estenosis/insuficiencia aórtica y mitral) y un
   **simulador de soplos** que se escucha y se dibuja (gravedad, maniobras: inspiración, Valsalva, cuclillas, handgrip;
   complicaciones del infarto por día, angina, TEP, HP). También en Más → Taller → Simuladores de cardio.
 - **🧭 Abordajes del temario** (`src/content/90-abordajes.js`; clave `abordajes`, en el orden de la lista del parcial):
-  un abordaje por cada uno de los 30 renglones de la lista que mandó el grupo, con su redacción. Trae los pasos en el orden
+  un abordaje por cada uno de los renglones de la lista que mandó el grupo (Endo ya por semana, S1–S7), con su redacción. Trae los pasos en el orden
   en que se hacen (con ramas “si… →”), cada punto que pide el renglón, “Así lo preguntan” y el reto “Ordena los pasos”
   (+15 XP la primera vez). Se entra desde Temario y desde la lección de cada tema. Leucemias y Linfoproliferativos no
   vienen en esa lista y se marcan como “No viene en tu lista”.

@@ -812,7 +812,8 @@ function topicItem(t) {
 VIEWS.temario = (m) => {
   const f = route.a && route.a !== 'all' ? route.a : 'all';
   const list = C.topics.filter((t) => f === 'all' || t.subj === f);
-  m.innerHTML = `<h1>Temario</h1><p class="muted">Semanas 1 a 6 · 30 temas en orden de prioridad. Neumología no entra en este parcial.</p>
+  if (f !== 'all') list.sort((a, b) => Math.min(...a.weeks) - Math.min(...b.weeks) || a.n - b.n); // por materia: en orden de semana del curso
+  m.innerHTML = `<h1>Temario</h1><p class="muted">${C.topics.length} temas en orden de prioridad. Endocrinología va por semana del curso (S1–S6 y dislipidemia en S7). Neumología no entra en este parcial.</p>
   ${ABS.length ? `<button class="abcta gold" data-go="abordajes">${GEMS}<span class="h">🧭 Abordajes del temario</span><span class="s">Los ${ABS.length} renglones de tu lista del parcial, paso a paso · ${ABS.filter((a) => abDone(a.id)).length}/${ABS.length} ordenados</span></button>` : ''}
   <div class="filters" role="toolbar" aria-label="Filtrar por materia"><button class="chip${f === 'all' ? ' fill' : ''}" style="--sc:var(--gold)" data-go="temario" data-a="all" aria-pressed="${f === 'all'}">Todas</button>${C.subjects.map((s) => `<button class="chip${f === s.id ? ' fill' : ''}" style="--sc:${s.color}" data-go="temario" data-a="${s.id}" aria-pressed="${f === s.id}">${subjIcon(s.id, 1)} ${esc(s.short)}</button>`).join('')}</div>
   <ul class="tlist">${list.map(topicItem).join('')}</ul>`;
@@ -3335,7 +3336,7 @@ VIEWS.sim = (m) => {
   const pool = C.questions.length, lens = [...new Set([20, 40, pool].filter((v) => v <= pool))];
   m.innerHTML = `<button class="btn small ghost" data-go="mas" style="align-self:flex-start">← Más</button><h1>Simulacro</h1>
   <p class="muted">Como el examen: sin explicaciones hasta el final, con reloj (75 s por pregunta) y resultados por materia. Las que falles entran a tu cuaderno de errores.</p>
-  <div class="note">El banco tiene ${pool} preguntas de los 30 temas. El simulacro las mezcla al azar; el de ${pool} es el banco completo.</div>
+  <div class="note">El banco tiene ${pool} preguntas de los ${C.topics.length} temas. El simulacro las mezcla al azar; el de ${pool} es el banco completo.</div>
   <div class="stack">${lens.map((n) => `<button class="btn ${n === 40 ? 'gold-btn ' : ''}big" data-act="simgo" data-n="${n}">${n} preguntas · ${Math.round((n * 75) / 60)} min</button>`).join('')}</div>
   ${S.sims.length ? `<section class="panel"><h2>Tus simulacros</h2><ul class="blks">${S.sims.slice().reverse().map((s) => `<li class="blk"><span class="blk-t">${fmtDay(s.date)} · ${s.n} preguntas</span><span class="blk-m">${pct(s.ok / s.n)}%</span></li>`).join('')}</ul></section>` : ''}`;
   ACT.simgo = (b) => { const n = +b.dataset.n; startQuiz({ mode: 'sim', title: `Simulacro de ${n}`, qids: shuffle(C.questions.map((q) => q.id)).slice(0, n), tab: 'mas', back: 'sim', deadline: Date.now() + n * 75000 }); };

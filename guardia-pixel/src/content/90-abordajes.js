@@ -6,7 +6,28 @@ export default {
   abordajes: [
     // ───────────── Endocrinología
     {
-      id: 'hipofisis', subj: 'endo', tema: 'Tumores hipofisarios', topics: ['hipofisis'],
+      id: 'hipofnf', subj: 'endo', tema: 'Trastornos hipofisarios no funcionantes: hipopituitarismo, diabetes insípida y SIADH (semana 1)', topics: ['hipofnf'],
+      pasos: [
+        { h: 'Sospecha por masa, por déficit o por el agua', t: `Efecto de masa (cefalea, hemianopsia bitemporal), <b>hipopituitarismo</b> (hipogonadismo, fatiga, hipotensión) o un trastorno del agua: <b>poliuria con Na alto</b> (DI) o <b>hiponatremia euvolémica</b> (SIADH).` },
+        { h: 'RM y perfil hormonal completo', t: `<b>RM con gadolinio</b> + PRL (el efecto tallo da PRL &lt;100–150), IGF-1, tamizaje de Cushing, <b>cortisol 8 a. m.</b>, <b>T4 libre</b>, LH/FSH con testosterona o estradiol. Campimetría si toca el quiasma.` },
+        { h: 'Repón en orden', t: `<b>Hidrocortisona primero</b>, después levotiroxina (ajustada con la T4 libre), luego sexuales. Apoplejía: hidrocortisona IV ya.` },
+        { h: 'Poliuria: confirma que es hipotónica', t: `&gt;3 L/día con osmolaridad urinaria &lt;300. Descarta diuresis osmótica (glucosa) y revisa fármacos (litio).`,
+          si: [['Na normal-bajo, orina se concentra al deprivar', 'polidipsia primaria'], ['No concentra; sube &gt;50 % con desmopresina', 'DI central → desmopresina'], ['No concentra ni con desmopresina', 'DI nefrogénica → tiazida (+ amilorida si es litio)']] },
+        { h: 'Hiponatremia: clasifícala', t: `Mide osmolaridad plasmática (hipotónica &lt;275), volemia, osmolaridad y Na urinarios.`,
+          si: [['Euvolémica, orina &gt;100 mOsm, Na urinario &gt;30, TSH y cortisol normales', 'SIADH: busca SNC, pulmón, cáncer, fármacos'], ['Hipovolémica, Na urinario &lt;30', 'pérdidas: salina 0.9 %'], ['Hipervolémica (edema)', 'IC, cirrosis, nefrótico']] },
+        { h: 'Trata según los síntomas', t: `Convulsiones o coma: <b>salina al 3 % en bolo</b> de 100–150 mL (repite hasta +4–6). Leve: restricción hídrica, sal o urea, tratar la causa. <b>No más de 8–10 mEq/L en 24 h</b>.` },
+        { h: 'Vigila después de la cirugía', t: `Na y uresis diarios: <b>DI (días 1–2) → SIADH (días 6–10) → DI permanente</b> (respuesta trifásica).` }
+      ],
+      cubre: [
+        ['Adenoma no funcionante', `El macroadenoma más común; da efecto de masa e hipopituitarismo. Con defecto visual → cirugía transesfenoidal.`],
+        ['Hipopituitarismo', `GH → LH/FSH → TSH → ACTH. Hormona periférica baja con hipofisaria baja o “normal”. Cortisol antes que tiroides.`],
+        ['Diabetes insípida', `Falta (central) o no se oye (nefrogénica) la ADH: poliuria diluida y Na alto. Deprivación de agua + desmopresina.`],
+        ['SIADH', `Sobra ADH: hiponatremia hipotónica euvolémica con orina concentrada. Restricción hídrica; 3 % si hay síntomas graves.`]
+      ],
+      examen: 'Macroadenoma con PRL moderada = efecto tallo (cirugía, no cabergolina). Poliuria con litio que no responde a desmopresina = DI nefrogénica. Hiponatremia con convulsiones = salina al 3 %.'
+    },
+    {
+      id: 'hipofisis', subj: 'endo', tema: 'Tumores hipofisarios funcionantes: prolactinoma, acromegalia y Cushing (semana 2)', topics: ['hipofisis'],
       pasos: [
         { h: 'Reconoce por qué llega', t: `Por <b>efecto de masa</b> (cefalea, hemianopsia bitemporal, hipopituitarismo; pares III, IV y VI si invade el seno cavernoso), por <b>exceso hormonal</b> (galactorrea-amenorrea, acromegalia, Cushing) o como <b>incidentaloma</b>.` },
         { h: 'Mide el tumor con RM de silla turca', t: `RM con gadolinio: <b>microadenoma &lt;1 cm</b>, <b>macroadenoma ≥1 cm</b>. La TC solo si no hay RM.` },
@@ -20,20 +41,7 @@ export default {
       examen: 'El prolactinoma es el único que se trata primero con medicamento (cabergolina), incluso el macro con defecto visual. Acromegalia: IGF-1 para tamizar, GH que no baja de 1 ng/mL con la curva de glucosa para confirmar.'
     },
     {
-      id: 'smdl', subj: 'endo', tema: 'Síndrome metabólico y dislipidemia', topics: ['smdl'],
-      pasos: [
-        { h: 'Tamiza y define el síndrome metabólico', t: `Perfil de lípidos en todo adulto (no necesita ayuno). Síndrome metabólico = <b>3 de 5</b>: cintura alta (≥90 cm hombre / ≥80 cm mujer en latinos), TG ≥150, HDL &lt;40 hombre / &lt;50 mujer, PA ≥130/85, glucosa en ayuno ≥100 (o en tratamiento para cualquiera).` },
-        { h: 'Descarta causas secundarias', t: `<b>Hipotiroidismo (TSH)</b>, diabetes, síndrome nefrótico, colestasis, alcohol (TG), fármacos (tiazidas, esteroides, antirretrovirales, isotretinoína).` },
-        { h: 'Calcula el riesgo cardiovascular', t: `<b>Muy alto</b>: enfermedad CV establecida, DM con daño a órgano, ERC con TFG &lt;30. <b>Alto</b>: LDL ≥190, DM sin daño, ERC 30–59. Los demás, con SCORE2 (ESC) o PREVENT (AHA). <b>LDL ≥190 = probable hipercolesterolemia familiar</b>: estatina de alta intensidad sin calcular nada.` },
-        { h: 'Fija la meta de LDL', t: `Muy alto riesgo <b>&lt;55 mg/dL</b> y bajar ≥50 %; alto &lt;70; moderado &lt;100; bajo &lt;116 (ESC).` },
-        { h: 'Escala el tratamiento', t: `Estilo de vida para todos → <b>estatina de alta intensidad</b> (atorvastatina 40–80, rosuvastatina 20–40) → <b>+ ezetimiba</b> → <b>+ iPCSK9</b> (o inclisirán; ácido bempedoico si no tolera estatinas).` },
-        { h: 'Atiende los triglicéridos', t: `<b>TG ≥500</b>: fibrato y dieta muy baja en grasa para prevenir pancreatitis (≥1000 = riesgo alto). TG 150–499 con LDL ya en meta y riesgo alto: icosapento de etilo.` },
-        { h: 'Revisa a las 4–12 semanas', t: `Perfil de lípidos para ver la meta y el apego. ALT basal; CK solo si hay dolor muscular.` }
-      ],
-      examen: 'Síndrome metabólico = 3 de 5 criterios. En muy alto riesgo la meta de LDL es menos de 55 mg/dL; si no llega con estatina de alta intensidad, el siguiente paso es ezetimiba.'
-    },
-    {
-      id: 'dm2', subj: 'endo', tema: 'Diabetes', topics: ['dm2'],
+      id: 'dm2', subj: 'endo', tema: 'Diabetes mellitus y antidiabéticos (semanas 3 y 4)', topics: ['dm2'],
       pasos: [
         { h: 'Haz el diagnóstico', t: `Glucosa en ayuno <b>≥126</b>, HbA1c <b>≥6.5 %</b>, glucosa a las 2 h de la CTGO <b>≥200</b>, o glucosa al azar ≥200 con síntomas. Sin síntomas se confirma con una segunda prueba. Prediabetes: 100–125 / 5.7–6.4 % / 140–199.` },
         { h: '¿Es una urgencia?', t: `Descarta crisis antes de pensar en pastillas.`,
@@ -46,6 +54,59 @@ export default {
         { h: 'Da seguimiento', t: `HbA1c cada 3 meses si no está en meta (cada 6 si ya está), estatina de 40 a 75 años, revisión de pies en cada consulta, vacunas.` }
       ],
       examen: 'Sin síntomas, una sola cifra no basta: se repite la prueba. En DM2 con IC o ERC se agrega iSGLT2 aunque la HbA1c esté en meta.'
+    },
+    {
+      id: 'cad', subj: 'endo', tema: 'Cetoacidosis diabética y estado hiperosmolar (semana 5)', topics: ['cad'],
+      pasos: [
+        { h: 'Confirma la crisis', t: `Glucosa, electrolitos con <b>brecha aniónica</b>, gasometría venosa, <b>β-hidroxibutirato</b>, osmolaridad, BUN/Cr, fósforo, BH, EGO, ECG.`,
+          si: [['Glucosa ≥200, BHB ≥3, pH &lt;7.3 o HCO₃ &lt;18', 'cetoacidosis'], ['Glucosa ≥600, osm efectiva &gt;300, pH ≥7.3', 'estado hiperosmolar']] },
+        { h: 'Líquidos primero', t: `Cristaloide isotónico <b>1–1.5 L la 1ª hora</b>, luego 250–500 mL/h. Calcula el <b>Na corregido</b> (+1.6 por cada 100 de glucosa arriba de 100): si es normal o alto, salina 0.45 %.` },
+        { h: 'Revisa el potasio antes de la insulina', t: `El K corporal está bajo aunque el sérico salga normal.`,
+          si: [['K &lt;3.5', 'repón y no inicies insulina'], ['K 3.5–5', '10–20 mEq por litro'], ['K &gt;5', 'sin K; mide cada 2 h']] },
+        { h: 'Insulina regular IV', t: `<b>0.1 U/kg/h</b> (± bolo 0.1 U/kg) o 0.14 U/kg/h sin bolo. Meta: −50 a 70 mg/dL por hora. Bicarbonato solo si pH &lt;7.0.` },
+        { h: 'Dextrosa a 250 sin quitar la insulina', t: `Cuando la glucosa baja de <b>250</b>: dextrosa al 5–10 % y baja la insulina a 0.05 U/kg/h. Lo que se trata es la <b>cetosis</b>.` },
+        { h: 'Busca y trata el desencadenante', t: `Insulina omitida, <b>infección</b>, infarto, pancreatitis, fármacos (esteroides, <b>iSGLT2</b> → CAD euglucémica), embarazo.` },
+        { h: 'Confirma la resolución y pasa a SC', t: `CAD: <b>BHB &lt;0.6 y pH ≥7.3</b> (o brecha ≤12). EHH: osm &lt;300 y mente normal. <b>Basal SC 2 h antes</b> de suspender la infusión.` }
+      ],
+      cubre: [
+        ['Cetoacidosis diabética', `Déficit absoluto de insulina: cetonas + acidosis con brecha alta en horas; Kussmaul, vómito, dolor abdominal. Típica de DM1.`],
+        ['Estado hiperglucémico hiperosmolar', `Déficit relativo: glucosa altísima, deshidratación de días y alteración mental, sin cetoacidosis. Típico de DM2 anciano.`],
+        ['Complicaciones del tratamiento', `Hipoglucemia, hipokalemia, edema cerebral (niños), acidosis hiperclorémica por salina, sobrecarga de volumen.`]
+      ],
+      examen: 'Líquidos → K (≥3.5) → insulina IV → dextrosa a 250 sin suspender la insulina. Bicarbonato solo con pH &lt;7.0. Basal SC 2 h antes de quitar la infusión.'
+    },
+    {
+      id: 'insulina', subj: 'endo', tema: 'Insulinoterapia (semana 6)', topics: ['insulina'],
+      pasos: [
+        { h: 'Decide si necesita insulina', t: `DM1 siempre. DM2: de entrada si HbA1c <b>&gt;10 %</b>, glucosa ≥300, catabolismo o cetosis; si no, cuando no llega a meta (considera antes un arGLP-1). Hospitalizado: insulina.` },
+        { h: 'Elige el esquema', t: `Ambulatorio DM2: <b>basal</b>. DM1 o DM2 avanzada: <b>basal-bolo</b>. Hospital que come: basal-bolo-corrección (0.3–0.5 U/kg/día). Crisis: regular IV.` },
+        { h: 'Inicia la basal', t: `<b>10 U o 0.1–0.2 U/kg/día</b>. Mantén metformina; suspende o baja la sulfonilurea.` },
+        { h: 'Titula con el ayuno', t: `<b>+2 U cada 3 días</b> hasta 80–130 mg/dL; baja 10–20 % si hay hipoglucemia.`,
+          si: [['Ayuno alto', 'sube la basal'], ['Ayuno en meta, HbA1c alta', 'agrega prandial o arGLP-1'], ['Basal &gt;0.5 U/kg o hipoglucemias', 'sobrebasalización: no subas más']] },
+        { h: 'Agrega prandial si hace falta', t: `<b>4 U o 10 % de la basal</b> antes de la comida más grande; sube 1–2 U dos veces por semana; después en las otras comidas.` },
+        { h: 'Enseña a reconocer y tratar la hipoglucemia', t: `<b>Regla del 15</b>. Inconsciente: <b>glucagón</b> o dextrosa al 50 % IV. Revisa técnica y sitios de inyección.` },
+        { h: 'Ajusta por patrones', t: `Glucosa alta al despertar: mide a las 3 a. m.`,
+          si: [['Hipoglucemia de madrugada', 'Somogyi → baja la dosis nocturna'], ['Sin hipoglucemia', 'fenómeno del alba → sube la basal'], ['Alta en la tarde con prednisona matutina', 'NPH en la mañana']] }
+      ],
+      cubre: [
+        ['Tipos de insulina', `Ultrarrápidas (lispro, aspart, glulisina), regular (la única IV), NPH (pico 4–10 h), basales sin pico (glargina, detemir, degludec), premezclas.`],
+        ['Esquemas', `Basal, basal-plus, basal-bolo, premezcla 2 veces al día; en hospital basal-bolo-corrección, no escala móvil sola.`],
+        ['Hipoglucemia', `Niveles 1 (&lt;70), 2 (&lt;54) y 3 (requiere ayuda). Regla del 15; glucagón si no hay vía oral.`]
+      ],
+      examen: 'Basal se titula con el ayuno (+2 U cada 3 días). Ayuno en meta con HbA1c alta = agrega prandial. Somogyi: baja la nocturna; alba: sube la basal.'
+    },
+    {
+      id: 'smdl', subj: 'endo', tema: 'Síndrome metabólico y dislipidemia (semana 7)', topics: ['smdl'],
+      pasos: [
+        { h: 'Tamiza y define el síndrome metabólico', t: `Perfil de lípidos en todo adulto (no necesita ayuno). Síndrome metabólico = <b>3 de 5</b>: cintura alta (≥90 cm hombre / ≥80 cm mujer en latinos), TG ≥150, HDL &lt;40 hombre / &lt;50 mujer, PA ≥130/85, glucosa en ayuno ≥100 (o en tratamiento para cualquiera).` },
+        { h: 'Descarta causas secundarias', t: `<b>Hipotiroidismo (TSH)</b>, diabetes, síndrome nefrótico, colestasis, alcohol (TG), fármacos (tiazidas, esteroides, antirretrovirales, isotretinoína).` },
+        { h: 'Calcula el riesgo cardiovascular', t: `<b>Muy alto</b>: enfermedad CV establecida, DM con daño a órgano, ERC con TFG &lt;30. <b>Alto</b>: LDL ≥190, DM sin daño, ERC 30–59. Los demás, con SCORE2 (ESC) o PREVENT (AHA). <b>LDL ≥190 = probable hipercolesterolemia familiar</b>: estatina de alta intensidad sin calcular nada.` },
+        { h: 'Fija la meta de LDL', t: `Muy alto riesgo <b>&lt;55 mg/dL</b> y bajar ≥50 %; alto &lt;70; moderado &lt;100; bajo &lt;116 (ESC).` },
+        { h: 'Escala el tratamiento', t: `Estilo de vida para todos → <b>estatina de alta intensidad</b> (atorvastatina 40–80, rosuvastatina 20–40) → <b>+ ezetimiba</b> → <b>+ iPCSK9</b> (o inclisirán; ácido bempedoico si no tolera estatinas).` },
+        { h: 'Atiende los triglicéridos', t: `<b>TG ≥500</b>: fibrato y dieta muy baja en grasa para prevenir pancreatitis (≥1000 = riesgo alto). TG 150–499 con LDL ya en meta y riesgo alto: icosapento de etilo.` },
+        { h: 'Revisa a las 4–12 semanas', t: `Perfil de lípidos para ver la meta y el apego. ALT basal; CK solo si hay dolor muscular.` }
+      ],
+      examen: 'Síndrome metabólico = 3 de 5 criterios. En muy alto riesgo la meta de LDL es menos de 55 mg/dL; si no llega con estatina de alta intensidad, el siguiente paso es ezetimiba.'
     },
 
     // ───────────── Cardiología
