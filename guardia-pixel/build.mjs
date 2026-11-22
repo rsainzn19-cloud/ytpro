@@ -234,7 +234,7 @@ for (const [tid, L] of Object.entries(C.lessons)) {
 }
 const diag = C.questions.filter((q) => q.diag);
 if (diag.length !== 30) errs.push(`el diagnóstico tiene ${diag.length} preguntas, no 30`);
-for (const s of C.subjects) {
+for (const s of C.subjects.filter((x) => !x.nodiag)) {
   const n = diag.filter((q) => q.subj === s.id).length;
   if (n !== 5) errs.push(`diagnóstico: ${s.id} tiene ${n} preguntas, no 5`);
 }

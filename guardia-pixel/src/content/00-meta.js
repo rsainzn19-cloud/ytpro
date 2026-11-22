@@ -1,15 +1,15 @@
-// Datos generales: examen, materias, temario oficial (semanas 1–6) y rangos.
+// Datos generales: examen, materias, temario del curso completo (semanas 1–11, según 1P y 2P/FINAL de Drive) y rangos.
 // Para agregar un tema nuevo con contenido: crea un archivo en esta carpeta con
 // lessons/questions/cards/cases/anims y vuelve a correr `node build.mjs`.
 export default {
   exam: {
-    date: '2026-11-10',
-    start: '2026-10-26',
-    label: 'Parcial regional de Medicina Interna',
-    place: 'Aula 3 · Hospital Zambrano Hellion',
-    weight: '25% de la calificación teórica',
+    date: '2026-12-22',
+    start: '2026-11-22',
+    label: 'Examen final de Medicina Interna',
+    place: 'Martes 22 de diciembre · aula por confirmar',
+    weight: 'Curso completo · semanas 1 a 11',
     classes: { 5: '2026-10-27', 6: '2026-11-03' },
-    sim: ['2026-11-07', '2026-11-08']
+    sim: ['2026-12-19', '2026-12-20']
   },
 
   subjects: [
@@ -18,7 +18,9 @@ export default {
     { id: 'gastro', name: 'Gastroenterología', short: 'Gastro', color: '#FF9B3D', icon: 'stomach' },
     { id: 'hemato', name: 'Hematología', short: 'Hemato', color: '#FF8FD0', icon: 'drop' },
     { id: 'nefro', name: 'Nefrología', short: 'Nefro', color: '#4DB8FF', icon: 'kidney' },
-    { id: 'reuma', name: 'Reumatología', short: 'Reuma', color: '#C6E84A', icon: 'bone' }
+    { id: 'reuma', name: 'Reumatología', short: 'Reuma', color: '#C6E84A', icon: 'bone' },
+    { id: 'infecto', name: 'Infectología', short: 'Infecto', color: '#5EEAD4', icon: 'bug', nodiag: true },
+    { id: 'neumo', name: 'Neumología', short: 'Neumo', color: '#9FD8FF', icon: 'lungs', nodiag: true }
   ],
 
   topics: [
@@ -54,7 +56,10 @@ export default {
     { id: 'abordaje', n: 30, pri: 'baja', subj: 'reuma', weeks: [1, 2], title: 'Abordaje reumatológico', sub: 'Interrogatorio, articular vs periarticular, inflamatorio vs mecánico, patrón' },
     { id: 'hipofnf', n: 31, pri: 'alta', subj: 'endo', weeks: [1], title: 'Hipófisis no funcionante, diabetes insípida y SIADH', sub: 'Adenoma no funcionante, hipopituitarismo, diabetes insípida central y nefrogénica, SIADH e hiponatremia' },
     { id: 'cad', n: 32, pri: 'alta', subj: 'endo', weeks: [5], title: 'Cetoacidosis y estado hiperosmolar', sub: 'Criterios, líquidos, potasio, insulina IV, dextrosa, resolución y complicaciones' },
-    { id: 'insulina', n: 33, pri: 'media', subj: 'endo', weeks: [6], title: 'Insulinoterapia', sub: 'Tipos de insulina, cuándo iniciar, basal y prandial, titulación, hospital e hipoglucemia' }
+    { id: 'insulina', n: 33, pri: 'media', subj: 'endo', weeks: [6], title: 'Insulinoterapia', sub: 'Tipos de insulina, cuándo iniciar, basal y prandial, titulación, hospital e hipoglucemia' },
+    { id: 'ic', n: 34, pri: 'alta', subj: 'cardio', weeks: [7], title: 'Insuficiencia cardiaca', sub: 'FEVI reducida y preservada, BNP, los 4 pilares, dispositivos y la descompensación aguda' },
+    { id: 'bradi', n: 35, pri: 'media', subj: 'cardio', weeks: [10], title: 'Bradiarritmias y bloqueos', sub: 'Nodo sinusal, bloqueos AV (Mobitz I y II, completo), bloqueos de rama, atropina y marcapasos' },
+    { id: 'taqui', n: 36, pri: 'alta', subj: 'cardio', weeks: [11], title: 'Taquiarritmias y antiarrítmicos', sub: 'FA (CHA2DS2-VASc, anticoagulación), flutter, TSV, WPW, TV, torsades y clases de antiarrítmicos' }
   ],
 
   ranks: [

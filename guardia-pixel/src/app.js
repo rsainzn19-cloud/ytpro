@@ -293,6 +293,8 @@ const SPR = {
   drop: ['...X...', '...X...', '..XXX..', '..XXX..', '.XXXXX.', 'XXWXXXX', 'XWXXXXX', 'XXXXXXX', '.XXXXX.'],
   kidney: ['.XXXX...', 'XXXXXX..', 'XWXXXXX.', 'XXXXX.D.', 'XXXX..DD', 'XXXXX.D.', 'XXXXXXX.', 'XXXXXX..', '.XXXX...'],
   bone: ['XX.....XX', 'XXX...XXX', '.XXXXXXX.', 'XXX...XXX', 'XX.....XX'],
+  lungs: ['....X....', '....X....', '.XX.X.XX.', 'XXXXXXXXX', 'XWXX.XXWX', 'XXXX.XXXX', 'XXXX.XXXX', 'XXX...XXX', '.X.....X.'],
+  bug: ['.X.....X.', '..X...X..', '..XXXXX..', '.XWXXXWX.', 'XXXXXXXXX', '.XXXXXXX.', 'X.XXXXX.X', '..X...X..'],
   life: ['.XX.XX.', 'XWXXXXX', 'XXXXXXX', '.XXXXX.', '..XXX..', '...X...'],
   flame: ['...Y...', '...YY..', '..YYY..', '.YYOYY.', '.YOOOY.', 'YOORROY', 'YORRROY', '.YORRY.', '..YYY..'],
   star: ['...X...', '..XXX..', 'XXXXXXX', '.XXXXX.', '..XXX..', '.XX.XX.', 'XX...XX'],
@@ -807,13 +809,13 @@ VIEWS.plan = (m) => {
 // ═══════════ Temario y tema
 function topicItem(t) {
   const m = mastery(t.id), kn = known(t.id);
-  return `<li><button class="titem" data-go="topic" data-a="${t.id}"><span class="num">${pad(t.n)}</span><span><span class="tt">${esc(t.title)}</span><span class="meta">${subjChip(t.subj)}<span class="pri ${t.pri}">${t.pri}</span><span class="small muted">Sem ${t.weeks.join('–')}</span>${inList(t.id) ? '' : '<span class="chip" style="--sc:#8790CC">No viene en tu lista</span>'}${hasContent(t.id) ? '' : `<span class="locked">${icon('lock', '#8790CC', 1)} Sin lección</span>`}</span><span class="mbar"><span class="seg ${kn ? (m < 0.45 ? 'bad' : m < 0.7 ? '' : 'ok') : ''}" style="--p:${kn ? m : 0}"><i></i></span><span>${kn ? pct(m) + '%' : 'sin datos'}</span></span></span></button></li>`;
+  return `<li><button class="titem" data-go="topic" data-a="${t.id}"><span class="num">${pad(t.n)}</span><span><span class="tt">${esc(t.title)}</span><span class="meta">${subjChip(t.subj)}<span class="pri ${t.pri}">${t.pri}</span><span class="small muted">Sem ${t.weeks.join('–')}</span>${hasContent(t.id) ? '' : `<span class="locked">${icon('lock', '#8790CC', 1)} Sin lección</span>`}</span><span class="mbar"><span class="seg ${kn ? (m < 0.45 ? 'bad' : m < 0.7 ? '' : 'ok') : ''}" style="--p:${kn ? m : 0}"><i></i></span><span>${kn ? pct(m) + '%' : 'sin datos'}</span></span></span></button></li>`;
 }
 VIEWS.temario = (m) => {
   const f = route.a && route.a !== 'all' ? route.a : 'all';
   const list = C.topics.filter((t) => f === 'all' || t.subj === f);
   if (f !== 'all') list.sort((a, b) => Math.min(...a.weeks) - Math.min(...b.weeks) || a.n - b.n); // por materia: en orden de semana del curso
-  m.innerHTML = `<h1>Temario</h1><p class="muted">${C.topics.length} temas en orden de prioridad. Endocrinología va por semana del curso (S1–S6 y dislipidemia en S7). Neumología no entra en este parcial.</p>
+  m.innerHTML = `<h1>Temario</h1><p class="muted">${C.topics.length} temas del curso completo (semanas 1 a 11) en orden de prioridad. Filtra por materia para verlos por semana.</p>
   ${ABS.length ? `<button class="abcta gold" data-go="abordajes">${GEMS}<span class="h">🧭 Abordajes del temario</span><span class="s">Los ${ABS.length} renglones de tu lista del parcial, paso a paso · ${ABS.filter((a) => abDone(a.id)).length}/${ABS.length} ordenados</span></button>` : ''}
   <div class="filters" role="toolbar" aria-label="Filtrar por materia"><button class="chip${f === 'all' ? ' fill' : ''}" style="--sc:var(--gold)" data-go="temario" data-a="all" aria-pressed="${f === 'all'}">Todas</button>${C.subjects.map((s) => `<button class="chip${f === s.id ? ' fill' : ''}" style="--sc:${s.color}" data-go="temario" data-a="${s.id}" aria-pressed="${f === s.id}">${subjIcon(s.id, 1)} ${esc(s.short)}</button>`).join('')}</div>
   <ul class="tlist">${list.map(topicItem).join('')}</ul>`;
