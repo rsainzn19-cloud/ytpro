@@ -59,7 +59,11 @@ export default {
     { id: 'insulina', n: 33, pri: 'media', subj: 'endo', weeks: [6], title: 'Insulinoterapia', sub: 'Tipos de insulina, cuándo iniciar, basal y prandial, titulación, hospital e hipoglucemia' },
     { id: 'ic', n: 34, pri: 'alta', subj: 'cardio', weeks: [7], title: 'Insuficiencia cardiaca', sub: 'FEVI reducida y preservada, BNP, los 4 pilares, dispositivos y la descompensación aguda' },
     { id: 'bradi', n: 35, pri: 'media', subj: 'cardio', weeks: [10], title: 'Bradiarritmias y bloqueos', sub: 'Nodo sinusal, bloqueos AV (Mobitz I y II, completo), bloqueos de rama, atropina y marcapasos' },
-    { id: 'taqui', n: 36, pri: 'alta', subj: 'cardio', weeks: [11], title: 'Taquiarritmias y antiarrítmicos', sub: 'FA (CHA2DS2-VASc, anticoagulación), flutter, TSV, WPW, TV, torsades y clases de antiarrítmicos' }
+    { id: 'taqui', n: 36, pri: 'alta', subj: 'cardio', weeks: [11], title: 'Taquiarritmias y antiarrítmicos', sub: 'FA (CHA2DS2-VASc, anticoagulación), flutter, TSV, WPW, TV, torsades y clases de antiarrítmicos' },
+    { id: 'hipotiroidismo', n: 37, pri: 'media', subj: 'endo', weeks: [8], title: 'Hipotiroidismo', sub: 'Hashimoto, tiroiditis, TSH y T4 libre, subclínico, levotiroxina, embarazo y coma mixedematoso' },
+    { id: 'hipertiroidismo', n: 38, pri: 'alta', subj: 'endo', weeks: [9], title: 'Hipertiroidismo y tormenta tiroidea', sub: 'Graves, nódulos tóxicos, tiroiditis, captación de yodo, metimazol/PTU, yodo radiactivo y tormenta' },
+    { id: 'suprarrenal', n: 39, pri: 'media', subj: 'endo', weeks: [10], title: 'Insuficiencia suprarrenal e hiponatremia', sub: 'Addison vs secundaria, cosintropina, crisis suprarrenal y abordaje de la hiponatremia' },
+    { id: 'calcio', n: 40, pri: 'media', subj: 'endo', weeks: [11], title: 'Hipercalcemia y osteoporosis', sub: 'PTH, hiperparatiroidismo, cáncer, tratamiento agudo, DXA, FRAX y bisfosfonatos' }
   ],
 
   ranks: [
