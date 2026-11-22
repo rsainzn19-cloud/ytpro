@@ -68,7 +68,12 @@ export default {
     { id: 'ccr', n: 42, pri: 'media', subj: 'gastro', weeks: [8], title: 'Cáncer colorrectal y tamizaje', sub: 'Lynch, PAF, derecho vs izquierdo, estadificación, CEA y tamizaje por riesgo' },
     { id: 'hepatitis', n: 43, pri: 'alta', subj: 'gastro', weeks: [9], title: 'Pruebas hepáticas y hepatitis', sub: 'Patrones hepatocelular y colestásico, virus A a E, serología de VHB, alcohol, paracetamol y autoinmune' },
     { id: 'cirrosis', n: 44, pri: 'alta', subj: 'gastro', weeks: [10], title: 'Cirrosis y sus complicaciones', sub: 'Child-Pugh y MELD, ascitis y GASA, PBE, várices, encefalopatía y síndrome hepatorrenal' },
-    { id: 'diverticular', n: 45, pri: 'media', subj: 'gastro', weeks: [11], title: 'Enfermedad diverticular', sub: 'Sangrado diverticular, diverticulitis, TC, Hinchey, drenaje y cirugía' }
+    { id: 'diverticular', n: 45, pri: 'media', subj: 'gastro', weeks: [11], title: 'Enfermedad diverticular', sub: 'Sangrado diverticular, diverticulitis, TC, Hinchey, drenaje y cirugía' },
+    { id: 'asma', n: 56, pri: 'alta', subj: 'neumo', weeks: [7], title: 'Asma', sub: 'Espirometría y reversibilidad, metacolina, escalones GINA, budesonida-formoterol, biológicos y crisis asmática' },
+    { id: 'epoc', n: 57, pri: 'alta', subj: 'neumo', weeks: [8], title: 'EPOC', sub: 'Tabaco y leña, GOLD (grados y grupos A-B-E), LAMA/LABA, CSI por eosinófilos, O2 crónico y exacerbación' },
+    { id: 'neumonia', n: 58, pri: 'alta', subj: 'neumo', weeks: [9], title: 'Neumonía', sub: 'Agentes, CURB-65, criterios de UCI, antibiótico empírico por escenario, MRSA, Pseudomonas, nosocomial' },
+    { id: 'derrame', n: 59, pri: 'media', subj: 'neumo', weeks: [10], title: 'Derrame pleural', sub: 'Trasudado vs exudado (Light), análisis del líquido, paraneumónico, empiema, quilotórax y maligno' },
+    { id: 'tb', n: 60, pri: 'media', subj: 'neumo', weeks: [11], title: 'Tuberculosis', sub: 'Primaria y reactivación, Xpert y cultivo, RIPE, efectos adversos, TB latente (PPD/IGRA) y resistente' }
   ],
 
   ranks: [
