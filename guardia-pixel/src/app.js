@@ -671,7 +671,7 @@ function dailyCard() {
 }
 function todayBlocks() {
   const td = today();
-  if (td >= C.exam.date) return '<p class="muted">El parcial ya pasó. Puedes seguir practicando con todo lo que hay en la app.</p>';
+  if (td >= C.exam.date) return '<p class="muted">El examen ya pasó. Puedes seguir practicando con todo lo que hay en la app.</p>';
   const d = S.plan && S.plan.days.find((x) => x.date === td);
   if (!d) return td < C.exam.start
     ? `<p>Tu plan empieza ${diffDays(td, C.exam.start) === 1 ? 'mañana, ' : 'el '}<b>${fmtLong(C.exam.start)}</b>, con ${S.diag.done ? 'tu primer tema' : 'el diagnóstico de 30 preguntas (~30 min) y tu primer tema'}. Hoy descansa; si te sobran 5 minutos, abre la carta misteriosa.</p>`
@@ -696,9 +696,9 @@ VIEWS.home = (m) => {
   const el = clamp(diffDays(C.exam.start, td), 0, tot), done = topicsDone().size;
   const diagN = Object.keys(S.diag.ans).length, cq = cardQueue(), ed = errorsDue().length, daily = dailyCard();
   m.innerHTML = `
-  <section class="count gold" aria-label="Cuenta regresiva al parcial">${GEMS}
+  <section class="count gold" aria-label="Cuenta regresiva al examen">${GEMS}
     <p class="eyebrow">${esc(C.exam.label)} · ${esc(C.exam.weight)}</p>
-    <div class="count-row"><div class="bignum">${left}</div><div class="stack" style="gap:4px"><p class="px">${left === 1 ? 'día' : 'días'} para el parcial</p><p class="muted small">${fmtLong(C.exam.date)} · ${esc(C.exam.place)}</p></div></div>
+    <div class="count-row"><div class="bignum">${left}</div><div class="stack" style="gap:4px"><p class="px">${left === 1 ? 'día' : 'días'} para el examen</p><p class="muted small">${fmtLong(C.exam.date)} · ${esc(C.exam.place)}</p></div></div>
     <div class="meter"><span>Tiempo</span><div class="seg" style="--p:${el / tot}"><i></i></div><span>${el}/${tot} d</span></div>
     <div class="meter"><span>Temario</span><div class="seg ok" style="--p:${done / C.topics.length}"><i></i></div><span>${done}/${C.topics.length}</span></div>
   </section>
@@ -796,8 +796,8 @@ VIEWS.plan = (m) => {
   const left = S.plan.left || [];
   m.innerHTML = `
   <button class="btn small ghost" data-go="home" style="align-self:flex-start">← Inicio</button>
-  <h1>Plan hasta el parcial</h1>
-  <p class="muted">Ordenado por prioridad y por tus puntos débiles. Lo que ya empezaste va primero. Los temas nuevos de las semanas 5 y 6 aparecen después de su clase (27 oct y 3 nov). El 7 y 8 de noviembre son de simulacro.</p>
+  <h1>Plan hasta el examen</h1>
+  <p class="muted">Ordenado por prioridad y por tus puntos débiles. Lo que ya empezaste va primero. Cubre los ${C.topics.length} temas del curso; el ${fmtDay(C.exam.sim[0])} y el ${fmtDay(C.exam.sim[1])} son de simulacro y el día antes del examen es de repaso final.</p>
   <section class="panel"><h2>¿Cuánto tiempo tienes al día?</h2><div class="budget">${sel('wk', 'Lun, mié a vie (después del hospital)')}${sel('tue', 'Martes académico')}${sel('we', 'Sábado y domingo')}</div><button class="btn" data-act="replan">Rehacer el plan desde hoy</button>${S.diag.done ? '' : '<p class="small muted">Haz el diagnóstico para que el plan use tus temas débiles; por ahora solo usa la prioridad.</p>'}</section>
   ${left.length ? `<div class="note"><b>Con este tiempo no alcanza la vuelta completa de ${left.length} tema(s)</b>: ${left.map((id) => esc(TOP[id].title)).join(', ')}. Quedaron como “perlas rápidas” el ${fmtDay(C.exam.sim[1])}. Si puedes, sube tu tiempo diario.</div>` : `<div class="note"><b>Los ${C.topics.length} temas entran en el plan antes del examen.</b>${(S.plan.fit || 1) < 1 ? ' Para que quepan, los bloques de tema son más cortos de lo ideal: prioriza preguntas y perlas, y si puedes sube tu tiempo diario.' : ''}</div>`}
   <ol class="days">${days.map((d) => dayCard(d, d.date === td ? 'today' : d.date < td ? 'past' : '')).join('')}</ol>`;
@@ -2274,7 +2274,7 @@ VIEWS.taller = (m) => {
   const best = (k) => (WS()[k] != null ? ` · mejor ${pct(WS()[k])}%` : '');
   const tile = (go, t, d) => `<button class="tile" data-go="taller" data-a="${go}"><span class="t">${esc(t)}</span><span class="d">${esc(d)}</span></button>`;
   m.innerHTML = `<button class="btn small ghost" data-go="mas" style="align-self:flex-start">← Más</button><h1>Taller</h1>
-  <p class="muted">Lo que más se parece a las preguntas del parcial: decidir el siguiente paso, leer un estudio y ubicar un fármaco.</p>
+  <p class="muted">Lo que más se parece a las preguntas del examen: decidir el siguiente paso, leer un estudio y ubicar un fármaco.</p>
   <h2>Algoritmos con casos</h2><div class="tools">${Object.entries(C.algos).map(([id, A]) => tile('algo:' + id, A.title, `${A.cases.length} casos${best('algo:' + id)}`)).join('')}</div>
   <h2>Lee y escucha</h2><div class="tools">${tile('ecg:all', 'Taller de electros', `${Object.keys(C.ecg).length} patrones · lectura guiada${best('ecglab')}`)}${tile('soplos:all', 'Taller de soplos', `${Object.keys(C.soplos).length} ruidos y soplos para escuchar${best('soplos')}`)}${tile('frotis:all', 'Lee el frotis', `${Object.keys(C.frotis).length} hallazgos al azar`)}${tile('algo:gaso', 'Gasometría paso a paso', `${C.algos.gaso.cases.length} casos`)}</div>
   <h2>Simuladores de cardio</h2><div class="tools">${Object.entries(ECGSIM).map(([id, d]) => tile('xecg:' + id, d.title.replace('Simulador de ECG · ', 'ECG · '), TOP[id].title)).join('')}${Object.entries(HSSIM).map(([id, d]) => tile('xhs:' + id, d.title.replace('Simulador de soplos · ', 'Soplos · '), TOP[id].title)).join('')}</div>
@@ -3285,7 +3285,7 @@ VIEWS.perlas = (m) => {
 // ═══════════ Más: herramientas
 VIEWS.mas = (m) => {
   const tiles = [
-    ['plan', 'Plan', 'Día por día hasta el parcial'], ['diag', 'Diagnóstico', S.diag.done ? 'Ver tu mapa de calor' : '30 preguntas para empezar'],
+    ['plan', 'Plan', 'Día por día hasta el examen'], ['diag', 'Diagnóstico', S.diag.done ? 'Ver tu mapa de calor' : '30 preguntas para empezar'],
     ['sim', 'Simulacro', 'Con reloj, como el examen'], ['taller', 'Taller', 'Algoritmos, ECG, gasometría y simuladores'], ['calc', 'Calculadoras', 'Escalas que te explican el resultado'],
     ['comp', 'Comparadores', 'Lado a lado: × '], ['ruleta', 'Ruleta', '¿Cuál será tu enfermedad?'],
     ['videos', 'Videos', 'Un video por tema, con voz'], ['perlas', 'Perlas', 'Repaso final de un vistazo'], ['logros', 'Logros', `${Object.keys(S.ach).length} de ${ACH.length}`],

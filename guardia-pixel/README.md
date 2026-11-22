@@ -42,6 +42,13 @@ Los 30 temas tienen:
 - **🫀 Míralo en 3D** en la pestaña Video de los 30 temas: el órgano del tema (modelos de OrganUI / BodyParts3D) con lo
   afectado en rojo y la causa en naranja, etapas de la enfermedad, explicación al tocar y recorrido narrado
   (`src/content/80-organos3d.js`; ver `tools/organs3d/README.md`).
+- **Curso completo para el examen final (martes 22 de diciembre de 2026)**: 60 temas de las semanas 1 a 11 según los
+  resúmenes 1P y 2P/“FINAL Med Interna” y las guías de Drive. Se agregaron Cardio S7–S11 (`ic`, `bradi`, `taqui`), Endo
+  S8–S11 (`hipotiroidismo`, `hipertiroidismo`, `suprarrenal`, `calcio`), Gastro S7–S11 (`eii`, `ccr`, `hepatitis`,
+  `cirrosis`, `diverticular`), y dos materias nuevas: **Infectología** S1–S11 (`atb`, `micro`, `fod`, `sepsis`, `snc`, `vih`,
+  `iaas`, `endocarditis`, `vacunas`, `covid`) y **Neumología** S7–S11 (`asma`, `epoc`, `neumonia`, `derrame`, `tb`)
+  (`src/content/43-ic.js` … `69-covid.js`). Cada tema: lección, video narrado, 15–20 preguntas, tarjetas y recuadro de su
+  guía con “Ojo” vs guías actuales. Las materias con `nodiag: true` no entran al diagnóstico inicial de 30 preguntas.
 - **Endocrinología por semana del curso** (resumen 1P y Guía Endocrino de Drive): S1 `hipofnf` (adenoma no funcionante,
   hipopituitarismo, diabetes insípida y SIADH; `40-hipofnf.js`), S2 `hipofisis` (funcionantes), S3–S4 `dm2` (diabetes y
   antidiabéticos), S5 `cad` (cetoacidosis y estado hiperosmolar; `41-cad.js`), S6 `insulina` (insulinoterapia;

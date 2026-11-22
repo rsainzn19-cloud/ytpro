@@ -6,7 +6,7 @@ export default {
     date: '2026-12-22',
     start: '2026-11-22',
     label: 'Examen final de Medicina Interna',
-    place: 'Martes 22 de diciembre · aula por confirmar',
+    place: 'Aula por confirmar',
     weight: 'Curso completo · semanas 1 a 11',
     classes: { 5: '2026-10-27', 6: '2026-11-03' },
     sim: ['2026-12-19', '2026-12-20']
@@ -78,7 +78,12 @@ export default {
     { id: 'micro', n: 47, pri: 'baja', subj: 'infecto', weeks: [3], title: 'Laboratorio de microbiología', sub: 'Gram y otras tinciones, medios de cultivo, hemocultivos, CMI y antibiograma' },
     { id: 'fod', n: 48, pri: 'media', subj: 'infecto', weeks: [4], title: 'Fiebre y fiebre de origen desconocido', sub: 'Definición, causas (infección, cáncer, inflamatorias), abordaje escalonado, PET-CT y neutropenia febril' },
     { id: 'sepsis', n: 49, pri: 'alta', subj: 'infecto', weeks: [5], title: 'Sepsis y choque séptico', sub: 'Sepsis-3, SOFA y qSOFA, paquete de 1 hora, líquidos, norepinefrina, vasopresina, hidrocortisona y foco' },
-    { id: 'snc', n: 50, pri: 'alta', subj: 'infecto', weeks: [6], title: 'Infecciones del SNC', sub: 'Meningitis bacteriana (empírico, dexametasona, LCR), viral, TB y criptococo, encefalitis herpética y absceso' }
+    { id: 'snc', n: 50, pri: 'alta', subj: 'infecto', weeks: [6], title: 'Infecciones del SNC', sub: 'Meningitis bacteriana (empírico, dexametasona, LCR), viral, TB y criptococo, encefalitis herpética y absceso' },
+    { id: 'vih', n: 51, pri: 'alta', subj: 'infecto', weeks: [7], title: 'VIH', sub: 'Tamizaje y diagnóstico, TAR inmediato con inhibidor de integrasa, oportunistas por CD4, profilaxis, PrEP y PEP' },
+    { id: 'iaas', n: 52, pri: 'media', subj: 'infecto', weeks: [8], title: 'Infecciones intrahospitalarias', sub: 'Bacteriemia por catéter, IVU por sonda, neumonía nosocomial, sitio quirúrgico y C. difficile' },
+    { id: 'endocarditis', n: 53, pri: 'media', subj: 'infecto', weeks: [9], title: 'Endocarditis infecciosa', sub: 'Agentes, estigmas, hemocultivos y eco, criterios de Duke, tratamiento empírico, cirugía y profilaxis' },
+    { id: 'vacunas', n: 54, pri: 'baja', subj: 'infecto', weeks: [10], title: 'Vacunación del adulto', sub: 'Vacunas vivas y contraindicaciones, esquema por edad, embarazo, asplenia, tétanos y rabia' },
+    { id: 'covid', n: 55, pri: 'baja', subj: 'infecto', weeks: [11], title: 'COVID-19', sub: 'Diagnóstico, tratamiento por gravedad (nirmatrelvir, dexametasona, remdesivir, tocilizumab) y complicaciones' }
   ],
 
   ranks: [
