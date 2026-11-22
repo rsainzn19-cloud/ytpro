@@ -63,7 +63,12 @@ export default {
     { id: 'hipotiroidismo', n: 37, pri: 'media', subj: 'endo', weeks: [8], title: 'Hipotiroidismo', sub: 'Hashimoto, tiroiditis, TSH y T4 libre, subclínico, levotiroxina, embarazo y coma mixedematoso' },
     { id: 'hipertiroidismo', n: 38, pri: 'alta', subj: 'endo', weeks: [9], title: 'Hipertiroidismo y tormenta tiroidea', sub: 'Graves, nódulos tóxicos, tiroiditis, captación de yodo, metimazol/PTU, yodo radiactivo y tormenta' },
     { id: 'suprarrenal', n: 39, pri: 'media', subj: 'endo', weeks: [10], title: 'Insuficiencia suprarrenal e hiponatremia', sub: 'Addison vs secundaria, cosintropina, crisis suprarrenal y abordaje de la hiponatremia' },
-    { id: 'calcio', n: 40, pri: 'media', subj: 'endo', weeks: [11], title: 'Hipercalcemia y osteoporosis', sub: 'PTH, hiperparatiroidismo, cáncer, tratamiento agudo, DXA, FRAX y bisfosfonatos' }
+    { id: 'calcio', n: 40, pri: 'media', subj: 'endo', weeks: [11], title: 'Hipercalcemia y osteoporosis', sub: 'PTH, hiperparatiroidismo, cáncer, tratamiento agudo, DXA, FRAX y bisfosfonatos' },
+    { id: 'eii', n: 41, pri: 'media', subj: 'gastro', weeks: [7], title: 'Enfermedad inflamatoria intestinal', sub: 'Crohn vs CUCI, extraintestinales, Truelove-Witts, 5-ASA, esteroides, biológicos y megacolon tóxico' },
+    { id: 'ccr', n: 42, pri: 'media', subj: 'gastro', weeks: [8], title: 'Cáncer colorrectal y tamizaje', sub: 'Lynch, PAF, derecho vs izquierdo, estadificación, CEA y tamizaje por riesgo' },
+    { id: 'hepatitis', n: 43, pri: 'alta', subj: 'gastro', weeks: [9], title: 'Pruebas hepáticas y hepatitis', sub: 'Patrones hepatocelular y colestásico, virus A a E, serología de VHB, alcohol, paracetamol y autoinmune' },
+    { id: 'cirrosis', n: 44, pri: 'alta', subj: 'gastro', weeks: [10], title: 'Cirrosis y sus complicaciones', sub: 'Child-Pugh y MELD, ascitis y GASA, PBE, várices, encefalopatía y síndrome hepatorrenal' },
+    { id: 'diverticular', n: 45, pri: 'media', subj: 'gastro', weeks: [11], title: 'Enfermedad diverticular', sub: 'Sangrado diverticular, diverticulitis, TC, Hinchey, drenaje y cirugía' }
   ],
 
   ranks: [
