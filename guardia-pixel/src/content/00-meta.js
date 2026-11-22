@@ -73,7 +73,12 @@ export default {
     { id: 'epoc', n: 57, pri: 'alta', subj: 'neumo', weeks: [8], title: 'EPOC', sub: 'Tabaco y leña, GOLD (grados y grupos A-B-E), LAMA/LABA, CSI por eosinófilos, O2 crónico y exacerbación' },
     { id: 'neumonia', n: 58, pri: 'alta', subj: 'neumo', weeks: [9], title: 'Neumonía', sub: 'Agentes, CURB-65, criterios de UCI, antibiótico empírico por escenario, MRSA, Pseudomonas, nosocomial' },
     { id: 'derrame', n: 59, pri: 'media', subj: 'neumo', weeks: [10], title: 'Derrame pleural', sub: 'Trasudado vs exudado (Light), análisis del líquido, paraneumónico, empiema, quilotórax y maligno' },
-    { id: 'tb', n: 60, pri: 'media', subj: 'neumo', weeks: [11], title: 'Tuberculosis', sub: 'Primaria y reactivación, Xpert y cultivo, RIPE, efectos adversos, TB latente (PPD/IGRA) y resistente' }
+    { id: 'tb', n: 60, pri: 'media', subj: 'neumo', weeks: [11], title: 'Tuberculosis', sub: 'Primaria y reactivación, Xpert y cultivo, RIPE, efectos adversos, TB latente (PPD/IGRA) y resistente' },
+    { id: 'atb', n: 46, pri: 'alta', subj: 'infecto', weeks: [1, 2], title: 'Antibióticos', sub: 'Betalactámicos, vancomicina, 30S y 50S, quinolonas, metronidazol, TMP-SMX: mecanismo, cobertura y efectos adversos' },
+    { id: 'micro', n: 47, pri: 'baja', subj: 'infecto', weeks: [3], title: 'Laboratorio de microbiología', sub: 'Gram y otras tinciones, medios de cultivo, hemocultivos, CMI y antibiograma' },
+    { id: 'fod', n: 48, pri: 'media', subj: 'infecto', weeks: [4], title: 'Fiebre y fiebre de origen desconocido', sub: 'Definición, causas (infección, cáncer, inflamatorias), abordaje escalonado, PET-CT y neutropenia febril' },
+    { id: 'sepsis', n: 49, pri: 'alta', subj: 'infecto', weeks: [5], title: 'Sepsis y choque séptico', sub: 'Sepsis-3, SOFA y qSOFA, paquete de 1 hora, líquidos, norepinefrina, vasopresina, hidrocortisona y foco' },
+    { id: 'snc', n: 50, pri: 'alta', subj: 'infecto', weeks: [6], title: 'Infecciones del SNC', sub: 'Meningitis bacteriana (empírico, dexametasona, LCR), viral, TB y criptococo, encefalitis herpética y absceso' }
   ],
 
   ranks: [
