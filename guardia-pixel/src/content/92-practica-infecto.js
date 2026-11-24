@@ -117,7 +117,7 @@ export default {
         pcp: { end: 'TMP-SMX 21 días (+ prednisona si PaO2 menor de 70) y TAR en 2 semanas', d: 'La prednisona va antes o con el antibiótico.' }
       },
       cases: [
-        { t: 'Julio, 32 años, con disnea, LDH alta y vidrio despulido.', data: [['Prueba 4a gen.', 'Positiva'], ['CD4', '45'], ['PaO2', '62 mmHg']], path: { prueba: 0, conf: 2 }, end: 'pcp' },
+        { t: 'Rubén, 32 años, con disnea, LDH alta y vidrio despulido.', data: [['Prueba 4a gen.', 'Positiva'], ['CD4', '45'], ['PaO2', '62 mmHg']], path: { prueba: 0, conf: 2 }, end: 'pcp' },
         { t: 'Mujer de 26 años, asintomática, en control prenatal.', data: [['Prueba 4a gen.', 'Positiva'], ['CD4', '520']], path: { prueba: 0, conf: 0 }, end: 'tar' },
         { t: 'Hombre con fiebre, faringitis y exantema 3 semanas después de una exposición.', data: [['Prueba 4a gen.', 'Negativa']], path: { prueba: 1 }, end: 'cv' },
         { t: 'Hombre con VIH nuevo, CD4 de 30 y antígeno criptocócico en LCR positivo.', data: [['Presión de apertura', '40 cmH2O']], path: { prueba: 0, conf: 1 }, end: 'espera' }
@@ -159,7 +159,7 @@ export default {
         atb: { end: 'Antibiótico dirigido 4 a 6 semanas', d: 'MSSA: cefazolina u oxacilina. Estreptococo: penicilina o ceftriaxona. Enterococo: ampicilina + ceftriaxona.' }
       },
       cases: [
-        { t: 'Mauricio, 29 años, usa heroína IV, con fiebre y soplo tricuspídeo.', data: [['Hemocultivos', 'S. aureus en 3 sets'], ['Eco', 'Vegetación tricuspídea 14 mm'], ['IC', 'No']], path: { may: 0, def: 2 }, end: 'atb' },
+        { t: 'Saúl, 29 años, usa heroína IV, con fiebre y soplo tricuspídeo.', data: [['Hemocultivos', 'S. aureus en 3 sets'], ['Eco', 'Vegetación tricuspídea 14 mm'], ['IC', 'No']], path: { may: 0, def: 2 }, end: 'atb' },
         { t: 'Mujer con prótesis aórtica, fiebre y disnea súbita.', data: [['Hemocultivos', 'S. epidermidis en 3 sets'], ['Eco TE', 'Dehiscencia con insuficiencia grave'], ['Clínica', 'Edema pulmonar']], path: { may: 0, def: 0 }, end: 'cir' },
         { t: 'Hombre con valvulopatía mitral y fiebre tras extracción dental.', data: [['Hemocultivos', 'Viridans en 2 sets'], ['Eco TT', 'Sin vegetación'], ['Menores', 'Predisposición y fiebre']], path: { may: 1, men1: 1 }, end: 'pos' },
         { t: 'Hombre de 65 años con fiebre y PR que se alarga a diario.', data: [['Hemocultivos', 'S. aureus'], ['Eco TE', 'Absceso perivalvular aórtico'], ['ECG', 'Bloqueo AV de 1er grado nuevo']], path: { may: 0, def: 1 }, end: 'cir' }
@@ -277,7 +277,7 @@ export default {
       ] },
     { id: 'g-vih', topic: 'vih', subj: 'infecto',
       title: 'Tres semanas sin aire', place: 'Urgencias',
-      patient: { name: 'Julio', age: 32, sex: 'H', skin: '#D9A07A', hair: '#2A1A12', gown: '#5EEAD4' },
+      patient: { name: 'Rubén', age: 32, sex: 'H', skin: '#D9A07A', hair: '#2A1A12', gown: '#5EEAD4' },
       intro: 'Tos seca, fiebre y disnea progresiva por 3 semanas. Bajó 7 kg. Candidiasis oral. Nunca se ha hecho prueba de VIH.',
       extra: { label: 'CD4', unit: '' },
       start: { FC: 112, PAS: 118, PAD: 72, SpO2: 86, FR: 28, X: '?' },
@@ -309,7 +309,7 @@ export default {
       ] },
     { id: 'g-endocarditis', topic: 'endocarditis', subj: 'infecto',
       title: 'El soplo que cambia', place: 'Piso de medicina interna',
-      patient: { name: 'Mauricio', age: 29, sex: 'H', skin: '#D9A07A', hair: '#2A1A12', gown: '#5EEAD4' },
+      patient: { name: 'Saúl', age: 29, sex: 'H', skin: '#D9A07A', hair: '#2A1A12', gown: '#5EEAD4' },
       intro: 'Usa heroína IV. Dos semanas con fiebre, tos y dolor pleurítico. Soplo holosistólico tricuspídeo. Nódulos pulmonares cavitados.',
       extra: { label: 'T', unit: '°C' },
       start: { FC: 116, PAS: 104, PAD: 62, SpO2: 93, FR: 24, X: 39.4 },

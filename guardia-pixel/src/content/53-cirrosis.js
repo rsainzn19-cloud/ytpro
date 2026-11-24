@@ -9,26 +9,55 @@ export default {
       hook: 'La cirrosis se complica por hipertensión portal (várices, ascitis) y por falla hepática (encefalopatía, coagulopatía). Toda ascitis nueva o paciente cirrótico que empeora: paracentesis. Y el sangrado variceal: octreotida, ceftriaxona y ligadura.',
       nn: [], yt: 'cirrhosis complications ascites SBP variceal bleeding hepatic encephalopathy',
       video: [
-        { ch: 'Hipertensión portal y ascitis', sc: [
-          { v: { k: 'title', t: 'Cirrosis', s: 'Semana 10 · Gastroenterología' },
-            say: 'Semana diez: la cirrosis, el hígado convertido en cicatriz. Las causas principales son el alcohol, la hepatitis C, la B y el hígado graso metabólico. Las complicaciones vienen de dos lados: la presión portal alta y el hígado que ya no funciona.' },
-          { v: { k: 'list', t: 'Complicaciones', items: ['Ascitis', 'Peritonitis bacteriana espontánea', 'Várices y sangrado', 'Encefalopatía hepática', 'Síndrome hepatorrenal', 'Hepatocarcinoma'] },
-            say: 'Las complicaciones: ascitis, peritonitis bacteriana espontánea, várices que sangran, encefalopatía, síndrome hepatorrenal y hepatocarcinoma.' },
-          { v: { k: 'vs', a: 'GASA 1.1 o más', b: 'GASA menor de 1.1', rows: [['Qué indica', 'Hipertensión portal', 'Sin hipertensión portal'], ['Causas', 'Cirrosis, IC, Budd-Chiari', 'Carcinomatosis, TB, pancreatitis, nefrótico']] },
-            say: 'En toda ascitis nueva se hace paracentesis y se calcula el gradiente de albúmina suero ascitis. Si es uno punto uno o más, hay hipertensión portal, como en la cirrosis. Si es menor, piensa en cáncer peritoneal, tuberculosis o pancreatitis.' },
-          { v: { k: 'list', t: 'Tratamiento de la ascitis', items: ['Sodio menor de 2 g al día', 'Espironolactona con furosemida, 100 a 40', 'Paracentesis evacuadora con albúmina', 'Refractaria: TIPS o trasplante'] },
-            say: 'La ascitis se trata con restricción de sodio y diuréticos: espironolactona con furosemida en proporción cien a cuarenta. Si es a tensión, paracentesis evacuadora; si se sacan más de cinco litros, se repone con albúmina.' }
+        { ch: 'El hígado cicatrizado', sc: [
+          { v: { k: 'title', t: 'Cirrosis y sus complicaciones', s: 'Semana 10 · Gastroenterología' },
+            say: 'Semana diez: la cirrosis. Es el final común de cualquier daño hepático crónico: el hígado se llena de cicatriz y nódulos, pierde función y la sangre de la porta ya no pasa. De ahí salen las complicaciones que preguntan: ascitis, peritonitis, várices, encefalopatía y síndrome hepatorrenal.' },
+          { v: { k: 'case', t: 'Vomita sangre', p: { name: 'Héctor', age: 54, sex: 'H', skin: '#C98B62', hair: '#9A9A9A', gown: '#5BA7E0' }, text: 'Cirrosis por alcohol, con ascitis. Hematemesis abundante hace una hora. Somnoliento, con asterixis.', vit: { PA: '88/50', FC: '120', Hb: '7.2', Plaq: '68 000' } },
+            say: 'Héctor tiene cincuenta y cuatro años y cirrosis por alcohol con ascitis. Hace una hora vomitó sangre en abundancia. Está somnoliento y tiene asterixis. La presión es de ochenta y ocho sobre cincuenta, la frecuencia de ciento veinte y la hemoglobina de siete punto dos.' },
+          { v: { k: 'list', t: 'Causas', items: ['Alcohol', 'Hígado graso metabólico', 'Hepatitis C y B', 'Autoinmune, CBP, CEP', 'Hemocromatosis, Wilson, alfa-1 antitripsina'] },
+            say: 'Las causas principales son el alcohol, el hígado graso metabólico y las hepatitis C y B. Menos comunes: hepatitis autoinmune, colangitis biliar primaria, colangitis esclerosante, hemocromatosis, Wilson y deficiencia de alfa uno antitripsina.' },
+          { v: { k: 'vs', a: 'Hipertensión portal', b: 'Insuficiencia hepatocelular', rows: [['Ascitis', 'Sí', '—'], ['Várices, cabeza de medusa', 'Sí', '—'], ['Esplenomegalia, plaquetas bajas', 'Sí', '—'], ['Ictericia, INR alto', '—', 'Sí'], ['Albúmina baja, asterixis', '—', 'Sí'], ['Arañas, ginecomastia', '—', 'Estrógenos altos']] },
+            say: 'Los signos salen de dos problemas. La hipertensión portal da ascitis, várices, circulación colateral en cabeza de medusa, esplenomegalia y plaquetas bajas. La insuficiencia del hepatocito da ictericia, INR alto, albúmina baja y encefalopatía con asterixis. Y como el hígado no degrada estrógenos, aparecen arañas vasculares, eritema palmar y ginecomastia.' },
+          { v: { k: 'vs', a: 'Child-Pugh', b: 'MELD', rows: [['Mide', 'Bilirrubina, albúmina, INR, ascitis, encefalopatía', 'Bilirrubina, INR, creatinina, sodio'], ['Clases', 'A 5 a 6, B 7 a 9, C 10 a 15', 'Número'], ['Uso', 'Pronóstico general', 'Prioridad de trasplante'], ['Referir', '—', 'MELD 15 o más']] },
+            say: 'El pronóstico se mide con Child Pugh, que usa bilirrubina, albúmina, INR, ascitis y encefalopatía y clasifica en A, B y C. Y con MELD, que usa bilirrubina, INR, creatinina y sodio, y decide la prioridad para trasplante: se refiere con MELD de quince o más. Todo cirrótico necesita ultrasonido con o sin alfafetoproteína cada seis meses para buscar hepatocarcinoma, y endoscopia para buscar várices.' }
         ] },
-        { ch: 'Las urgencias', sc: [
-          { v: { k: 'case', t: 'Vomita sangre', p: { name: 'Héctor', age: 54, sex: 'H', skin: '#C98B62', hair: '#9A9A9A', gown: '#5BA7E0' }, text: 'Cirrosis por alcohol. Hematemesis abundante, PA 88/50, FC 120.', vit: { PA: '88/50', Hb: '7.2' } },
-            say: 'Héctor tiene cirrosis por alcohol y llega vomitando sangre, con presión de ochenta y ocho sobre cincuenta.' },
-          { v: { k: 'flow', t: 'Sangrado variceal', steps: ['Vía aérea y 2 vías gruesas', 'Transfundir con Hb de 7', 'Octreotida IV', 'Ceftriaxona', 'Ligadura endoscópica en 12 h'] },
-            say: 'Protege la vía aérea, dos vías gruesas, transfunde de forma restrictiva con hemoglobina menor de siete, octreotida intravenosa, ceftriaxona profiláctica y ligadura endoscópica en las primeras doce horas.' },
-          { v: { k: 'quiz', q: 'Cirrótico con ascitis, fiebre y dolor abdominal. Paracentesis: 380 neutrófilos. ¿Qué tiene?', opts: ['Ascitis normal', 'Peritonitis bacteriana espontánea', 'Peritonitis secundaria segura'], a: 1 },
-            say: 'Pausa. Un cirrótico con ascitis, fiebre y dolor abdominal. La paracentesis tiene trescientos ochenta neutrófilos. ¿Qué tiene?',
-            exp: 'Peritonitis bacteriana espontánea: doscientos cincuenta o más neutrófilos. Se trata con cefotaxima o ceftriaxona y albúmina para prevenir el síndrome hepatorrenal.' },
-          { v: { k: 'mnemo', t: 'Sangrado variceal: octreotida, ceftriaxona, ligadura', d: 'Y luego propranolol o carvedilol + ligaduras para que no vuelva a sangrar.' },
-            say: 'Llévate esto: sangrado variceal, octreotida, ceftriaxona y ligadura. Encefalopatía, lactulosa y rifaximina. Peritonitis, cefalosporina y albúmina.' }
+        { ch: 'Ascitis y peritonitis', sc: [
+          { v: { k: 'big', h: 'Gradiente albúmina suero-ascitis', t: '≥1.1', s: 'Hipertensión portal: cirrosis, IC, Budd-Chiari. Menor de 1.1: carcinomatosis, TB, pancreatitis, nefrótico.' },
+            say: 'Toda ascitis nueva y todo cirrótico hospitalizado se puncionan. El dato clave es el gradiente entre la albúmina del suero y la del líquido: si es de uno punto uno o más, la ascitis es por hipertensión portal; si es menor, piensa en carcinomatosis, tuberculosis, pancreatitis o síndrome nefrótico.' },
+          { v: { k: 'flow', t: 'Tratar la ascitis', steps: ['Sodio menor de 2 g al día', 'Espironolactona + furosemida 100 a 40', 'Sin AINE ni IECA', 'Paracentesis de más de 5 L: albúmina 6 a 8 g por litro', 'Refractaria: TIPS o trasplante'] },
+            say: 'La ascitis se trata con restricción de sodio a menos de dos gramos al día y espironolactona con furosemida en proporción de cien a cuarenta. Nada de antiinflamatorios ni inhibidores de la enzima convertidora. Si se sacan más de cinco litros por paracentesis, se reponen seis a ocho gramos de albúmina por litro. Y la refractaria se maneja con paracentesis seriadas, TIPS o trasplante.' },
+          { v: { k: 'list', t: 'Peritonitis bacteriana espontánea', items: ['PMN en líquido 250 o más', 'E. coli, Klebsiella', 'Ceftriaxona o cefotaxima', '+ albúmina 1.5 g/kg día 1 y 1 g/kg día 3', 'Profilaxis después con ciprofloxacino'] },
+            say: 'La peritonitis bacteriana espontánea se diagnostica con doscientos cincuenta neutrófilos o más por milímetro cúbico en el líquido. La causan E. coli y Klebsiella. Se trata con ceftriaxona o cefotaxima más albúmina, uno punto cinco gramos por kilo el primer día y uno el tercero, porque la albúmina previene el síndrome hepatorrenal. Después queda con profilaxis.' },
+          { v: { k: 'quiz', q: 'Cirrótico con fiebre y dolor abdominal. Líquido de ascitis con 480 PMN. ¿Qué das?', opts: ['Ceftriaxona sola', 'Ceftriaxona + albúmina', 'Esperar el cultivo'], a: 1 },
+            say: 'Pausa. Cirrótico con fiebre y dolor abdominal. Su líquido de ascitis tiene cuatrocientos ochenta neutrófilos. ¿Qué das?',
+            exp: 'Ceftriaxona más albúmina intravenosa. Con doscientos cincuenta neutrófilos o más ya es peritonitis bacteriana espontánea, no esperes el cultivo. La albúmina reduce el síndrome hepatorrenal y la mortalidad.' }
+        ] },
+        { ch: 'Sangrado por várices', sc: [
+          { v: { k: 'flow', t: 'Sangrado variceal agudo', steps: ['Vía aérea: intubar si hay riesgo de aspiración', 'Transfundir solo si Hb menor de 7', 'Octreotida o terlipresina IV', 'Ceftriaxona 1 g al día por 7 días', 'Endoscopia con ligadura en 12 h o menos', 'Falla: balón como puente y TIPS'] },
+            say: 'El sangrado por várices se maneja así: primero la vía aérea, e intubar si hay riesgo de aspiración. Transfusión restrictiva, solo con hemoglobina menor de siete, porque transfundir de más sube la presión portal. Octreotida o terlipresina intravenosa. Ceftriaxona por siete días, que reduce infecciones, resangrado y muerte. Endoscopia con ligadura en las primeras doce horas. Y si falla, sonda de balón como puente a TIPS.' },
+          { v: { k: 'vs', a: 'Profilaxis primaria', b: 'Profilaxis secundaria', rows: [['Quién', 'Várices grandes o con puntos rojos', 'Ya sangró'], ['Qué', 'Betabloqueador no selectivo o ligadura', 'Betabloqueador + ligaduras seriadas'], ['Betabloqueador', 'Propranolol, nadolol, carvedilol', 'Igual']] },
+            say: 'Para prevenir el primer sangrado, en várices grandes o con puntos rojos, betabloqueador no selectivo, como propranolol o carvedilol, o ligadura. Después de un sangrado, ambos: betabloqueador más ligaduras seriadas.' },
+          { v: { k: 'tip', kind: 'trap', t: 'Transfundir a Hb de 10 en sangrado variceal aumenta el resangrado y la muerte: meta 7 a 8.' },
+            say: 'Trampa: transfundir para llevar la hemoglobina a diez. En el sangrado variceal, transfundir de más eleva la presión portal y aumenta el resangrado y la mortalidad. La meta es siete a ocho.' }
+        ] },
+        { ch: 'Encefalopatía y riñón', sc: [
+          { v: { k: 'list', t: 'Encefalopatía: busca el desencadenante', items: ['Sangrado digestivo', 'Infección (PBE)', 'Estreñimiento', 'Hipokalemia, deshidratación, diuréticos', 'Benzodiacepinas u opioides'] },
+            say: 'La encefalopatía hepática va desde cambios sutiles hasta el coma, con asterixis. Casi siempre hay un desencadenante que buscar: sangrado digestivo, infección como la peritonitis espontánea, estreñimiento, hipokalemia, deshidratación por diuréticos, o benzodiacepinas y opioides.' },
+          { v: { k: 'list', t: 'Tratamiento', items: ['Corregir el desencadenante', 'Lactulosa: 2 a 3 evacuaciones blandas al día', 'Rifaximina para prevenir recurrencias', 'El amonio no sirve para seguimiento'] },
+            say: 'Se corrige el desencadenante y se da lactulosa hasta lograr dos o tres evacuaciones blandas al día; la rifaximina se agrega para prevenir recurrencias. El amonio sérico no sirve para diagnosticar ni para seguir la evolución: el diagnóstico es clínico.' },
+          { v: { k: 'list', t: 'Síndrome hepatorrenal', items: ['Lesión renal sin otra causa', 'Sin respuesta a 2 días de albúmina y sin diurético', 'Sin choque ni nefrotóxicos; sedimento normal', 'Terlipresina + albúmina', 'Definitivo: trasplante'] },
+            say: 'El síndrome hepatorrenal es una lesión renal funcional por vasoconstricción renal. Se diagnostica cuando no responde a dos días de suspender diuréticos y dar albúmina, sin choque, sin nefrotóxicos y con sedimento normal. Se trata con terlipresina más albúmina, y lo definitivo es el trasplante.' },
+          { v: { k: 'quiz', q: 'Héctor tras el sangrado: más somnoliento, asterixis, 3 días sin evacuar. ¿Qué das?', opts: ['Haloperidol', 'Lactulosa y buscar el desencadenante', 'Flumazenil'], a: 1 },
+            say: 'Pausa. Después del sangrado, Héctor está más somnoliento, con asterixis y tres días sin evacuar. ¿Qué das?',
+            exp: 'Lactulosa, y corregir los desencadenantes: el sangrado digestivo aporta proteína al intestino y el estreñimiento la mantiene. Nada de sedantes.' }
+        ] },
+        { ch: 'Cierre del caso', sc: [
+          { v: { k: 'list', t: 'Héctor: final del caso', items: ['Intubado por somnolencia y hematemesis', 'Terlipresina + ceftriaxona', 'Ligadura de várices a las 6 h', 'Child C: TIPS preventivo en 72 h', 'Lactulosa; propranolol al egreso'] },
+            say: 'A Héctor lo intuban por somnolencia con hematemesis, recibe terlipresina y ceftriaxona, y a las seis horas le ligan las várices. Por ser Child C, le colocan un TIPS preventivo en las primeras setenta y dos horas. Inicia lactulosa y egresa con propranolol, abstinencia de alcohol y referencia a trasplante.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Todo cirrótico con sangrado digestivo recibe ceftriaxona 7 días, aunque no tenga fiebre.' },
+            say: 'Perla: todo cirrótico con sangrado digestivo recibe ceftriaxona por siete días, aunque no tenga fiebre. Reduce infecciones, resangrado y mortalidad.' },
+          { v: { k: 'mnemo', t: 'GASA ≥1.1 · PMN ≥250 · Hb 7', d: 'PBE: ceftriaxona + albúmina. Várices: vasoactivo + ceftriaxona + ligadura ≤12 h. Encefalopatía: lactulosa y desencadenante.' },
+            say: 'Llévate tres números: gradiente de uno punto uno, doscientos cincuenta neutrófilos y hemoglobina de siete. Ahora juega la guardia de Héctor y mueve el MELD en el simulador del taller.' }
         ] }
       ],
       sections: [

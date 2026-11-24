@@ -9,21 +9,45 @@ export default {
       hook: 'Los divertículos sangran (sangrado indoloro, abundante) o se inflaman (diverticulitis: dolor en fosa iliaca izquierda, fiebre y leucocitosis). La diverticulitis se confirma con TC, nunca con colonoscopia en la fase aguda.',
       nn: [], yt: 'diverticulitis diverticular bleeding Hinchey',
       video: [
-        { ch: 'Diverticulosis y diverticulitis', sc: [
+        { ch: 'Diverticulosis', sc: [
           { v: { k: 'title', t: 'Enfermedad diverticular', s: 'Semana 11 · Gastroenterología' },
-            say: 'Semana once: los divertículos, bolsitas de mucosa que salen por los puntos débiles del colon, sobre todo en el sigmoides, por la presión alta del estreñimiento crónico y la dieta baja en fibra.' },
-          { v: { k: 'vs', a: 'Sangrado diverticular', b: 'Diverticulitis', rows: [['Dolor', 'No', 'FII, fiebre'], ['Lado', 'Más el derecho', 'Más el izquierdo'], ['Estudio', 'Colonoscopia', 'TC con contraste'], ['Tratamiento', 'Suele parar solo', 'Antibiótico o drenaje']] },
-            say: 'Pueden dar dos problemas distintos. El sangrado diverticular es abundante e indoloro, es la causa más común de sangrado digestivo bajo y suele parar solo. La diverticulitis es inflamación: dolor en la fosa iliaca izquierda, fiebre y leucocitosis.' },
-          { v: { k: 'case', t: 'Dolor en FII', p: { name: 'Julio', age: 64, sex: 'H', skin: '#C98B62', hair: '#9A9A9A', gown: '#5BA7E0' }, text: 'Dolor en fosa iliaca izquierda de 2 días, fiebre 38.3, leucocitos 15,000. TC: engrosamiento del sigmoides sin absceso.', vit: { T: '38.3', Leu: '15K' } },
-            say: 'Julio tiene sesenta y cuatro años, dolor en la fosa iliaca izquierda desde hace dos días, fiebre y leucocitosis. La tomografía muestra inflamación del sigmoides sin absceso: diverticulitis no complicada.' }
+            say: 'Semana once: la enfermedad diverticular. Tener divertículos es muy común después de los sesenta y casi nunca da síntomas. Lo que importa son sus dos complicaciones, que se comportan al revés: la diverticulitis duele y no sangra, y el sangrado diverticular sangra y no duele.' },
+          { v: { k: 'case', t: 'Dolor en fosa iliaca izquierda', p: { name: 'Don Julio', age: 64, sex: 'H', skin: '#C98B62', hair: '#9A9A9A', gown: '#5BA7E0' }, text: 'Dos días con dolor en fosa iliaca izquierda, náusea y fiebre. Dolor a la palpación profunda sin rebote.', vit: { T: '38.3', FC: '98', Leucos: '15 000', PCR: '120' } },
+            say: 'Don Julio tiene sesenta y cuatro años y dos días con dolor en la fosa iliaca izquierda, náusea y fiebre de treinta y ocho punto tres. Le duele a la palpación profunda pero no tiene rebote. Sus leucocitos son de quince mil.' },
+          { v: { k: 'list', t: 'Por qué aparecen', items: ['Divertículos falsos: mucosa y submucosa', 'Presión alta dentro del colon', 'Salen donde entran los vasos', 'Sigmoides en occidente', 'Factores: poca fibra, estreñimiento, obesidad, AINE'] },
+            say: 'Son divertículos falsos: solo la mucosa y la submucosa se hernian por los puntos débiles donde los vasos atraviesan la pared, empujadas por la presión alta dentro del colon. En occidente predominan en el sigmoides. Los favorecen la dieta baja en fibra, el estreñimiento, la obesidad, el sedentarismo, el tabaco y los antiinflamatorios. Las semillas y las nueces no aumentan el riesgo.' }
         ] },
-        { ch: 'Tratamiento', sc: [
-          { v: { k: 'flow', t: 'Según la TC', steps: ['No complicada: casa, dieta líquida, analgésico', 'Antibiótico si hay riesgo', 'Absceso mayor de 3 a 4 cm: drenaje percutáneo', 'Peritonitis: cirugía'] },
-            say: 'La no complicada en un paciente sano se maneja en casa con dieta líquida y analgésico; el antibiótico se da a los de alto riesgo. Un absceso mayor de tres o cuatro centímetros se drena por vía percutánea. Y la peritonitis purulenta o fecal es cirugía urgente.' },
-          { v: { k: 'tip', kind: 'trap', t: 'No hagas colonoscopia en la diverticulitis aguda: riesgo de perforación. Hazla 6–8 semanas después para descartar cáncer.' },
-            say: 'No hagas colonoscopia en la fase aguda, por el riesgo de perforar. Se hace seis a ocho semanas después, para descartar un cáncer que se pareciera.' },
-          { v: { k: 'mnemo', t: 'Diverticulitis: dolor FII + fiebre + leucocitosis', d: 'TC para confirmar y clasificar (Hinchey); colonoscopia diferida.' },
-            say: 'Llévate la tríada: dolor en fosa iliaca izquierda, fiebre y leucocitosis. Tomografía para confirmar.' }
+        { ch: 'Diverticulitis', sc: [
+          { v: { k: 'list', t: 'Clínica', items: ['Dolor en fosa iliaca izquierda', 'Fiebre y leucocitosis', 'Cambio del hábito intestinal', 'Masa palpable', 'Disuria si toca la vejiga'] },
+            say: 'La diverticulitis es la inflamación por microperforación de un divertículo: dolor en la fosa iliaca izquierda, fiebre, leucocitosis y cambio del hábito intestinal. Puede palparse una masa, y si la inflamación toca la vejiga, hay disuria.' },
+          { v: { k: 'big', h: 'Estudio de elección', t: 'TC con contraste', s: 'Engrosamiento, grasa inflamada, absceso, aire libre. Nada de colonoscopia ni enema en fase aguda.' },
+            say: 'El estudio de elección es la tomografía de abdomen y pelvis con contraste: muestra engrosamiento de la pared, grasa inflamada y complicaciones como absceso o aire libre. En la fase aguda no se hace colonoscopia ni enema, porque pueden perforar.' },
+          { v: { k: 'list', t: 'Clasificación de Hinchey', items: ['I: absceso pericólico', 'II: absceso pélvico o a distancia', 'III: peritonitis purulenta', 'IV: peritonitis fecal'] },
+            say: 'Las complicadas se clasifican con Hinchey: uno, absceso pericólico; dos, absceso pélvico o a distancia; tres, peritonitis purulenta; y cuatro, peritonitis fecal.' },
+          { v: { k: 'vs', a: 'No complicada', b: 'Complicada', rows: [['Dónde', 'Casa si tolera la vía oral', 'Hospital'], ['Antibiótico', 'Selectivo: solo si hay riesgo', 'IV siempre'], ['Absceso mayor de 3 a 4 cm', '—', 'Drenaje percutáneo'], ['Peritonitis', '—', 'Cirugía: Hartmann o resección']] },
+            say: 'La no complicada se trata en casa si tolera la vía oral, con dieta líquida y analgesia, y el antibiótico es selectivo: solo en inmunosuprimidos, ancianos frágiles, sepsis o datos de riesgo en la tomografía, con amoxicilina clavulanato. La complicada se hospitaliza con antibiótico intravenoso; un absceso de más de tres o cuatro centímetros se drena por vía percutánea; y la peritonitis purulenta o fecal va a cirugía.' },
+          { v: { k: 'quiz', q: 'Don Julio: TC con absceso pericólico de 5 cm, estable. ¿Qué haces?', opts: ['Antibiótico oral en casa', 'Antibiótico IV + drenaje percutáneo', 'Colectomía de urgencia'], a: 1 },
+            say: 'Pausa. La tomografía de don Julio muestra un absceso pericólico de cinco centímetros. Está estable. ¿Qué haces?',
+            exp: 'Hospitalizar con antibiótico intravenoso y drenaje percutáneo guiado por imagen. Es Hinchey uno con absceso mayor de cuatro centímetros. La cirugía urgente queda para la peritonitis.' }
+        ] },
+        { ch: 'Sangrado diverticular', sc: [
+          { v: { k: 'list', t: 'Sangrado diverticular', items: ['Causa #1 de sangrado bajo en adultos', 'Hematoquecia abundante e INDOLORA', 'Más en colon derecho', 'Cede solo en 80%'] },
+            say: 'El sangrado diverticular es la causa más común de sangrado digestivo bajo en adultos: hematoquecia abundante y sin dolor, más del colon derecho, que cede solo en ochenta por ciento de los casos. Duele la diverticulitis; el sangrado, no.' },
+          { v: { k: 'flow', t: 'Manejo', steps: ['Reanimar', 'Sangrado masivo: descartar fuente alta', 'Estable: colonoscopia tras preparación en 24 h', 'Inestable: angio-TC y embolización', 'Persiste: cirugía'] },
+            say: 'Se reanima primero. Si el sangrado es masivo, se descarta una fuente alta con endoscopia, porque un sangrado alto rápido también puede salir rojo. Si está estable, colonoscopia en las primeras veinticuatro horas tras preparación, que diagnostica y puede poner clips. Si está inestable, angiotomografía y embolización. Y si persiste, cirugía.' },
+          { v: { k: 'quiz', q: 'Mujer de 78 años con hematoquecia abundante sin dolor, PA 86/50 que no mejora con volumen. ¿Siguiente paso?', opts: ['Colonoscopia mañana tras preparación', 'Angio-TC para localizar y embolizar', 'Observar: cede sola'], a: 1 },
+            say: 'Pausa. Mujer de setenta y ocho años con hematoquecia abundante sin dolor, presión de ochenta y seis sobre cincuenta que no mejora con volumen. ¿Qué sigue?',
+            exp: 'Angiotomografía para localizar el sitio y embolizar. Inestable a pesar de la reanimación no puede esperar la preparación de una colonoscopia.' }
+        ] },
+        { ch: 'Después y cierre', sc: [
+          { v: { k: 'list', t: 'Después de la diverticulitis', items: ['Colonoscopia a las 6 a 8 semanas', 'Descartar cáncer', 'Cirugía electiva individualizada', 'Fístula colovesical: neumaturia, fecaluria', 'Prevención: fibra, ejercicio, peso'] },
+            say: 'Seis a ocho semanas después de una diverticulitis se hace colonoscopia si no tiene una reciente, porque un cáncer puede simularla. La cirugía electiva ya no se decide por número de episodios, sino por fístula, estenosis, recurrencias que afectan la calidad de vida o inmunosupresión. Una fístula colovesical da aire y heces en la orina e infecciones urinarias repetidas.' },
+          { v: { k: 'list', t: 'Don Julio: final del caso', items: ['TC: absceso de 5 cm, Hinchey I', 'Drenaje percutáneo + antibiótico IV', 'Alta al día 5 con antibiótico oral', 'Colonoscopia a las 8 semanas: sin cáncer', 'Fibra y ejercicio'] },
+            say: 'Don Julio tiene un absceso de cinco centímetros, Hinchey uno. Le colocan drenaje percutáneo y recibe antibiótico intravenoso. Se va al quinto día con antibiótico oral. A las ocho semanas, la colonoscopia no muestra cáncer.' },
+          { v: { k: 'tip', kind: 'trap', t: 'Diverticulitis aguda: NO colonoscopia ni enema. TC con contraste; colonoscopia hasta 6 a 8 semanas después.' },
+            say: 'La trampa de siempre: pedir colonoscopia en la diverticulitis aguda. Primero tomografía; la colonoscopia hasta seis a ocho semanas después.' },
+          { v: { k: 'mnemo', t: 'Diverticulitis duele, sangrado no', d: 'Diverticulitis: TC, absceso >3–4 cm drenaje, peritonitis cirugía. Sangrado: indoloro, derecho; inestable → angio-TC.' },
+            say: 'Llévate esto: la diverticulitis duele, el sangrado diverticular no. Ahora practica en el algoritmo del taller.' }
         ] }
       ],
       sections: [
