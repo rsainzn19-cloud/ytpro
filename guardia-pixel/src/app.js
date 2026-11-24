@@ -606,6 +606,7 @@ const STATIC = {
   snd: () => { S.settings.sound = !S.settings.sound; save(); if (route.v === 'ajustes') render(); else hud(); beep('ok'); toast(S.settings.sound ? 'Sonido activado' : 'Sonido apagado'); }
 };
 const STATIC_CHG = {
+  slider: (el) => { const sec = el.closest('section'); if (sec && sec._sl) sec._sl(+el.value); },
   chk: (el) => {
     const k = el.dataset.k; S.checks[k] = el.checked;
     el.closest('.blk').classList.toggle('done', el.checked);
@@ -1927,6 +1928,28 @@ const SIMS = {
   cascada: { title: 'Cascada de coagulación: qué alarga el TP o el TTPa', topics: ['sangrado'], mount: (sec) => { sec.innerHTML = '<h2>Simulador · Cascada de coagulación</h2><p class="small muted">Elige el problema y mira qué factores fallan y qué prueba se altera; o ponte a prueba.</p><div class="fvbox"></div>'; fvCascada(sec.querySelector('.fvbox')); } },
   mapaanemia: { title: 'Mapa de la anemia: VCM y reticulocitos', topics: ['anemias', 'hemoliticas'], mount: (sec) => { sec.innerHTML = '<h2>Simulador · Mapa de la anemia</h2><div class="fvbox"></div>'; fvMapa(sec.querySelector('.fvbox')); } }
 };
+// Simuladores de un control (C.sliders en src/content/9x-*.js): mueve el valor y lee qué significa.
+// { title, topics, label, unit, min, max, step, start, bands: [[hasta, nombre, 'ok'|'warn'|'bad', texto]] }
+for (const [id, D] of Object.entries(C.sliders || {})) SIMS[id] = { title: D.title, topics: D.topics, mount: (sec) => simSlider(sec, id, D) };
+function simSlider(sec, id, D) {
+  let v = D.start, lo = D.min, hi = D.max;
+  const fmt = (x) => (D.step < 1 ? x.toFixed(String(D.step).split('.')[1].length) : String(x));
+  const pos = (x) => ((x - lo) / (hi - lo)) * 100;
+  let prev = lo;
+  const strip = D.bands.map(([to, , lv]) => { const a = pos(prev), b = pos(Math.min(to, hi)); prev = to; return `<i style="left:${a}%;width:${Math.max(0, b - a)}%;background:var(--${lv})"></i>`; }).join('');
+  sec.innerHTML = `<h2>Simulador · ${esc(D.title)}</h2>${D.intro ? `<p class="small muted">${esc(D.intro)}</p>` : ''}
+    <label class="sl"><span>${esc(D.label)}</span><b class="slv"></b><input type="range" min="${lo}" max="${hi}" step="${D.step}" value="${v}" data-inp="slider" data-id="${id}" aria-label="${esc(D.label)}"></label>
+    <div class="slstrip" aria-hidden="true">${strip}<em></em></div><div class="simout" aria-live="polite"></div>`;
+  const out = sec.querySelector('.simout'), mk = sec.querySelector('.slstrip em');
+  const draw = () => {
+    const b = D.bands.find((x) => v <= x[0]) || D.bands[D.bands.length - 1];
+    sec.querySelector('.slv').textContent = `${fmt(v)}${D.unit ? ' ' + D.unit : ''}`;
+    mk.style.left = pos(v) + '%';
+    out.innerHTML = `<p class="chip" style="--sc:var(--${b[2]})">${esc(b[1])}</p><p>${b[3]}</p>`;
+  };
+  sec._sl = (x) => { v = x; draw(); };
+  draw();
+}
 function mountSim(host, sid) {
   const sec = document.createElement('section');
   sec.className = 'panel sim'; host.appendChild(sec);

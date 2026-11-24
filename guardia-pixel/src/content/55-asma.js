@@ -9,23 +9,57 @@ export default {
       hook: 'El asma es obstrucción reversible: la espirometría con broncodilatador lo demuestra. Hoy nadie con asma debe usar solo salbutamol: el rescate preferido es budesonida-formoterol. Y en la crisis: O₂, SABA, esteroide sistémico y magnesio si no responde.',
       nn: [], yt: 'asthma GINA steps exacerbation management',
       video: [
-        { ch: 'Diagnóstico', sc: [
+        { ch: 'Qué es el asma', sc: [
           { v: { k: 'title', t: 'Asma', s: 'Semana 7 · Neumología' },
-            say: 'Semana siete de neumología: el asma. Es inflamación crónica de la vía aérea con hiperreactividad y obstrucción que va y viene: tos, sibilancias, disnea y opresión, peor en la noche, con el ejercicio, el frío o los alérgenos.' },
-          { v: { k: 'list', t: 'Espirometría', items: ['FEV1 entre FVC menor de 0.7', 'Mejora 12 por ciento y 200 mL con broncodilatador', 'Si es normal: reto con metacolina', 'Variabilidad del flujo pico'] },
-            say: 'La espirometría confirma: hay obstrucción y mejora al menos doce por ciento y doscientos mililitros con el broncodilatador. Si sale normal pero la sospecha es alta, se hace reto con metacolina: una caída de veinte por ciento confirma hiperreactividad.' },
-          { v: { k: 'tip', kind: 'pearl', t: 'Asma = obstrucción reversible y eosinofílica. EPOC = obstrucción no reversible por tabaco o humo de leña.' },
-            say: 'La diferencia con la EPOC: el asma es reversible, empieza joven, se asocia a atopia y es eosinofílica. La EPOC no se revierte y viene del tabaco o del humo de leña.' }
+            say: 'Semana siete: el asma. Es la enfermedad respiratoria crónica más frecuente en jóvenes, y en el examen la preguntan de tres maneras: cómo se diagnostica, qué escalón de tratamiento toca y qué hacer en una crisis. Vamos por las tres con una paciente.' },
+          { v: { k: 'case', t: 'Crisis en urgencias', p: { name: 'Karla', age: 23, sex: 'M', skin: '#E2B08A', hair: '#2A1A12', gown: '#9FD8FF' }, text: 'Asmática desde niña, solo usa salbutamol. Lleva 2 días con gripa. Hoy habla en frases cortas, usa músculos accesorios y tiene sibilancias difusas.', vit: { FR: '30', FC: '122', SpO2: '89%', FEP: '40%' } },
+            say: 'Conoce a Karla, de veintitrés años. Es asmática desde niña y solo usa salbutamol cuando se ahoga. Hace dos días le dio gripa y hoy llega hablando en frases cortas, con músculos accesorios, sibilancias en ambos campos, frecuencia respiratoria de treinta y saturación de ochenta y nueve por ciento. Antes de tratarla, entendamos qué le pasa a su bronquio.' },
+          { v: { k: 'list', t: 'Tres fenómenos en el bronquio', items: ['Inflamación crónica (eosinófilos, Th2)', 'Broncoconstricción reversible', 'Hiperreactividad a estímulos', 'Con los años: remodelación'] },
+            say: 'El asma es una inflamación crónica de la vía aérea, casi siempre de tipo dos, con eosinófilos, interleucinas cuatro, cinco y trece e inmunoglobulina E. Esa inflamación hace que el bronquio se cierre de forma reversible y que reaccione de más a estímulos que en otra persona no harían nada. Si no se trata por años, el bronquio se remodela y la obstrucción deja de ser reversible.' },
+          { v: { k: 'list', t: 'Desencadenantes', items: ['Virus respiratorios (el más común en crisis)', 'Alérgenos: ácaros, polen, mascotas', 'Ejercicio y aire frío', 'Humo, contaminación', 'AINE y aspirina; betabloqueadores'] },
+            say: 'Lo que dispara una crisis: sobre todo las infecciones virales, como en Karla. También alérgenos como ácaros, polen y mascotas, el ejercicio con aire frío, el humo y la contaminación. Y dos fármacos que el examen adora: los antiinflamatorios no esteroideos en el asma sensible a aspirina, y los betabloqueadores, incluso en gotas para glaucoma.' }
         ] },
-        { ch: 'Tratamiento', sc: [
-          { v: { k: 'flow', t: 'Escalones GINA', steps: ['1 y 2: budesonida-formoterol a demanda', '3: dosis baja diaria de mantenimiento y rescate', '4: dosis media', '5: referir, LAMA, biológico'] },
-            say: 'Los escalones de GINA. En los pasos uno y dos, budesonida con formoterol solo cuando hay síntomas. En el tres, la misma combinación diaria y también de rescate. En el cuatro, dosis media. En el cinco, se agrega antimuscarínico de larga acción y se valora un biológico.' },
-          { v: { k: 'case', t: 'Crisis en urgencias', p: { name: 'Karla', age: 23, sex: 'M', skin: '#E2B08A', hair: '#2A1A12', gown: '#9FD8FF' }, text: 'Habla en frases cortas, usa músculos accesorios, SatO2 89 %, FR 30, sibilancias difusas.', vit: { SatO2: '89 %', FEP: '40 %' } },
-            say: 'Karla tiene una crisis: habla en frases cortas, usa músculos accesorios y su saturación es de ochenta y nueve.' },
-          { v: { k: 'list', t: 'Crisis asmática', items: ['O2 para SatO2 de 93 a 95', 'Salbutamol cada 20 min por 1 hora', 'Ipratropio en grave', 'Prednisona o metilprednisolona', 'Sulfato de magnesio IV si no responde'] },
-            say: 'Oxígeno para una saturación de noventa y tres a noventa y cinco, salbutamol cada veinte minutos la primera hora, ipratropio en las graves, esteroide sistémico pronto, y sulfato de magnesio intravenoso si no responde.' },
-          { v: { k: 'tip', kind: 'trap', t: 'Tórax silencioso, confusión o PaCO2 normal o alta en una crisis = paro inminente: intubar.' },
-            say: 'Cuidado: un tórax silencioso, confusión o un CO dos normal o alto en plena crisis significan agotamiento y paro inminente. Ese paciente se intuba.' }
+        { ch: 'Cómo se diagnostica', sc: [
+          { v: { k: 'list', t: 'Sospecha clínica', items: ['Tos, sibilancias, disnea, opresión', 'Variables: van y vienen', 'Peor de noche o en la madrugada', 'Con desencadenantes claros', 'Atopia: rinitis, dermatitis'] },
+            say: 'Sospechas asma cuando los síntomas son variables: tos, sibilancias, falta de aire y opresión que van y vienen, empeoran en la noche o en la madrugada y aparecen con desencadenantes. Si además hay rinitis o dermatitis atópica, la sospecha sube.' },
+          { v: { k: 'flow', t: 'Confirmar con función pulmonar', steps: ['Espirometría con broncodilatador', 'FEV1/FVC bajo = obstrucción', 'FEV1 sube ≥12% y ≥200 mL = reversible', 'Normal: metacolina o variabilidad del FEP'] },
+            say: 'Se confirma con espirometría antes y después de salbutamol. El cociente entre el volumen espirado en el primer segundo y la capacidad vital forzada baja: hay obstrucción. Y si el volumen del primer segundo sube doce por ciento y al menos doscientos mililitros con el broncodilatador, la obstrucción es reversible: eso es asma. Si la espirometría sale normal y la sospecha sigue, se hace reto con metacolina o se mide la variabilidad del flujo espiratorio pico.' },
+          { v: { k: 'vs', a: 'Asma', b: 'EPOC', rows: [['Edad', 'Joven, desde la infancia', 'Mayor de 40, fumador'], ['Síntomas', 'Variables, nocturnos', 'Progresivos, diarios'], ['Reversibilidad', 'Sí, puede normalizar', 'Persistente tras broncodilatador'], ['Inflamación', 'Eosinófilos', 'Neutrófilos'], ['Base del tratamiento', 'Corticoide inhalado', 'Broncodilatador de acción larga']] },
+            say: 'Compáralo con la EPOC. El asma empieza joven, con síntomas variables y nocturnos, obstrucción que se revierte y eosinófilos; su base es el corticoide inhalado. La EPOC aparece después de los cuarenta en fumadores, con síntomas progresivos y obstrucción que persiste después del broncodilatador; su base son los broncodilatadores de acción larga.' },
+          { v: { k: 'quiz', q: 'Tos nocturna y sibilancias. Espirometría normal. ¿Siguiente paso?', opts: ['Descartar asma', 'Reto con metacolina', 'Tomografía de tórax'], a: 1 },
+            say: 'Pausa. Paciente con tos nocturna y sibilancias, pero la espirometría salió normal. ¿Qué sigue?',
+            exp: 'Reto con metacolina. Una espirometría normal no descarta el asma porque entre crisis el bronquio puede estar abierto. Si con metacolina el volumen del primer segundo cae veinte por ciento o más, hay hiperreactividad. Un reto negativo, en cambio, casi descarta el asma.' }
+        ] },
+        { ch: 'Tratamiento crónico por escalones', sc: [
+          { v: { k: 'big', h: 'Regla de oro de GINA', t: 'Nunca SABA solo', s: 'Todo asmático lleva corticoide inhalado. El salbutamol solo aumenta crisis graves y muertes.' },
+            say: 'La regla más importante de la guía GINA: ningún asmático debe usar salbutamol solo. El broncodilatador de acción corta abre el bronquio pero no toca la inflamación, y usarlo solo se asocia a más crisis graves y más muertes. Todo asmático lleva corticoide inhalado, aunque sea a demanda.' },
+          { v: { k: 'flow', t: 'Vía 1 de GINA', steps: ['Pasos 1 y 2: budesonida-formoterol a demanda', 'Paso 3: MART dosis baja', 'Paso 4: MART dosis media', 'Paso 5: + tiotropio, fenotipo y biológico'] },
+            say: 'La vía preferida usa budesonida con formoterol. En los pasos uno y dos, a demanda: el paciente lo inhala solo cuando tiene síntomas y así recibe corticoide cada vez. En el paso tres, la misma combinación como mantenimiento y rescate, llamada MART, a dosis baja. En el cuatro, MART a dosis media. En el cinco se agrega tiotropio, se estudia el fenotipo y se considera un biológico.' },
+          { v: { k: 'list', t: 'Biológicos en asma grave', items: ['Anti-IgE: omalizumab (alérgico)', 'Anti-IL-5: mepolizumab, benralizumab', 'Anti-IL-4R: dupilumab', 'Anti-TSLP: tezepelumab', 'Requisito: técnica y apego revisados'] },
+            say: 'Los biológicos son para el asma grave que sigue sin control en el paso cinco. Omalizumab, contra la inmunoglobulina E, en el asma alérgica. Mepolizumab y benralizumab, contra la interleucina cinco, cuando hay eosinófilos altos. Dupilumab bloquea el receptor de interleucina cuatro, y tezepelumab actúa más arriba, contra TSLP. Pero antes de cualquiera, revisa técnica de inhalación y apego.' },
+          { v: { k: 'list', t: 'Antes de subir un escalón', items: ['Técnica de inhalación', 'Apego real', 'Desencadenantes en casa o trabajo', 'Rinitis, ERGE, obesidad', 'Bajar escalón tras 3 meses controlado'] },
+            say: 'Antes de subir un escalón, revisa cuatro cosas: la técnica con el inhalador, que lo use de verdad, los desencadenantes en casa o en el trabajo, y comorbilidades como rinitis, reflujo y obesidad. Y si lleva tres meses controlado, intenta bajar un escalón.' }
+        ] },
+        { ch: 'La crisis asmática', sc: [
+          { v: { k: 'list', t: 'Crisis grave', items: ['Habla en palabras o frases cortas', 'FR mayor de 30, FC mayor de 120', 'SpO2 menor de 90%', 'FEP 50% o menos', 'Músculos accesorios'] },
+            say: 'Volvamos con Karla. Habla en frases cortas, respira treinta veces por minuto, su frecuencia cardiaca pasa de ciento veinte, satura menos de noventa y su flujo pico es de cuarenta por ciento. Es una crisis grave.' },
+          { v: { k: 'list', t: 'Amenaza vital', items: ['Somnolencia o confusión', 'Tórax silencioso', 'Bradicardia o hipotensión', 'PaCO2 normal o alta', 'Agotamiento: no puede hablar'] },
+            say: 'Aprende los datos de amenaza vital, porque cambian la conducta: somnolencia o confusión, tórax silencioso porque ya casi no mueve aire, bradicardia, hipotensión y un dióxido de carbono normal o alto. En una crisis, el paciente debería tener el CO2 bajo por la taquipnea; si sube, se está cansando.' },
+          { v: { k: 'flow', t: 'Tratamiento en urgencias', steps: ['O2 para SpO2 93 a 95%', 'Salbutamol c/20 min la 1a hora', 'Ipratropio si es grave', 'Esteroide sistémico temprano', 'Sin respuesta: sulfato de magnesio 2 g IV', 'Deterioro: UCI e intubación'] },
+            say: 'El tratamiento: oxígeno para una saturación de noventa y tres a noventa y cinco. Salbutamol inhalado cada veinte minutos durante la primera hora, con ipratropio si la crisis es grave. Esteroide sistémico temprano, por ejemplo prednisona cuarenta a cincuenta miligramos por cinco a siete días. Si no responde, sulfato de magnesio dos gramos intravenoso. Y si se deteriora, terapia intensiva e intubación.' },
+          { v: { k: 'quiz', q: 'Karla, a la hora: somnolienta, tórax silencioso, PaCO2 46. ¿Qué haces?', opts: ['Otra nebulización y observar', 'Intubar y llevar a UCI', 'Alta con prednisona'], a: 1 },
+            say: 'Pausa. Una hora después, Karla está somnolienta, ya casi no se escuchan sibilancias y su CO2 es de cuarenta y seis. ¿Qué haces?',
+            exp: 'Intubar y llevar a terapia intensiva. El tórax silencioso no es mejoría: ya no mueve aire. Y un CO2 normal o alto en plena crisis significa agotamiento respiratorio. Es amenaza vital.' }
+        ] },
+        { ch: 'Cierre y trampas', sc: [
+          { v: { k: 'list', t: 'Karla: al egreso', items: ['Inicia corticoide inhalado (nunca SABA solo)', 'Budesonida-formoterol como rescate', 'Prednisona 5 a 7 días', 'Plan de acción escrito', 'Revisión en 2 a 7 días'] },
+            say: 'Karla mejora con el tratamiento de terapia intensiva. Al egreso ya no se va solo con salbutamol: inicia budesonida con formoterol, termina cinco a siete días de prednisona, se lleva un plan de acción escrito y una cita en dos a siete días.' },
+          { v: { k: 'tip', kind: 'trap', t: 'Tórax silencioso NO es mejoría: ya no entra aire. Con PaCO2 normal o alta en crisis, el paciente se está agotando.' },
+            say: 'La trampa típica: interpretar el tórax silencioso como mejoría. Es lo contrario: ya no entra aire. Y un CO2 normal en crisis es una alarma, no un alivio.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Asma + pólipos nasales + reacción a aspirina = enfermedad respiratoria exacerbada por AINE (Samter): montelukast y evitar AINE.' },
+            say: 'Perla: asma, pólipos nasales y reacción a la aspirina es la tríada de Samter, la enfermedad respiratoria exacerbada por antiinflamatorios. Responde bien a montelukast y el paciente debe evitar los antiinflamatorios.' },
+          { v: { k: 'mnemo', t: 'Nunca SABA solo', d: 'Diagnóstico: reversibilidad ≥12% y 200 mL. Crónico: budesonida-formoterol. Crisis: O2, salbutamol, ipratropio, esteroide, magnesio.' },
+            say: 'Llévate esto: nunca salbutamol solo. Diagnóstico con reversibilidad de doce por ciento y doscientos mililitros. Tratamiento con budesonida y formoterol. Y en la crisis: oxígeno, salbutamol, ipratropio, esteroide y magnesio. Ahora ve al taller y decide paso a paso en el algoritmo del asma.' }
         ] }
       ],
       sections: [

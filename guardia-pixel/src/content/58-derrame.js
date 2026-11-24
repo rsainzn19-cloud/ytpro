@@ -9,21 +9,51 @@ export default {
       hook: 'Ante un derrame: ¿trasudado o exudado? Lo deciden los criterios de Light (proteínas y DHL). El trasudado se trata tratando la causa (IC, cirrosis); el exudado se estudia. Y si un derrame paraneumónico tiene pH <7.2, glucosa <60 o pus: sonda.',
       nn: [], yt: 'pleural effusion Light criteria parapneumonic empyema',
       video: [
-        { ch: 'Light', sc: [
+        { ch: 'Qué es un derrame', sc: [
           { v: { k: 'title', t: 'Derrame pleural', s: 'Semana 10 · Neumología' },
-            say: 'Semana diez: el derrame pleural. Se acumula líquido entre las pleuras porque se produce de más o se absorbe de menos. En la exploración hay matidez, vibraciones disminuidas y murmullo abolido.' },
-          { v: { k: 'vs', a: 'Trasudado', b: 'Exudado', rows: [['Mecanismo', 'Presión: hidrostática u oncótica', 'Permeabilidad: inflamación'], ['Causas', 'IC, cirrosis, nefrótico', 'Neumonía, cáncer, TB, TEP'], ['Light', 'Ninguno positivo', 'Al menos uno positivo']] },
-            say: 'El trasudado se debe a presiones: insuficiencia cardiaca, la causa más común, cirrosis o síndrome nefrótico. El exudado se debe a inflamación: neumonía, cáncer, tuberculosis o embolia.' },
-          { v: { k: 'list', t: 'Criterios de Light: exudado si', items: ['Proteínas pleura entre suero mayor de 0.5', 'DHL pleura entre suero mayor de 0.6', 'DHL pleural mayor de dos tercios del límite superior'] },
-            say: 'Criterios de Light: es exudado si cumple al menos uno. Proteínas del líquido entre las del suero mayor de cero punto cinco. DHL del líquido entre la del suero mayor de cero punto seis. O DHL pleural mayor de dos tercios del límite superior normal.' }
+            say: 'Semana diez: el derrame pleural. Entre las dos pleuras siempre hay unos mililitros de líquido; hay derrame cuando se produce de más o se absorbe de menos. Todo el tema gira alrededor de una pregunta: es trasudado o exudado. Vamos con dos pacientes.' },
+          { v: { k: 'case', t: 'Neumonía que no mejora', p: { name: 'Héctor', age: 48, sex: 'H', skin: '#C98B62', hair: '#2A1A12', gown: '#9FD8FF' }, text: 'Día 4 de ceftriaxona + azitromicina por neumonía derecha. Sigue con fiebre y dolor pleurítico. Matidez y murmullo abolido en la base derecha.', vit: { T: '38.8', FR: '26', SpO2: '92%' } },
+            say: 'Héctor, de cuarenta y ocho años, lleva cuatro días con ceftriaxona y azitromicina por una neumonía derecha. Sigue con fiebre y le duele el costado al respirar. En la base derecha hay matidez, las vibraciones vocales están disminuidas y no se escucha el murmullo vesicular.' },
+          { v: { k: 'list', t: 'Exploración del derrame', items: ['Matidez a la percusión', 'Vibraciones vocales disminuidas', 'Murmullo vesicular abolido', 'Frote pleural al inicio', 'Grande: desvía la tráquea al lado contrario'] },
+            say: 'Esa es la exploración del derrame: matidez, vibraciones vocales disminuidas y murmullo abolido. Al inicio puede haber frote pleural. Si es muy grande, empuja el mediastino y desvía la tráquea hacia el lado contrario. Compáralo con la consolidación, donde las vibraciones aumentan.' },
+          { v: { k: 'list', t: 'Imagen', items: ['Rx PA: borra el ángulo con más de 200 mL', 'Decúbito lateral: detecta 50 mL', 'USG: el más sensible y guía la punción', 'TC: pleura y pulmón debajo'] },
+            say: 'En la radiografía de frente, el ángulo costofrénico se borra cuando hay más de doscientos mililitros; en decúbito lateral se ven desde cincuenta. El ultrasonido es el más sensible, distingue líquido de engrosamiento y guía la punción. La tomografía muestra la pleura y el pulmón que está debajo.' }
         ] },
-        { ch: 'Qué hacer', sc: [
-          { v: { k: 'list', t: 'Paraneumónico: sonda si', items: ['pH menor de 7.2', 'Glucosa menor de 60', 'Gram o cultivo positivo', 'Pus: empiema', 'Loculado'] },
-            say: 'En el derrame paraneumónico, se coloca sonda pleural si el pH es menor de siete punto dos, la glucosa menor de sesenta, el Gram o cultivo es positivo, hay pus, o está tabicado.' },
-          { v: { k: 'tip', kind: 'trap', t: 'Los diuréticos en IC pueden convertir un trasudado en “seudoexudado”: usa el gradiente de albúmina (>1.2 = trasudado).' },
-            say: 'Cuidado: un paciente con insuficiencia cardiaca que ya recibió diuréticos puede parecer exudado por Light. Usa el gradiente de albúmina suero pleura: mayor de uno punto dos indica trasudado.' },
-          { v: { k: 'mnemo', t: 'Light: 0.5 – 0.6 – 2/3', d: 'Proteínas >0.5, DHL >0.6, DHL >2/3 del límite superior: uno basta para exudado.' },
-            say: 'Llévate los números de Light: cero punto cinco, cero punto seis y dos tercios.' }
+        { ch: 'Trasudado o exudado', sc: [
+          { v: { k: 'vs', a: 'Trasudado', b: 'Exudado', rows: [['Mecanismo', 'Presión hidrostática u oncótica', 'Permeabilidad por inflamación'], ['Causa #1', 'Insuficiencia cardiaca', 'Paraneumónico'], ['Otras', 'Cirrosis, nefrótico, diálisis', 'Cáncer, TB, TEP, pancreatitis, AR'], ['Lado', 'Bilateral casi siempre', 'Unilateral con frecuencia'], ['Qué hacer', 'Tratar la causa', 'Estudiar el líquido']] },
+            say: 'El trasudado se debe a presiones: sube la hidrostática o baja la oncótica. La causa número uno de derrame en general es la insuficiencia cardiaca, seguida de cirrosis y síndrome nefrótico. Suele ser bilateral y se trata tratando la causa. El exudado se debe a inflamación de la pleura: el más común es el paraneumónico, y le siguen cáncer, tuberculosis, tromboembolia y pancreatitis. Se estudia.' },
+          { v: { k: 'list', t: 'Criterios de Light: exudado si hay uno', items: ['Proteínas pleura entre suero mayor de 0.5', 'DHL pleura entre suero mayor de 0.6', 'DHL pleural mayor de 2/3 del límite normal'] },
+            say: 'Los criterios de Light deciden. Es exudado si cumple al menos uno: proteínas del líquido entre las del suero mayor de cero punto cinco; DHL del líquido entre la del suero mayor de cero punto seis; o DHL del líquido mayor de dos tercios del límite superior normal del suero.' },
+          { v: { k: 'tip', kind: 'trap', t: 'Con diurético, un trasudado cardiaco puede salir exudado por Light. Gradiente de albúmina suero-pleura >1.2 g/dL o NT-proBNP alto = trasudado.' },
+            say: 'Trampa: Light es muy sensible para exudado, y en un paciente con insuficiencia cardiaca que ya recibió diuréticos, el trasudado se concentra y puede parecer exudado. Calcula el gradiente de albúmina entre suero y pleura: si es mayor de uno punto dos, es trasudado.' },
+          { v: { k: 'quiz', q: 'Proteínas pleura/suero 0.7, DHL pleura/suero 0.4. ¿Qué es?', opts: ['Trasudado', 'Exudado', 'No se puede saber'], a: 1 },
+            say: 'Pausa. El cociente de proteínas es cero punto siete y el de DHL cero punto cuatro. ¿Trasudado o exudado?',
+            exp: 'Exudado. Basta un criterio de Light, y el de proteínas es mayor de cero punto cinco. No importa que la DHL no cumpla.' }
+        ] },
+        { ch: 'Pistas del líquido', sc: [
+          { v: { k: 'list', t: 'Qué te dice el líquido', items: ['pH menor de 7.2 y glucosa baja: empiema, AR, TB, cáncer', 'Linfocitos y ADA mayor de 40: tuberculosis', 'Amilasa alta: pancreatitis o rotura esofágica', 'Triglicéridos mayor de 110: quilotórax', 'Hto pleural mayor de 50% del sérico: hemotórax'] },
+            say: 'Una vez que es exudado, el líquido da pistas. pH menor de siete punto dos con glucosa baja: empiema, artritis reumatoide, tuberculosis o cáncer. Linfocitos con adenosina desaminasa mayor de cuarenta: tuberculosis. Amilasa alta: pancreatitis o rotura de esófago. Triglicéridos mayores de ciento diez: quilotórax. Y hematocrito pleural mayor de la mitad del de la sangre: hemotórax.' },
+          { v: { k: 'case', t: 'Otro paciente: derrame linfocítico', p: { name: 'Lorena', age: 30, sex: 'M', skin: '#D9A07A', hair: '#2A1A12', gown: '#9FD8FF' }, text: 'Fiebre y sudoración nocturna de 3 semanas. Derrame izquierdo moderado. Exudado con 85% linfocitos y ADA 72.', vit: { ADA: '72', Linfos: '85%' } },
+            say: 'Lorena, de treinta años, tiene tres semanas con fiebre y sudoración nocturna y un derrame izquierdo. El líquido es exudado, con ochenta y cinco por ciento de linfocitos y adenosina desaminasa de setenta y dos.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Pleuritis TB: exudado linfocítico con ADA >40. El cultivo del líquido casi siempre sale negativo; la biopsia pleural confirma. Se trata con RIPE.' },
+            say: 'Perla: eso es pleuritis tuberculosa. El cultivo del líquido casi siempre sale negativo porque hay pocos bacilos; lo que confirma es la biopsia pleural con granulomas. En la práctica, con un exudado linfocítico y adenosina desaminasa alta en zona endémica, se inicia tratamiento antifímico.' }
+        ] },
+        { ch: 'Paraneumónico y empiema', sc: [
+          { v: { k: 'vs', a: 'No complicado', b: 'Complicado o empiema', rows: [['pH', '7.2 o más', 'Menor de 7.2'], ['Glucosa', '60 o más', 'Menor de 60'], ['Gram o cultivo', 'Negativo', 'Positivo o pus franco'], ['Aspecto', 'Libre', 'Tabicado'], ['Manejo', 'Solo antibiótico', 'Antibiótico + sonda pleural']] },
+            say: 'El derrame paraneumónico no complicado tiene pH de siete punto dos o más, glucosa de sesenta o más, Gram negativo y corre libre: basta el antibiótico. Si el pH baja de siete punto dos, la glucosa de sesenta, el Gram o el cultivo son positivos, está tabicado o sale pus, es complicado o empiema, y necesita sonda pleural además del antibiótico.' },
+          { v: { k: 'flow', t: 'Si es empiema', steps: ['Sonda pleural', 'Antibiótico con anaerobios', 'Tabicado: tPA + DNasa intrapleural', 'Falla: toracoscopia o decorticación'] },
+            say: 'En el empiema: sonda pleural y un antibiótico que cubra anaerobios, como ampicilina con sulbactam. Si está tabicado, se instilan alteplasa y desoxirribonucleasa por la sonda. Y si a pesar de eso no drena, cirugía: toracoscopia o decorticación.' },
+          { v: { k: 'quiz', q: 'Héctor: líquido turbio, pH 7.05, glucosa 38, Gram con cocos positivos. ¿Qué haces?', opts: ['Cambiar a meropenem y observar', 'Colocar sonda pleural y seguir antibiótico', 'Repetir toracocentesis en una semana'], a: 1 },
+            say: 'Pausa. Puncionan a Héctor: líquido turbio, pH de siete punto cero cinco, glucosa de treinta y ocho y cocos grampositivos. ¿Qué haces?',
+            exp: 'Colocar sonda pleural y continuar el antibiótico. Es un derrame paraneumónico complicado: el antibiótico solo no penetra bien una colección infectada, hay que drenarla.' }
+        ] },
+        { ch: 'Cierre y otros escenarios', sc: [
+          { v: { k: 'list', t: 'Otros derrames', items: ['Maligno recurrente: catéter tunelizado o pleurodesis', 'Evacuar máximo 1 a 1.5 L por vez', 'Hemotórax: sonda gruesa; cirugía si drena mucho', 'Quilotórax: dieta con TCM, octreotida', 'IC típica bilateral: diurético, sin punción'] },
+            say: 'Otros escenarios: el derrame maligno que se reproduce se maneja con catéter pleural tunelizado o pleurodesis con talco. Nunca saques más de uno a uno y medio litros por vez, por el edema de reexpansión. El hemotórax necesita sonda gruesa, y cirugía si drena mucho. El quilotórax, dieta con triglicéridos de cadena media y octreotida. Y el derrame bilateral típico de insuficiencia cardiaca no se punciona: se da diurético.' },
+          { v: { k: 'list', t: 'Héctor: final del caso', items: ['Sonda pleural: 600 mL de líquido turbio', 'Tabicado: tPA + DNasa por 3 días', 'Ampicilina-sulbactam', 'Afebril al día 3; se retira la sonda al día 6'] },
+            say: 'A Héctor le colocan sonda pleural y drenan seiscientos mililitros de líquido turbio. El ultrasonido muestra tabiques, así que reciben alteplasa y desoxirribonucleasa por la sonda tres días, con ampicilina y sulbactam. Al tercer día ya no tiene fiebre y la sonda se retira al sexto.' },
+          { v: { k: 'mnemo', t: 'Light: 0.5 – 0.6 – 2/3', d: 'Uno basta para exudado. Paraneumónico con pH <7.2, glucosa <60, Gram + o pus = sonda.' },
+            say: 'Llévate los números de Light: cero punto cinco, cero punto seis y dos tercios; uno basta para exudado. Y en el paraneumónico, pH menor de siete punto dos, glucosa menor de sesenta, Gram positivo o pus significan sonda. Ahora practica con el simulador de pH pleural y el algoritmo del taller.' }
         ] }
       ],
       sections: [

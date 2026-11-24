@@ -1,0 +1,250 @@
+// Práctica de Neumología (semanas 7 a 11): algoritmos con casos (pestaña Taller), casos de guardia con monitor
+// y simuladores de un control. Formatos en 51-taller.js (algos), 24-tep.js (cases) y app.js (sliders).
+export default {
+  algos: {
+    asmacrisis: {
+      title: 'Crisis asmática: gravedad y siguiente paso', topics: ['asma'], start: 'vital',
+      nodes: {
+        vital: { q: '¿Tiene datos de amenaza vital? (somnolencia, tórax silencioso, bradicardia, PaCO2 normal o alta)', opts: [{ t: 'Sí', go: 'uci' }, { t: 'No', go: 'grav' }] },
+        grav: { q: '¿Cómo es la crisis?', hint: 'Grave: habla en palabras, FR >30, FC >120, SpO2 <90%, FEP ≤50%.', opts: [{ t: 'Leve o moderada: habla en frases, FEP mayor de 50%', go: 'leve' }, { t: 'Grave: habla en palabras, FEP 50% o menos', go: 'grave' }] },
+        leve: { q: 'Salbutamol c/20 min la 1a hora + prednisona. ¿Cómo responde a la hora?', opts: [{ t: 'Bien: FEP mayor de 70% y sin disnea', go: 'alta' }, { t: 'Mal: sigue con disnea y FEP bajo', go: 'grave' }] },
+        grave: { q: 'O2, salbutamol + ipratropio y esteroide sistémico. ¿Mejora?', opts: [{ t: 'Sí', go: 'obs' }, { t: 'No mejora', go: 'mg' }] },
+        mg: { q: 'Sulfato de magnesio 2 g IV. ¿Mejora ahora?', opts: [{ t: 'Sí', go: 'obs' }, { t: 'No, o se deteriora', go: 'uci' }] },
+        alta: { end: 'Alta con plan de acción', d: 'Prednisona 5 a 7 días, iniciar o subir corticoide inhalado (nunca SABA solo), revisar técnica y cita en 2 a 7 días.' },
+        obs: { end: 'Hospitalizar y continuar', d: 'Broncodilatadores espaciados, esteroide sistémico y vigilancia de FEP y gases. Al egreso, corticoide inhalado.' },
+        uci: { end: 'Terapia intensiva: preparar intubación', d: 'Amenaza vital o falla al tratamiento máximo. La PaCO2 que sube indica agotamiento.' }
+      },
+      cases: [
+        { t: 'Estudiante de 19 años con sibilancias tras correr con frío. Habla en frases completas.', data: [['FR', '22'], ['SpO2', '95%'], ['FEP', '65%'], ['A la hora', 'FEP 82%, sin disnea']], path: { vital: 1, grav: 0, leve: 0 }, end: 'alta' },
+        { t: 'Mujer de 30 años con gripa. Habla en palabras sueltas y usa accesorios.', data: [['FR', '32'], ['FC', '126'], ['SpO2', '88%'], ['FEP', '35%'], ['Tras salbutamol, ipratropio y esteroide', 'Mejora: FEP 60%']], path: { vital: 1, grav: 1, grave: 0 }, end: 'obs' },
+        { t: 'Hombre de 25 años en crisis grave que no mejora con nebulizaciones ni metilprednisolona.', data: [['FEP', '30% tras 1 h'], ['Magnesio IV', 'Sin cambio'], ['PaCO2', '44 y subiendo']], path: { vital: 1, grav: 1, grave: 1, mg: 1 }, end: 'uci', why: { mg: 'Falla al tratamiento máximo y CO2 que sube: agotamiento.' } },
+        { t: 'Mujer de 23 años somnolienta, con tórax silencioso.', data: [['SpO2', '86%'], ['FC', '58'], ['PaCO2', '52']], path: { vital: 0 }, end: 'uci', why: { vital: 'Somnolencia, tórax silencioso, bradicardia e hipercapnia: amenaza vital.' } }
+      ]
+    },
+    epocabe: {
+      title: 'EPOC: del diagnóstico al inhalador', topics: ['epoc'], start: 'espiro',
+      nodes: {
+        espiro: { q: 'Espirometría posbroncodilatador: ¿FEV1/FVC?', opts: [{ t: 'Menor de 0.70', go: 'exa' }, { t: '0.70 o más', go: 'noepoc' }] },
+        exa: { q: 'En el último año: ¿exacerbaciones?', opts: [{ t: '2 o más, o 1 que lo hospitalizó', go: 'eos' }, { t: '0 o 1 sin hospitalización', go: 'sint' }] },
+        sint: { q: '¿Cuántos síntomas tiene?', hint: 'Muchos síntomas: mMRC 2 o más, o CAT 10 o más.', opts: [{ t: 'Pocos: mMRC 0 a 1, CAT menor de 10', go: 'A' }, { t: 'Muchos: mMRC 2 o más, CAT 10 o más', go: 'B' }] },
+        eos: { q: 'Grupo E: ¿eosinófilos en sangre?', opts: [{ t: '300 o más por µL', go: 'Ecsi' }, { t: 'Menos de 300', go: 'E' }] },
+        noepoc: { end: 'No es EPOC', d: 'Sin obstrucción posbroncodilatador no hay EPOC. Busca otra causa de disnea (asma con espirometría normal, IC, obesidad) y repite si la sospecha sigue.' },
+        A: { end: 'Grupo A: un broncodilatador', d: 'De preferencia de acción larga (LAMA o LABA). Dejar de fumar, vacunas y SABA de rescate.' },
+        B: { end: 'Grupo B: LAMA + LABA', d: 'Doble broncodilatador, rehabilitación pulmonar, vacunas y dejar de fumar.' },
+        E: { end: 'Grupo E: LAMA + LABA', d: 'Sin corticoide inhalado si eosinófilos menores de 300 (y nunca si menores de 100). Si sigue exacerbando: roflumilast o azitromicina.' },
+        Ecsi: { end: 'Grupo E: LAMA + LABA + CSI', d: 'Triple terapia con eosinófilos de 300 o más: reduce exacerbaciones. Vigila neumonía.' }
+      },
+      cases: [
+        { t: 'Hombre de 63 años, 40 paquetes-año, disnea al caminar una cuadra. Una exacerbación sin hospitalización.', data: [['FEV1/FVC posBD', '0.58'], ['FEV1', '52%'], ['mMRC', '2'], ['CAT', '18']], path: { espiro: 0, exa: 1, sint: 1 }, end: 'B' },
+        { t: 'Mujer de 70 años que cocinó con leña 40 años. Tos leve; camina sin problema.', data: [['FEV1/FVC posBD', '0.66'], ['FEV1', '78%'], ['mMRC', '1'], ['Exacerbaciones', '0']], path: { espiro: 0, exa: 1, sint: 0 }, end: 'A' },
+        { t: 'Hombre de 68 años hospitalizado dos veces este año por exacerbación.', data: [['FEV1/FVC posBD', '0.48'], ['FEV1', '35%'], ['Eosinófilos', '420 por µL']], path: { espiro: 0, exa: 0, eos: 0 }, end: 'Ecsi' },
+        { t: 'Hombre de 66 años con 2 exacerbaciones ambulatorias este año.', data: [['FEV1/FVC posBD', '0.55'], ['Eosinófilos', '90 por µL']], path: { espiro: 0, exa: 0, eos: 1 }, end: 'E', why: { eos: 'Con eosinófilos menores de 100 el corticoide inhalado no ayuda y aumenta neumonías.' } },
+        { t: 'Fumador de 50 años con disnea. Espirometría posbroncodilatador normal.', data: [['FEV1/FVC posBD', '0.78'], ['IMC', '38']], path: { espiro: 1 }, end: 'noepoc' }
+      ]
+    },
+    nac: {
+      title: 'Neumonía: dónde y con qué', topics: ['neumonia'], start: 'curb',
+      nodes: {
+        curb: { q: 'CURB-65 (Confusión, Urea, FR ≥30, PA baja, edad ≥65):', opts: [{ t: '0 a 1', go: 'amb' }, { t: '2', go: 'piso' }, { t: '3 o más, o choque o ventilación', go: 'uci' }] },
+        amb: { q: 'Ambulatorio: ¿tiene comorbilidades? (DM, EPOC, IC, ERC, hepatopatía, alcohol)', opts: [{ t: 'No, es sano', go: 'ambS' }, { t: 'Sí', go: 'ambC' }] },
+        piso: { q: 'Hospitalizado: ¿riesgo de MRSA o Pseudomonas? (aislamiento previo, hospitalización y antibiótico IV en 90 días)', opts: [{ t: 'No', go: 'pisoE' }, { t: 'Sí', go: 'risk' }] },
+        uci: { q: 'UCI: ¿riesgo de MRSA o Pseudomonas?', opts: [{ t: 'No', go: 'uciE' }, { t: 'Sí', go: 'risk' }] },
+        ambS: { end: 'Amoxicilina 1 g c/8 h o doxiciclina', d: 'Macrólido solo si la resistencia local del neumococo es menor de 25%. 5 días si mejora.' },
+        ambC: { end: 'Amoxi-clav + macrólido, o quinolona respiratoria', d: 'Levofloxacino o moxifloxacino solos son alternativa. 5 días mínimo.' },
+        pisoE: { end: 'Ceftriaxona + azitromicina', d: 'O quinolona respiratoria sola. Nunca ceftriaxona sola: no cubre atípicos.' },
+        uciE: { end: 'Ceftriaxona + azitromicina (o + quinolona)', d: 'En UCI siempre dos fármacos. Considera hidrocortisona en NAC grave sin influenza.' },
+        risk: { end: 'Agregar cobertura dirigida', d: 'MRSA: vancomicina o linezolid. Pseudomonas: piperacilina-tazobactam, cefepime o meropenem. Toma cultivos y desescala a las 48 a 72 h.' }
+      },
+      cases: [
+        { t: 'Hombre de 30 años sano con fiebre, tos y consolidación lobar.', data: [['Confusión', 'No'], ['BUN', '12'], ['FR', '22'], ['PA', '124/78']], path: { curb: 0, amb: 0 }, end: 'ambS' },
+        { t: 'Mujer de 58 años con EPOC y diabetes. Neumonía basal.', data: [['Confusión', 'No'], ['BUN', '15'], ['FR', '24'], ['PA', '130/80']], path: { curb: 0, amb: 1 }, end: 'ambC' },
+        { t: 'Hombre de 70 años con neumonía y BUN de 26, sin hospitalizaciones previas.', data: [['Confusión', 'No'], ['FR', '26'], ['PA', '118/72'], ['CURB-65', '2']], path: { curb: 1, piso: 0 }, end: 'pisoE' },
+        { t: 'Ofelia, 72 años, confundida y en choque.', data: [['CURB-65', '5'], ['Norepinefrina', 'Sí'], ['Antibiótico previo', 'No']], path: { curb: 2, uci: 0 }, end: 'uciE' },
+        { t: 'Hombre de 60 años con bronquiectasias y Pseudomonas en esputo hace 6 meses. Neumonía con CURB-65 de 2.', data: [['Aislamiento previo', 'Pseudomonas'], ['CURB-65', '2']], path: { curb: 1, piso: 1 }, end: 'risk' }
+      ]
+    },
+    pleura: {
+      title: 'Derrame pleural: Light y sonda', topics: ['derrame'], start: 'ic',
+      nodes: {
+        ic: { q: '¿Es un derrame bilateral típico de IC que responde a diurético?', opts: [{ t: 'Sí', go: 'trasIC' }, { t: 'No, o hay dudas (fiebre, dolor, unilateral)', go: 'light' }] },
+        light: { q: 'Toracocentesis: ¿cumple al menos un criterio de Light?', hint: 'Proteínas P/S >0.5, DHL P/S >0.6, DHL pleural >2/3 del límite normal.', opts: [{ t: 'Ninguno', go: 'tras' }, { t: 'Uno o más', go: 'exu' }] },
+        exu: { q: 'Exudado: ¿cuál es el contexto?', opts: [{ t: 'Neumonía', go: 'para' }, { t: 'Linfocitos y ADA mayor de 40', go: 'tbp' }, { t: 'Pérdida de peso, citología con células malignas', go: 'malig' }] },
+        para: { q: 'Paraneumónico: ¿pH menor de 7.2, glucosa menor de 60, Gram/cultivo positivo, pus o tabiques?', opts: [{ t: 'Ninguno', go: 'nocomp' }, { t: 'Al menos uno', go: 'sonda' }] },
+        trasIC: { end: 'Trasudado cardiaco: diurético', d: 'No necesita punción. Si se punciona tras diurético y sale exudado por Light, el gradiente de albúmina mayor de 1.2 confirma trasudado.' },
+        tras: { end: 'Trasudado: trata la causa', d: 'IC, cirrosis (hidrotórax derecho) o síndrome nefrótico.' },
+        tbp: { end: 'Pleuritis tuberculosa', d: 'El cultivo del líquido suele ser negativo; la biopsia pleural confirma. Tratamiento con RIPE.' },
+        malig: { end: 'Derrame maligno', d: 'Si recurre y da síntomas: catéter pleural tunelizado o pleurodesis con talco. Evacuar máximo 1 a 1.5 L por vez.' },
+        nocomp: { end: 'Paraneumónico no complicado', d: 'Solo antibiótico; vigila que no crezca.' },
+        sonda: { end: 'Paraneumónico complicado o empiema: sonda pleural', d: 'Más antibiótico con anaerobios. Si está tabicado: tPA + DNasa intrapleural; si falla, toracoscopia o decorticación.' }
+      },
+      cases: [
+        { t: 'Hombre de 75 años con IC descompensada, derrame bilateral pequeño, sin fiebre.', data: [['Rx', 'Derrame bilateral, cardiomegalia'], ['NT-proBNP', '6200']], path: { ic: 0 }, end: 'trasIC' },
+        { t: 'Mujer de 52 años con cirrosis y derrame derecho.', data: [['Proteínas P/S', '0.3'], ['DHL P/S', '0.4'], ['DHL pleural', '1/3 del límite']], path: { ic: 1, light: 0 }, end: 'tras' },
+        { t: 'Héctor, 48 años, con neumonía y fiebre persistente.', data: [['Proteínas P/S', '0.7'], ['pH', '7.05'], ['Glucosa', '38 mg/dL'], ['Gram', 'Cocos grampositivos']], path: { ic: 1, light: 1, exu: 0, para: 1 }, end: 'sonda' },
+        { t: 'Mujer de 30 años con sudoración nocturna y derrame izquierdo.', data: [['Proteínas P/S', '0.68'], ['Linfocitos', '85%'], ['ADA', '72 U/L']], path: { ic: 1, light: 1, exu: 1 }, end: 'tbp' },
+        { t: 'Hombre de 40 años con neumonía y derrame pequeño de pH 7.35.', data: [['Proteínas P/S', '0.6'], ['pH', '7.35'], ['Glucosa', '90'], ['Gram', 'Negativo'], ['USG', 'Libre']], path: { ic: 1, light: 1, exu: 0, para: 0 }, end: 'nocomp' }
+      ]
+    },
+    tblat: {
+      title: 'Tuberculosis: PPD, activa o latente', topics: ['tb'], start: 'sint',
+      nodes: {
+        sint: { q: '¿Tiene síntomas (tos, fiebre, sudoración, pérdida de peso) o Rx anormal?', opts: [{ t: 'Sí', go: 'act' }, { t: 'No: tamizaje en asintomático', go: 'ppd' }] },
+        act: { q: 'Esputo con Xpert MTB/RIF:', opts: [{ t: 'MTB detectado, sensible a rifampicina', go: 'ripe' }, { t: 'MTB detectado, resistente a rifampicina', go: 'mdr' }] },
+        ppd: { q: '¿Quién es el paciente?', opts: [{ t: 'VIH, contacto o inmunosuprimido', go: 'c5' }, { t: 'Diabético, renal, personal de salud o migrante', go: 'c10' }, { t: 'Sin factores de riesgo', go: 'c15' }] },
+        c5: { q: 'Corte de 5 mm: ¿cuánto midió la induración?', opts: [{ t: '5 mm o más', go: 'rx' }, { t: 'Menos de 5 mm', go: 'neg' }] },
+        c10: { q: 'Corte de 10 mm: ¿cuánto midió?', opts: [{ t: '10 mm o más', go: 'rx' }, { t: 'Menos de 10 mm', go: 'neg' }] },
+        c15: { q: 'Corte de 15 mm: ¿cuánto midió?', opts: [{ t: '15 mm o más', go: 'rx' }, { t: 'Menos de 15 mm', go: 'neg' }] },
+        rx: { q: 'PPD positivo. Rx de tórax:', opts: [{ t: 'Normal', go: 'lat' }, { t: 'Cavidad o infiltrado', go: 'act' }] },
+        ripe: { end: 'TB activa sensible: 2 RIPE + 4 RI', d: 'Supervisado, con piridoxina. Prueba de VIH y glucosa. Estudio de contactos.' },
+        mdr: { end: 'TB resistente a rifampicina', d: 'Cultivo con antibiograma y régimen oral de 6 meses (BPaLM) en centro especializado.' },
+        lat: { end: 'TB latente: tratar', d: '3HP (isoniazida + rifapentina semanal 3 meses), 4R o isoniazida 6 a 9 meses con piridoxina.' },
+        neg: { end: 'PPD negativo', d: 'Sin TB latente demostrable. En inmunosuprimido grave puede ser falso negativo; considera IGRA.' }
+      },
+      cases: [
+        { t: 'Fernando, 45 años, diabético, con tos de 5 semanas y cavidad apical.', data: [['Xpert MTB/RIF', 'Detectado, sin resistencia']], path: { sint: 0, act: 0 }, end: 'ripe' },
+        { t: 'Enfermera de 34 años, asintomática, en tamizaje anual.', data: [['PPD', '12 mm'], ['Rx de tórax', 'Normal']], path: { sint: 1, ppd: 1, c10: 0, rx: 0 }, end: 'lat' },
+        { t: 'Hombre de 38 años con VIH, asintomático.', data: [['CD4', '420'], ['PPD', '6 mm'], ['Rx', 'Normal']], path: { sint: 1, ppd: 0, c5: 0, rx: 0 }, end: 'lat', why: { c5: 'En VIH el corte es de 5 mm.' } },
+        { t: 'Contador de 40 años sin factores de riesgo, examen de ingreso.', data: [['PPD', '11 mm']], path: { sint: 1, ppd: 2, c15: 1 }, end: 'neg', why: { c15: 'Sin factores de riesgo el corte es de 15 mm.' } },
+        { t: 'Hombre de 50 años con tos y hemoptisis que abandonó dos tratamientos.', data: [['Xpert MTB/RIF', 'Detectado, resistente a rifampicina']], path: { sint: 0, act: 1 }, end: 'mdr' }
+      ]
+    }
+  },
+  sliders: {
+    fev1: { title: 'EPOC: FEV1 y grado GOLD', topics: ['epoc', 'asma'], label: 'FEV1 posbroncodilatador (% del predicho)', unit: '%', min: 10, max: 110, step: 1, start: 52,
+      intro: 'Con FEV1/FVC menor de 0.70 ya hay EPOC; el FEV1 dice qué tan grave es la obstrucción. El inhalador lo decide el grupo A, B o E.',
+      bands: [[29, 'GOLD 4 · muy grave', 'bad', 'Menos de 30%. Suele haber hipoxemia: mide gases para oxígeno crónico. Valora reducción de volumen o trasplante.'], [49, 'GOLD 3 · grave', 'bad', '30 a 49%. Más exacerbaciones y hospitalizaciones. Roflumilast es opción si hay bronquitis crónica y sigue exacerbando.'], [79, 'GOLD 2 · moderado', 'warn', '50 a 79%. El más común en consulta. Rehabilitación pulmonar si hay disnea.'], [110, 'GOLD 1 · leve', 'ok', '80% o más. Obstrucción leve con FEV1 conservado; lo más útil es dejar de fumar.']] },
+    phpleural: { title: 'Derrame paraneumónico: pH del líquido', topics: ['derrame', 'neumonia'], label: 'pH del líquido pleural', unit: '', min: 6.8, max: 7.6, step: 0.01, start: 7.3,
+      intro: 'El pH es el mejor marcador de que el derrame paraneumónico necesita drenaje. Mídelo en gasómetro, sin aire.',
+      bands: [[7.19, 'Complicado: sonda pleural', 'bad', 'pH menor de 7.2: las bacterias y los neutrófilos consumen glucosa y producen ácido. Antibiótico más sonda; si está tabicado, tPA + DNasa.'], [7.29, 'Zona gris', 'warn', 'pH 7.2 a 7.29: vigila de cerca, repite la punción si no mejora y busca tabiques en el USG.'], [7.6, 'No complicado', 'ok', 'pH 7.3 o más con glucosa ≥60 y Gram negativo: basta el antibiótico.']] }
+  },
+  cases: [
+    { id: 'g-asma', topic: 'asma', subj: 'neumo',
+      title: 'Gripa y sin aire', place: 'Urgencias',
+      patient: { name: 'Karla', age: 23, sex: 'M', skin: '#E2B08A', hair: '#2A1A12', gown: '#9FD8FF' },
+      intro: 'Asmática desde niña; solo usa salbutamol. Dos días con gripa. Habla en frases cortas y usa músculos accesorios.',
+      extra: { label: 'FEP', unit: '%' },
+      start: { FC: 122, PAS: 128, PAD: 78, SpO2: 89, FR: 30, X: 40 },
+      nodes: [
+        { tag: 'Llegada', ecg: 'tachy',
+          text: 'Sibilancias difusas. FEP 40% del predicho. Crisis grave sin datos de amenaza vital.',
+          q: '¿Qué inicias?',
+          A: { t: 'O2 a meta 93 a 95%, salbutamol + ipratropio c/20 min y prednisona o metilprednisolona', ok: true, res: 'A los 40 minutos la SpO2 sube a 93% pero el FEP solo llega a 45%.', vit: { SpO2: 93, X: 45 } },
+          B: { t: 'Solo salbutamol y esperar a ver si mejora antes del esteroide', ok: false, res: 'El broncoespasmo cede poco: la inflamación sigue intacta y el FEP no sube.', vit: { SpO2: 90, X: 38 } },
+          why: 'En la crisis grave el esteroide sistémico va temprano, junto con salbutamol, ipratropio y oxígeno.' },
+        { tag: 'Una hora después', ecg: 'tachy', vit: { FC: 118, FR: 28 },
+          text: 'Sigue con disnea importante y FEP de 45% a pesar del tratamiento completo.',
+          q: '¿Siguiente paso?',
+          A: { t: 'Aminofilina intravenosa', ok: false, res: 'Aparecen náusea y taquicardia de 140 sin mejoría: la aminofilina ya no se recomienda.', vit: { FC: 140 } },
+          B: { t: 'Sulfato de magnesio 2 g IV en 20 minutos', ok: true, res: 'Mejora la entrada de aire; FEP 55%.', vit: { FC: 112, X: 55 } },
+          why: 'El magnesio IV es el siguiente paso en crisis grave que no responde.' },
+        { tag: 'Madrugada', ecg: 'brady', vit: { FC: 56, PAS: 96, PAD: 60, SpO2: 85, FR: 12, X: 20 },
+          text: 'La enfermera la encuentra somnolienta. Casi no se escuchan sibilancias. Gasometría: pH 7.29, PaCO2 52.',
+          q: '¿Qué significa y qué haces?',
+          A: { t: 'Está mejorando porque ya no tiene sibilancias: dejarla dormir', ok: false, res: 'Quince minutos después hace paro respiratorio.', vit: { SpO2: 70, FC: 40 } },
+          B: { t: 'Amenaza vital por agotamiento: llamar a UCI e intubar', ok: true, res: 'Se intuba con ketamina y se ventila con frecuencia baja y espiración larga.', ecg: 'tachy', vit: { FC: 104, PAS: 110, SpO2: 94, FR: 14 } },
+          why: 'Tórax silencioso, somnolencia, bradicardia y PaCO2 alta son datos de amenaza vital: se intuba.' },
+        { tag: 'Al egreso', ecg: 'normal', vit: { FC: 84, PAS: 118, PAD: 74, SpO2: 97, FR: 16, X: 80 },
+          text: 'Cinco días después está lista para irse. Pregunta si sigue solo con su salbutamol.',
+          q: '¿Qué tratamiento de mantenimiento indicas?',
+          A: { t: 'Budesonida-formoterol de mantenimiento y rescate, plan escrito y cita en una semana', ok: true, res: 'Se va con plan de acción y aprende la técnica con espaciador.' },
+          B: { t: 'Salbutamol a demanda como antes', ok: false, res: 'SABA solo aumenta el riesgo de otra crisis grave y de muerte.' },
+          why: 'Tras una crisis grave se inicia corticoide inhalado; GINA prefiere budesonida-formoterol (MART).' }
+      ] },
+    { id: 'g-epoc', topic: 'epoc', subj: 'neumo',
+      title: 'El oxígeno de más', place: 'Urgencias',
+      patient: { name: 'Gerardo', age: 63, sex: 'H', skin: '#C98B62', hair: '#9A9A9A', gown: '#9FD8FF' },
+      intro: 'EPOC GOLD 2, fumador activo. Tres días con más disnea y esputo verde. Llega en ambulancia con mascarilla con reservorio.',
+      extra: { label: 'pH', unit: '' },
+      start: { FC: 108, PAS: 142, PAD: 84, SpO2: 99, FR: 28, X: 7.28 },
+      nodes: [
+        { tag: 'Llegada', ecg: 'tachy',
+          text: 'Somnoliento pero responde. Gasometría: pH 7.28, PaCO2 68, PaO2 140.',
+          q: '¿Qué haces con el oxígeno?',
+          A: { t: 'Mantener el reservorio: entre más oxígeno, mejor', ok: false, res: 'Se hunde más: pH 7.22 y PaCO2 78.', vit: { X: 7.22, FR: 30 } },
+          B: { t: 'Cambiar a Venturi titulado para SpO2 88 a 92%', ok: true, res: 'Saturación de 90%; la PaCO2 deja de subir.', vit: { SpO2: 90, X: 7.29 } },
+          why: 'En EPOC hipercápnico el exceso de O2 empeora la V/Q y la hipercapnia. Meta 88 a 92%.' },
+        { tag: 'Tratamiento', ecg: 'tachy',
+          text: 'Sigue con acidosis respiratoria: pH 7.29, PaCO2 66. Tolera la mascarilla.',
+          q: '¿Cómo lo ventilas?',
+          A: { t: 'Ventilación mecánica no invasiva (BiPAP)', ok: true, res: 'A las 2 horas: pH 7.33, menos somnoliento.', vit: { X: 7.33, FR: 22 } },
+          B: { t: 'Puntas nasales y esperar la gasometría de mañana', ok: false, res: 'Por la noche entra en coma hipercápnico y lo intuban.', vit: { X: 7.15 } },
+          why: 'pH ≤7.35 con PaCO2 >45 es indicación de VMNI: reduce intubación y mortalidad.' },
+        { tag: 'Fármacos', ecg: 'normal', vit: { FC: 96 },
+          text: 'Esputo purulento, más volumen y más disnea.',
+          q: '¿Qué agregas además de salbutamol con ipratropio?',
+          A: { t: 'Prednisona 40 mg por 5 días y amoxicilina-clavulanato', ok: true, res: 'A las 24 h pH 7.36; deja la BiPAP.', vit: { X: 7.36, SpO2: 91 } },
+          B: { t: 'Solo antibiótico, sin esteroide', ok: false, res: 'Mejora más lento y se alarga la estancia.' },
+          why: 'Esteroide sistémico corto y antibiótico si hay esputo purulento con otro cardinal de Anthonisen.' },
+        { tag: 'Al egreso', ecg: 'normal', vit: { FC: 84, PAS: 132, PAD: 80, SpO2: 90, FR: 18, X: 7.4 },
+          text: 'Eosinófilos 110. Ahora es grupo E. En reposo, PaO2 54.',
+          q: '¿Con qué se va?',
+          A: { t: 'LAMA + LABA, oxígeno domiciliario 15 h o más, vacunas, rehabilitación y vareniclina', ok: true, res: 'Egresa con plan completo y cita en neumología.' },
+          B: { t: 'Corticoide inhalado solo y sin oxígeno', ok: false, res: 'Sin oxígeno con PaO2 de 54 pierde el beneficio en mortalidad, y el CSI solo no sirve en EPOC.' },
+          why: 'PaO2 ≤55 en reposo es indicación de oxígeno crónico; el grupo E inicia doble broncodilatador.' }
+      ] },
+    { id: 'g-neumonia', topic: 'neumonia', subj: 'neumo',
+      title: 'La abuela confundida', place: 'Urgencias',
+      patient: { name: 'Ofelia', age: 72, sex: 'M', skin: '#E2B08A', hair: '#B0B0B0', gown: '#9FD8FF' },
+      intro: 'Diabética. Tres días con fiebre, tos con esputo herrumbroso y dolor pleurítico derecho. Hoy está confundida.',
+      extra: { label: 'Lact.', unit: 'mmol/L' },
+      start: { FC: 118, PAS: 88, PAD: 56, SpO2: 88, FR: 32, X: 3.8 },
+      nodes: [
+        { tag: 'Llegada', ecg: 'tachy',
+          text: 'Consolidación en lóbulo inferior derecho. BUN 28. CURB-65 de 5.',
+          q: '¿Dónde la tratas?',
+          A: { t: 'Piso de medicina interna', ok: false, res: 'En piso se deteriora: PAS 76 y requiere traslado urgente.', vit: { PAS: 76, PAD: 44 } },
+          B: { t: 'UCI: CURB-65 de 5 con hipotensión', ok: true, res: 'Pasa a UCI con monitoreo y dos vías.' },
+          why: 'CURB-65 de 3 o más: valorar UCI; con choque es UCI sin discusión.' },
+        { tag: 'Primera hora', ecg: 'tachy',
+          text: 'Hemocultivos tomados. Sin antibióticos en los últimos 90 días ni aislamientos previos.',
+          q: '¿Qué antibiótico?',
+          A: { t: 'Ceftriaxona sola', ok: false, res: 'No cubre atípicos: si fuera Legionella, la perderías.' },
+          B: { t: 'Ceftriaxona + azitromicina', ok: true, res: 'Dosis en la primera hora.', vit: { X: 3.4 } },
+          why: 'En UCI: betalactámico + macrólido (o + quinolona). Sin riesgo no se agrega anti-MRSA ni antipseudomonas.' },
+        { tag: 'Choque', ecg: 'tachy', vit: { PAS: 82, PAD: 48 },
+          text: 'Recibió 30 mL/kg de cristaloide. Sigue con PAM de 59 y lactato de 3.4.',
+          q: '¿Qué sigue?',
+          A: { t: 'Norepinefrina para PAM de 65 o más', ok: true, res: 'PAM 70 con norepinefrina; el lactato baja.', vit: { PAS: 104, PAD: 58, FC: 102, X: 2.1 } },
+          B: { t: 'Otros 3 L de solución', ok: false, res: 'Aparecen estertores y la SpO2 baja a 82%.', vit: { SpO2: 82 } },
+          why: 'Choque séptico que persiste tras la reanimación inicial: vasopresor, norepinefrina primero.' },
+        { tag: 'Día 3', ecg: 'normal', vit: { FC: 88, PAS: 122, PAD: 72, SpO2: 95, FR: 18, X: 1.1 },
+          text: 'Afebril 48 h, sin vasopresor, come bien. Antígeno urinario de neumococo positivo.',
+          q: '¿Qué haces con el antibiótico?',
+          A: { t: 'Pasar a vía oral (amoxicilina) y completar al menos 5 días', ok: true, res: 'Egresa el día 5 con amoxicilina oral.' },
+          B: { t: 'Agregar meropenem por la gravedad inicial', ok: false, res: 'Escalaste sin motivo: más resistencia y riesgo de C. difficile.' },
+          why: 'Estable 48 a 72 h: cambio a vía oral y duración mínima de 5 días.' }
+      ] },
+    { id: 'g-tb', topic: 'tb', subj: 'neumo',
+      title: 'Cinco semanas de tos', place: 'Consulta',
+      patient: { name: 'Fernando', age: 45, sex: 'H', skin: '#C98B62', hair: '#2A1A12', gown: '#9FD8FF' },
+      intro: 'Diabético mal controlado. Tos con hemoptisis, fiebre vespertina, sudoración nocturna; bajó 8 kg. Rx con cavidad apical derecha.',
+      extra: { label: 'Peso', unit: 'kg' },
+      start: { FC: 98, PAS: 118, PAD: 74, SpO2: 94, FR: 20, X: 61 },
+      nodes: [
+        { tag: 'Consulta 1', ecg: 'normal',
+          text: 'Sospecha de TB pulmonar.',
+          q: '¿Qué pides primero?',
+          A: { t: 'PPD para confirmar la tuberculosis', ok: false, res: 'El PPD no distingue activa de latente y no sirve para confirmar enfermedad.' },
+          B: { t: 'Esputo: Xpert MTB/RIF, baciloscopia y cultivo', ok: true, res: 'Xpert: MTB detectado, sin resistencia a rifampicina.' },
+          why: 'La TB activa se confirma con microbiología del esputo.' },
+        { tag: 'Antes de tratar', ecg: 'normal',
+          text: 'TB pulmonar sensible confirmada.',
+          q: '¿Qué otra prueba es obligatoria?',
+          A: { t: 'Prueba de VIH', ok: true, res: 'VIH negativo. A1c de 10.2%: se inicia insulina.' },
+          B: { t: 'Ninguna, solo iniciar tratamiento', ok: false, res: 'Si tuviera VIH, cambiaría el manejo (antirretrovirales y profilaxis).' },
+          why: 'A toda persona con TB se le ofrece prueba de VIH.' },
+        { tag: 'Mes 1', ecg: 'normal', vit: { X: 62 },
+          text: 'En RIPE supervisado. Refiere ardor y hormigueo en ambos pies.',
+          q: '¿Qué haces?',
+          A: { t: 'Agregar piridoxina (B6) y continuar el esquema', ok: true, res: 'Las parestesias ceden en 3 semanas.' },
+          B: { t: 'Suspender la rifampicina', ok: false, res: 'La rifampicina no causa neuropatía; interrumpir el esquema favorece resistencia.' },
+          why: 'La isoniazida causa neuropatía periférica por déficit de B6, más en diabéticos.' },
+        { tag: 'Mes 2', ecg: 'normal', vit: { FC: 82, SpO2: 97, X: 66 },
+          text: 'Cultivo negativo. Su esposa pregunta si ella también debe hacerse algo; está asintomática.',
+          q: '¿Qué indicas a Fernando y a su esposa?',
+          A: { t: 'Fernando sigue con rifampicina + isoniazida 4 meses; a la esposa, tamizaje con PPD o IGRA y Rx', ok: true, res: 'La esposa tiene PPD de 9 mm con Rx normal: TB latente, recibe 3HP.' },
+          B: { t: 'Fernando termina hoy; la esposa no necesita nada', ok: false, res: 'Tratamiento incompleto y un contacto sin estudiar.' },
+          why: 'Esquema de 6 meses y estudio de contactos: en contactos el PPD es positivo desde 5 mm.' }
+      ] }
+  ]
+};

@@ -9,23 +9,53 @@ export default {
       hook: 'Tos + fiebre + infiltrado nuevo = neumonía. CURB-65 decide dónde se trata; el sitio (casa, piso, UCI) y los factores de riesgo (MRSA, Pseudomonas) deciden el antibiótico. El neumococo es el #1 en todos lados.',
       nn: [], yt: 'community acquired pneumonia CURB-65 antibiotic treatment',
       video: [
-        { ch: 'Diagnóstico y gravedad', sc: [
+        { ch: 'Qué es y quién la causa', sc: [
           { v: { k: 'title', t: 'Neumonía', s: 'Semana 9 · Neumología' },
-            say: 'Semana nueve: la neumonía. Se diagnostica con síntomas respiratorios, fiebre y un infiltrado nuevo en la radiografía. El agente más común en la comunidad es el neumococo.' },
-          { v: { k: 'case', t: 'Fiebre y tos con flema', p: { name: 'Ofelia', age: 72, sex: 'M', skin: '#E2B08A', hair: '#B0B0B0', gown: '#9FD8FF' }, text: 'Fiebre, tos con esputo herrumbroso, confusión. FR 32, PA 88/56, BUN 28. RX: consolidación en lóbulo inferior derecho.', vit: { FR: '32', PA: '88/56' } },
-            say: 'Ofelia tiene setenta y dos años, fiebre, tos con esputo color óxido y está confundida. Respira treinta y dos veces por minuto, la presión es de ochenta y ocho sobre cincuenta y seis y el nitrógeno ureico está alto. Tiene una consolidación lobar.' },
-          { v: { k: 'list', t: 'CURB-65', items: ['Confusión', 'Urea o BUN alto', 'FR 30 o más', 'PA baja: sistólica menor de 90 o diastólica 60 o menos', 'Edad 65 o más'] },
-            say: 'CURB sesenta y cinco: confusión, urea alta, frecuencia respiratoria de treinta o más, presión baja y edad de sesenta y cinco o más. Cero a uno, casa. Dos, hospital. Tres o más, valorar terapia intensiva. Ofelia tiene cinco.' }
+            say: 'Semana nueve: la neumonía. Es la infección que más mata en el mundo y la que más vas a ver en el internado. En este video vas a aprender a reconocerla, a decidir dónde se trata con CURB sesenta y cinco y a elegir el antibiótico según el sitio y los factores de riesgo.' },
+          { v: { k: 'case', t: 'Fiebre y tos con flema', p: { name: 'Ofelia', age: 72, sex: 'M', skin: '#E2B08A', hair: '#B0B0B0', gown: '#9FD8FF' }, text: 'Diabética. 3 días con fiebre, tos con esputo herrumbroso y dolor pleurítico. Hoy está confundida.', vit: { FR: '32', PA: '88/56', T: '39.1', SpO2: '88%' } },
+            say: 'Conoce a Ofelia, de setenta y dos años y diabética. Lleva tres días con fiebre, tos con esputo color óxido y dolor al respirar en el costado derecho. Hoy su hija la nota confundida. Respira treinta y dos veces por minuto, la presión es de ochenta y ocho sobre cincuenta y seis y satura ochenta y ocho por ciento.' },
+          { v: { k: 'vs', a: 'Típica', b: 'Atípica', rows: [['Agentes', 'Neumococo, H. influenzae, Moraxella', 'Mycoplasma, Chlamydophila, Legionella'], ['Inicio', 'Súbito, fiebre alta', 'Gradual, tos seca'], ['Rx', 'Consolidación lobar', 'Infiltrado intersticial'], ['Cobertura', 'Betalactámico', 'Macrólido, doxiciclina o quinolona']] },
+            say: 'El neumococo es el agente número uno en todos los escenarios. Da la neumonía típica: inicio súbito, fiebre alta, esputo herrumbroso y consolidación lobar. Los atípicos, Mycoplasma, Chlamydophila y Legionella, dan un cuadro más gradual con tos seca e infiltrado intersticial, y no responden a betalactámicos porque no tienen la pared que estos atacan.' },
+          { v: { k: 'list', t: 'Pistas de agente en el examen', items: ['Legionella: diarrea, hiponatremia, confusión', 'Mycoplasma: joven, anemia hemolítica, miringitis', 'S. aureus: después de influenza, cavita', 'Klebsiella: alcohólico, jalea de grosella', 'Anaerobios: aspiración, lóbulo inferior derecho'] },
+            say: 'Las pistas que pregunta el examen: Legionella da diarrea, hiponatremia y confusión, y se pide antígeno urinario. Mycoplasma, jóvenes con anemia hemolítica por crioaglutininas. Estafilococo dorado, después de influenza y con cavitaciones. Klebsiella, alcohólicos con esputo en jalea de grosella en el lóbulo superior. Y anaerobios por aspiración, en el lóbulo inferior derecho.' }
         ] },
-        { ch: 'Antibiótico', sc: [
-          { v: { k: 'vs', a: 'Ambulatorio', b: 'Hospitalizado', rows: [['Sano', 'Amoxicilina o doxiciclina (o macrólido)', '—'], ['Comorbilidad', 'Amoxi-clav más macrólido o quinolona respiratoria', 'Ceftriaxona más azitromicina o quinolona'], ['UCI', '—', 'Ceftriaxona más azitromicina o más quinolona']] },
-            say: 'En casa, al paciente sano: amoxicilina o doxiciclina. Con comorbilidades: amoxicilina con clavulanato más un macrólido, o una quinolona respiratoria. Hospitalizado: ceftriaxona más azitromicina, o una quinolona respiratoria sola. En terapia intensiva, betalactámico más macrólido o quinolona.' },
-          { v: { k: 'list', t: 'Cubrir más si hay riesgo', items: ['MRSA: vancomicina o linezolid', 'Pseudomonas: piperacilina-tazobactam, cefepime o meropenem', 'Aspiración: ampicilina-sulbactam'] },
-            say: 'Si hay riesgo de estafilococo resistente, agrega vancomicina o linezolid. Si hay riesgo de pseudomonas, usa piperacilina tazobactam, cefepime o meropenem.' },
-          { v: { k: 'tip', kind: 'pearl', t: 'Duración: mínimo 5 días y 48–72 h afebril y estable.' },
-            say: 'La duración mínima es de cinco días, y el paciente debe llevar cuarenta y ocho a setenta y dos horas sin fiebre y estable.' },
-          { v: { k: 'mnemo', t: 'CURB-65: 0–1 casa, 2 hospital, ≥3 UCI', d: 'Confusión, Urea, Respiración ≥30, Baja PA, edad ≥65.' },
-            say: 'Llévate CURB sesenta y cinco: cero o uno a casa, dos al hospital, tres o más a terapia intensiva.' }
+        { ch: 'Diagnóstico y gravedad', sc: [
+          { v: { k: 'list', t: 'Diagnóstico', items: ['Clínica: fiebre, tos, disnea, dolor pleurítico', 'Exploración: estertores, soplo tubario, egofonía', 'Rx de tórax: infiltrado NUEVO', 'Ancianos: confusión o caídas sin fiebre'] },
+            say: 'El diagnóstico une la clínica con la imagen: fiebre, tos, falta de aire y dolor pleurítico, con estertores, soplo tubario y egofonía, más un infiltrado nuevo en la radiografía. Ojo con los ancianos: pueden presentarse solo con confusión o caídas, sin fiebre.' },
+          { v: { k: 'list', t: 'CURB-65', items: ['Confusión', 'Urea mayor de 7 mmol/L (BUN mayor de 19)', 'Respiración: FR 30 o más', 'Baja PA: PAS menor de 90 o PAD 60 o menos', 'Edad 65 o más'] },
+            say: 'CURB sesenta y cinco da un punto por cada criterio: confusión, urea alta, frecuencia respiratoria de treinta o más, presión baja y edad de sesenta y cinco o más.' },
+          { v: { k: 'flow', t: '¿Dónde se trata?', steps: ['CURB-65 de 0 a 1: casa', 'CURB-65 de 2: hospital', 'CURB-65 de 3 o más: valorar UCI', 'Choque o ventilación: UCI siempre'] },
+            say: 'Cero o uno, tratamiento en casa. Dos, hospitalización. Tres o más, valora terapia intensiva. Y si tiene choque con vasopresor o necesita ventilación mecánica, terapia intensiva sin discusión: esos son los criterios mayores. Ofelia tiene confusión, urea alta, frecuencia de treinta y dos, presión baja y setenta y dos años: cinco puntos.' },
+          { v: { k: 'quiz', q: 'Hombre de 30 años, sano, CURB-65 de 0. ¿Dónde y con qué?', opts: ['Hospital con ceftriaxona', 'Casa con amoxicilina o doxiciclina', 'Casa con levofloxacino'], a: 1 },
+            say: 'Pausa. Hombre de treinta años, sano, con neumonía y CURB sesenta y cinco de cero. ¿Dónde lo tratas y con qué?',
+            exp: 'En casa con amoxicilina un gramo cada ocho horas, o doxiciclina. Las quinolonas se reservan para quien tiene comorbilidades o alergia, y el macrólido solo sirve si la resistencia local del neumococo es baja, cosa que en México no suele pasar.' }
+        ] },
+        { ch: 'El antibiótico correcto', sc: [
+          { v: { k: 'vs', a: 'Escenario', b: 'Antibiótico', rows: [['Casa, sano', 'Amoxicilina o doxiciclina', 'Macrólido si resistencia baja'], ['Casa, comorbilidad', 'Amoxi-clav + macrólido', 'O quinolona respiratoria'], ['Piso', 'Ceftriaxona + azitromicina', 'O quinolona sola'], ['UCI', 'Ceftriaxona + azitromicina', 'O ceftriaxona + quinolona']] },
+            say: 'En casa y sano: amoxicilina o doxiciclina. En casa con comorbilidades como diabetes, EPOC o insuficiencia cardiaca: amoxicilina con clavulanato más un macrólido, o una quinolona respiratoria sola. Hospitalizado en piso: ceftriaxona más azitromicina, o una quinolona respiratoria sola. En terapia intensiva siempre son dos: ceftriaxona con azitromicina o ceftriaxona con quinolona.' },
+          { v: { k: 'list', t: 'Agrega cobertura si hay riesgo', items: ['MRSA previo o neumonía necrotizante: vancomicina o linezolid', 'Pseudomonas previa, bronquiectasias: piperacilina-tazobactam, cefepime o meropenem', 'Aspiración con absceso: ampicilina-sulbactam', 'Influenza: oseltamivir'] },
+            say: 'Agrega cobertura solo si hay riesgo: si ya tuvo estafilococo resistente o la neumonía es necrotizante, vancomicina o linezolid. Si tuvo pseudomonas o tiene bronquiectasias, piperacilina con tazobactam, cefepime o meropenem. Si hubo aspiración con absceso, ampicilina con sulbactam. Y si hay influenza, oseltamivir.' },
+          { v: { k: 'tip', kind: 'trap', t: 'La ceftriaxona sola no cubre atípicos. Hospitalizado = betalactámico + macrólido, o quinolona respiratoria sola.' },
+            say: 'Trampa clásica: dejar ceftriaxona sola al paciente hospitalizado. No cubre atípicos, y Legionella mata. Siempre betalactámico más macrólido, o una quinolona respiratoria sola.' },
+          { v: { k: 'big', h: 'Duración', t: '5 días', s: 'Mínimo, y 48 a 72 h afebril y estable. 7 días si es MRSA o Pseudomonas. Pasa a vía oral al mejorar.' },
+            say: 'La duración mínima es de cinco días, siempre que lleve cuarenta y ocho a setenta y dos horas afebril y estable. Siete días si hubo estafilococo resistente o pseudomonas. En cuanto mejore y tolere la vía oral, cambia a pastillas.' }
+        ] },
+        { ch: 'Nosocomial y complicaciones', sc: [
+          { v: { k: 'vs', a: 'Intrahospitalaria', b: 'Asociada a ventilador', rows: [['Definición', '48 h o más de hospitalizado', '48 h o más intubado'], ['Agentes', 'Pseudomonas, enterobacterias', 'Igual, más Acinetobacter y MRSA'], ['Tratamiento', 'Antipseudomonas', 'Antipseudomonas ± anti-MRSA'], ['Duración', '7 días', '7 días']] },
+            say: 'La neumonía intrahospitalaria aparece cuarenta y ocho horas o más después de ingresar, y la asociada a ventilador, cuarenta y ocho horas o más después de intubar. Aquí cambian los agentes: pseudomonas, enterobacterias, Acinetobacter y estafilococo resistente. El tratamiento es antipseudomonas, más vancomicina o linezolid según el riesgo, por siete días.' },
+          { v: { k: 'list', t: 'Si no mejora en 72 h, busca', items: ['Derrame paraneumónico o empiema', 'Absceso pulmonar', 'Germen no cubierto o resistente', 'Otro diagnóstico: TEP, cáncer, TB'] },
+            say: 'Si a las setenta y dos horas no mejora, no cambies el antibiótico a ciegas: busca derrame paraneumónico o empiema, absceso, un germen no cubierto o un diagnóstico distinto, como tromboembolia, cáncer o tuberculosis.' },
+          { v: { k: 'quiz', q: 'Hombre de 50 años con neumonía, diarrea, sodio de 126 y confusión. ¿Qué pides y qué das?', opts: ['Coprocultivo y metronidazol', 'Antígeno urinario de Legionella; macrólido o quinolona', 'Ceftriaxona sola'], a: 1 },
+            say: 'Pausa. Hombre de cincuenta años con neumonía, diarrea, sodio de ciento veintiséis y confusión. ¿Qué pides y con qué tratas?',
+            exp: 'Antígeno urinario de Legionella, y azitromicina o levofloxacino. Neumonía con diarrea, hiponatremia y confusión es Legionella hasta demostrar lo contrario, y los betalactámicos no la cubren.' }
+        ] },
+        { ch: 'Cierre y perlas', sc: [
+          { v: { k: 'list', t: 'Ofelia: final del caso', items: ['CURB-65 de 5: UCI', 'Hemocultivos y antígenos urinarios', 'Ceftriaxona + azitromicina', 'Líquidos y norepinefrina: sepsis', 'Hidrocortisona por NAC grave'] },
+            say: 'Ofelia tiene CURB de cinco y choque: va a terapia intensiva. Se toman hemocultivos y antígenos urinarios, recibe ceftriaxona con azitromicina en la primera hora, líquidos y norepinefrina, y por ser neumonía grave sin influenza se considera hidrocortisona. El antígeno urinario sale positivo para neumococo.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'En fumadores mayores de 50, Rx de control a las 6 a 8 semanas: la neumonía que no se resuelve puede esconder un cáncer.' },
+            say: 'Perla: en fumadores mayores de cincuenta años se repite la radiografía a las seis u ocho semanas. Una neumonía que no se resuelve puede estar escondiendo un cáncer de pulmón.' },
+          { v: { k: 'mnemo', t: 'CURB-65: 0–1 casa, 2 hospital, ≥3 UCI', d: 'Casa: amoxicilina. Piso: ceftriaxona + azitromicina. Riesgo: MRSA → vancomicina; Pseudomonas → pip-tazo.' },
+            say: 'Llévate esto: CURB sesenta y cinco decide dónde, el sitio y los factores de riesgo deciden el antibiótico. Casa, amoxicilina. Piso, ceftriaxona con azitromicina. Ahora practica en la guardia con Ofelia y en el algoritmo del taller.' }
         ] }
       ],
       sections: [

@@ -12,7 +12,7 @@ const OUT = opt('--out');
 const ONLY = opt('--only') ? new Set(opt('--only').split(',').map((x) => x.trim())) : null;
 const keepTopic = (tid) => !ONLY || ['meta', 'diagnostico'].includes(tid) || ONLY.has(tid);
 
-const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {}, algos: {}, ecg: {}, frotis: {}, soplos: {}, guias: {}, chuletas: {}, libro: {}, cond3d: {}, facil: {}, ecgsim: {}, hssim: {} };
+const C = { questions: [], cards: [], cases: [], lessons: {}, compares: {}, anims: {}, paths: {}, algos: {}, ecg: {}, frotis: {}, soplos: {}, guias: {}, chuletas: {}, libro: {}, cond3d: {}, facil: {}, ecgsim: {}, hssim: {}, sliders: {} };
 for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('.js')).sort()) {
   const part = (await import(new URL('content/' + f, src))).default;
   // Con --only se cargan solo esos temas, pero los comparadores de todos (una lección puede usar uno ajeno)
@@ -26,7 +26,7 @@ for (const f of readdirSync(new URL('content/', src)).filter((f) => f.endsWith('
       // Guías de la rotación: varias fuentes pueden complementar el mismo tema
       for (const [tid, G] of Object.entries(v)) (C.guias[tid] = C.guias[tid] || []).push(G);
     } else if (Array.isArray(v)) C[k] = (C[k] || []).concat(v);
-    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg', 'frotis', 'soplos', 'chuletas', 'libro', 'cond3d', 'facil', 'ecgsim', 'hssim'].includes(k)) Object.assign(C[k], v);
+    else if (typeof v === 'object' && ['lessons', 'compares', 'anims', 'paths', 'algos', 'ecg', 'frotis', 'soplos', 'chuletas', 'libro', 'cond3d', 'facil', 'ecgsim', 'hssim', 'sliders'].includes(k)) Object.assign(C[k], v);
     else C[k] = v;
   }
 }
@@ -93,6 +93,11 @@ for (const [aid, A] of Object.entries(C.algos)) {
     while (N[cur] && !N[cur].end && guard++ < 20) { const k = cs.path[cur]; if (k == null || !N[cur].opts[k]) { errs.push(`algoritmo ${aid}, caso ${i + 1}: sin respuesta en ${cur}`); return; } cur = N[cur].opts[k].go; }
     if (cur !== cs.end) errs.push(`algoritmo ${aid}, caso ${i + 1}: el camino llega a ${cur}, no a ${cs.end}`);
   });
+}
+for (const [sid, D] of Object.entries(C.sliders)) {
+  if (!(D.title && D.label && D.bands && D.bands.length >= 2 && D.min < D.max && D.start >= D.min && D.start <= D.max)) errs.push(`simulador ${sid}: faltan datos`);
+  for (const tid of D.topics || []) if (!C.topics.some((t) => t.id === tid)) errs.push(`simulador ${sid}: tema ${tid} no existe`);
+  D.bands.forEach((x, i) => { if (!['ok', 'warn', 'bad'].includes(x[2]) || !x[3]) errs.push(`simulador ${sid}: banda ${i + 1} inválida`); if (i && x[0] <= D.bands[i - 1][0]) errs.push(`simulador ${sid}: bandas fuera de orden`); });
 }
 for (const [eid, e] of [...Object.entries(C.ecg), ...Object.entries(C.frotis)]) {
   if (!e.name || !e.why) errs.push(`ECG ${eid}: falta nombre o explicación`);

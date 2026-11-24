@@ -9,21 +9,57 @@ export default {
       hook: 'Tos >2–3 semanas con fiebre vespertina, sudoración y pérdida de peso: TB hasta demostrar lo contrario. Se confirma con baciloscopia/PCR (Xpert) y cultivo; se trata con RIPE 2 meses y RI 4 meses. La latente (PPD o IGRA +, RX normal) se trata para que no se active.',
       nn: [], yt: 'tuberculosis diagnosis treatment RIPE latent TB',
       video: [
-        { ch: 'Diagnóstico', sc: [
+        { ch: 'El bacilo y sus formas', sc: [
           { v: { k: 'title', t: 'Tuberculosis', s: 'Semana 11 · Neumología' },
-            say: 'Semana once: la tuberculosis. La causa Mycobacterium tuberculosis, se transmite por gotitas y sigue siendo muy frecuente en México. Los grupos de riesgo: VIH, diabetes, desnutrición, alcohol, cárcel y contactos.' },
-          { v: { k: 'case', t: 'Tos y sudores', p: { name: 'Fernando', age: 45, sex: 'H', skin: '#C98B62', hair: '#2A1A12', gown: '#9FD8FF' }, text: 'Diabético. Tos de 5 semanas con hemoptisis, fiebre vespertina, sudoración nocturna, bajó 8 kg. RX: cavitación apical derecha.', vit: { Tos: '5 sem', Peso: '−8 kg' } },
-            say: 'Fernando es diabético, tiene tos desde hace cinco semanas, a veces con sangre, fiebre en las tardes, sudoración en la noche y bajó ocho kilos. La radiografía muestra una cavidad en el ápice derecho.' },
-          { v: { k: 'list', t: 'Cómo se confirma', items: ['Baciloscopia seriada', 'PCR Xpert MTB RIF', 'Cultivo: el estándar de oro', 'Prueba de resistencia'] },
-            say: 'Se confirma con baciloscopias de esputo, con la prueba molecular Xpert, que además detecta resistencia a rifampicina, y con el cultivo, que es el estándar de oro pero tarda semanas.' }
+            say: 'Semana once: la tuberculosis. México sigue siendo zona endémica y la diabetes es el factor de riesgo que más la empuja aquí. En este video vas a aprender a sospecharla, confirmarla, tratarla con el esquema correcto, reconocer los efectos adversos de cada fármaco y manejar la forma latente.' },
+          { v: { k: 'case', t: 'Tos y sudores', p: { name: 'Fernando', age: 45, sex: 'H', skin: '#C98B62', hair: '#2A1A12', gown: '#9FD8FF' }, text: 'Diabético mal controlado. Tos de 5 semanas, hemoptisis, fiebre vespertina y sudoración nocturna. Bajó 8 kg. Rx: cavitación apical derecha.', vit: { Tos: '5 sem', Peso: '−8 kg', A1c: '10.2%' } },
+            say: 'Conoce a Fernando, de cuarenta y cinco años, diabético con mal control. Tiene cinco semanas con tos, a veces con sangre, fiebre por las tardes, sudoración que le moja la almohada y bajó ocho kilos. La radiografía muestra una cavidad en el vértice derecho.' },
+          { v: { k: 'vs', a: 'Primaria', b: 'Reactivación', rows: [['Cuándo', 'Primer contacto', 'Años después, al bajar las defensas'], ['Lugar', 'Lóbulos medios e inferiores', 'Lóbulos superiores, apicales'], ['Imagen', 'Complejo de Ghon: foco + ganglio hiliar', 'Cavitación, árbol en gemación'], ['Evolución', 'Casi siempre se controla: latente', 'Contagiosa si cavita']] },
+            say: 'Mycobacterium tuberculosis se contagia por aerosoles. En el primer contacto produce el complejo de Ghon: un foco en los lóbulos medios o inferiores más un ganglio hiliar, y casi siempre el sistema inmune lo encierra en granulomas: es la tuberculosis latente. Años después, si bajan las defensas, se reactiva en los lóbulos superiores, donde hay más oxígeno, y cava cavidades llenas de bacilos.' },
+          { v: { k: 'list', t: 'Riesgo de reactivación', items: ['VIH: el mayor', 'Diabetes (muy frecuente en México)', 'Anti-TNF, esteroides, trasplante', 'ERC en diálisis, silicosis', 'Desnutrición, alcohol'] },
+            say: 'El mayor riesgo de reactivación es el VIH. Le siguen la diabetes, los anti TNF como infliximab, los esteroides y los trasplantes, la enfermedad renal en diálisis, la silicosis, la desnutrición y el alcohol.' },
+          { v: { k: 'list', t: 'Formas extrapulmonares', items: ['Ganglionar (escrófula): la más común', 'Pleural: exudado linfocítico, ADA alta', 'Meníngea: base del cráneo, pares craneales', 'Pott: vertebral', 'Renal: piuria estéril; miliar: diseminada'] },
+            say: 'Fuera del pulmón, la más común es la ganglionar, la escrófula en el cuello. La pleural da un exudado linfocítico con adenosina desaminasa alta. La meníngea afecta la base del cráneo y los pares craneales. El mal de Pott es vertebral, la renal da piuria estéril y la miliar es diseminada, con micronódulos en todo el pulmón.' }
+        ] },
+        { ch: 'Diagnóstico', sc: [
+          { v: { k: 'list', t: 'Sospecha', items: ['Tos de más de 2 a 3 semanas', 'Fiebre vespertina', 'Sudoración nocturna', 'Pérdida de peso', 'Hemoptisis'] },
+            say: 'Sospecha tuberculosis ante tos de más de dos o tres semanas, sobre todo con fiebre vespertina, sudoración nocturna, pérdida de peso y hemoptisis.' },
+          { v: { k: 'flow', t: 'Confirmar', steps: ['Esputo: Xpert MTB/RIF', 'Baciloscopia seriada (3 muestras)', 'Cultivo con antibiograma: estándar de oro', 'Sin esputo: inducido o lavado bronquial', 'Toda TB: prueba de VIH y glucosa'] },
+            say: 'Se confirma en esputo. La prueba molecular Xpert da resultado en dos horas y detecta resistencia a rifampicina. La baciloscopia con Ziehl Neelsen es barata, en tres muestras. El estándar de oro es el cultivo con antibiograma, que tarda de dos a seis semanas. Si no expectora, esputo inducido o lavado broncoalveolar. Y a todo paciente con tuberculosis se le pide prueba de VIH y glucosa.' },
+          { v: { k: 'quiz', q: 'Fernando: Xpert detecta M. tuberculosis, sin resistencia a rifampicina. ¿Esquema?', opts: ['Isoniazida sola 9 meses', 'RIPE 2 meses y luego rifampicina más isoniazida 4 meses', 'Levofloxacino 14 días'], a: 1 },
+            say: 'Pausa. El Xpert de Fernando detecta tuberculosis sensible a rifampicina. ¿Qué esquema le das?',
+            exp: 'Dos meses de rifampicina, isoniazida, pirazinamida y etambutol, y después cuatro meses de rifampicina con isoniazida, supervisado. La isoniazida sola es para la forma latente; darla en enfermedad activa genera resistencia.' }
         ] },
         { ch: 'Tratamiento', sc: [
-          { v: { k: 'flow', t: 'TB sensible', steps: ['2 meses: rifampicina, isoniazida, pirazinamida, etambutol', '4 meses: rifampicina e isoniazida', 'Piridoxina con isoniazida', 'Tratamiento supervisado'] },
-            say: 'La TB sensible se trata seis meses: dos meses con rifampicina, isoniazida, pirazinamida y etambutol, y cuatro meses con rifampicina e isoniazida. Se agrega piridoxina para prevenir la neuropatía de la isoniazida.' },
-          { v: { k: 'vs', a: 'Efecto adverso', b: 'Clave', rows: [['Isoniazida', 'Neuropatía, hepatitis', 'Piridoxina'], ['Rifampicina', 'Líquidos naranjas, interacciones', 'Inductor CYP'], ['Pirazinamida', 'Hiperuricemia, hepatitis', 'Gota'], ['Etambutol', 'Neuritis óptica', 'Colores']] },
-            say: 'Los efectos adversos: isoniazida, neuropatía y hepatitis. Rifampicina, lágrimas y orina naranjas e interacciones, porque induce enzimas hepáticas. Pirazinamida, ácido úrico alto. Etambutol, neuritis óptica con pérdida de la visión de colores.' },
-          { v: { k: 'mnemo', t: 'RIPE', d: 'Rifampicina, Isoniazida, Pirazinamida, Etambutol: 2 meses; luego RI 4 meses.' },
-            say: 'Llévate RIPE: dos meses los cuatro, cuatro meses rifampicina con isoniazida. Y la latente se trata para que no se active.' }
+          { v: { k: 'big', h: 'Esquema de TB sensible', t: '2 RIPE + 4 RI', s: 'Fase intensiva de 2 meses y sostén de 4. Supervisado (TAES). Piridoxina con isoniazida.' },
+            say: 'El esquema estándar dura seis meses. Fase intensiva de dos meses con cuatro fármacos: rifampicina, isoniazida, pirazinamida y etambutol. Fase de sostén de cuatro meses con rifampicina e isoniazida. Siempre supervisado, el tratamiento acortado estrictamente supervisado, y con piridoxina para proteger los nervios de la isoniazida.' },
+          { v: { k: 'vs', a: 'Fármaco', b: 'Efecto adverso clave', rows: [['Isoniazida', 'Neuropatía por déficit de B6', 'Hepatitis, lupus inducido'], ['Rifampicina', 'Orina y lágrimas naranjas', 'Inductor: falla el anticonceptivo'], ['Pirazinamida', 'Hiperuricemia y gota', 'La más hepatotóxica'], ['Etambutol', 'Neuritis óptica', 'Pierde la visión de colores']] },
+            say: 'Los efectos adversos son pregunta segura. Isoniazida: neuropatía periférica por déficit de vitamina B seis, hepatitis y lupus inducido. Rifampicina: pinta de naranja la orina y las lágrimas, y es un gran inductor del citocromo, así que falla el anticonceptivo y baja la warfarina. Pirazinamida: hiperuricemia y gota, y es la más hepatotóxica. Etambutol: neuritis óptica, con pérdida de la visión de colores.' },
+          { v: { k: 'list', t: 'Cuándo se alarga', items: ['Meníngea: 9 a 12 meses + dexametasona', 'Ósea o Pott: 6 a 9 meses', 'Cavitada con cultivo positivo a los 2 meses: 9 meses', 'Pericárdica: valorar esteroide'] },
+            say: 'El tratamiento se alarga en la forma meníngea, nueve a doce meses con dexametasona; en la ósea, seis a nueve meses; y en la cavitada que sigue con cultivo positivo a los dos meses, nueve meses.' },
+          { v: { k: 'list', t: 'Hepatotoxicidad', items: ['Suspender si ALT 3 veces con síntomas', 'O 5 veces sin síntomas', 'Reintroducir uno por uno', 'Primero rifampicina, luego isoniazida'] },
+            say: 'Si las transaminasas suben tres veces con síntomas, o cinco veces sin ellos, se suspende todo. Cuando bajen, se reintroducen uno por uno: primero rifampicina, luego isoniazida, para encontrar al culpable, que con frecuencia es la pirazinamida.' },
+          { v: { k: 'quiz', q: 'Mujer en el mes 2 de RIPE ya no distingue el rojo del verde. ¿Culpable?', opts: ['Isoniazida', 'Rifampicina', 'Etambutol', 'Pirazinamida'], a: 2 },
+            say: 'Pausa. Una paciente en el segundo mes de tratamiento ya no distingue el rojo del verde. ¿Qué fármaco es?',
+            exp: 'Etambutol. Causa neuritis óptica, y lo primero que se pierde es la visión de colores rojo y verde. Se suspende y se vigila la agudeza visual.' }
+        ] },
+        { ch: 'Resistencia, VIH y latente', sc: [
+          { v: { k: 'list', t: 'TB resistente', items: ['RR: resistente a rifampicina', 'MDR: rifampicina + isoniazida', 'XDR: + fluoroquinolona y bedaquilina o linezolid', 'Régimen oral BPaLM 6 meses'] },
+            say: 'La tuberculosis resistente se clasifica por los fármacos que fallan. Resistente a rifampicina; multirresistente si falla rifampicina e isoniazida; y extensamente resistente si además falla una fluoroquinolona y bedaquilina o linezolid. Hoy se trata con un régimen oral de seis meses: bedaquilina, pretomanid, linezolid y moxifloxacino.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'TB + VIH: iniciar antirretrovirales en 2 semanas (en meníngea, esperar 4 a 8). Vigila el síndrome de reconstitución inmune.' },
+            say: 'Perla: en el paciente con VIH y tuberculosis, se empieza el tratamiento antifímico y los antirretrovirales se inician en las primeras dos semanas. En la meníngea se espera de cuatro a ocho semanas porque la inflamación de la reconstitución inmune puede ser grave.' },
+          { v: { k: 'vs', a: 'PPD positivo si', b: 'Grupo', rows: [['5 mm o más', 'VIH, contactos, inmunosuprimidos', 'Fibrosis en Rx'], ['10 mm o más', 'Diabetes, ERC, personal de salud', 'Migrantes, niños menores de 4'], ['15 mm o más', 'Sin factores de riesgo', '—']] },
+            say: 'Para la forma latente se tamiza a los grupos de riesgo. La tuberculina se lee según el paciente: cinco milímetros es positiva en VIH, contactos e inmunosuprimidos; diez en diabéticos, renales, personal de salud y migrantes; quince en personas sin factores de riesgo. En vacunados con BCG se prefiere el IGRA, como QuantiFERON.' },
+          { v: { k: 'flow', t: 'PPD o IGRA positivo', steps: ['Rx de tórax y síntomas', 'Si hay datos: estudiar TB activa', 'Si es normal: TB latente', 'Tratar: 3HP, 4R o isoniazida 6 a 9 meses'] },
+            say: 'Una prueba positiva no distingue latente de activa. Siempre pide radiografía y pregunta síntomas. Si la radiografía es normal y no hay síntomas, es latente y se trata: isoniazida con rifapentina semanal por tres meses, rifampicina por cuatro, o isoniazida de seis a nueve meses.' }
+        ] },
+        { ch: 'Cierre del caso', sc: [
+          { v: { k: 'list', t: 'Fernando: final del caso', items: ['Xpert positivo, sensible a rifampicina', 'VIH negativo; insulina para la diabetes', 'RIPE supervisado + piridoxina', 'Cultivo negativo al mes 2: sigue RI 4 meses', 'Estudio de contactos en casa'] },
+            say: 'Fernando tiene tuberculosis sensible. Su prueba de VIH sale negativa y se inicia insulina para controlar la diabetes. Recibe el esquema supervisado con piridoxina, su cultivo se negativiza al segundo mes y completa cuatro meses de rifampicina con isoniazida. Además se estudia a sus contactos en casa.' },
+          { v: { k: 'tip', kind: 'trap', t: 'PPD positivo ≠ TB latente: primero descarta TB activa con Rx. Dar isoniazida sola a una TB activa genera resistencia.' },
+            say: 'La trampa final: un PPD positivo no significa tuberculosis latente. Primero descarta la activa con radiografía, porque darle isoniazida sola a una activa genera resistencia.' },
+          { v: { k: 'mnemo', t: 'RIPE 2 + RI 4', d: 'Isoniazida: nervios (B6). Rifampicina: naranja e interacciones. Pirazinamida: gota. Etambutol: ojos.' },
+            say: 'Llévate esto: rifampicina, isoniazida, pirazinamida y etambutol dos meses, y rifampicina con isoniazida cuatro. Isoniazida, nervios. Rifampicina, naranja e interacciones. Pirazinamida, gota. Etambutol, ojos. Ahora practica en el taller con el algoritmo del PPD y la guardia de Fernando.' }
         ] }
       ],
       sections: [
