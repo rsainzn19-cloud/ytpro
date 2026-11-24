@@ -9,21 +9,55 @@ export default {
       hook: 'Una bradicardia preocupa por dos cosas: si da síntomas (síncope, hipotensión) y si el bloqueo está debajo del nodo AV (Mobitz II y completo), porque esos terminan en marcapasos.',
       nn: [], yt: 'bradyarrhythmias AV block Mobitz pacemaker',
       video: [
-        { ch: 'Del nodo sinusal al bloqueo completo', sc: [
-          { v: { k: 'title', t: 'Bradiarritmias y bloqueos', s: 'Semana 10 · Cardiología' },
-            say: 'Semana diez: las bradicardias. Hay dos sitios donde puede fallar el sistema: el nodo sinusal, que no dispara, y el nodo auriculoventricular o el sistema de His, que no conduce.' },
-          { v: { k: 'list', t: 'Bloqueos AV', items: ['1er grado: PR largo, todas conducen', 'Mobitz I: el PR se alarga hasta que una P no conduce', 'Mobitz II: PR fijo y de pronto una P sin QRS', '3er grado: P y QRS van cada quien a su ritmo'] },
-            say: 'Los bloqueos auriculoventriculares. Primer grado: el PR mide más de doscientos milisegundos, pero todas las P conducen. Mobitz uno o Wenckebach: el PR se alarga latido a latido hasta que una P no conduce. Mobitz dos: el PR es fijo y de repente una P se queda sin QRS. Tercer grado: aurículas y ventrículos laten cada quien a su ritmo.' },
-          { v: { k: 'vs', a: 'Mobitz I', b: 'Mobitz II', rows: [['Dónde', 'Nodo AV', 'His o ramas'], ['QRS', 'Estrecho', 'A menudo ancho'], ['Atropina', 'Mejora', 'No sirve o empeora'], ['Riesgo', 'Benigno', 'Pasa a completo'], ['Tratamiento', 'Observar', 'Marcapasos']] },
-            say: 'La diferencia clave: el Mobitz uno vive en el nodo, suele ser benigno y responde a atropina. El Mobitz dos está debajo del nodo, puede progresar de golpe a bloqueo completo y necesita marcapasos aunque no dé síntomas.' }
+        { ch: 'El sistema de conducción', sc: [
+          { v: { k: 'title', t: 'Bradiarritmias', s: 'Semana 10 · Cardiología' },
+            say: 'Semana diez: las bradiarritmias. Todo se reduce a dos preguntas: dónde está el bloqueo, en el nodo o debajo de él, y si el paciente está estable. Con eso decides entre observar, atropina o marcapasos.' },
+          { v: { k: 'case', t: 'Se desmayó en el mercado', p: { name: 'Don Rafael', age: 79, sex: 'H', skin: '#C98B62', hair: '#B0B0B0', gown: '#5BA7E0' }, text: 'Síncope sin pródromo. Mareo desde hace una semana. Toma metoprolol por HTA. Pulso lento y regular.', vit: { FC: '36', PA: '84/50', Glasgow: '15' } },
+            say: 'Don Rafael tiene setenta y nueve años y se desmayó en el mercado, de golpe, sin aviso. Lleva una semana mareado. Toma metoprolol para la presión. Su pulso es de treinta y seis por minuto y la presión de ochenta y cuatro sobre cincuenta.' },
+          { v: { k: 'flow', t: 'Camino del impulso', steps: ['Nodo sinusal: marcapasos de 60 a 100', 'Aurículas: onda P', 'Nodo AV: retrasa (el PR)', 'His y ramas: QRS estrecho', 'Escape nodal 40 a 60; ventricular 20 a 40'] },
+            say: 'El impulso nace en el nodo sinusal a sesenta a cien latidos, despolariza las aurículas, que es la onda P, y se retrasa en el nodo auriculoventricular, que es el intervalo PR. Luego baja por el haz de His y sus ramas, y da un QRS estrecho. Si algo falla arriba, toma el mando un escape: el nodal, a cuarenta a sesenta con QRS estrecho, o el ventricular, a veinte a cuarenta con QRS ancho y más inestable.' },
+          { v: { k: 'list', t: 'Causas reversibles', items: ['Fármacos: BB, verapamilo, diltiazem, digoxina, amiodarona', 'Hipotiroidismo, hipotermia', 'Hiperkalemia', 'Infarto inferior', 'Hipertensión intracraneal (Cushing)'] },
+            say: 'Antes de pensar en marcapasos, busca causas reversibles: betabloqueadores, verapamilo, diltiazem, digoxina y amiodarona; hipotiroidismo e hipotermia; hiperkalemia; infarto inferior, porque la coronaria derecha irriga el nodo; e hipertensión intracraneal, la tríada de Cushing.' }
         ] },
-        { ch: 'Qué hacer en urgencias', sc: [
-          { v: { k: 'flow', t: 'Bradicardia inestable', steps: ['Atropina 1 mg IV', 'Si no responde: marcapasos transcutáneo', 'O dopamina o epinefrina en infusión', 'Marcapasos definitivo'] },
-            say: 'Si la bradicardia da hipotensión, alteración del estado mental, dolor torácico o falla cardiaca: atropina un miligramo intravenoso, repetible. Si no responde, marcapasos transcutáneo o infusión de dopamina o epinefrina, mientras se coloca un marcapasos transvenoso.' },
-          { v: { k: 'tip', kind: 'trap', t: 'Antes de poner marcapasos, busca causas reversibles: fármacos (BB, calcioantagonistas, digoxina), hiperkalemia, hipotiroidismo e infarto inferior.' },
-            say: 'Antes de pensar en marcapasos busca lo reversible: betabloqueadores, calcioantagonistas, digoxina, hiperkalemia, hipotiroidismo y el infarto inferior, que da bloqueos que suelen recuperarse.' },
-          { v: { k: 'mnemo', t: 'Más largo, más largo, cae: Wenckebach', d: 'PR que se alarga hasta que cae un QRS = Mobitz I. PR fijo con caída súbita = Mobitz II. P y QRS sin relación = completo.' },
-            say: 'La rima: más largo, más largo, cae, y es Wenckebach. Si las P y los QRS no se ponen de acuerdo, es bloqueo completo.' }
+        { ch: 'Nodo sinusal', sc: [
+          { v: { k: 'list', t: 'Disfunción del nodo sinusal', items: ['Bradicardia sinusal sintomática', 'Pausas de más de 3 segundos', 'Incompetencia cronotrópica', 'Síndrome taqui-bradi: alterna con FA', 'Marcapasos si los síntomas coinciden'] },
+            say: 'La disfunción del nodo sinusal es típica de ancianos por fibrosis: bradicardia sinusal con síntomas, pausas de más de tres segundos, frecuencia que no sube con el esfuerzo, y el síndrome taqui bradi, que alterna fibrilación auricular rápida con pausas. Es la indicación más común de marcapasos, cuando los síntomas coinciden con la bradicardia.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Bradicardia sinusal en un atleta o al dormir es normal. Solo se trata si da síntomas.' },
+            say: 'Perla: una bradicardia sinusal en un atleta o durante el sueño es normal. Solo se estudia y se trata si da síntomas.' }
+        ] },
+        { ch: 'Bloqueos auriculoventriculares', sc: [
+          { v: { k: 'vs', a: 'Bloqueo', b: 'ECG', rows: [['1er grado', 'PR mayor de 200 ms', 'Todas conducen'], ['2o Mobitz I', 'PR se alarga hasta que una P no conduce', 'Nodo AV'], ['2o Mobitz II', 'PR fijo y una P se bloquea de golpe', 'His-Purkinje'], ['3er grado', 'P y QRS sin relación', 'Disociación AV']] },
+            say: 'Los bloqueos auriculoventriculares. Primer grado: el PR mide más de doscientos milisegundos pero todas las P conducen. Segundo grado Mobitz uno o Wenckebach: el PR se alarga latido a latido hasta que una P no conduce, y vuelve a empezar; está en el nodo. Mobitz dos: el PR es fijo y de pronto una P se bloquea; está debajo del nodo. Tercer grado: las P y los QRS van cada quien a su ritmo.' },
+          { v: { k: 'vs', a: 'Nodal', b: 'Infranodal', rows: [['Bloqueos', '1er grado, Mobitz I', 'Mobitz II, muchos de 3er grado'], ['QRS de escape', 'Estrecho, 40 a 60', 'Ancho, 20 a 40'], ['Atropina', 'Funciona', 'Casi no sirve'], ['Pronóstico', 'Benigno', 'Progresa a asistolia'], ['Marcapasos', 'Solo si da síntomas', 'Sí, aun sin síntomas']] },
+            say: 'Lo importante es dónde está el bloqueo. Si es nodal, como el primer grado y Mobitz uno, el escape es estrecho, la atropina funciona y es benigno: solo se trata si da síntomas. Si es infranodal, como Mobitz dos y muchos bloqueos completos, el escape es ancho y lento, la atropina casi no sirve y puede progresar a asistolia: lleva marcapasos aunque no haya síntomas.' },
+          { v: { k: 'quiz', q: 'ECG: PR fijo de 170 ms y de pronto una P sin QRS; QRS ancho. Asintomático. ¿Qué haces?', opts: ['Observar', 'Marcapasos definitivo', 'Atropina diaria'], a: 1 },
+            say: 'Pausa. PR fijo de ciento setenta milisegundos y de pronto una P sin QRS, con QRS ancho. El paciente no tiene síntomas. ¿Qué haces?',
+            exp: 'Marcapasos definitivo. Es Mobitz dos, un bloqueo infranodal que puede progresar a bloqueo completo o asistolia sin aviso, aunque hoy no dé síntomas.' },
+          { v: { k: 'list', t: 'Infarto y bloqueo', items: ['Inferior (coronaria derecha): bloqueo nodal, transitorio', 'Anterior (descendente): infranodal, mal pronóstico', 'Congénito: lupus materno (anti-Ro)', 'Otras: Lyme, sarcoidosis, absceso aórtico, TAVI'] },
+            say: 'En el infarto inferior, la coronaria derecha irriga el nodo, y el bloqueo suele ser nodal y transitorio. En el anterior, el bloqueo es infranodal y de mal pronóstico. El bloqueo completo congénito se asocia a lupus materno con anticuerpos anti Ro. Y entre las adquiridas: Lyme, sarcoidosis, absceso de una endocarditis aórtica y después de un implante valvular percutáneo.' }
+        ] },
+        { ch: 'Bloqueos de rama', sc: [
+          { v: { k: 'vs', a: 'Rama derecha', b: 'Rama izquierda', rows: [['QRS', '120 ms o más', '120 ms o más'], ['V1', 'rSR prima: orejas de conejo', 'QS o rS profunda'], ['V6 y DI', 'S ancha', 'R ancha y mellada'], ['Significado', 'Puede ser normal; nuevo en TEP', 'Casi siempre hay cardiopatía']] },
+            say: 'Los bloqueos de rama ensanchan el QRS a ciento veinte milisegundos o más. En el de rama derecha, V uno muestra rSR prima, como orejas de conejo, y hay S ancha en V seis; puede ser normal, y si es nuevo piensa en tromboembolia. En el de rama izquierda, V uno es negativo y V seis tiene una R ancha y mellada; casi siempre hay cardiopatía, y si es nuevo con dolor torácico se trata como síndrome coronario de alto riesgo.' }
+        ] },
+        { ch: 'La bradicardia inestable', sc: [
+          { v: { k: 'list', t: 'Datos de inestabilidad', items: ['Hipotensión', 'Alteración mental', 'Choque', 'Dolor isquémico', 'Falla cardiaca aguda'] },
+            say: 'Una bradicardia es inestable si causa hipotensión, alteración mental, choque, dolor isquémico o falla cardiaca aguda.' },
+          { v: { k: 'flow', t: 'Algoritmo', steps: ['Atropina 1 mg IV c/3 a 5 min (máx 3 mg)', 'Sin respuesta: marcapasos transcutáneo', 'O dopamina 5 a 20 µg/kg/min', 'O epinefrina 2 a 10 µg/min', 'Luego marcapasos transvenoso'] },
+            say: 'El algoritmo: atropina un miligramo intravenosa cada tres a cinco minutos, hasta tres miligramos. Si no responde, marcapasos transcutáneo, o infusión de dopamina o epinefrina, y después marcapasos transvenoso. La atropina casi no sirve en bloqueos infranodales ni en el corazón trasplantado.' },
+          { v: { k: 'list', t: 'Antídotos', items: ['Hiperkalemia: gluconato de calcio', 'Betabloqueador: glucagón', 'Calcioantagonista: calcio, insulina a dosis alta', 'Digoxina: anticuerpos antidigoxina'] },
+            say: 'Y los antídotos: en hiperkalemia, gluconato de calcio; en intoxicación por betabloqueador, glucagón; por calcioantagonista, calcio e insulina a dosis alta; y por digoxina, anticuerpos antidigoxina.' },
+          { v: { k: 'quiz', q: 'Don Rafael: bloqueo AV completo con QRS ancho, FC 36, PA 84/50. Atropina sin respuesta. ¿Siguiente?', opts: ['Otra dosis de atropina de 3 mg', 'Marcapasos transcutáneo o dopamina', 'Observar en piso'], a: 1 },
+            say: 'Pausa. Don Rafael tiene bloqueo completo con QRS ancho, frecuencia de treinta y seis y presión de ochenta y cuatro. La atropina no funcionó. ¿Qué sigue?',
+            exp: 'Marcapasos transcutáneo o infusión de dopamina o epinefrina, como puente al marcapasos transvenoso. Con escape ancho el bloqueo es infranodal y la atropina no va a funcionar.' }
+        ] },
+        { ch: 'Cierre del caso', sc: [
+          { v: { k: 'list', t: 'Don Rafael: final del caso', items: ['ECG: bloqueo AV completo, escape ancho a 36', 'Marcapasos transcutáneo, luego transvenoso', 'K normal; se suspende el metoprolol', '48 h sin metoprolol: sigue el bloqueo', 'Marcapasos definitivo'] },
+            say: 'El electrocardiograma de don Rafael muestra bloqueo completo con escape ancho. Recibe marcapasos transcutáneo y luego transvenoso. Su potasio es normal y se suspende el metoprolol; como a las cuarenta y ocho horas el bloqueo persiste, no era el fármaco: se le coloca marcapasos definitivo.' },
+          { v: { k: 'tip', kind: 'trap', t: 'Atropina en bloqueo infranodal (Mobitz II, completo con QRS ancho): casi no funciona. No pierdas tiempo: marcapasos.' },
+            say: 'Trampa: insistir con atropina en un bloqueo infranodal. No funciona; ve directo al marcapasos.' },
+          { v: { k: 'mnemo', t: 'Nodal: benigno, atropina · Infranodal: marcapasos', d: 'Mobitz I: PR que se alarga. Mobitz II: PR fijo con P bloqueada. 3er grado: disociación. Inestable: atropina → marcapasos o dopamina.' },
+            say: 'Llévate esto: nodal, benigno y responde a atropina; infranodal, marcapasos aunque no haya síntomas. Ahora mueve el simulador de ECG del taller, del ritmo normal al bloqueo completo.' }
         ] }
       ],
       sections: [
