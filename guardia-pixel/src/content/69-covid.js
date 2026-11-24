@@ -9,21 +9,51 @@ export default {
       hook: 'El tratamiento de COVID-19 depende de la gravedad: ambulatorio con riesgo → nirmatrelvir/ritonavir en los primeros 5 días; hospitalizado con O₂ → dexametasona (± remdesivir); grave → dexametasona + inmunomodulador. Los esteroides NO se dan sin hipoxemia.',
       nn: [], yt: 'COVID-19 treatment by severity dexamethasone Paxlovid remdesivir',
       video: [
-        { ch: 'Diagnóstico y gravedad', sc: [
+        { ch: 'Virus y clínica', sc: [
           { v: { k: 'title', t: 'COVID-19', s: 'Semana 11 · Infectología' },
-            say: 'Semana once: COVID diecinueve, por SARS CoV dos. Se une al receptor de la enzima convertidora de angiotensina dos. Incuba de dos a catorce días, alrededor de cinco.' },
-          { v: { k: 'list', t: 'Diagnóstico', items: ['PCR: la más sensible', 'Antígeno: rápido, repetir si es negativo con síntomas', 'Serología: no diagnostica infección aguda'] },
-            say: 'Se diagnostica con PCR, la más sensible, o con prueba rápida de antígeno, que si sale negativa con síntomas se repite. La serología no sirve para la infección aguda.' },
-          { v: { k: 'vs', a: 'Gravedad', b: 'Tratamiento', rows: [['Leve con riesgo', 'Sin O2', 'Nirmatrelvir con ritonavir en 5 días'], ['Hospitalizado con O2', 'SatO2 menor de 94', 'Dexametasona más remdesivir'], ['Crítico', 'Alto flujo o ventilación', 'Dexametasona más tocilizumab o baricitinib']] },
-            say: 'Leve con factores de riesgo: nirmatrelvir con ritonavir en los primeros cinco días. Hospitalizado con oxígeno: dexametasona seis miligramos por diez días, más remdesivir. Crítico: dexametasona más tocilizumab o baricitinib. Sin hipoxemia, nada de esteroides.' }
+            say: 'Semana once: COVID diecinueve. Ya no es la pandemia de dos mil veinte, pero sigue hospitalizando adultos mayores y personas con comorbilidades. Lo que pregunta el examen es muy concreto: qué tratamiento corresponde a cada nivel de gravedad, y sobre todo cuándo sí y cuándo no dar dexametasona.' },
+          { v: { k: 'case', t: 'Fiebre y tos', p: { name: 'Don Ernesto', age: 68, sex: 'H', skin: '#C98B62', hair: '#9A9A9A', gown: '#5EEAD4' }, text: 'Diabético y obeso. Dos días con fiebre, tos y perdió el olfato. Antígeno positivo. Toma atorvastatina y apixabán por FA.', vit: { T: '38.3', SpO2: '96%', FR: '18' } },
+            say: 'Don Ernesto tiene sesenta y ocho años, diabetes y obesidad. Lleva dos días con fiebre, tos y perdió el olfato. Su prueba de antígeno es positiva y satura noventa y seis por ciento. Toma atorvastatina y apixabán por fibrilación auricular.' },
+          { v: { k: 'list', t: 'El virus', items: ['SARS-CoV-2: coronavirus de ARN', 'La proteína S se une a ACE2', 'Gotas y aerosoles', 'Incubación de 2 a 14 días', 'Gravedad: edad, obesidad, DM, inmunosupresión'] },
+            say: 'SARS CoV dos es un coronavirus de ARN cuya proteína espiga se une al receptor ACE dos. Se contagia por gotas y aerosoles, con incubación de dos a catorce días. El riesgo de enfermedad grave lo dan la edad avanzada, la obesidad, la diabetes, la enfermedad renal, la inmunosupresión, el embarazo y no estar vacunado.' },
+          { v: { k: 'list', t: 'Diagnóstico', items: ['RT-PCR: el estándar', 'Antígeno: rápido, menos sensible', 'Antígeno negativo con síntomas: repetir en 48 h', 'TC: vidrio despulido periférico y basal', 'Mal pronóstico: linfopenia, dímero D, ferritina'] },
+            say: 'Se diagnostica con RT PCR, el estándar, o con antígeno, más rápido pero menos sensible: si sale negativo con síntomas, se repite a las cuarenta y ocho horas. La tomografía muestra vidrio despulido bilateral, periférico y en las bases. Los marcadores de mal pronóstico son linfopenia y dímero D, ferritina, deshidrogenasa láctica y proteína C reactiva altos.' }
         ] },
-        { ch: 'Lo que se pregunta', sc: [
-          { v: { k: 'tip', kind: 'trap', t: 'El nirmatrelvir/ritonavir tiene muchas interacciones (ritonavir inhibe CYP3A4): revisa estatinas, anticoagulantes, antiarrítmicos.' },
-            say: 'Una trampa: el ritonavir inhibe fuertemente el citocromo tres A cuatro, así que hay que revisar interacciones con estatinas, anticoagulantes y antiarrítmicos.' },
-          { v: { k: 'list', t: 'Complicaciones', items: ['SDRA y neumonía en vidrio despulido', 'Trombosis: profilaxis con heparina', 'Miocarditis', 'COVID prolongado'] },
-            say: 'Las complicaciones: síndrome de distrés respiratorio, trombosis, por lo que todo hospitalizado recibe profilaxis con heparina, miocarditis y síntomas prolongados.' },
-          { v: { k: 'mnemo', t: 'Sin O₂: no esteroide. Con O₂: dexametasona', d: 'Ambulatorio de riesgo: nirmatrelvir/ritonavir ≤5 días. Grave: + tocilizumab o baricitinib.' },
-            say: 'Llévate esto: sin oxígeno, no esteroide. Con oxígeno, dexametasona. Y el paciente ambulatorio de riesgo, antiviral en los primeros cinco días.' }
+        { ch: 'Tratamiento por gravedad', sc: [
+          { v: { k: 'flow', t: 'Escalera por gravedad', steps: ['Leve sin riesgo: sintomático', 'Leve con riesgo: nirmatrelvir-ritonavir', 'Hospitalizado sin O2: sin dexametasona', 'Con O2: dexametasona + remdesivir', 'Alto flujo o ventilación: + tocilizumab o baricitinib'] },
+            say: 'El tratamiento sube por escalones. Leve sin riesgo: solo sintomático. Leve con riesgo de progresar: nirmatrelvir con ritonavir. Hospitalizado sin oxígeno: no se da dexametasona. Hospitalizado con oxígeno: dexametasona seis miligramos por diez días más remdesivir. Y con alto flujo o ventilación: se agrega tocilizumab o baricitinib.' },
+          { v: { k: 'vs', a: 'Antiviral', b: 'Detalle', rows: [['Nirmatrelvir-ritonavir', '5 días, en los primeros 5 días', 'Ritonavir inhibe CYP3A4'], ['Remdesivir', '3 días IV ambulatorio, en 7 días', 'Hospitalizado con O2'], ['Molnupiravir', 'Alternativa', 'No en embarazo']] },
+            say: 'Los antivirales funcionan al inicio. Nirmatrelvir con ritonavir por cinco días, si se inicia en los primeros cinco días de síntomas; el ritonavir inhibe el citocromo tres A cuatro y tiene muchas interacciones. Remdesivir intravenoso por tres días como alternativa ambulatoria, o en el hospitalizado con oxígeno. Molnupiravir es la última opción y no se usa en el embarazo.' },
+          { v: { k: 'big', h: 'Dexametasona', t: 'Solo con O2', s: '6 mg al día por 10 días. Sin hipoxemia no ayuda y puede dañar (RECOVERY).' },
+            say: 'La dexametasona salva vidas, pero solo en quien necesita oxígeno. En el estudio RECOVERY redujo la mortalidad en pacientes con oxígeno y en ventilación, y en quienes no tenían hipoxemia no ayudó e incluso tendió a dañar.' },
+          { v: { k: 'quiz', q: 'Hospitalizado por COVID, SpO2 de 96% al aire ambiente. ¿Le das dexametasona?', opts: ['Sí, a todos los hospitalizados', 'No: sin hipoxemia no está indicada', 'Solo si la PCR está alta'], a: 1 },
+            say: 'Pausa. Paciente hospitalizado por COVID que satura noventa y seis por ciento al aire ambiente. ¿Le das dexametasona?',
+            exp: 'No. La dexametasona solo está indicada en quien requiere oxígeno, con saturación menor de noventa y cuatro. Sin hipoxemia no reduce la mortalidad.' }
+        ] },
+        { ch: 'Interacciones y lo que no se usa', sc: [
+          { v: { k: 'list', t: 'Interacciones del ritonavir', items: ['Estatinas: suspender simvastatina o atorvastatina', 'Anticoagulantes directos: ajustar o cambiar', 'Amiodarona, tacrolimus', 'Anticonceptivos hormonales', 'Revisar SIEMPRE la lista de fármacos'] },
+            say: 'Antes de dar nirmatrelvir con ritonavir revisa todos los fármacos. Interactúa con estatinas, que se suspenden durante el tratamiento, con anticoagulantes directos como apixabán, que requieren ajuste o cambio, con amiodarona, tacrolimus y anticonceptivos hormonales. Si la interacción no se puede manejar, usa remdesivir.' },
+          { v: { k: 'list', t: 'No recomendados', items: ['Ivermectina', 'Hidroxicloroquina', 'Azitromicina sin infección bacteriana', 'Plasma convaleciente de rutina', 'Antibióticos de rutina'] },
+            say: 'Lo que no se recomienda, y el examen lo pregunta: ivermectina, hidroxicloroquina, azitromicina si no hay infección bacteriana, plasma convaleciente de rutina y antibióticos de rutina.' },
+          { v: { k: 'quiz', q: 'Don Ernesto: 2 días de síntomas, SpO2 96%, diabético y obeso. ¿Qué indicas?', opts: ['Dexametasona 6 mg', 'Nirmatrelvir-ritonavir 5 días, ajustando sus fármacos', 'Azitromicina e ivermectina'], a: 1 },
+            say: 'Pausa. Don Ernesto tiene dos días de síntomas, no tiene hipoxemia y tiene riesgo por edad, diabetes y obesidad. ¿Qué indicas?',
+            exp: 'Nirmatrelvir con ritonavir por cinco días, suspendiendo la atorvastatina durante el tratamiento y ajustando el apixabán con su médico, o remdesivir si no se pueden manejar las interacciones. La dexametasona no está indicada sin hipoxemia.' }
+        ] },
+        { ch: 'Complicaciones y prevención', sc: [
+          { v: { k: 'list', t: 'Complicaciones', items: ['SDRA: ventilación protectora y prono', 'Trombosis: profilaxis en hospitalizados', 'Miocarditis, lesión renal', 'Sobreinfección bacteriana', 'COVID prolongado: más de 3 meses'] },
+            say: 'Las complicaciones: síndrome de distrés respiratorio, que se maneja con ventilación protectora y posición prona; trombosis, por lo que todo hospitalizado recibe profilaxis con heparina; miocarditis, lesión renal y sobreinfección bacteriana. Y el COVID prolongado: fatiga, disnea y niebla mental por más de tres meses.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Hospitalizado no crítico con dímero D alto y bajo riesgo de sangrado: heparina a dosis terapéutica. Crítico: profiláctica.' },
+            say: 'Perla: en el hospitalizado que no está en terapia intensiva, con dímero D alto y bajo riesgo de sangrado, la heparina a dosis terapéutica redujo eventos. En el paciente crítico, en cambio, se usa dosis profiláctica.' },
+          { v: { k: 'list', t: 'Prevención', items: ['Vacunación con refuerzo actualizado', 'Mayores y grupos de riesgo: anual', 'Reduce hospitalización y muerte', 'Aislamiento mientras haya síntomas'] },
+            say: 'La prevención es la vacuna, con refuerzo actualizado en mayores y grupos de riesgo, que reduce hospitalización y muerte, y aislamiento mientras haya síntomas, con cubrebocas después.' }
+        ] },
+        { ch: 'Cierre del caso', sc: [
+          { v: { k: 'list', t: 'Don Ernesto: final del caso', items: ['Nirmatrelvir-ritonavir 5 días', 'Suspende atorvastatina 5 días', 'Apixabán: ajustado por interacción', 'Día 4: SpO2 de 95%, mejorando', 'Sin hospitalización'] },
+            say: 'Don Ernesto recibe nirmatrelvir con ritonavir. Suspende la atorvastatina durante esos cinco días y se ajusta el apixabán por la interacción. Al cuarto día satura noventa y cinco por ciento y va mejorando, sin necesidad de hospital.' },
+          { v: { k: 'tip', kind: 'trap', t: 'Dexametasona en COVID sin hipoxemia: no. Antivirales tardíos (más de 5 a 7 días) en el hospitalizado grave: poco beneficio.' },
+            say: 'Las trampas: dar dexametasona a quien no necesita oxígeno, y esperar a que el paciente se agrave para dar el antiviral, que funciona al inicio.' },
+          { v: { k: 'mnemo', t: 'Riesgo → antiviral · O2 → dexametasona · alto flujo → tocilizumab', d: 'Nirmatrelvir-ritonavir en ≤5 días. Dexametasona 6 mg × 10 días solo con O2. Cuida el CYP3A4.' },
+            say: 'Llévate la escalera: riesgo, antiviral; oxígeno, dexametasona; alto flujo, tocilizumab o baricitinib. Ahora practica en el algoritmo de COVID del taller.' }
         ] }
       ],
       sections: [

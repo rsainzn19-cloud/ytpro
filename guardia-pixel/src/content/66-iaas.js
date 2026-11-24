@@ -9,23 +9,55 @@ export default {
       hook: 'Las infecciones intrahospitalarias son cinco: del torrente por catéter, IVU por sonda, neumonía nosocomial/asociada a ventilador, del sitio quirúrgico y C. difficile. La mejor medicina es la prevención: higiene de manos y retirar lo que no se necesita.',
       nn: [], yt: 'hospital acquired infections CLABSI CAUTI C difficile',
       video: [
-        { ch: 'Las cinco grandes', sc: [
+        { ch: 'Las infecciones que da el hospital', sc: [
           { v: { k: 'title', t: 'Infecciones intrahospitalarias', s: 'Semana 8 · Infectología' },
-            say: 'Semana ocho: las infecciones asociadas a la atención de la salud. Aparecen cuarenta y ocho horas o más después del ingreso, o por un dispositivo o procedimiento.' },
-          { v: { k: 'list', t: 'Las cinco grandes', items: ['Bacteriemia por catéter central', 'IVU asociada a sonda', 'Neumonía nosocomial y por ventilador', 'Infección del sitio quirúrgico', 'Clostridioides difficile'] },
-            say: 'Son cinco: bacteriemia por catéter central, infección urinaria por sonda, neumonía nosocomial y asociada a ventilador, infección del sitio quirúrgico y diarrea por Clostridioides difficile.' },
-          { v: { k: 'case', t: 'Diarrea en el hospital', p: { name: 'Elena', age: 68, sex: 'M', skin: '#E2B08A', hair: '#B0B0B0', gown: '#5EEAD4' }, text: 'Día 6 de ceftriaxona por neumonía. 8 evacuaciones acuosas, fiebre, leucocitos 18,000.', vit: { Leu: '18K', Cr: '1.1' } },
-            say: 'Elena lleva seis días con ceftriaxona y empieza con ocho evacuaciones acuosas al día, fiebre y leucocitosis.' },
-          { v: { k: 'flow', t: 'C. difficile', steps: ['Prueba de toxina o PCR', 'Suspender el antibiótico si se puede', 'Fidaxomicina o vancomicina oral', 'Fulminante: vancomicina oral alta + metronidazol IV', 'Recurrencias: trasplante fecal'] },
-            say: 'Sospecha Clostridioides difficile. Se confirma con pruebas de toxina o PCR, se suspende el antibiótico desencadenante si es posible, y se trata con fidaxomicina o vancomicina oral. El metronidazol ya no es de primera línea.' }
+            say: 'Semana ocho: las infecciones asociadas a la atención de la salud. Son las que el paciente no traía y se lleva del hospital: las de catéter, las de sonda urinaria, la neumonía del ventilador, la del sitio quirúrgico y Clostridioides difficile. La mayoría se puede prevenir.' },
+          { v: { k: 'case', t: 'Fiebre en el día 9', p: { name: 'Doña Teresa', age: 71, sex: 'M', skin: '#E2B08A', hair: '#B0B0B0', gown: '#5EEAD4' }, text: 'Hospitalizada por neumonía, recibió ceftriaxona y levofloxacino. Tiene catéter venoso central yugular y sonda urinaria. Hoy: fiebre y 6 evacuaciones líquidas.', vit: { T: '38.7', FC: '112', Leucos: '22 000', Cr: '1.8' } },
+            say: 'Doña Teresa tiene setenta y un años y lleva nueve días hospitalizada por neumonía. Recibió ceftriaxona y levofloxacino. Tiene un catéter venoso central en la yugular y una sonda urinaria. Hoy tiene fiebre y seis evacuaciones líquidas. Sus leucocitos son de veintidós mil y la creatinina subió a uno punto ocho. ¿De dónde viene la fiebre?' },
+          { v: { k: 'list', t: 'Las cinco grandes', items: ['Bacteriemia por catéter', 'IVU asociada a sonda', 'Neumonía intrahospitalaria y del ventilador', 'Infección del sitio quirúrgico', 'Clostridioides difficile'] },
+            say: 'Son cinco las grandes: la bacteriemia asociada a catéter central, la infección urinaria asociada a sonda, la neumonía intrahospitalaria y la asociada a ventilador, la infección del sitio quirúrgico y la diarrea por Clostridioides difficile.' },
+          { v: { k: 'big', h: 'Lo que más previene', t: 'Higiene de manos', s: 'En los 5 momentos. Agua y jabón si hay C. difficile: el alcohol no mata las esporas.' },
+            say: 'La medida que más previene todas es la higiene de manos en los cinco momentos: antes de tocar al paciente, antes de un procedimiento limpio, después del riesgo de exposición a fluidos, después de tocar al paciente y después de tocar su entorno. Y ojo: con difficile, agua y jabón, porque el alcohol no mata las esporas.' }
         ] },
-        { ch: 'Prevención', sc: [
-          { v: { k: 'list', t: 'Prevención', items: ['Higiene de manos', 'Retirar catéteres y sondas que no se necesitan', 'Clorhexidina y técnica estéril', 'Cabecera a 30 a 45 grados', 'Agua y jabón para C. difficile'] },
-            say: 'La prevención: higiene de manos, retirar diario lo que no se necesita, técnica estéril con clorhexidina, cabecera elevada en el paciente ventilado, y para Clostridioides difficile, agua y jabón, porque el alcohol no mata las esporas.' },
-          { v: { k: 'tip', kind: 'trap', t: 'El alcohol en gel no elimina las esporas de C. difficile: lavado con agua y jabón y aislamiento de contacto.' },
-            say: 'La trampa: el gel con alcohol no elimina las esporas de C. difficile. Lavado con agua y jabón y aislamiento de contacto.' },
-          { v: { k: 'mnemo', t: 'Bacteriemia por catéter con S. aureus o Candida: retira el catéter', d: 'Y busca endocarditis con eco en S. aureus.' },
-            say: 'Llévate esto: si la bacteriemia por catéter es por Staphylococcus aureus o por Candida, el catéter se retira.' }
+        { ch: 'Catéter y sonda', sc: [
+          { v: { k: 'list', t: 'Bacteriemia por catéter', items: ['Estafilococo coagulasa negativo, S. aureus', 'Enterococo, gramnegativos', 'Candida: nutrición parenteral', 'Dx: cultivo del catéter y periférico', 'El del catéter crece 2 h antes'] },
+            say: 'La bacteriemia por catéter la causan estafilococos coagulasa negativos, estafilococo dorado, enterococo, gramnegativos y Candida, sobre todo con nutrición parenteral. Se diagnostica con dos hemocultivos, uno del catéter y otro periférico: si el del catéter crece dos horas o más antes, el catéter es el foco.' },
+          { v: { k: 'list', t: 'Retira el catéter si hay', items: ['S. aureus o Candida', 'Pseudomonas o micobacterias', 'Choque o endocarditis', 'Tromboflebitis supurada', 'Bacteriemia de más de 72 h'] },
+            say: 'Se trata con vancomicina, más cobertura de gramnegativos según la gravedad, y una equinocandina si hay riesgo de Candida. El catéter se retira si crece estafilococo dorado, Candida, pseudomonas o micobacterias, si hay choque, endocarditis o tromboflebitis supurada, o si la bacteriemia persiste más de setenta y dos horas.' },
+          { v: { k: 'vs', a: 'Bacteriuria asintomática', b: 'IVU por sonda', rows: [['Síntomas', 'No', 'Fiebre, dolor, delirio'], ['¿Tratar?', 'No (salvo embarazo o cirugía urológica)', 'Sí, 7 días'], ['Paso clave', 'No cultivar de rutina', 'Cambiar la sonda antes del cultivo'], ['Prevención', 'Retirar la sonda', 'Retirar la sonda']] },
+            say: 'Con sonda, casi todos tienen bacterias en la orina: eso es bacteriuria asintomática y no se trata, salvo en el embarazo o antes de cirugía urológica. La infección urinaria asociada a sonda tiene síntomas: fiebre, dolor o delirio sin otra causa. Se cambia o retira la sonda antes de cultivar y se trata siete días. La mejor prevención es quitar la sonda en cuanto no se necesite.' },
+          { v: { k: 'quiz', q: 'Paciente con sonda, sin fiebre ni síntomas. Urocultivo con 100 000 UFC de E. coli. ¿Qué haces?', opts: ['Ciprofloxacino 7 días', 'No tratar; valorar retirar la sonda', 'Cambiar la sonda y dar ceftriaxona'], a: 1 },
+            say: 'Pausa. Paciente con sonda, sin fiebre ni síntomas, con urocultivo de cien mil colonias de E. coli. ¿Lo tratas?',
+            exp: 'No. Es bacteriuria asintomática: tratarla no da beneficio y selecciona resistencias y difficile. Lo útil es preguntarse si la sonda todavía se necesita.' }
+        ] },
+        { ch: 'Neumonía nosocomial y sitio quirúrgico', sc: [
+          { v: { k: 'list', t: 'Neumonía nosocomial y del ventilador', items: ['48 h o más de ingreso o de intubación', 'Pseudomonas, Acinetobacter, BLEE, MRSA', 'Pip-tazo, cefepime o meropenem', '± vancomicina o linezolid', '7 días'] },
+            say: 'La neumonía intrahospitalaria aparece cuarenta y ocho horas o más después del ingreso, y la asociada a ventilador, cuarenta y ocho horas o más después de intubar. Los agentes son pseudomonas, Acinetobacter, enterobacterias productoras de betalactamasas y estafilococo resistente. Se trata con un antipseudomonas, más vancomicina o linezolid según el riesgo, por siete días.' },
+          { v: { k: 'list', t: 'Prevenir la del ventilador', items: ['Cabecera a 30 a 45 grados', 'Ventana diaria de sedación', 'Prueba de respiración espontánea', 'Higiene oral', 'Extubar lo antes posible'] },
+            say: 'Para prevenir la del ventilador: cabecera a treinta o cuarenta y cinco grados, suspender la sedación cada día para valorar, pruebas de respiración espontánea, higiene oral y extubar en cuanto se pueda.' },
+          { v: { k: 'list', t: 'Sitio quirúrgico', items: ['Hasta 30 días; 90 con implante', 'S. aureus: el más común', 'Cefazolina 60 min antes de la incisión', 'Cortar el vello, no rasurar', 'Glucosa controlada y normotermia'] },
+            say: 'La infección del sitio quirúrgico aparece en los primeros treinta días, o noventa si hay implante. El agente más común es el estafilococo dorado. Se previene con cefazolina en los sesenta minutos previos a la incisión, cortando el vello en lugar de rasurar, con glucosa controlada y manteniendo la temperatura. Se trata abriendo y drenando la herida.' }
+        ] },
+        { ch: 'Clostridioides difficile', sc: [
+          { v: { k: 'list', t: 'Cuándo sospecharlo', items: ['3 o más evacuaciones líquidas en 24 h', 'Antibióticos en las últimas 12 semanas', 'Clindamicina, quinolonas, cefalosporinas', 'Hospitalización, edad, IBP', 'Leucocitosis a veces muy alta'] },
+            say: 'Sospecha Clostridioides difficile con tres o más evacuaciones líquidas en veinticuatro horas en alguien que recibió antibióticos en las últimas doce semanas, sobre todo clindamicina, quinolonas y cefalosporinas. Otros factores son la hospitalización, la edad y los inhibidores de bomba de protones. La leucocitosis puede ser muy alta.' },
+          { v: { k: 'flow', t: 'Diagnóstico y gravedad', steps: ['Solo en heces diarreicas', 'GDH + toxina; si discordante, PCR', 'Grave: leucocitos 15 000 o más o Cr mayor de 1.5', 'Fulminante: choque, íleo o megacolon', 'No repetir como prueba de curación'] },
+            say: 'Se estudia solo en heces diarreicas, con glutamato deshidrogenasa más toxina, y PCR si no coinciden. Es grave si los leucocitos son de quince mil o más o la creatinina pasa de uno punto cinco. Fulminante si hay choque, íleo o megacolon. Y no se repite la prueba para ver si se curó.' },
+          { v: { k: 'vs', a: 'Episodio', b: 'Tratamiento', rows: [['No grave o grave', 'Fidaxomicina o vancomicina oral', '10 días'], ['Fulminante', 'Vancomicina oral dosis alta + metronidazol IV', 'Colectomía si perfora'], ['1a recurrencia', 'Fidaxomicina', 'O vancomicina descendente'], ['2 o más recurrencias', 'Trasplante de microbiota fecal', '—']] },
+            say: 'Primer episodio, grave o no: fidaxomicina, que tiene menos recurrencias, o vancomicina oral por diez días. Fulminante: vancomicina oral a dosis alta, rectal si hay íleo, más metronidazol intravenoso, y colectomía si perfora o hay megacolon. En recurrencias, fidaxomicina o vancomicina en dosis descendente, y con dos o más, trasplante de microbiota fecal.' },
+          { v: { k: 'quiz', q: 'Doña Teresa: toxina positiva, leucocitos 22 000, creatinina 1.8. ¿Tratamiento?', opts: ['Metronidazol oral', 'Vancomicina oral o fidaxomicina', 'Loperamida'], a: 1 },
+            say: 'Pausa. Doña Teresa tiene toxina de difficile positiva, leucocitos de veintidós mil y creatinina de uno punto ocho. ¿Qué das?',
+            exp: 'Vancomicina oral o fidaxomicina por diez días: es un episodio grave. El metronidazol oral ya no es de primera línea, y la loperamida está contraindicada porque favorece el megacolon.' }
+        ] },
+        { ch: 'Personal de salud y cierre', sc: [
+          { v: { k: 'big', h: 'Pinchazo con aguja hueca', t: 'Regla de 3', s: 'Riesgo de transmisión: VHB ~30% (no vacunado), VHC ~3%, VIH ~0.3%.' },
+            say: 'Para el personal de salud, la regla de tres: después de un pinchazo con aguja hueca, el riesgo de contagio es de treinta por ciento para hepatitis B en no vacunados, alrededor de tres por ciento para hepatitis C y cero punto tres por ciento para VIH. Se lava con agua y jabón, se reporta, se toman pruebas basales y se inicia profilaxis de VIH en menos de setenta y dos horas si aplica.' },
+          { v: { k: 'list', t: 'Doña Teresa: final del caso', items: ['C. difficile grave: vancomicina oral', 'Aislamiento de contacto, agua y jabón', 'Suspender levofloxacino y el IBP', 'Retirar la sonda que ya no necesita', 'Catéter central: revisar si sigue indicado'] },
+            say: 'Doña Teresa tiene difficile grave: recibe vancomicina oral, queda en aislamiento de contacto con lavado de manos con agua y jabón, y se suspenden el levofloxacino y el inhibidor de bomba. Además se retira la sonda urinaria, que ya no necesitaba, y se revisa si el catéter central sigue indicado.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Cada día, pregunta: ¿este paciente todavía necesita la sonda, el catéter y el antibiótico? Retirar a tiempo es la mejor prevención.' },
+            say: 'Perla: cada día, en cada paciente, pregunta si todavía necesita la sonda, el catéter y el antibiótico. Retirarlos a tiempo es la mejor prevención de infecciones intrahospitalarias.' },
+          { v: { k: 'mnemo', t: 'Manos, retirar, desescalar', d: 'Catéter con S. aureus o Candida: retirar. Sonda sin síntomas: no tratar. Difficile: fidaxomicina o vancomicina oral; agua y jabón.' },
+            say: 'Llévate tres verbos: manos, retirar y desescalar. Ahora practica en el algoritmo del taller con los cinco tipos de infección intrahospitalaria.' }
         ] }
       ],
       sections: [

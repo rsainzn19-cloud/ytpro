@@ -9,23 +9,51 @@ export default {
       hook: 'Meningitis bacteriana: fiebre, cefalea, rigidez de nuca y alteración mental. No retrases el tratamiento: hemocultivos → dexametasona + antibiótico → TC (si hay indicación) → punción lumbar. Encefalitis con conducta extraña y lóbulo temporal: aciclovir ya.',
       nn: [], yt: 'bacterial meningitis CSF findings empiric treatment HSV encephalitis',
       video: [
-        { ch: 'Meningitis', sc: [
+        { ch: 'Meningitis: quién y cómo', sc: [
           { v: { k: 'title', t: 'Infecciones del SNC', s: 'Semana 6 · Infectología' },
-            say: 'Semana seis: las infecciones del sistema nervioso. La meningitis bacteriana es una urgencia: cada hora sin antibiótico aumenta las secuelas y la muerte.' },
-          { v: { k: 'case', t: 'Cefalea y nuca rígida', p: { name: 'Sofía', age: 20, sex: 'M', skin: '#E2B08A', hair: '#2A1A12', gown: '#5EEAD4' }, text: 'Universitaria. Fiebre 39.5, cefalea intensa, vómito, rigidez de nuca y petequias en piernas.', vit: { T: '39.5', PA: '96/60' } },
-            say: 'Sofía es universitaria. Tiene fiebre, cefalea intensa, vómito, rigidez de nuca y petequias en las piernas. Piensa en meningococo.' },
-          { v: { k: 'flow', t: 'Orden de acciones', steps: ['Hemocultivos', 'Dexametasona antes o con el antibiótico', 'Ceftriaxona más vancomicina', 'TC si hay indicación', 'Punción lumbar'] },
-            say: 'El orden: hemocultivos, dexametasona antes o junto con la primera dosis de antibiótico, ceftriaxona más vancomicina, y si hay indicación, tomografía antes de la punción. Nunca retrases el antibiótico por la tomografía.' },
-          { v: { k: 'vs', a: 'Bacteriana', b: 'Viral', rows: [['Células', 'Miles, neutrófilos', 'Cientos, linfocitos'], ['Glucosa', 'Baja', 'Normal'], ['Proteínas', 'Muy altas', 'Normales o poco altas']] },
-            say: 'En el líquido: la bacteriana tiene miles de neutrófilos, glucosa baja y proteínas muy altas. La viral tiene linfocitos, glucosa normal y proteínas casi normales. La tuberculosa y la de hongos tienen linfocitos con glucosa baja.' }
+            say: 'Semana seis: las infecciones del sistema nervioso central. La meningitis bacteriana es una urgencia en la que cada hora sin antibiótico deja más sordera, más secuelas y más muertes. Vas a aprender el orden exacto de acciones, a leer el líquido cefalorraquídeo y a reconocer la encefalitis y el absceso.' },
+          { v: { k: 'case', t: 'Cefalea y nuca rígida', p: { name: 'Sofía', age: 20, sex: 'M', skin: '#E2B08A', hair: '#2A1A12', gown: '#5EEAD4' }, text: 'Universitaria, vive en dormitorio. 12 horas con fiebre, cefalea intensa, vómito y rigidez de nuca. Petequias en piernas.', vit: { T: '39.5', FC: '118', PA: '96/60', Glasgow: '14' } },
+            say: 'Sofía tiene veinte años y vive en un dormitorio universitario. En doce horas aparecieron fiebre, cefalea intensa, vómito y rigidez de nuca. En las piernas tiene petequias que no desaparecen al presionar. Su presión es de noventa y seis sobre sesenta.' },
+          { v: { k: 'vs', a: 'Paciente', b: 'Agentes', rows: [['18 a 50 años', 'Neumococo, meningococo', '—'], ['Mayor de 50, inmunosuprimido, embarazo, alcohol', 'Neumococo + Listeria', 'Agrega ampicilina'], ['Neonato', 'S. agalactiae, E. coli', 'Listeria'], ['Neurocirugía o derivación', 'Estafilococos, Pseudomonas', '—']] },
+            say: 'Los agentes dependen del paciente. Entre dieciocho y cincuenta años: neumococo, el número uno, y meningococo, en jóvenes que viven juntos, con petequias. En mayores de cincuenta, inmunosuprimidos, embarazadas y alcohólicos se suma Listeria. En neonatos, estreptococo del grupo B y E. coli. Y después de neurocirugía, estafilococos y pseudomonas.' },
+          { v: { k: 'list', t: 'Clínica', items: ['Fiebre, cefalea, rigidez de nuca', 'Alteración mental', 'La tríada completa solo en la mitad', 'Kernig y Brudzinski: poco sensibles', 'Petequias o púrpura: meningococo'] },
+            say: 'La clínica clásica es fiebre, cefalea, rigidez de nuca y alteración mental, pero la tríada completa solo aparece en la mitad de los pacientes. Los signos de Kernig y Brudzinski son específicos pero poco sensibles: si no están, no descartan. Y las petequias o la púrpura apuntan a meningococo.' }
+        ] },
+        { ch: 'El orden de acciones', sc: [
+          { v: { k: 'flow', t: 'Orden de acciones', steps: ['Hemocultivos', 'Dexametasona antes o con el antibiótico', 'Ceftriaxona + vancomicina (± ampicilina)', 'TC solo si hay indicación', 'Punción lumbar'] },
+            say: 'El orden importa: primero hemocultivos. Luego dexametasona, antes o junto con la primera dosis de antibiótico. Después ceftriaxona más vancomicina, y ampicilina si hay riesgo de Listeria. La tomografía, solo si hay indicación. Y la punción lumbar. Nunca retrases el antibiótico por esperar la tomografía.' },
+          { v: { k: 'list', t: 'TC antes de la punción si', items: ['Inmunosupresión', 'Enfermedad previa del SNC', 'Convulsión en la última semana', 'Papiledema', 'Alteración del alerta o déficit focal'] },
+            say: 'La tomografía antes de la punción se pide si hay inmunosupresión, enfermedad previa del sistema nervioso, una convulsión en la última semana, papiledema, alteración del estado de alerta o un déficit focal. Busca una masa que pueda causar herniación al puncionar.' },
+          { v: { k: 'big', h: 'Dexametasona', t: '0.15 mg/kg c/6 h', s: 'Por 4 días, antes o con la 1a dosis. Reduce sordera y muerte en neumococo; se suspende si no es neumococo.' },
+            say: 'La dexametasona va a cero punto quince miligramos por kilo cada seis horas por cuatro días, y tiene que darse antes o junto con el antibiótico. Reduce la sordera y la mortalidad en la meningitis por neumococo; si el cultivo muestra otro agente, se suspende.' },
+          { v: { k: 'quiz', q: 'Hombre de 70 años con meningitis bacteriana. ¿Esquema empírico?', opts: ['Ceftriaxona + vancomicina', 'Ceftriaxona + vancomicina + ampicilina', 'Ampicilina + gentamicina'], a: 1 },
+            say: 'Pausa. Hombre de setenta años con meningitis bacteriana. ¿Qué esquema empírico das?',
+            exp: 'Ceftriaxona más vancomicina más ampicilina, con dexametasona. Por la edad hay que cubrir Listeria, y ninguna cefalosporina la cubre.' }
+        ] },
+        { ch: 'Leer el líquido', sc: [
+          { v: { k: 'vs', a: 'Bacteriana', b: 'Viral', rows: [['Células', 'Más de 1000, neutrófilos', '10 a 500, linfocitos'], ['Glucosa', 'Baja: menor de 40', 'Normal'], ['Proteínas', 'Muy altas', 'Normales o poco altas'], ['Manejo', 'Antibiótico ya', 'Soporte']] },
+            say: 'En el líquido, la bacteriana tiene más de mil células con predominio de neutrófilos, glucosa baja, menor de cuarenta o menos del cuarenta por ciento de la sérica, y proteínas muy altas. La viral, casi siempre por enterovirus, tiene decenas a cientos de linfocitos, glucosa normal y proteínas casi normales: se da manejo de soporte.' },
+          { v: { k: 'vs', a: 'Tuberculosa', b: 'Criptococo', rows: [['Células', 'Linfocitos', 'Linfocitos'], ['Glucosa', 'Baja', 'Baja'], ['Pista', 'Pares craneales, hidrocefalia', 'VIH, presión de apertura muy alta'], ['Prueba', 'ADA, PCR, cultivo', 'Antígeno criptocócico'], ['Tratamiento', 'RIPE + dexametasona', 'Anfotericina + flucitosina']] },
+            say: 'Linfocitos con glucosa baja: piensa en tuberculosis u hongos. La tuberculosa afecta la base del cráneo, da parálisis de pares craneales e hidrocefalia; se trata con antifímicos por un año y dexametasona. La criptocócica aparece en VIH avanzado, con presión de apertura muy alta; se diagnostica con antígeno criptocócico y se trata con anfotericina más flucitosina, con punciones evacuadoras.' },
+          { v: { k: 'quiz', q: 'LCR: 2800 células, 90% neutrófilos, glucosa 18, proteínas 320. ¿Qué es?', opts: ['Viral', 'Bacteriana', 'Tuberculosa'], a: 1 },
+            say: 'Pausa. Líquido con dos mil ochocientas células, noventa por ciento neutrófilos, glucosa de dieciocho y proteínas de trescientos veinte. ¿Qué es?',
+            exp: 'Bacteriana: miles de neutrófilos, glucosa muy baja y proteínas muy altas. Sigue con el antibiótico y la dexametasona, y espera el Gram y el cultivo para ajustar.' }
         ] },
         { ch: 'Encefalitis y absceso', sc: [
-          { v: { k: 'list', t: 'Encefalitis herpética', items: ['Fiebre más conducta extraña', 'Convulsiones, afasia', 'RM: lóbulo temporal', 'PCR de HSV en LCR', 'Aciclovir IV ya'] },
-            say: 'La encefalitis por herpes simple da fiebre con alteración de la conducta, convulsiones y afasia, porque afecta el lóbulo temporal. Se confirma con PCR en el líquido, pero el aciclovir intravenoso se inicia ya, sin esperar.' },
-          { v: { k: 'tip', kind: 'trap', t: 'En mayores de 50, inmunosuprimidos y embarazadas agrega ampicilina para cubrir Listeria.' },
-            say: 'No olvides: en mayores de cincuenta, inmunosuprimidos, alcohólicos y embarazadas, agrega ampicilina para cubrir Listeria, porque ninguna cefalosporina la cubre.' },
-          { v: { k: 'mnemo', t: 'Ceftriaxona + vancomicina ± ampicilina + dexametasona', d: 'Empírico en meningitis bacteriana del adulto; aciclovir si sospechas encefalitis.' },
-            say: 'Llévate el esquema: ceftriaxona y vancomicina, ampicilina si hay riesgo de Listeria, y dexametasona. Y aciclovir si hay encefalitis.' }
+          { v: { k: 'list', t: 'Encefalitis herpética', items: ['Fiebre + conducta extraña', 'Afasia, convulsiones, alucinaciones olfatorias', 'RM: lóbulo temporal', 'PCR de VHS en LCR', 'Aciclovir IV 10 mg/kg c/8 h YA'] },
+            say: 'La encefalitis es inflamación del cerebro: además de fiebre hay alteración de la conducta, convulsiones o déficits. La causa esporádica número uno es el herpes simple tipo uno, que afecta el lóbulo temporal: afasia, alucinaciones olfatorias y cambios de personalidad. Se confirma con PCR en el líquido, pero el aciclovir intravenoso se inicia en cuanto lo sospechas, con buena hidratación por el riesgo renal.' },
+          { v: { k: 'list', t: 'Absceso cerebral', items: ['Por contigüidad: sinusitis, oído, dientes', 'Hematógeno: endocarditis, cardiopatía cianógena', 'TC o RM: realce en anillo', 'Ceftriaxona + metronidazol 6 a 8 semanas', 'Drenaje si mide más de 2.5 cm; NO punción lumbar'] },
+            say: 'El absceso cerebral llega por contigüidad desde senos, oído o dientes, o por sangre desde una endocarditis. Da cefalea, y solo la mitad tiene fiebre. En la imagen, una lesión con realce en anillo. Se trata con ceftriaxona más metronidazol por seis a ocho semanas, con drenaje si mide más de dos punto cinco centímetros. Y nunca se hace punción lumbar, por riesgo de herniación.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Mujer joven con psicosis, discinesias y convulsiones: encefalitis anti-NMDA. Busca teratoma de ovario.' },
+            say: 'Perla: mujer joven con psicosis aguda, movimientos anormales de la boca y convulsiones. Piensa en encefalitis autoinmune contra el receptor NMDA y busca un teratoma de ovario.' }
+        ] },
+        { ch: 'Cierre del caso', sc: [
+          { v: { k: 'list', t: 'Sofía: final del caso', items: ['Hemocultivos y dexametasona', 'Ceftriaxona + vancomicina en 30 min', 'Sin indicación de TC: punción', 'Gram: diplococos gramnegativos', 'Aislamiento por gotas 24 h'] },
+            say: 'A Sofía le toman hemocultivos, recibe dexametasona y a los treinta minutos ceftriaxona con vancomicina. No tiene indicación de tomografía, así que la puncionan: el Gram muestra diplococos gramnegativos. Es meningococo. Se suspende la vancomicina, se deja ceftriaxona y queda en aislamiento por gotas las primeras veinticuatro horas.' },
+          { v: { k: 'tip', kind: 'trap', t: 'Meningococo: profilaxis a contactos cercanos (rifampicina, ciprofloxacino dosis única o ceftriaxona IM), no a todo el hospital.' },
+            say: 'No olvides a los contactos: sus compañeras de dormitorio y quien le dio respiración boca a boca reciben profilaxis con ciprofloxacino en dosis única, rifampicina o ceftriaxona intramuscular. El personal que solo la atendió sin exposición a secreciones, no.' },
+          { v: { k: 'mnemo', t: 'Cultivos, dexa, ceftri + vanco ± ampi', d: 'Mayor de 50 o inmunosuprimido: ampicilina. Encefalitis: aciclovir. Absceso: no PL.' },
+            say: 'Llévate el orden: cultivos, dexametasona, ceftriaxona con vancomicina, y ampicilina si hay riesgo de Listeria. Encefalitis, aciclovir. Absceso, nunca punción. Ahora practica leyendo líquidos en el algoritmo del taller.' }
         ] }
       ],
       sections: [

@@ -9,19 +9,47 @@ export default {
       hook: 'FOD clásica: >38.3 °C en varias ocasiones por ≥3 semanas sin diagnóstico tras un estudio básico. Las causas se reparten en infecciones, cáncer e inflamatorias; la clave está en una historia minuciosa y en no dar antibiótico “a ciegas”.',
       nn: [], yt: 'fever of unknown origin approach',
       video: [
-        { ch: 'Qué es y por qué', sc: [
+        { ch: 'Qué es y qué no es', sc: [
           { v: { k: 'title', t: 'Fiebre de origen desconocido', s: 'Semana 4 · Infectología' },
-            say: 'Semana cuatro: la fiebre de origen desconocido. Se define como fiebre de más de treinta y ocho punto tres en varias ocasiones, por tres semanas o más, sin diagnóstico después de un estudio inicial razonable.' },
-          { v: { k: 'list', t: 'Grandes grupos', items: ['Infecciones: TB, endocarditis, abscesos', 'Neoplasias: linfoma, renal, leucemia', 'Inflamatorias: Still, arteritis temporal, LES', 'Misceláneas: fármacos, facticia, TEP'] },
-            say: 'Las causas se dividen en infecciones, como tuberculosis extrapulmonar, endocarditis y abscesos; neoplasias, sobre todo linfoma; enfermedades inflamatorias, como Still del adulto y arteritis de células gigantes en mayores; y otras, como fiebre por fármacos o facticia.' },
-          { v: { k: 'tip', kind: 'trap', t: 'No des antibiótico empírico ni esteroide en una FOD estable: borras el diagnóstico.' },
-            say: 'La trampa: en un paciente estable no se da antibiótico ni esteroide a ciegas, porque negativizan cultivos y tapan un linfoma o una vasculitis.' }
+            say: 'Semana cuatro: la fiebre de origen desconocido. Es el paciente que lleva semanas con fiebre y nadie sabe por qué. Aquí no gana quien pide más estudios, sino quien sigue un orden. Vamos con una paciente.' },
+          { v: { k: 'case', t: 'Cuatro semanas con fiebre', p: { name: 'Rosa', age: 68, sex: 'M', skin: '#E2B08A', hair: '#B0B0B0', gown: '#5EEAD4' }, text: 'Fiebre de 38.5 casi a diario por 4 semanas. Cansancio, bajó 4 kg, dolor de cabeza nuevo y le duele la mandíbula al masticar. Ya tomó dos antibióticos sin mejoría.', vit: { T: '38.5', VSG: '98' } },
+            say: 'Rosa tiene sesenta y ocho años y cuatro semanas con fiebre de treinta y ocho punto cinco casi diario. Está cansada, bajó cuatro kilos, tiene dolor de cabeza nuevo y le duele la mandíbula al masticar. Ya tomó dos antibióticos sin mejorar. Su velocidad de sedimentación es de noventa y ocho.' },
+          { v: { k: 'big', h: 'Fiebre de origen desconocido clásica', t: '3 semanas', s: 'Fiebre >38.3 °C en varias ocasiones, por 3 semanas o más, sin diagnóstico tras un estudio inicial razonable.' },
+            say: 'La definición clásica: fiebre de más de treinta y ocho punto tres en varias ocasiones, por tres semanas o más, sin diagnóstico después de un estudio inicial razonable, ya sea tres visitas, tres días de hospital o una semana de estudio dirigido.' },
+          { v: { k: 'vs', a: 'Tipo', b: 'Qué pensar', rows: [['Nosocomial', 'C. difficile, catéter, fármacos', 'TEP, sinusitis'], ['Neutropénica', 'Menos de 500 neutrófilos', 'Antibiótico en 1 hora'], ['VIH', 'MAC, TB, CMV', 'Linfoma, criptococo'], ['Hipertermia', 'Golpe de calor, maligna', 'No responde a antipirético']] },
+            say: 'Hay otros tipos que se manejan distinto. La nosocomial, en un hospitalizado: difficile, catéteres, fármacos, tromboembolia. La neutropénica, con menos de quinientos neutrófilos, es una urgencia que se trata en la primera hora. En VIH, piensa en micobacterias, citomegalovirus, linfoma y criptococo. Y la hipertermia no es fiebre: no responde a antipiréticos.' }
         ] },
-        { ch: 'Abordaje', sc: [
-          { v: { k: 'flow', t: 'Estudio escalonado', steps: ['Historia y exploración repetidas', 'BH, VSG/PCR, química, EGO, hemocultivos, VIH', 'TC tórax-abdomen-pelvis', 'PET-CT', 'Biopsia dirigida'] },
-            say: 'El abordaje es escalonado: historia y exploración repetidas, laboratorio básico con hemocultivos y VIH, tomografía de tórax, abdomen y pelvis, luego PET CT, y biopsia de lo que salga anormal.' },
-          { v: { k: 'mnemo', t: 'Infección, cáncer, inflamación, otras', d: 'TB extrapulmonar, endocarditis, abscesos; linfoma; Still, arteritis temporal; fármacos y facticia.' },
-            say: 'Llévate los cuatro grupos: infección, cáncer, inflamación y otras. Y el PET CT es el estudio de imagen más útil cuando la tomografía no lo resuelve.' }
+        { ch: 'Las cuatro familias de causas', sc: [
+          { v: { k: 'list', t: 'Infecciones', items: ['TB extrapulmonar o miliar', 'Endocarditis (cultivo negativo: HACEK, Coxiella)', 'Abscesos abdominales, hepáticos, dentales', 'Osteomielitis, brucelosis, tifoidea', 'VIH agudo, CMV, VEB'] },
+            say: 'Primera familia, infecciones: tuberculosis extrapulmonar o miliar, endocarditis, incluida la de cultivo negativo por HACEK o Coxiella, abscesos abdominales, hepáticos o dentales, osteomielitis, brucelosis por leche sin pasteurizar, tifoidea y virus como VIH agudo, citomegalovirus y Epstein Barr.' },
+          { v: { k: 'list', t: 'Neoplasias', items: ['Linfoma: la más común', 'Leucemia', 'Carcinoma renal', 'Hepatocarcinoma y metástasis hepáticas', 'Mixoma auricular'] },
+            say: 'Segunda, neoplasias. La más común es el linfoma, con síntomas B: fiebre, sudoración nocturna y pérdida de peso. También leucemia, carcinoma renal, hígado con tumor o metástasis, y el mixoma auricular.' },
+          { v: { k: 'list', t: 'Inflamatorias', items: ['Arteritis de células gigantes (mayor de 50)', 'Still del adulto: ferritina altísima', 'Lupus y otras vasculitis', 'Sarcoidosis, EII'] },
+            say: 'Tercera, enfermedades inflamatorias. En mayores de cincuenta, la arteritis de células gigantes. En jóvenes, el Still del adulto, con fiebre en picos, exantema color salmón, artritis y ferritina altísima. También lupus, otras vasculitis, sarcoidosis y enfermedad inflamatoria intestinal.' },
+          { v: { k: 'list', t: 'Otras', items: ['Fiebre por fármacos: betalactámicos, anticonvulsivos', 'TEP y TVP', 'Hipertiroidismo', 'Hematomas', 'Facticia'] },
+            say: 'Cuarta, otras: fiebre por fármacos, que cede a las cuarenta y ocho o setenta y dos horas de suspenderlos; tromboembolia; hipertiroidismo; hematomas que se reabsorben; y fiebre facticia.' },
+          { v: { k: 'quiz', q: 'Rosa: 68 años, cefalea nueva, claudicación mandibular, VSG 98. ¿Qué sospechas?', opts: ['Linfoma', 'Arteritis de células gigantes', 'Endocarditis'], a: 1 },
+            say: 'Pausa. Con lo que sabes de Rosa, sesenta y ocho años, cefalea nueva, dolor de mandíbula al masticar y sedimentación de noventa y ocho, ¿qué sospechas?',
+            exp: 'Arteritis de células gigantes. Es la causa inflamatoria más común de fiebre de origen desconocido en mayores de cincuenta. La claudicación mandibular es muy específica, y el riesgo es la ceguera por neuritis óptica isquémica.' }
+        ] },
+        { ch: 'El abordaje en orden', sc: [
+          { v: { k: 'list', t: 'Historia que se repite', items: ['Viajes, animales, leche sin pasteurizar', 'Contactos de TB, prácticas sexuales', 'Todos los fármacos', 'Prótesis, válvulas, catéteres', 'Explorar a diario: soplos, ganglios, temporales'] },
+            say: 'El primer estudio es la historia, y se repite. Pregunta viajes, animales, leche sin pasteurizar, contactos de tuberculosis, prácticas sexuales, todos los fármacos, prótesis y válvulas. Y explora todos los días: un soplo nuevo, un ganglio, una arteria temporal engrosada o un bazo que crece.' },
+          { v: { k: 'flow', t: 'Estudio escalonado', steps: ['BH con frotis, VSG, PCR, PFH, LDH, EGO', '3 hemocultivos, VIH, PPD o IGRA, ANA, FR, ferritina', 'TC de tórax, abdomen y pelvis', 'PET-CT si la TC no aclara', 'Biopsia dirigida a lo anormal'] },
+            say: 'Luego, laboratorio básico: biometría con frotis, sedimentación, proteína C reactiva, pruebas de función hepática, deshidrogenasa láctica y examen de orina. Tres hemocultivos antes de cualquier antibiótico, VIH, prueba de tuberculosis, anticuerpos antinucleares, factor reumatoide y ferritina. Después, tomografía de tórax, abdomen y pelvis. Si no aclara, PET CT, que es el estudio de imagen con más rendimiento. Y al final, biopsia de lo que salga anormal.' },
+          { v: { k: 'tip', kind: 'trap', t: 'En el paciente estable, nada de antibiótico ni esteroide a ciegas: negativizan cultivos y tapan un linfoma o una vasculitis.' },
+            say: 'La gran trampa: dar antibiótico o esteroide empírico a un paciente estable. Los antibióticos negativizan los hemocultivos de una endocarditis, y el esteroide tapa un linfoma. Solo se trata a ciegas al paciente grave o neutropénico.' },
+          { v: { k: 'quiz', q: 'Fiebre de 4 semanas en un estable. TC de tórax, abdomen y pelvis normal. ¿Qué sigue?', opts: ['Ceftriaxona empírica', 'PET-CT', 'Prednisona de prueba'], a: 1 },
+            say: 'Pausa. Paciente estable, cuatro semanas con fiebre, laboratorio inicial sin pista y tomografía normal. ¿Qué sigue?',
+            exp: 'PET CT con fluorodesoxiglucosa. Encuentra focos inflamatorios, infecciosos o tumorales que la tomografía no ve y guía la biopsia. Antibiótico o esteroide a ciegas solo esconderían el diagnóstico.' }
+        ] },
+        { ch: 'Cierre del caso', sc: [
+          { v: { k: 'list', t: 'Rosa: final del caso', items: ['Arteria temporal engrosada y dolorosa', 'Prednisona 40 a 60 mg HOY', 'Biopsia en las siguientes 2 semanas', 'Biopsia: arteritis granulomatosa', 'Fiebre cede en 48 h'] },
+            say: 'Al explorar a Rosa, su arteria temporal está engrosada y duele. Se inicia prednisona de cuarenta a sesenta miligramos el mismo día, sin esperar la biopsia, para proteger la visión. La biopsia, hecha en las siguientes dos semanas, muestra arteritis granulomatosa, y la fiebre cede en cuarenta y ocho horas.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Arteritis de células gigantes con síntomas visuales o alta sospecha: esteroide antes de la biopsia. La biopsia sigue siendo útil hasta 2 semanas después.' },
+            say: 'Perla: en la arteritis de células gigantes, el esteroide va antes que la biopsia. La biopsia sigue siendo útil hasta dos semanas después de iniciarlo, pero la ceguera no se recupera.' },
+          { v: { k: 'mnemo', t: 'Infección · cáncer · inflamación · otras', d: '3 semanas, >38.3 °C. Historia repetida → laboratorio → TC → PET-CT → biopsia. Nada a ciegas si está estable.' },
+            say: 'Llévate las cuatro familias: infección, cáncer, inflamación y otras. Y el orden: historia repetida, laboratorio, tomografía, PET CT y biopsia, sin tratamiento a ciegas si está estable. Ahora practica en el taller con el algoritmo de fiebre.' }
         ] }
       ],
       sections: [

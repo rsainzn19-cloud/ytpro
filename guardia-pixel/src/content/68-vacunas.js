@@ -9,21 +9,47 @@ export default {
       hook: 'Las vacunas vivas (triple viral, varicela, fiebre amarilla, BCG) están contraindicadas en embarazo e inmunosupresión grave. Todos los adultos: influenza cada año y Td cada 10 años (Tdap en cada embarazo). A los 50: zóster recombinante; a los 65 (o antes con riesgo): neumococo.',
       nn: [], yt: 'adult immunization schedule live vaccines contraindications',
       video: [
-        { ch: 'Las básicas', sc: [
-          { v: { k: 'title', t: 'Vacunas del adulto', s: 'Semana 10 · Infectología' },
-            say: 'Semana diez: las vacunas del adulto. Lo más preguntado es cuáles son vivas, a quién no se le ponen, y qué toca a cada edad.' },
-          { v: { k: 'list', t: 'Vivas atenuadas', items: ['Triple viral: sarampión, rubéola, parotiditis', 'Varicela', 'Fiebre amarilla', 'BCG', 'Influenza intranasal'] },
-            say: 'Las vivas: triple viral, varicela, fiebre amarilla, BCG e influenza intranasal. No se ponen en embarazadas ni en inmunosupresión grave, como VIH con CD4 menor de doscientos.' },
-          { v: { k: 'flow', t: 'Calendario por edad', steps: ['Todos: influenza anual', 'Td cada 10 años; Tdap en cada embarazo', '50 años: zóster recombinante, 2 dosis', '65 años: neumococo conjugada', '60 años o más: VSR'] },
-            say: 'Todos: influenza cada año, y toxoide tetánico diftérico cada diez años, con Tdap en cada embarazo entre las semanas veintisiete y treinta y seis. A los cincuenta, la vacuna recombinante contra zóster en dos dosis. A los sesenta y cinco, neumococo. Y a los sesenta o más, virus sincitial respiratorio.' }
+        { ch: 'Vivas o inactivadas', sc: [
+          { v: { k: 'title', t: 'Vacunación del adulto', s: 'Semana 10 · Infectología' },
+            say: 'Semana diez: vacunación en el adulto. En el examen la preguntan de dos formas: qué vacuna le toca a un paciente y a quién no se le puede poner una vacuna viva. Vamos con una paciente de consulta.' },
+          { v: { k: 'case', t: 'Consulta de revisión', p: { name: 'Marta', age: 62, sex: 'M', skin: '#E2B08A', hair: '#7A6A5A', gown: '#5EEAD4' }, text: 'Diabética e hipertensa. Tuvo herpes zóster hace 3 años. Última vacuna: tétanos hace 12 años. Va a iniciar adalimumab por artritis reumatoide.', vit: { Edad: '62', A1c: '7.4%' } },
+            say: 'Marta tiene sesenta y dos años, es diabética e hipertensa, tuvo herpes zóster hace tres años y su última vacuna fue la del tétanos hace doce. Además, su reumatólogo va a iniciar adalimumab. ¿Qué vacunas le tocan y en qué orden?' },
+          { v: { k: 'vs', a: 'Vivas atenuadas', b: 'Inactivadas', rows: [['Ejemplos', 'Triple viral, varicela, fiebre amarilla', 'Influenza inyectable, Tdap, neumococo'], ['Más', 'BCG, rotavirus, polio oral, dengue', 'Zóster recombinante, VPH, hepatitis'], ['Embarazo', 'Contraindicadas', 'Seguras'], ['Inmunosupresión grave', 'Contraindicadas', 'Seguras, pero responden menos']] },
+            say: 'Primero, la gran división. Las vacunas vivas atenuadas son triple viral, varicela, fiebre amarilla, BCG, rotavirus, polio oral, influenza intranasal y dengue. Están contraindicadas en el embarazo y en la inmunosupresión grave. Las inactivadas, como influenza inyectable, tétanos, neumococo, zóster recombinante, VPH y hepatitis, son seguras en ambos, aunque el inmunosuprimido responde menos.' },
+          { v: { k: 'list', t: 'Inmunosupresión grave', items: ['VIH con CD4 menor de 200', 'Quimioterapia', 'Prednisona 20 mg o más por 14 días o más', 'Biológicos: anti-TNF, rituximab', 'Trasplante'] },
+            say: 'Se considera inmunosupresión grave el VIH con CD4 menores de doscientos, la quimioterapia, la prednisona de veinte miligramos o más por catorce días o más, los biológicos como anti TNF y rituximab, y el trasplante. En VIH con doscientos CD4 o más, la triple viral y la varicela sí se pueden aplicar.' },
+          { v: { k: 'list', t: 'Reglas que preguntan', items: ['Dos vivas: el mismo día o separadas 4 semanas', 'Alergia al huevo ya no contraindica influenza', 'Enfermedad leve no contraindica', 'Antes de un biológico: vivas 4 semanas antes', 'Evitar embarazo 4 semanas tras triple viral'] },
+            say: 'Reglas que preguntan: dos vacunas vivas inyectables se aplican el mismo día o separadas cuatro semanas. La alergia al huevo ya no contraindica la vacuna de influenza. Un resfriado leve no es contraindicación. Antes de iniciar un biológico, las vivas se ponen al menos cuatro semanas antes. Y tras la triple viral o la varicela, evitar embarazo cuatro semanas.' }
         ] },
-        { ch: 'Situaciones especiales', sc: [
-          { v: { k: 'list', t: 'Asplenia', items: ['Neumococo', 'Meningococo ACWY y B', 'Haemophilus influenzae tipo b', '2 semanas antes de una esplenectomía electiva'] },
-            say: 'En asplenia: neumococo, meningococo ACWY y B, y Haemophilus tipo b, idealmente dos semanas antes de una esplenectomía programada.' },
-          { v: { k: 'tip', kind: 'trap', t: 'La alergia al huevo ya no contraindica la vacuna de influenza.' },
-            say: 'Un dato que cambió: la alergia al huevo ya no contraindica la vacuna de influenza.' },
-          { v: { k: 'mnemo', t: 'Vivas: no en embarazo ni inmunosupresión', d: 'Triple viral, varicela, fiebre amarilla, BCG, influenza intranasal. Entre dos vivas: el mismo día o 4 semanas después.' },
-            say: 'Llévate esto: las vivas no van en embarazo ni en inmunosupresión, y dos vivas se ponen el mismo día o con cuatro semanas de separación.' }
+        { ch: 'El esquema del adulto', sc: [
+          { v: { k: 'list', t: 'Para todos', items: ['Influenza: cada año', 'Tdap una vez; Td o Tdap cada 10 años', 'Hepatitis B: 19 a 59 años', 'COVID según recomendación vigente'] },
+            say: 'Para todos los adultos: influenza cada año. Tdap una vez en la vida y después refuerzo de tétanos cada diez años. Hepatitis B de los diecinueve a los cincuenta y nueve años. Y COVID según la recomendación vigente.' },
+          { v: { k: 'vs', a: 'Vacuna', b: 'A quién', rows: [['Zóster recombinante', '50 años o más; 19 si inmunosuprimido', '2 dosis, aunque ya haya tenido zóster'], ['Neumococo PCV20 o 21', '50 años o más', '19 a 49 con riesgo'], ['VSR', '75 o más; 60 a 74 con riesgo', 'Embarazo 32 a 36 semanas'], ['VPH', 'Hasta 26 años', '27 a 45: decisión compartida']] },
+            say: 'Por edad: zóster recombinante desde los cincuenta años, o desde los diecinueve si hay inmunosupresión, en dos dosis, aunque ya haya tenido zóster. Neumococo conjugada de veinte o veintiún serotipos desde los cincuenta, o antes si hay riesgo como diabetes, EPOC o asplenia. Virus sincitial respiratorio desde los setenta y cinco, o de sesenta a setenta y cuatro con riesgo. Y VPH hasta los veintiséis años.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'La vacuna de zóster recombinante es inactivada: sirve en inmunosuprimidos y se pone aunque ya haya tenido zóster.' },
+            say: 'Perla: la vacuna recombinante contra zóster es inactivada, así que se puede poner en inmunosuprimidos, y se aplica aunque el paciente ya haya tenido zóster, porque puede repetir.' },
+          { v: { k: 'quiz', q: 'Marta va a iniciar adalimumab. ¿Puede recibir la vacuna de zóster?', opts: ['No, es viva', 'Sí, la recombinante es inactivada', 'Solo si los CD4 son mayores de 200'], a: 1 },
+            say: 'Pausa. Marta va a iniciar adalimumab. ¿Puede recibir la vacuna contra zóster?',
+            exp: 'Sí. La vacuna recombinante es inactivada y está indicada en adultos que van a recibir inmunosupresores, idealmente antes de iniciarlos. La vacuna viva de zóster ya no se usa.' }
+        ] },
+        { ch: 'Embarazo y situaciones especiales', sc: [
+          { v: { k: 'list', t: 'Embarazo', items: ['Tdap de las 27 a 36 semanas, en cada embarazo', 'Influenza en cualquier trimestre', 'COVID', 'VSR de las 32 a 36 semanas', 'Nada vivo'] },
+            say: 'En el embarazo: Tdap entre las veintisiete y treinta y seis semanas, en cada embarazo, para proteger al recién nacido de la tos ferina. Influenza en cualquier trimestre, COVID, y virus sincitial respiratorio entre las treinta y dos y treinta y seis semanas. Ninguna vacuna viva.' },
+          { v: { k: 'list', t: 'Asplenia', items: ['Neumococo', 'Meningococo ACWY y B', 'Haemophilus tipo b', 'Electiva: 2 semanas antes', 'Urgente: 2 semanas después'] },
+            say: 'Sin bazo, el riesgo es de bacterias encapsuladas: se vacuna contra neumococo, meningococo ACWY y B, y Haemophilus tipo b. Si la esplenectomía es programada, dos semanas antes; si fue urgente, dos semanas después.' },
+          { v: { k: 'vs', a: 'Herida', b: 'Conducta', rows: [['Limpia y menor', 'Td si la última fue hace más de 10 años', 'Sin inmunoglobulina'], ['Sucia o grave', 'Td si fue hace más de 5 años', '—'], ['Sucia + esquema incompleto o desconocido', 'Td + inmunoglobulina antitetánica', '—']] },
+            say: 'Heridas y tétanos: si la herida es limpia y menor, refuerzo si la última dosis fue hace más de diez años. Si es sucia o grave, si fue hace más de cinco. Y si es sucia y el esquema está incompleto o se desconoce, toxoide más inmunoglobulina antitetánica.' },
+          { v: { k: 'quiz', q: 'Herida sucia con clavo oxidado. Última vacuna de tétanos hace 7 años, esquema completo. ¿Qué das?', opts: ['Nada', 'Td o Tdap', 'Td + inmunoglobulina antitetánica'], a: 1 },
+            say: 'Pausa. Herida sucia con un clavo oxidado. La última dosis de tétanos fue hace siete años y el esquema está completo. ¿Qué das?',
+            exp: 'Td o Tdap. En una herida sucia el refuerzo se da si pasaron más de cinco años. La inmunoglobulina solo se agrega si el esquema primario está incompleto o se desconoce.' }
+        ] },
+        { ch: 'Cierre del caso', sc: [
+          { v: { k: 'list', t: 'Marta: su plan', items: ['Influenza hoy', 'Tdap hoy (Td vencido)', 'Neumococo PCV20 hoy (50 o más y DM)', 'Zóster recombinante: 2 dosis', 'Hepatitis B por diabetes; luego adalimumab'] },
+            say: 'Plan para Marta: hoy, influenza, Tdap porque su refuerzo está vencido, y neumococo conjugada de veinte serotipos por tener más de cincuenta años y diabetes. Zóster recombinante en dos dosis, aunque ya tuvo zóster. Hepatitis B por la diabetes. Y como va a iniciar adalimumab, también se le hace tamizaje de tuberculosis latente. Todo inactivado, así que no hay que esperar para el biológico.' },
+          { v: { k: 'tip', kind: 'trap', t: 'Vacuna viva en embarazada o en paciente con biológico o prednisona ≥20 mg por ≥14 días: contraindicada.' },
+            say: 'Trampa: poner una vacuna viva a una embarazada o a un paciente con biológicos o prednisona alta. Si el paciente está por iniciar inmunosupresión, las vivas van al menos cuatro semanas antes.' },
+          { v: { k: 'mnemo', t: 'Vivas: SRP, varicela, amarilla, BCG', d: 'Nunca en embarazo ni inmunosupresión grave. Zóster recombinante ≥50. Neumococo ≥50. Tdap en cada embarazo.' },
+            say: 'Llévate las vivas: triple viral, varicela, fiebre amarilla y BCG, nunca en embarazo ni en inmunosupresión grave. Y las de edad: zóster y neumococo desde los cincuenta. Ahora practica en el algoritmo de vacunas del taller.' }
         ] }
       ],
       sections: [

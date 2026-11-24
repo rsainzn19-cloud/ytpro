@@ -9,21 +9,51 @@ export default {
       hook: 'El laboratorio de micro se pregunta por asociaciones: qué tinción ve qué bicho, qué medio lo cultiva y cómo se lee un antibiograma (CMI). Y las reglas de oro: cultivos antes del antibiótico y hemocultivos pareados.',
       nn: [], yt: 'gram stain culture media microbiology lab',
       video: [
-        { ch: 'Tinciones', sc: [
+        { ch: 'El viaje de una muestra', sc: [
           { v: { k: 'title', t: 'Laboratorio de microbiología', s: 'Semana 3 · Infectología' },
-            say: 'Semana tres de infectología: el laboratorio de micro. Se aprende por asociaciones: qué tinción, qué medio y cómo leer el antibiograma.' },
-          { v: { k: 'vs', a: 'Grampositivo', b: 'Gramnegativo', rows: [['Color', 'Morado', 'Rosa'], ['Pared', 'Peptidoglucano grueso', 'Delgado más membrana externa con LPS'], ['Ejemplos', 'Estafilo, estrepto', 'E. coli, Pseudomonas']] },
-            say: 'La tinción de Gram: cristal violeta, lugol, alcohol que decolora y safranina. Los grampositivos tienen pared gruesa de peptidoglucano y se quedan morados. Los gramnegativos tienen pared delgada y membrana externa con lipopolisacárido, y se ven rosas.' },
-          { v: { k: 'list', t: 'Otras tinciones', items: ['Ziehl-Neelsen: micobacterias, Nocardia', 'Tinta china: Cryptococcus', 'Plata: Pneumocystis, hongos', 'Giemsa: Plasmodium, Chlamydia', 'Campo oscuro: Treponema'] },
-            say: 'Otras: Ziehl Neelsen para bacilos ácido alcohol resistentes, como la tuberculosis. Tinta china para Cryptococcus. Plata para Pneumocystis. Giemsa para paludismo. Y campo oscuro para Treponema.' }
+            say: 'Semana tres: el laboratorio de microbiología. Cuando pides un cultivo, la muestra pasa por tres estaciones: la tinción, que da una pista en minutos; el cultivo, que identifica en uno o dos días; y el antibiograma, que dice qué sirve. Vamos a recorrerlas con un caso.' },
+          { v: { k: 'case', t: 'Uretritis', p: { name: 'Iván', age: 24, sex: 'H', skin: '#D9A07A', hair: '#2A1A12', gown: '#5EEAD4' }, text: 'Secreción uretral purulenta y disuria de 3 días. Relaciones sin condón hace una semana.', vit: { T: '37.2' } },
+            say: 'Iván, de veinticuatro años, tiene tres días con secreción purulenta por la uretra y ardor al orinar. Hace una semana tuvo relaciones sin condón. Tomas la secreción. ¿Qué tinción pides y en qué medio se cultiva?' },
+          { v: { k: 'list', t: 'Antes de tomar la muestra', items: ['Antes del antibiótico', 'Hemocultivos: 2 a 3 sets de sitios distintos', '20 a 30 mL por set, aerobio + anaerobio', 'Orina: chorro medio', 'Esputo: más de 25 PMN, menos de 10 epiteliales'] },
+            say: 'Primero, la muestra. Siempre antes del antibiótico. Los hemocultivos se toman en dos o tres sets de sitios distintos, con veinte a treinta mililitros cada uno, en frasco aerobio y anaerobio. La orina, del chorro medio. Y el esputo es adecuado si tiene más de veinticinco neutrófilos y menos de diez células epiteliales por campo; si no, es saliva.' }
         ] },
-        { ch: 'Medios y antibiograma', sc: [
-          { v: { k: 'list', t: 'Medios', items: ['Thayer-Martin: Neisseria', 'Chocolate: Haemophilus', 'MacConkey: fermentadores de lactosa', 'Löwenstein-Jensen: TB', 'Sabouraud: hongos', 'BCYE: Legionella'] },
-            say: 'Medios: Thayer Martin para Neisseria, agar chocolate para Haemophilus, MacConkey para gramnegativos fermentadores de lactosa, Löwenstein Jensen para tuberculosis, Sabouraud para hongos y BCYE para Legionella.' },
-          { v: { k: 'big', h: 'CMI', t: 'Concentración mínima inhibitoria', u: 'menor que el punto de corte: sensible' },
-            say: 'El antibiograma da la concentración mínima inhibitoria: la menor concentración que impide el crecimiento. Si es menor que el punto de corte, la bacteria es sensible.' },
-          { v: { k: 'mnemo', t: 'Cultivos antes del antibiótico', d: 'Hemocultivos: 2 sets de sitios distintos antes de la primera dosis.' },
-            say: 'La regla de oro: toma los cultivos antes del antibiótico, con dos juegos de hemocultivos de sitios diferentes.' }
+        { ch: 'Tinciones', sc: [
+          { v: { k: 'vs', a: 'Grampositivo', b: 'Gramnegativo', rows: [['Color', 'Morado', 'Rosa'], ['Pared', 'Peptidoglucano grueso', 'Delgado + membrana externa'], ['Molécula clave', 'Ácido teicoico', 'Lipopolisacárido (endotoxina)'], ['Ejemplos', 'Estafilococo, estreptococo', 'E. coli, Neisseria, Pseudomonas']] },
+            say: 'La tinción de Gram separa a las bacterias por su pared. Las grampositivas tienen un peptidoglucano grueso que retiene el cristal violeta y se ven moradas. Las gramnegativas tienen una pared delgada con membrana externa y lipopolisacárido; el alcohol les quita el violeta y la safranina las pinta de rosa.' },
+          { v: { k: 'list', t: 'No se ven bien con Gram', items: ['Micobacterias: Ziehl-Neelsen', 'Mycoplasma: no tiene pared', 'Treponema y Leptospira: campo oscuro', 'Intracelulares: Chlamydia, Rickettsia', 'Legionella: plata'] },
+            say: 'Algunas no se ven con Gram. Las micobacterias tienen ácidos micólicos y se tiñen con Ziehl Neelsen. Mycoplasma no tiene pared. Treponema y Leptospira son tan delgadas que se ven en campo oscuro. Las intracelulares, como Chlamydia y Rickettsia, y Legionella, que se ve con plata.' },
+          { v: { k: 'vs', a: 'Tinción', b: 'Qué busca', rows: [['Ziehl-Neelsen', 'Micobacterias, Nocardia débil', 'Cryptosporidium'], ['Tinta china', 'Cryptococcus', 'Cápsula'], ['Plata', 'Pneumocystis, hongos', 'Legionella, H. pylori'], ['Giemsa', 'Plasmodium, Babesia', 'Trypanosoma'], ['KOH', 'Hongos de piel y uñas', 'Hifas']] },
+            say: 'Las otras tinciones: Ziehl Neelsen para ácido alcohol resistentes. Tinta china para la cápsula de Cryptococcus en líquido cefalorraquídeo. Plata para Pneumocystis, hongos, Legionella y Helicobacter. Giemsa para parásitos de la sangre como el plasmodio. Y hidróxido de potasio para hifas en piel y uñas.' },
+          { v: { k: 'quiz', q: 'Iván: diplococos gramnegativos dentro de neutrófilos. ¿Qué es?', opts: ['Chlamydia trachomatis', 'Neisseria gonorrhoeae', 'Treponema pallidum'], a: 1 },
+            say: 'Pausa. En el Gram de Iván se ven diplococos gramnegativos dentro de los neutrófilos. ¿Qué es?',
+            exp: 'Neisseria gonorrhoeae. Diplococos gramnegativos intracelulares en una uretritis purulenta son gonococo. Chlamydia no se ve con Gram porque es intracelular obligada, y suele coexistir, por eso se tratan ambas.' }
+        ] },
+        { ch: 'Medios de cultivo', sc: [
+          { v: { k: 'list', t: 'Agar sangre: hemólisis', items: ['Alfa (verde): neumococo, viridans', 'Beta (total): S. pyogenes, agalactiae, aureus', 'Gamma (ninguna): enterococo'] },
+            say: 'En agar sangre se ve la hemólisis. Alfa es parcial y deja un halo verde: neumococo y estreptococos viridans. Beta es total y deja un halo transparente: Streptococcus pyogenes, agalactiae y estafilococo dorado. Gamma es ninguna: enterococo.' },
+          { v: { k: 'vs', a: 'Medio', b: 'Para qué', rows: [['Chocolate', 'H. influenzae, Neisseria', 'Factores V y X'], ['Thayer-Martin', 'Gonococo', 'Selectivo'], ['MacConkey', 'Gramnegativos', 'Lactosa positivo: rosa'], ['BCYE', 'Legionella', 'Carbón y cisteína'], ['Löwenstein-Jensen', 'M. tuberculosis', '2 a 6 semanas'], ['Sabouraud', 'Hongos', '—']] },
+            say: 'Los medios que preguntan: agar chocolate para Haemophilus y Neisseria, porque aporta los factores cinco y diez. Thayer Martin, selectivo para gonococo. MacConkey para gramnegativos, donde los que fermentan lactosa, como E. coli y Klebsiella, se ven rosas. BCYE con carbón y cisteína para Legionella. Löwenstein Jensen para tuberculosis. Y Sabouraud para hongos.' },
+          { v: { k: 'list', t: 'Pistas de color y olor', items: ['Pseudomonas: azul-verde, olor a uvas', 'S. aureus: colonias doradas', 'Serratia: rojo', 'E. coli en EMB: verde metálico', 'Actinomyces: gránulos de azufre'] },
+            say: 'Y pistas de color: pseudomonas da pigmento azul verde y huele a uvas; el estafilococo dorado hace colonias doradas; Serratia, rojas; E. coli brilla verde metálico en EMB; y Actinomyces forma gránulos amarillos como de azufre.' }
+        ] },
+        { ch: 'Antibiograma', sc: [
+          { v: { k: 'big', h: 'CMI', t: 'Concentración mínima inhibitoria', s: 'La menor concentración que impide el crecimiento. Se compara con el punto de corte: sensible, intermedio o resistente.' },
+            say: 'El antibiograma reporta la concentración mínima inhibitoria: la menor concentración del antibiótico que impide que la bacteria crezca. Se compara con el punto de corte de ese antibiótico para decir si es sensible, intermedio o resistente.' },
+          { v: { k: 'tip', kind: 'trap', t: 'No compares la CMI de un antibiótico con la de otro: cada uno tiene su punto de corte. Elige por S/I/R, sitio y toxicidad.' },
+            say: 'Trampa: no elijas el antibiótico con la CMI más baja. Cada fármaco tiene su propio punto de corte, así que comparar números entre antibióticos no sirve. Elige entre los sensibles según el sitio de infección, la toxicidad y el espectro.' },
+          { v: { k: 'list', t: '¿Contaminante o real?', items: ['1 de 2 sets con estafilococo coagulasa negativo: contaminante', 'S. aureus: nunca contaminante', 'Candida: nunca contaminante', 'Gramnegativos: nunca contaminantes'] },
+            say: 'Un hemocultivo positivo en un solo set con estafilococo coagulasa negativo suele ser contaminante de la piel. Pero estafilococo dorado, Candida o un gramnegativo en sangre nunca se consideran contaminantes: siempre se tratan.' },
+          { v: { k: 'quiz', q: 'Hemocultivo: 1 de 2 sets con S. aureus. ¿Qué haces?', opts: ['Repetir y no tratar: contaminante', 'Tratar como bacteriemia real', 'Esperar al tercer set'], a: 1 },
+            say: 'Pausa. Uno de dos sets de hemocultivo creció estafilococo dorado. ¿Contaminante?',
+            exp: 'No. El estafilococo dorado en sangre siempre es real: se trata como bacteriemia, se repiten hemocultivos para ver que se negativicen y se pide ecocardiograma para descartar endocarditis.' }
+        ] },
+        { ch: 'Cierre', sc: [
+          { v: { k: 'list', t: 'Iván: final del caso', items: ['Gram: diplococos gramnegativos intracelulares', 'Cultivo en Thayer-Martin o NAAT', 'Ceftriaxona 500 mg IM dosis única', '+ doxiciclina por Chlamydia', 'Tratar a la pareja; VIH y sífilis'] },
+            say: 'Iván tiene gonorrea. Se confirma con cultivo en Thayer Martin o con prueba de amplificación de ácidos nucleicos. Recibe ceftriaxona quinientos miligramos intramuscular en dosis única, más doxiciclina siete días para cubrir Chlamydia. Se trata a su pareja y se le ofrecen pruebas de VIH y sífilis.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Tinta china en LCR = Cryptococcus en VIH con CD4 <100. Hoy se prefiere el antígeno criptocócico, más sensible.' },
+            say: 'Perla: levaduras encapsuladas con tinta china en el líquido cefalorraquídeo de un paciente con VIH avanzado es Cryptococcus. Hoy se prefiere medir el antígeno criptocócico, que es más sensible.' },
+          { v: { k: 'mnemo', t: 'Chocolate para Haemophilus, carbón para Legionella', d: 'Thayer-Martin: gonococo. MacConkey rosa: fermenta lactosa. Löwenstein: TB. Tinta china: Cryptococcus.' },
+            say: 'Llévate los pares: chocolate para Haemophilus, carbón para Legionella, Thayer Martin para gonococo, Löwenstein para tuberculosis y tinta china para Cryptococcus. Ahora prueba el algoritmo del Gram en el taller.' }
         ] }
       ],
       sections: [
