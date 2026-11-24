@@ -10,171 +10,56 @@ export default {
       yt: 'diabetic ketoacidosis hyperosmolar hyperglycemic state management',
       nn: [],
       video: [
-        {
-          ch: "Dos crisis, un esqueleto",
-          sc: [
-            {
-              v: {
-                k: "title",
-                t: "Cetoacidosis y estado hiperosmolar",
-                s: "Semana 5 · Endocrinología"
-              },
-              say: "Semana cinco: las urgencias de la diabetes. La cetoacidosis y el estado hiperosmolar. Son distintas, pero se tratan con el mismo esqueleto: líquidos, potasio e insulina."
-            },
-            {
-              v: {
-                k: "case",
-                t: "Dejó la insulina",
-                p: {
-                  name: "Valeria",
-                  age: 19,
-                  sex: "M",
-                  skin: "#E2B08A",
-                  hair: "#2A1A12",
-                  gown: "#F2A0B8"
-                },
-                text: "DM1. Dejó la insulina hace 2 días. Vómito, dolor abdominal, respiración profunda y aliento a fruta.",
-                vit: {
-                  Glu: "486",
-                  pH: "7.14",
-                  HCO3: "9"
-                }
-              },
-              say: "Valeria tiene diecinueve años y diabetes tipo uno. Dejó la insulina hace dos días. Llega con vómito, dolor abdominal, respiración profunda y aliento a fruta. Glucosa de cuatrocientos ochenta y seis, pH de siete punto catorce y bicarbonato de nueve."
-            },
-            {
-              v: {
-                k: "vs",
-                a: "Cetoacidosis",
-                b: "Estado hiperosmolar",
-                rows: [
-                  [
-                    "Insulina",
-                    "Falta toda",
-                    "Queda algo"
-                  ],
-                  [
-                    "Glucosa",
-                    "Desde 200",
-                    "Arriba de 600"
-                  ],
-                  [
-                    "Cetonas y pH",
-                    "Altas, pH bajo",
-                    "Mínimas, pH normal"
-                  ],
-                  [
-                    "Tiempo",
-                    "Horas",
-                    "Días"
-                  ],
-                  [
-                    "Paciente típico",
-                    "DM1 joven",
-                    "DM2 anciano"
-                  ]
-                ]
-              },
-              say: "Compáralas. En la cetoacidosis falta toda la insulina: se queman grasas, aparecen cetonas y el pH cae, en horas. En el estado hiperosmolar queda un poco de insulina que frena las cetonas, pero la glucosa sube por días hasta más de seiscientos, con deshidratación enorme y confusión."
-            }
-          ]
-        },
-        {
-          ch: "Tratamiento en orden",
-          sc: [
-            {
-              v: {
-                k: "flow",
-                t: "El orden",
-                steps: [
-                  "Líquidos",
-                  "Potasio",
-                  "Insulina IV",
-                  "Dextrosa a 250"
-                ]
-              },
-              say: "El tratamiento va en orden. Primero líquidos. Luego revisas el potasio. Después insulina intravenosa. Y cuando la glucosa baja de doscientos cincuenta, agregas dextrosa."
-            },
-            {
-              v: {
-                k: "big",
-                h: "Primera hora",
-                t: "1 a 1.5 L",
-                u: "de cristaloide"
-              },
-              say: "Lo primero es un litro a litro y medio de cristaloide en la primera hora. Los líquidos restauran la perfusión y por sí solos bajan la glucosa."
-            },
-            {
-              v: {
-                k: "list",
-                t: "Potasio antes que insulina",
-                items: [
-                  "Menos de 3.5: no des insulina, repón K",
-                  "3.5 a 5: agrega K a los líquidos",
-                  "Más de 5: no agregues, mide cada 2 h"
-                ]
-              },
-              say: "Luego el potasio. La insulina mete el potasio a las células, y aunque el potasio en sangre salga normal, el total del cuerpo está muy bajo. Si está por debajo de tres punto cinco, no inicies insulina: primero repón. Entre tres punto cinco y cinco, agrega potasio a los líquidos."
-            },
-            {
-              v: {
-                k: "quiz",
-                q: "Glucosa 228 con pH 7.24. ¿Qué haces?",
-                opts: [
-                  "Suspender la insulina",
-                  "Agregar dextrosa y seguir la insulina",
-                  "Pasar a insulina subcutánea"
-                ],
-                a: 1
-              },
-              say: "Pausa. Después de seis horas la glucosa es de doscientos veintiocho, pero el pH sigue en siete punto veinticuatro. ¿Qué haces?",
-              exp: "Agregas dextrosa y sigues con la insulina. Lo que se trata es la cetosis, no la glucosa; si suspendes la insulina, las cetonas regresan."
-            }
-          ]
-        },
-        {
-          ch: "Resolución y trampas",
-          sc: [
-            {
-              v: {
-                k: "list",
-                t: "Cetoacidosis resuelta",
-                items: [
-                  "Beta hidroxibutirato menor de 0.6",
-                  "pH de 7.3 o más",
-                  "Brecha aniónica normal",
-                  "Ya come",
-                  "Basal SC 2 h antes de quitar la IV"
-                ]
-              },
-              say: "La cetoacidosis se resuelve cuando el beta hidroxibutirato baja de cero punto seis y el pH llega a siete punto tres. Entonces aplicas insulina basal subcutánea y mantienes la intravenosa dos horas más, porque la intravenosa dura minutos."
-            },
-            {
-              v: {
-                k: "tip",
-                kind: "trap",
-                t: "La tira de orina mide acetoacetato, no beta hidroxibutirato: al mejorar el paciente puede marcar más cetonas."
-              },
-              say: "Una trampa: la tira de orina mide acetoacetato y no beta hidroxibutirato. Cuando el paciente mejora, el beta hidroxibutirato se convierte en acetoacetato y la tira marca más cetonas. No te asustes: sigue la brecha aniónica."
-            },
-            {
-              v: {
-                k: "tip",
-                kind: "pearl",
-                t: "Con iSGLT2 puede haber cetoacidosis con glucosa menor de 250: la cetoacidosis euglucémica."
-              },
-              say: "Y una perla: los inhibidores de SGLT dos pueden dar cetoacidosis con la glucosa casi normal. Si un paciente con empagliflozina tiene vómito y acidosis, mide cetonas aunque la glucosa sea de ciento ochenta."
-            },
-            {
-              v: {
-                k: "mnemo",
-                t: "Agua, K, insulina, dextrosa a 250",
-                d: "Líquidos primero; potasio de 3.5 o más para iniciar insulina; dextrosa al bajar de 250 sin quitar la insulina."
-              },
-              say: "Llévate esto: agua, potasio, insulina, y dextrosa a doscientos cincuenta sin quitar la insulina. Bicarbonato solo si el pH está por debajo de siete."
-            }
-          ]
-        }
+        { ch: 'Dos urgencias, un mecanismo', sc: [
+          { v: { k: 'title', t: 'Cetoacidosis y estado hiperosmolar', s: 'Semana 5 · Endocrinología' },
+            say: 'Semana cinco de Endocrinología: las crisis hiperglucémicas, la cetoacidosis diabética y el estado hiperglucémico hiperosmolar. Las dos se tratan con los mismos tres pasos, líquidos, potasio e insulina, pero el orden es lo que más preguntan. Vamos con una paciente.' },
+          { v: { k: 'case', t: 'Vómito y respiración profunda', p: { name: 'Fernanda', age: 19, sex: 'M', skin: '#E2B08A', hair: '#2A1A12', gown: '#B48CFF' }, text: 'DM1 desde los 12 años. Dos días con gastroenteritis; dejó de ponerse insulina porque no comía. Vómito, dolor abdominal, respiración profunda, aliento a manzana.', vit: { Glu: '486', pH: '7.08', HCO3: '7', K: '5.4' } },
+            say: 'Fernanda tiene diecinueve años y diabetes tipo uno. Lleva dos días con gastroenteritis y dejó de ponerse insulina porque no comía. Ahora vomita, le duele el abdomen, respira profundo y su aliento huele a manzana. Su glucosa es de cuatrocientos ochenta y seis, el pH de siete punto cero ocho, el bicarbonato de siete y el potasio de cinco punto cuatro.' },
+          { v: { k: 'vs', a: 'Cetoacidosis', b: 'Hiperosmolar', rows: [['Déficit de insulina', 'Absoluto', 'Relativo'], ['Típica de', 'DM1 (puede ser el debut)', 'DM2, adulto mayor'], ['Evolución', 'Horas', 'Días'], ['Lo que domina', 'Cetonas y acidosis', 'Deshidratación e hiperosmolaridad']] },
+            say: 'En la cetoacidosis falta la insulina por completo: se activa la lipólisis, el hígado fabrica cetonas y aparece una acidosis con brecha aniónica alta, en horas. Es típica de la diabetes tipo uno. En el estado hiperosmolar queda un poco de insulina, suficiente para frenar las cetonas pero no la glucosa: durante días la glucosuria arrastra agua y el paciente se deshidrata y se vuelve hiperosmolar. Es típico del adulto mayor con tipo dos.' },
+          { v: { k: 'list', t: 'Desencadenantes', items: ['Insulina omitida: la #1 en CAD', 'Infección: neumonía, IVU', 'Infarto, EVC, pancreatitis', 'Fármacos: esteroides, tiazidas, iSGLT2', 'Embarazo, alcohol, cocaína'] },
+            say: 'Los desencadenantes: omitir la insulina, la causa número uno de cetoacidosis, como Fernanda; las infecciones, sobre todo neumonía e infección urinaria; infarto, evento vascular y pancreatitis; fármacos como esteroides, tiazidas e inhibidores de SGLT dos; embarazo, alcohol y cocaína.' }
+        ] },
+        { ch: 'Diagnóstico', sc: [
+          { v: { k: 'vs', a: 'Criterio', b: 'CAD · EHH', rows: [['Glucosa', '200 o más', '600 o más'], ['Cetonas (BHB)', '3 mmol/L o más', 'Menos de 3'], ['pH / HCO3', 'pH menor de 7.3 o HCO3 menor de 18', 'pH 7.3 o más'], ['Osmolaridad efectiva', 'Variable', 'Más de 300'], ['Mente', 'Alerta o somnoliento', 'Confusión a coma']] },
+            say: 'Los criterios del consenso de dos mil veinticuatro. Cetoacidosis: glucosa de doscientos o más, beta hidroxibutirato de tres o más y pH menor de siete punto tres o bicarbonato menor de dieciocho. Estado hiperosmolar: glucosa de seiscientos o más, osmolaridad efectiva mayor de trescientos, sin acidosis importante, y alteración mental que se correlaciona con la osmolaridad.' },
+          { v: { k: 'list', t: 'Cálculos que preguntan', items: ['Brecha aniónica: Na − (Cl + HCO3), normal 12', 'Na corregido: + 1.6 por cada 100 de glucosa arriba de 100', 'Osm efectiva: 2 × Na + glucosa / 18', 'Grave: pH menor de 7.0, HCO3 menor de 10 o coma'] },
+            say: 'Tres cálculos. La brecha aniónica: sodio menos la suma de cloro y bicarbonato, normal alrededor de doce. El sodio corregido: suma uno punto seis por cada cien de glucosa arriba de cien, porque la glucosa jala agua y diluye el sodio. Y la osmolaridad efectiva: dos veces el sodio más la glucosa entre dieciocho. La cetoacidosis es grave con pH menor de siete, bicarbonato menor de diez o estupor.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'CAD euglucémica: con iSGLT2, embarazo o ayuno puede haber cetoacidosis con glucosa menor de 250. Mide cetonas.' },
+            say: 'Perla: con inhibidores de SGLT dos, en el embarazo o en ayuno prolongado puede haber cetoacidosis con glucosa menor de doscientos cincuenta. Si hay acidosis con brecha alta, mide cetonas aunque la glucosa no impresione.' },
+          { v: { k: 'quiz', q: 'Fernanda: Na 132, Cl 98, HCO3 7. ¿Brecha aniónica?', opts: ['12', '27', '39'], a: 1 },
+            say: 'Pausa. Fernanda tiene sodio de ciento treinta y dos, cloro de noventa y ocho y bicarbonato de siete. ¿Cuál es su brecha aniónica?',
+            exp: 'Veintisiete: ciento treinta y dos menos ciento cinco. Es una acidosis metabólica con brecha aniónica alta por cetonas.' }
+        ] },
+        { ch: 'El tratamiento en orden', sc: [
+          { v: { k: 'flow', t: 'Orden', steps: ['1. Líquidos: 1 a 1.5 L la 1a hora', '2. Potasio: revisar ANTES de la insulina', '3. Insulina regular IV 0.1 U/kg/h', '4. Glucosa menor de 250: agregar dextrosa', '5. Buscar el desencadenante'] },
+            say: 'El orden: primero líquidos, uno a uno y medio litros en la primera hora. Segundo, revisa el potasio antes de la insulina. Tercero, insulina regular intravenosa a cero punto uno unidades por kilo por hora. Cuarto, cuando la glucosa baje de doscientos cincuenta, agrega dextrosa. Y siempre busca el desencadenante.' },
+          { v: { k: 'vs', a: 'Potasio', b: 'Conducta', rows: [['Menor de 3.5', 'NO insulina', 'Repón K primero'], ['3.5 a 5.0', 'Insulina', '+ 10 a 20 mEq de KCl por litro'], ['Mayor de 5.0', 'Insulina', 'Sin K; medir cada 2 h']] },
+            say: 'El potasio es la clave. La insulina mete el potasio a la célula, así que si está por debajo de tres punto cinco, no inicias insulina: primero repones potasio, porque podrías provocar una arritmia mortal. Entre tres punto cinco y cinco, insulina con diez a veinte miliequivalentes de cloruro de potasio en cada litro. Y si está arriba de cinco, insulina sin potasio, midiéndolo cada dos horas.' },
+          { v: { k: 'tip', kind: 'trap', t: 'El K sérico alto en CAD engaña: el potasio corporal total está bajo. Al dar insulina se desploma.' },
+            say: 'Trampa: el potasio de Fernanda es de cinco punto cuatro, pero su potasio corporal total está muy bajo; lo perdió en la orina y el vómito. La acidosis y la falta de insulina lo sacan de las células. En cuanto des insulina, se desploma.' },
+          { v: { k: 'big', h: 'Glucosa menor de 250', t: 'Dextrosa + seguir insulina', s: 'Lo que se trata es la cetosis, no la glucosa. Baja la infusión a 0.05 U/kg/h pero no la suspendas.' },
+            say: 'Cuando la glucosa baja de doscientos cincuenta, agrega dextrosa al cinco o diez por ciento y baja la insulina a la mitad, pero no la suspendas: lo que tratas es la cetosis, y esa tarda más en corregirse que la glucosa.' },
+          { v: { k: 'list', t: 'Bicarbonato y fosfato', items: ['Bicarbonato solo si pH menor de 7.0', 'Fosfato solo si menor de 1.0 o debilidad, hemólisis', 'Glucosa capilar cada hora', 'Electrolitos cada 2 a 4 h'] },
+            say: 'El bicarbonato solo se da si el pH es menor de siete, y el fosfato solo si es menor de uno o hay debilidad, hemólisis o falla cardiaca. Glucosa capilar cada hora y electrolitos cada dos a cuatro horas.' },
+          { v: { k: 'quiz', q: 'CAD con K de 3.1. ¿Qué haces primero?', opts: ['Insulina IV 0.1 U/kg/h', 'Reponer potasio y diferir la insulina', 'Bicarbonato'], a: 1 },
+            say: 'Pausa. Paciente con cetoacidosis y potasio de tres punto uno. ¿Qué haces primero?',
+            exp: 'Reponer potasio, diez a veinte miliequivalentes por hora, y no iniciar la insulina hasta que pase de tres punto cinco. La insulina lo bajaría más y podría causar una arritmia.' }
+        ] },
+        { ch: 'Resolución y complicaciones', sc: [
+          { v: { k: 'list', t: 'CAD resuelta', items: ['BHB menor de 0.6 mmol/L', 'pH venoso 7.3 o más (o HCO3 18)', 'Brecha aniónica normal', 'Puede comer'] },
+            say: 'La cetoacidosis está resuelta cuando el beta hidroxibutirato baja de cero punto seis y el pH venoso es de siete punto tres o más, o el bicarbonato de dieciocho, y la brecha aniónica es normal. El estado hiperosmolar, cuando la osmolaridad baja de trescientos y recupera el estado mental.' },
+          { v: { k: 'big', h: 'Paso a subcutánea', t: 'Basal 2 h antes', s: 'Pon la insulina basal SC 2 horas antes de suspender la infusión. Si las separas, regresa la cetosis.' },
+            say: 'Para pasar a subcutánea, aplica la insulina basal dos horas antes de suspender la infusión. La insulina intravenosa dura minutos: si las separas, la cetosis regresa.' },
+          { v: { k: 'list', t: 'Complicaciones', items: ['Hipoglucemia e hipokalemia: las más comunes', 'Edema cerebral: niños; manitol', 'Acidosis hiperclorémica por salina', 'Trombosis en el hiperosmolar'] },
+            say: 'Las complicaciones del tratamiento más comunes son la hipoglucemia y la hipokalemia. El edema cerebral es raro pero grave, sobre todo en niños, a las cuatro a doce horas, y se trata con manitol. El exceso de salina causa acidosis hiperclorémica, por eso se prefieren soluciones balanceadas. Y en el hiperosmolar hay más trombosis.' }
+        ] },
+        { ch: 'Cierre del caso', sc: [
+          { v: { k: 'list', t: 'Fernanda: final del caso', items: ['Hartmann 1.5 L la 1a hora', 'K 5.4: insulina 0.1 U/kg/h sin K', 'Hora 4: K 3.9, se agrega KCl', 'Glucosa 230: dextrosa 10% + insulina a la mitad', 'Hora 16: BHB 0.4, pH 7.34; glargina 2 h antes'] },
+            say: 'Fernanda recibe un litro y medio de Hartmann en la primera hora. Con potasio de cinco punto cuatro inicia insulina sin potasio. A las cuatro horas el potasio baja a tres punto nueve y se agrega cloruro de potasio. Con glucosa de doscientos treinta se agrega dextrosa y se baja la insulina. A las dieciséis horas la cetoacidosis se resuelve, y se le aplica glargina dos horas antes de suspender la infusión. Se va con educación sobre días de enfermedad: nunca suspender la insulina basal.' },
+          { v: { k: 'mnemo', t: 'Líquidos → potasio → insulina', d: 'K <3.5: sin insulina. Glucosa <250: dextrosa sin suspender la insulina. Basal SC 2 h antes de quitar la IV.' },
+            say: 'Llévate el orden: líquidos, potasio e insulina. Potasio menor de tres punto cinco, sin insulina. Glucosa menor de doscientos cincuenta, dextrosa sin suspender la insulina. Y basal dos horas antes de quitar la infusión. Ahora juega la guardia de Fernanda y practica en el algoritmo del taller.' }
+        ] }
       ],
       sections: [
         { h: 'Por qué pasa', html: `

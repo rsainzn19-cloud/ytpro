@@ -42,6 +42,13 @@ Los 30 temas tienen:
 - **🫀 Míralo en 3D** en la pestaña Video de los 30 temas: el órgano del tema (modelos de OrganUI / BodyParts3D) con lo
   afectado en rojo y la causa en naranja, etapas de la enfermedad, explicación al tocar y recorrido narrado
   (`src/content/80-organos3d.js`; ver `tools/organs3d/README.md`).
+- **Práctica de los temas del curso completo** (`src/content/91-practica-neumo.js` … `96-practica-endo-1p.js`): los 30 temas
+  agregados para el final tienen video de 5 capítulos (18 a 24 escenas, ~5–6 min, con caso que se resuelve al final y
+  2–3 pausas de pregunta), un algoritmo con 4–6 casos en la pestaña Taller, y 18 casos de Guardia nuevos con monitor.
+  Nuevo tipo de simulador de un control, `sliders` (`{ title, topics, label, unit, min, max, step, start, intro, bands:
+  [[hasta, nombre, 'ok'|'warn'|'bad', texto]] }`): FEV1/GOLD, pH pleural, CD4, lactato, MELD, TSH, sodio, T-score,
+  CHA₂DS₂-VASc y FEVI. Simuladores de ECG por etapas para bradiarritmias (del ritmo sinusal al bloqueo completo y
+  bloqueos de rama), taquiarritmias (FA, TSV/flutter, WPW/TV/QT largo) e insuficiencia cardiaca.
 - **Curso completo para el examen final (martes 22 de diciembre de 2026)**: 60 temas de las semanas 1 a 11 según los
   resúmenes 1P y 2P/“FINAL Med Interna” y las guías de Drive. Se agregaron Cardio S7–S11 (`ic`, `bradi`, `taqui`), Endo
   S8–S11 (`hipotiroidismo`, `hipertiroidismo`, `suprarrenal`, `calcio`), Gastro S7–S11 (`eii`, `ccr`, `hepatitis`,

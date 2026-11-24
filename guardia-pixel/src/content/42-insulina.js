@@ -10,167 +10,59 @@ export default {
       yt: 'insulin therapy basal bolus types',
       nn: [],
       video: [
-        {
-          ch: "Las piezas de la insulina",
-          sc: [
-            {
-              v: {
-                k: "title",
-                t: "Insulinoterapia",
-                s: "Semana 6 · Endocrinología"
-              },
-              say: "Semana seis: la insulina. Se entiende con dos piezas: la basal, que frena al hígado en ayuno y de noche, y la prandial, que cubre cada comida."
-            },
-            {
-              v: {
-                k: "list",
-                t: "Tipos de insulina",
-                items: [
-                  "Ultrarrápidas: lispro, aspart, glulisina",
-                  "Regular: la única intravenosa",
-                  "NPH: pico de 4 a 10 horas",
-                  "Basales sin pico: glargina, degludec"
-                ]
-              },
-              say: "Los tipos. Las ultrarrápidas, como lispro y aspart, actúan en minutos y se ponen justo antes de comer. La regular es la única que va por la vena, por ejemplo en la cetoacidosis. La NPH tiene un pico de cuatro a diez horas. Y las basales como glargina y degludec duran un día o más sin pico."
-            },
-            {
-              v: {
-                k: "case",
-                t: "Bajó de peso sin querer",
-                p: {
-                  name: "Jorge",
-                  age: 48,
-                  sex: "H",
-                  skin: "#C98B62",
-                  hair: "#2A1A12",
-                  gown: "#7FC8A9"
-                },
-                text: "DM2 recién diagnosticada. Orina mucho, tiene sed y bajó 7 kg en 2 meses.",
-                vit: {
-                  HbA1c: "11.6 %",
-                  Glu: "342"
-                }
-              },
-              say: "Jorge tiene cuarenta y ocho años y diabetes recién diagnosticada. Orina mucho, tiene sed y bajó siete kilos en dos meses. Su hemoglobina glucosilada es de once punto seis."
-            },
-            {
-              v: {
-                k: "list",
-                t: "Insulina desde el inicio",
-                items: [
-                  "HbA1c mayor de 10",
-                  "Glucosa de 300 o más",
-                  "Pérdida de peso o cetosis",
-                  "Duda de DM1",
-                  "Hospitalizado o embarazada"
-                ]
-              },
-              say: "Jorge necesita insulina desde el inicio: hemoglobina glucosilada arriba de diez, glucosa de trescientos o más y pérdida de peso. Se agrega a la metformina."
-            }
-          ]
-        },
-        {
-          ch: "Basal y prandial",
-          sc: [
-            {
-              v: {
-                k: "big",
-                h: "Para iniciar",
-                t: "10 U",
-                u: "o 0.1 a 0.2 U por kg al día"
-              },
-              say: "La basal se inicia con diez unidades al día, o cero punto uno a cero punto dos unidades por kilo. Se mantiene la metformina y se quita o se baja la sulfonilurea, porque suman hipoglucemia."
-            },
-            {
-              v: {
-                k: "flow",
-                t: "Titula con el ayuno",
-                steps: [
-                  "Mide la glucosa en ayuno",
-                  "Sube 2 U cada 3 días",
-                  "Meta 80 a 130",
-                  "Hipoglucemia: baja 10 a 20 por ciento"
-                ]
-              },
-              say: "La basal se ajusta con la glucosa en ayuno. Sube dos unidades cada tres días hasta que el ayuno quede entre ochenta y ciento treinta. Si aparece una hipoglucemia, baja diez a veinte por ciento."
-            },
-            {
-              v: {
-                k: "quiz",
-                q: "Ayuno en meta, pero HbA1c de 8.6 y la basal ya es alta. ¿Qué haces?",
-                opts: [
-                  "Subir la basal",
-                  "Agregar prandial en la comida más grande",
-                  "Cambiar a NPH"
-                ],
-                a: 1
-              },
-              say: "Pausa. Un paciente tiene el ayuno en meta, pero la hemoglobina glucosilada sigue en ocho punto seis y ya usa una basal alta. ¿Qué haces?",
-              exp: "Agregas insulina prandial, cuatro unidades antes de la comida más grande, o un agonista de GLP uno. El problema es después de comer; subir la basal solo daría hipoglucemias."
-            }
-          ]
-        },
-        {
-          ch: "Hipoglucemia y madrugadas",
-          sc: [
-            {
-              v: {
-                k: "list",
-                t: "Hipoglucemia",
-                items: [
-                  "Nivel 1: menos de 70",
-                  "Nivel 2: menos de 54",
-                  "Nivel 3: necesita ayuda",
-                  "Regla del 15",
-                  "Inconsciente: glucagón"
-                ]
-              },
-              say: "La hipoglucemia es el efecto adverso más importante. Nivel uno, menos de setenta. Nivel dos, menos de cincuenta y cuatro. Nivel tres, cuando necesita ayuda de otra persona. Se trata con la regla del quince: quince gramos de glucosa y revisar a los quince minutos. Si está inconsciente, glucagón."
-            },
-            {
-              v: {
-                k: "vs",
-                a: "Fenómeno del alba",
-                b: "Efecto Somogyi",
-                rows: [
-                  [
-                    "A las 3 de la mañana",
-                    "Glucosa normal",
-                    "Hipoglucemia"
-                  ],
-                  [
-                    "Al despertar",
-                    "Alta",
-                    "Alta de rebote"
-                  ],
-                  [
-                    "Qué hacer",
-                    "Subir la basal",
-                    "Bajar la dosis nocturna"
-                  ]
-                ]
-              },
-              say: "Si la glucosa amanece alta, mide a las tres de la mañana. Si a esa hora está normal, es el fenómeno del alba y subes la basal. Si a esa hora hay hipoglucemia, es el efecto Somogyi: la de la mañana es un rebote, y hay que bajar la dosis de la noche."
-            },
-            {
-              v: {
-                k: "tip",
-                kind: "pearl",
-                t: "En el hospital: basal más prandial más corrección. La escala móvil sola persigue la hiperglucemia."
-              },
-              say: "En el hospital, la meta es de ciento cuarenta a ciento ochenta. Usa basal, prandial y corrección. La escala móvil sola, solo con regular según la glucosa, persigue la hiperglucemia y ya no se recomienda."
-            },
-            {
-              v: {
-                k: "mnemo",
-                t: "Basal para el ayuno, bolo para la comida",
-                d: "Ayuno alto: ajusta la basal. Ayuno bien pero HbA1c alta: agrega bolo."
-              },
-              say: "Llévate esto: la basal arregla el ayuno y el bolo arregla la comida. Si el ayuno está alto, mueve la basal. Si el ayuno está bien pero la hemoglobina glucosilada no, agrega bolo."
-            }
-          ]
-        }
+        { ch: 'Qué hace la insulina', sc: [
+          { v: { k: 'title', t: 'Insulinoterapia', s: 'Semana 6 · Endocrinología' },
+            say: 'Semana seis: la insulina. Es el fármaco que más miedo da recetar, pero con cuatro reglas se vuelve fácil: cuándo iniciarla, con cuánto empezar, cómo titularla con la glucosa en ayuno y cuándo dejar de subir la basal. Al final, la hipoglucemia y los fenómenos de la madrugada.' },
+          { v: { k: 'case', t: 'Azúcar de 300', p: { name: 'Don Ignacio', age: 58, sex: 'H', skin: '#C98B62', hair: '#7A6A5A', gown: '#B48CFF' }, text: 'DM2 de 9 años con metformina 1 g c/12 h y glibenclamida. Bajó 6 kg en 2 meses, orina mucho y tiene sed.', vit: { A1c: '11.8%', Glu: '312', Peso: '74 kg' } },
+            say: 'Don Ignacio tiene cincuenta y ocho años y nueve con diabetes tipo dos. Toma metformina y glibenclamida. En dos meses bajó seis kilos, orina mucho y tiene sed. Su hemoglobina glucosilada es de once punto ocho y la glucosa de trescientos doce.' },
+          { v: { k: 'list', t: 'Qué hace la insulina', items: ['Mete glucosa al músculo y la grasa', 'Forma glucógeno y triglicéridos', 'Frena la gluconeogénesis y la lipólisis', 'Frena la cetogénesis', 'Mete el potasio a la célula'] },
+            say: 'La insulina es la hormona anabólica: mete la glucosa al músculo y la grasa, forma glucógeno y triglicéridos, y frena la producción de glucosa en el hígado, la lipólisis y la formación de cetonas. Además mete el potasio a la célula, por eso trata la hiperkalemia y puede causar hipokalemia.' }
+        ] },
+        { ch: 'Los tipos de insulina', sc: [
+          { v: { k: 'vs', a: 'Tipo', b: 'Acción', rows: [['Ultrarrápida: lispro, aspart', 'Inicio 5 a 15 min, dura 3 a 5 h', 'Justo antes de comer'], ['Rápida: regular', 'Inicio 30 min, dura 6 a 8 h', 'La única IV'], ['Intermedia: NPH', 'Pico a las 4 a 10 h', 'Dos veces al día; esteroides'], ['Larga: glargina, detemir', 'Sin pico, 24 h', 'Basal una vez al día'], ['Ultralarga: degludec', 'Más de 36 h', 'Menos hipoglucemia nocturna']] },
+            say: 'Las insulinas por duración. Ultrarrápidas, lispro y aspart: empiezan en cinco a quince minutos y se ponen justo antes de comer. Rápida, la regular: empieza en treinta minutos y es la única que va por vena. Intermedia, la NPH: tiene un pico de cuatro a diez horas y se usa dos veces al día. Larga, glargina: sin pico, dura veinticuatro horas. Y ultralarga, degludec: más de treinta y seis, con menos hipoglucemia nocturna.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'NPH y regular se mezclan: primero se carga la regular (clara antes que turbia). La glargina no se mezcla.' },
+            say: 'Perla: la NPH y la regular se pueden mezclar en la misma jeringa, cargando primero la regular, la clara antes que la turbia. La glargina, por su pH ácido, no se mezcla con nada.' }
+        ] },
+        { ch: 'Cuándo y cómo iniciar', sc: [
+          { v: { k: 'list', t: 'Insulina de entrada en DM2', items: ['A1c mayor de 10% o glucosa 300 o más', 'Síntomas catabólicos: pérdida de peso, poliuria', 'Cetosis', 'Duda de DM1 o LADA', 'Embarazo, hospitalización, ERC avanzada'] },
+            say: 'En la diabetes tipo dos se inicia insulina de entrada si la hemoglobina glucosilada pasa de diez o la glucosa de trescientos, si hay síntomas catabólicos como pérdida de peso y poliuria, si hay cetosis, si se sospecha diabetes tipo uno o LADA, y en embarazo, hospitalización o enfermedad renal avanzada. Si no, antes de la insulina se considera un agonista de GLP uno.' },
+          { v: { k: 'flow', t: 'Iniciar la basal', steps: ['10 U al día o 0.1 a 0.2 U/kg', 'Mantener metformina (y iSGLT2 o arGLP-1)', 'Suspender o bajar la sulfonilurea', 'Titular con la glucosa en ayuno', '+2 U cada 3 días hasta 80 a 130'] },
+            say: 'La insulina basal se inicia con diez unidades al día o cero punto uno a cero punto dos por kilo. Se mantiene la metformina y se suspende o baja la sulfonilurea, que suma hipoglucemia. Se titula con la glucosa en ayuno: dos unidades más cada tres días hasta llegar a ochenta a ciento treinta.' },
+          { v: { k: 'quiz', q: 'Don Ignacio, 74 kg, A1c 11.8% con pérdida de peso. ¿Cómo inicias?', opts: ['Subir la glibenclamida', 'Glargina 10 a 15 U, seguir metformina, quitar glibenclamida', 'Solo dieta'], a: 1 },
+            say: 'Pausa. Don Ignacio pesa setenta y cuatro kilos, tiene glucosilada de once punto ocho y está bajando de peso. ¿Cómo inicias?',
+            exp: 'Glargina de diez a quince unidades en la noche, cero punto dos por kilo como máximo, manteniendo la metformina y suspendiendo la glibenclamida. Con glucosilada mayor de diez y síntomas catabólicos, la insulina va de entrada.' },
+          { v: { k: 'list', t: 'Si hay hipoglucemia', items: ['Sin causa clara: bajar 10 a 20%', 'Revisar horarios de comida y ejercicio', 'Revisar la función renal'] },
+            say: 'Si aparece hipoglucemia sin causa clara, se baja la dosis diez a veinte por ciento y se revisan los horarios de comida, el ejercicio y la función renal.' }
+        ] },
+        { ch: 'Cuándo dejar de subir la basal', sc: [
+          { v: { k: 'big', h: 'Sobrebasalización', t: '>0.5 U/kg/día', s: 'Basal alta, diferencia noche-mañana ≥50 mg/dL, hipoglucemias o ayuno en meta con A1c alta: ya no subas la basal.' },
+            say: 'La sobrebasalización: cuando la basal pasa de cero punto cinco unidades por kilo al día, la glucosa baja cincuenta o más de la noche a la mañana, hay hipoglucemias, o el ayuno ya está en meta pero la glucosilada no, deja de subir la basal. El problema es la glucosa después de comer.' },
+          { v: { k: 'flow', t: 'Agregar prandial', steps: ['4 U o 10% de la basal', 'Ultrarrápida antes de la comida más grande', 'Titular +1 a 2 U dos veces por semana', 'Si no basta: antes de cada comida (basal-bolo)', 'Alternativa: arGLP-1 o premezcla'] },
+            say: 'Entonces se agrega insulina prandial: cuatro unidades, o diez por ciento de la basal, de ultrarrápida antes de la comida más grande, titulando una o dos unidades dos veces por semana. Si no basta, antes de cada comida: el esquema basal bolo. Las alternativas son un agonista de GLP uno o una premezcla dos veces al día.' },
+          { v: { k: 'quiz', q: 'Glargina 0.6 U/kg, ayuno de 110, A1c 8.4%. ¿Qué haces?', opts: ['Subir la glargina', 'Agregar prandial en la comida principal o arGLP-1', 'Suspender la metformina'], a: 1 },
+            say: 'Pausa. Paciente con glargina a cero punto seis unidades por kilo, glucosa de ayuno de ciento diez y glucosilada de ocho punto cuatro. ¿Qué haces?',
+            exp: 'Agregar insulina prandial en la comida principal o un agonista de GLP uno. El ayuno ya está en meta y la basal pasa de cero punto cinco por kilo: subirla solo causaría hipoglucemia.' }
+        ] },
+        { ch: 'Hospital, hipoglucemia y madrugada', sc: [
+          { v: { k: 'list', t: 'En el hospital', items: ['Meta 140 a 180 mg/dL', 'Come: basal-bolo-corrección 0.3 a 0.5 U/kg', 'No come: basal + corrección', 'Escala móvil sola: NO', 'Esteroides: NPH en la mañana'] },
+            say: 'En el hospital la meta es ciento cuarenta a ciento ochenta. Si el paciente come, basal, bolo y corrección, con dosis total de cero punto tres a cero punto cinco por kilo; si no come, basal y corrección. La escala móvil sola se desaconseja porque persigue la hiperglucemia. Y la hiperglucemia por prednisona matutina se trata con NPH en la mañana.' },
+          { v: { k: 'flow', t: 'Hipoglucemia: regla del 15', steps: ['Glucosa menor de 70', '15 g de glucosa oral', 'Revisar a los 15 minutos', 'Repetir si sigue menor de 70', 'Inconsciente: glucagón o dextrosa 50% IV'] },
+            say: 'Hipoglucemia es glucosa menor de setenta; menor de cincuenta y cuatro es clínicamente importante, y grave si necesita ayuda de otra persona. Se trata con la regla del quince: quince gramos de glucosa, revisar a los quince minutos y repetir si sigue baja. Si está inconsciente, glucagón o dextrosa al cincuenta por ciento intravenosa.' },
+          { v: { k: 'vs', a: 'Fenómeno del alba', b: 'Efecto Somogyi', rows: [['Glucosa a las 3 am', 'Normal o alta', 'Baja (hipoglucemia)'], ['Causa', 'Hormonas de la madrugada', 'Rebote tras hipoglucemia'], ['Glucosa en ayuno', 'Alta', 'Alta'], ['Qué hacer', 'Subir la basal nocturna', 'BAJAR la dosis nocturna']] },
+            say: 'Dos fenómenos que dan glucosa alta en ayuno. El fenómeno del alba se debe a las hormonas de la madrugada, con glucosa normal o alta a las tres de la mañana: se sube la basal. El efecto Somogyi es un rebote después de una hipoglucemia de madrugada: se baja la dosis nocturna. Se distinguen midiendo la glucosa a las tres de la mañana.' },
+          { v: { k: 'quiz', q: 'Glucosa en ayuno de 210 y a las 3 am de 52. ¿Qué haces con la NPH nocturna?', opts: ['Subirla', 'Bajarla', 'Dejarla igual'], a: 1 },
+            say: 'Pausa. Glucosa en ayuno de doscientos diez, pero a las tres de la mañana de cincuenta y dos. ¿Qué haces con la NPH de la noche?',
+            exp: 'Bajarla. Es efecto Somogyi: la hipoglucemia de madrugada dispara un rebote. Subir la dosis empeoraría la hipoglucemia nocturna.' }
+        ] },
+        { ch: 'Cierre del caso', sc: [
+          { v: { k: 'list', t: 'Don Ignacio: final del caso', items: ['Glargina 12 U en la noche + metformina', 'Se suspende la glibenclamida', '+2 U cada 3 días: llega a 26 U', 'Ayuno 112; A1c a los 3 meses: 7.4%', 'Se agrega semaglutida; recupera peso sano'] },
+            say: 'Don Ignacio inicia glargina doce unidades en la noche, sigue con metformina y deja la glibenclamida. Sube dos unidades cada tres días hasta veintiséis, con ayuno de ciento doce. A los tres meses su glucosilada es de siete punto cuatro, y se agrega semaglutida para llegar a la meta sin subir más la basal.' },
+          { v: { k: 'tip', kind: 'trap', t: 'Subir la basal sin fin cuando el ayuno ya está en meta: sobrebasalización. Agrega prandial o arGLP-1.' },
+            say: 'La trampa final: seguir subiendo la basal cuando el ayuno ya está en meta. Eso es sobrebasalización: agrega prandial o un agonista de GLP uno.' },
+          { v: { k: 'mnemo', t: '10 U · +2 cada 3 días · tope 0.5 U/kg', d: 'Inicio: 10 U o 0.1–0.2 U/kg. Titula con el ayuno hasta 80–130. >0.5 U/kg: agrega prandial. Somogyi: baja; alba: sube.' },
+            say: 'Llévate los números: diez unidades, más dos cada tres días, y tope de cero punto cinco por kilo. Ahora titula la insulina en el algoritmo del taller.' }
+        ] }
       ],
       sections: [
         { h: 'Qué hace la insulina', html: `
