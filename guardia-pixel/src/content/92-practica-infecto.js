@@ -60,7 +60,7 @@ export default {
         pet: { end: 'PET-CT con FDG', d: 'El estudio de imagen con más rendimiento cuando la TC no aclara. Nada de antibiótico ni esteroide a ciegas.' }
       },
       cases: [
-        { t: 'Rosa, 68 años, 4 semanas con fiebre, cefalea nueva y dolor de mandíbula al masticar.', data: [['VSG', '98 mm/h'], ['Estado', 'Estable']], path: { grave: 1, pista: 0 }, end: 'acg' },
+        { t: 'Amparo, 68 años, 4 semanas con fiebre, cefalea nueva y dolor de mandíbula al masticar.', data: [['VSG', '98 mm/h'], ['Estado', 'Estable']], path: { grave: 1, pista: 0 }, end: 'acg' },
         { t: 'Hombre de 45 años, estable, fiebre de 5 semanas sin pista; laboratorio y TC normales.', data: [['Hemocultivos', 'Negativos'], ['TC', 'Normal']], path: { grave: 1, pista: 3, tc: 1 }, end: 'pet' },
         { t: 'Mujer con quimioterapia hace 10 días y fiebre de 38.6.', data: [['Neutrófilos', '220/µL']], path: { grave: 0 }, end: 'emp' },
         { t: 'Hombre de 30 años con fiebre, sudoración nocturna y ganglios cervicales de 3 cm.', data: [['LDH', 'Alta'], ['Peso', '−9 kg']], path: { grave: 1, pista: 2 }, end: 'linfo' }

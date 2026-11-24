@@ -9,25 +9,51 @@ export default {
       hook: 'TSH baja y T4 libre alta = tirotoxicosis. La captación de yodo separa lo que fabrica de más (Graves, nódulos: captación alta) de lo que solo se derrama (tiroiditis, hormona exógena: captación baja). La tormenta tiroidea mata: propranolol, antitiroideo, yodo y esteroide.',
       nn: [], yt: 'hyperthyroidism Graves disease thyroid storm',
       video: [
-        { ch: 'Diagnóstico', sc: [
+        { ch: 'Tirotoxicosis', sc: [
           { v: { k: 'title', t: 'Hipertiroidismo', s: 'Semana 9 · Endocrinología' },
-            say: 'Semana nueve: la tiroides acelerada. Todo va rápido: palpitaciones, pérdida de peso con hambre, calor, sudor, temblor, diarrea, ansiedad e insomnio.' },
-          { v: { k: 'case', t: 'Ojos saltones', p: { name: 'Daniela', age: 29, sex: 'M', skin: '#E2B08A', hair: '#2A1A12', gown: '#F2A0B8' }, text: 'Bajó 6 kg comiendo más, palpitaciones, temblor fino, exoftalmos y bocio difuso con soplo.', vit: { TSH: '0.01', T4L: '4.2' } },
-            say: 'Daniela tiene veintinueve años. Bajó seis kilos aunque come más, tiene palpitaciones, temblor fino, ojos saltones y un bocio difuso con soplo. TSH suprimida y T4 libre alta.' },
-          { v: { k: 'vs', a: 'Captación alta', b: 'Captación baja', rows: [['Qué pasa', 'Fabrica de más', 'Se derrama o viene de fuera'], ['Causas', 'Graves, bocio multinodular, adenoma tóxico', 'Tiroiditis, levotiroxina de más, yodo'], ['Antitiroideo', 'Sí', 'No: solo betabloqueador']] },
-            say: 'La captación de yodo divide las causas. Alta: la glándula fabrica de más, como en Graves, difusa, o en los nódulos tóxicos, focal. Baja: la hormona se derrama por inflamación, como en las tiroiditis, o viene de fuera, como la levotiroxina de más. En estas no sirven los antitiroideos.' },
-          { v: { k: 'list', t: 'Solo Graves', items: ['Exoftalmos', 'Mixedema pretibial', 'Bocio difuso con soplo', 'Anticuerpos contra el receptor de TSH'] },
-            say: 'Hay hallazgos que solo da Graves: exoftalmos, mixedema pretibial y anticuerpos contra el receptor de TSH, llamados TRAb.' }
+            say: 'Semana nueve: el hipertiroidismo. Todo va rápido: el corazón, el intestino, el metabolismo. Vas a aprender a encontrar la causa, a elegir entre metimazol, yodo radiactivo y cirugía, y a reconocer la tormenta tiroidea, que mata si no se trata a tiempo.' },
+          { v: { k: 'case', t: 'Ojos saltones', p: { name: 'Daniela', age: 29, sex: 'M', skin: '#E2B08A', hair: '#2A1A12', gown: '#F2A0B8' }, text: 'Tres meses: bajó 6 kg comiendo más, palpitaciones, temblor fino, calor, diarrea. Exoftalmos y bocio difuso con soplo.', vit: { FC: '118', TSH: '<0.01', 'T4L': '4.8' } },
+            say: 'Daniela tiene veintinueve años. En tres meses bajó seis kilos aunque come más, tiene palpitaciones, temblor fino, no tolera el calor y tiene diarrea. Sus ojos se ven saltones y tiene un bocio difuso con soplo. La TSH está suprimida y la T cuatro libre alta.' },
+          { v: { k: 'list', t: 'Clínica', items: ['Pérdida de peso con hambre', 'Calor, sudor, palpitaciones', 'Taquicardia o FA, temblor fino', 'Diarrea, ansiedad, insomnio', 'Oligomenorrea, debilidad proximal'] },
+            say: 'La clínica: pérdida de peso con hambre, intolerancia al calor, sudoración, palpitaciones, taquicardia o fibrilación auricular, temblor fino, diarrea, ansiedad, insomnio, menstruaciones escasas y debilidad proximal. En ancianos puede ser apático: solo pérdida de peso, fibrilación auricular y depresión.' },
+          { v: { k: 'big', h: 'Laboratorio', t: 'TSH ↓ · T4L ↑', s: 'Subclínico: TSH baja con T4 y T3 normales. TSH alta con T4 alta: adenoma productor de TSH (raro).' },
+            say: 'El laboratorio: TSH suprimida con T cuatro libre alta. Si la TSH está baja con T cuatro y T tres normales, es subclínico. Y si la TSH está alta con la T cuatro alta, piensa en un raro adenoma hipofisario productor de TSH.' }
         ] },
-        { ch: 'Tratamiento y tormenta', sc: [
-          { v: { k: 'flow', t: 'Graves', steps: ['Betabloqueador para síntomas', 'Metimazol 12 a 18 meses', 'Si recae: yodo radiactivo o cirugía'] },
-            say: 'Para Graves: propranolol para los síntomas y metimazol por doce a dieciocho meses. Si recae, el definitivo es yodo radiactivo o tiroidectomía. El propiltiouracilo se reserva para el primer trimestre del embarazo y la tormenta.' },
-          { v: { k: 'tip', kind: 'trap', t: 'Fiebre y dolor de garganta con metimazol o PTU: suspende y pide biometría (agranulocitosis).' },
-            say: 'Una advertencia: si un paciente con metimazol o propiltiouracilo tiene fiebre o dolor de garganta, suspende el fármaco y pide una biometría hemática. Puede ser agranulocitosis.' },
-          { v: { k: 'list', t: 'Tormenta tiroidea', items: ['Propranolol', 'PTU o metimazol', 'Yodo una hora después', 'Hidrocortisona', 'Enfriar y tratar el desencadenante'] },
-            say: 'La tormenta tiroidea es fiebre alta, taquicardia o fibrilación auricular, insuficiencia cardiaca y delirio. Se tratan las cuatro P: propranolol, propiltiouracilo, yoduro de potasio una hora después del antitiroideo, y prednisona o hidrocortisona.' },
-          { v: { k: 'mnemo', t: 'Las 4 P de la tormenta', d: 'Propranolol, PTU, Potasio yoduro (1 h después), Prednisona/hidrocortisona.' },
-            say: 'Las cuatro P: propranolol, PTU, yoduro de potasio y prednisona. El yodo siempre después del antitiroideo, para no darle materia prima a la glándula.' }
+        { ch: '¿Cuál es la causa?', sc: [
+          { v: { k: 'vs', a: 'Causa', b: 'Pistas', rows: [['Graves', 'Mujer joven, bocio difuso, oftalmopatía', 'TRAb positivos'], ['Bocio multinodular tóxico', 'Anciano, varios nódulos', 'Captación en parches'], ['Adenoma tóxico', 'Un nódulo caliente', 'Resto suprimido'], ['Tiroiditis', 'De Quervain dolorosa o silente', 'Captación baja'], ['Exógena', 'Toma levotiroxina', 'Tiroglobulina baja']] },
+            say: 'La causa más común es Graves: mujer joven, bocio difuso con soplo, oftalmopatía y mixedema pretibial, con anticuerpos contra el receptor de TSH. En ancianos, el bocio multinodular tóxico. Un solo nódulo caliente es el adenoma tóxico. Las tiroiditis liberan hormona ya hecha, así que la captación está baja. Y si alguien toma levotiroxina a escondidas, la tiroglobulina está baja.' },
+          { v: { k: 'flow', t: 'Encontrar la causa', steps: ['TSH baja y T4L alta', 'TRAb positivos: Graves', 'Dudoso: gammagrama con captación', 'Alta difusa: Graves', 'Alta en nódulos: BMNT o adenoma', 'Baja: tiroiditis o exógena'] },
+            say: 'Para encontrar la causa: si los anticuerpos contra el receptor de TSH son positivos, es Graves. Si no queda claro, gammagrama con captación: alta y difusa en Graves; alta en nódulos en el bocio multinodular o el adenoma; y baja en tiroiditis o hormona exógena.' },
+          { v: { k: 'quiz', q: 'Tirotoxicosis con tiroides dolorosa tras una gripa, VSG alta y captación baja. ¿Tratamiento?', opts: ['Metimazol', 'Propranolol y AINE', 'Yodo radiactivo'], a: 1 },
+            say: 'Pausa. Tirotoxicosis con la tiroides dolorosa después de una gripa, sedimentación alta y captación baja. ¿Qué das?',
+            exp: 'Propranolol y antiinflamatorio, o prednisona si el dolor es intenso. Es tiroiditis de De Quervain: la glándula libera hormona ya hecha, no la produce, así que los antitiroideos no sirven y no hay captación para el yodo.' }
+        ] },
+        { ch: 'Tratamiento', sc: [
+          { v: { k: 'list', t: 'Para los síntomas', items: ['Betabloqueador en todos', 'Propranolol o atenolol', 'Controla taquicardia, temblor, ansiedad'] },
+            say: 'Primero, a todos se les da un betabloqueador, como propranolol o atenolol, para controlar la taquicardia, el temblor y la ansiedad mientras actúa el tratamiento de fondo.' },
+          { v: { k: 'vs', a: 'Metimazol', b: 'PTU', rows: [['Cuándo', 'De elección', '1er trimestre y tormenta'], ['Extra', '—', 'Bloquea conversión de T4 a T3'], ['Riesgo', 'Agranulocitosis, embriopatía', 'Agranulocitosis, hepatitis grave'], ['Duración en Graves', '12 a 18 meses', '—']] },
+            say: 'El antitiroideo de elección es el metimazol, por doce a dieciocho meses en Graves. El propiltiouracilo se reserva para el primer trimestre del embarazo, porque el metimazol puede causar embriopatía, y para la tormenta, porque además bloquea la conversión de T cuatro a T tres. Ambos pueden dar agranulocitosis, y el propiltiouracilo, hepatitis grave.' },
+          { v: { k: 'tip', kind: 'trap', t: 'Fiebre y dolor de garganta con metimazol o PTU: suspender y pedir biometría. Puede ser agranulocitosis.' },
+            say: 'Trampa que preguntan mucho: paciente con metimazol que presenta fiebre y dolor de garganta. No es una faringitis cualquiera: se suspende el fármaco y se pide biometría hemática de inmediato, porque puede ser agranulocitosis.' },
+          { v: { k: 'vs', a: 'Yodo radiactivo', b: 'Tiroidectomía', rows: [['Para', 'BMNT, adenoma, Graves que recae', 'Bocio grande, nódulo sospechoso, oftalmopatía grave'], ['No en', 'Embarazo y lactancia', '—'], ['Problema', 'Empeora la oftalmopatía', 'Hipocalcemia, nervio laríngeo'], ['Resultado', 'Hipotiroidismo: levotiroxina', 'Hipotiroidismo: levotiroxina']] },
+            say: 'El tratamiento definitivo es yodo radiactivo o cirugía. El yodo es para el bocio multinodular, el adenoma tóxico y el Graves que recae; está contraindicado en embarazo y lactancia y empeora la oftalmopatía. La tiroidectomía es para bocios grandes que comprimen, nódulos sospechosos, oftalmopatía grave o embarazo en el segundo trimestre; sus complicaciones son la hipocalcemia y la lesión del laríngeo recurrente. Ambos dejan hipotiroidismo que se trata con levotiroxina.' }
+        ] },
+        { ch: 'Tormenta tiroidea', sc: [
+          { v: { k: 'list', t: 'Tormenta tiroidea', items: ['Desencadenante: cirugía, infección, parto, yodo', 'Fiebre alta', 'Taquicardia o FA, insuficiencia cardiaca', 'Vómito, diarrea, ictericia', 'Delirio o coma; Burch-Wartofsky 45 o más'] },
+            say: 'La tormenta tiroidea es la tirotoxicosis descompensada, casi siempre tras cirugía, infección, parto, yodo o suspender el antitiroideo. Da fiebre alta, taquicardia o fibrilación auricular con insuficiencia cardiaca, vómito, diarrea, ictericia y delirio. La escala de Burch Wartofsky de cuarenta y cinco o más apoya el diagnóstico.' },
+          { v: { k: 'flow', t: 'Tratamiento en UCI', steps: ['Propranolol', 'PTU (o metimazol)', 'Yodo (Lugol) 1 hora DESPUÉS del antitiroideo', 'Hidrocortisona', 'Enfriar con paracetamol, no aspirina'] },
+            say: 'Se trata en terapia intensiva en este orden: propranolol, propiltiouracilo, y una hora después yoduro de potasio o Lugol, para frenar la liberación de hormona. Si das el yodo antes del antitiroideo, le das material a la tiroides para fabricar más hormona. Además, hidrocortisona y enfriamiento con paracetamol, nunca aspirina, que desplaza la hormona de sus proteínas.' },
+          { v: { k: 'quiz', q: '¿En qué orden van el yodo y el PTU en la tormenta tiroidea?', opts: ['Yodo primero, luego PTU', 'PTU primero, yodo una hora después', 'Al mismo tiempo'], a: 1 },
+            say: 'Pausa. En la tormenta tiroidea, ¿qué va primero, el yodo o el propiltiouracilo?',
+            exp: 'Primero el propiltiouracilo y una hora después el yodo. El antitiroideo bloquea la síntesis; si el yodo llega antes, la glándula lo usa como materia prima para fabricar más hormona.' }
+        ] },
+        { ch: 'Cierre del caso', sc: [
+          { v: { k: 'list', t: 'Daniela: final del caso', items: ['TRAb positivos: Graves', 'Propranolol + metimazol', 'BH basal y alarma por fiebre', 'Oftalmopatía leve: dejar de fumar, selenio', 'Metimazol 12 a 18 meses'] },
+            say: 'Daniela tiene anticuerpos contra el receptor de TSH positivos: es Graves. Inicia propranolol y metimazol, con biometría basal y la indicación de suspenderlo y acudir si tiene fiebre o dolor de garganta. Su oftalmopatía es leve: deja de fumar y recibe selenio. Seguirá con metimazol de doce a dieciocho meses.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Embarazo con Graves: PTU en el 1er trimestre, metimazol del 2o en adelante. Nunca yodo radiactivo.' },
+            say: 'Perla: si una mujer con Graves se embaraza, propiltiouracilo en el primer trimestre y metimazol del segundo en adelante. El yodo radiactivo está prohibido.' },
+          { v: { k: 'mnemo', t: 'Metimazol de elección · PTU en 1er trimestre y tormenta', d: 'Todos: betabloqueador. Tiroiditis: solo BB (+ AINE). Tormenta: BB → PTU → yodo 1 h después → hidrocortisona.' },
+            say: 'Llévate esto: metimazol de elección, propiltiouracilo en el primer trimestre y la tormenta, betabloqueador para todos, y en la tormenta, el yodo siempre después del antitiroideo. Ahora practica en el algoritmo del taller.' }
         ] }
       ],
       sections: [

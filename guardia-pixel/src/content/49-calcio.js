@@ -9,24 +9,53 @@ export default {
       hook: 'Calcio alto: mide la PTH. Alta = hiperparatiroidismo primario (ambulatorio). Baja = cáncer (hospitalizado) u otras causas. La osteoporosis se diagnostica con DXA (T ≤ −2.5) o con una fractura por fragilidad, y se trata con bisfosfonatos.',
       nn: [], yt: 'hypercalcemia approach PTH osteoporosis treatment',
       video: [
-        { ch: 'Hipercalcemia', sc: [
+        { ch: 'El calcio y quién lo regula', sc: [
           { v: { k: 'title', t: 'Hipercalcemia y osteoporosis', s: 'Semana 11 · Endocrinología' },
-            say: 'Semana once: el calcio. Cuando sube, da huesos que duelen, piedras en el riñón, quejas abdominales y alteraciones mentales. Y la osteoporosis es el hueso que se rompe con poco.' },
-          { v: { k: 'flow', t: 'Hipercalcemia', steps: ['Corrige por albúmina', 'Mide PTH', 'Alta: hiperparatiroidismo', 'Baja: PTHrP y vitamina D'] },
-            say: 'Primero corrige el calcio por la albúmina. Luego mide la hormona paratiroidea. Si está alta o inapropiadamente normal, es hiperparatiroidismo primario. Si está suprimida, busca cáncer con la proteína relacionada a la PTH y mide vitamina D.' },
-          { v: { k: 'list', t: 'Huesos, piedras, quejas y gemidos', items: ['Huesos: dolor, osteoporosis', 'Piedras: litiasis renal', 'Quejas abdominales: estreñimiento, úlcera, pancreatitis', 'Gemidos psíquicos: confusión, depresión', 'Poliuria y QT corto'] },
-            say: 'La clínica es huesos, piedras, quejas abdominales y gemidos psíquicos. Además poliuria por diabetes insípida nefrogénica y QT corto en el electro.' },
-          { v: { k: 'list', t: 'Hipercalcemia grave', items: ['Salina 0.9 % abundante', 'Calcitonina: efecto rápido', 'Ácido zoledrónico: efecto en 2 a 4 días', 'Denosumab si hay falla renal'] },
-            say: 'Si es grave, catorce o más, o da síntomas: solución salina abundante, calcitonina para el efecto rápido, y ácido zoledrónico para mantenerlo. El diurético de asa solo si hay sobrecarga de volumen.' }
+            say: 'Semana once: el metabolismo del calcio. Dos temas: la hipercalcemia, que en consulta casi siempre es por paratiroides y en el hospital casi siempre es por cáncer, y la osteoporosis, que se trata para evitar fracturas. Vamos con una paciente de cada uno.' },
+          { v: { k: 'case', t: 'Piedras y huesos', p: { name: 'Leticia', age: 58, sex: 'M', skin: '#E2B08A', hair: '#5A4A3A', gown: '#B48CFF' }, text: 'Tercer cálculo renal en dos años. Estreñimiento, cansancio y algo de tristeza. DXA de cadera con T-score de −2.7.', vit: { Ca: '11.4', P: '2.2', PTH: '128', Alb: '4.0' } },
+            say: 'Leticia tiene cincuenta y ocho años y va por su tercer cálculo renal en dos años. Tiene estreñimiento, cansancio y se siente triste. Su calcio es de once punto cuatro, el fósforo está bajo y la paratohormona alta. Su densitometría de cadera da una T de menos dos punto siete.' },
+          { v: { k: 'flow', t: 'Quién regula el calcio', steps: ['Calcio baja: sube la PTH', 'PTH saca calcio del hueso', 'PTH retiene calcio en el riñón y bota fósforo', 'PTH activa la vitamina D', 'Vitamina D absorbe calcio en el intestino'] },
+            say: 'Cuando el calcio baja, sube la paratohormona. La PTH saca calcio del hueso, lo retiene en el riñón mientras elimina fósforo, y activa la vitamina D, que absorbe calcio en el intestino. Por eso en el hiperparatiroidismo el calcio sube y el fósforo baja.' },
+          { v: { k: 'big', h: 'Calcio corregido', t: 'Ca + 0.8 × (4 − albúmina)', s: 'Hipercalcemia: más de 10.5 mg/dL. Grave: 14 o más. Si hay duda, mide calcio iónico.' },
+            say: 'Antes de interpretar, corrige el calcio por la albúmina: al calcio medido súmale cero punto ocho por cada gramo que la albúmina esté por debajo de cuatro. Hay hipercalcemia con más de diez punto cinco, y es grave con catorce o más.' }
+        ] },
+        { ch: 'Hipercalcemia: la causa', sc: [
+          { v: { k: 'list', t: 'Clínica: huesos, piedras, quejas y gemidos', items: ['Huesos: dolor, osteoporosis', 'Piedras: litiasis, poliuria', 'Quejas: estreñimiento, náusea, pancreatitis', 'Gemidos: confusión, depresión, coma', 'ECG: QT corto'] },
+            say: 'La clínica se recuerda con huesos, piedras, quejas abdominales y gemidos psíquicos: dolor óseo y osteoporosis; cálculos renales y poliuria; estreñimiento, náusea, úlcera y pancreatitis; y confusión, depresión o coma. En el electrocardiograma, QT corto.' },
+          { v: { k: 'vs', a: 'PTH alta o normal', b: 'PTH baja', rows: [['Causa #1', 'Hiperparatiroidismo primario', 'Cáncer'], ['Dónde', 'Paciente ambulatorio', 'Paciente hospitalizado'], ['Mecanismo', 'Adenoma en 85%', 'PTHrP, metástasis, calcitriol'], ['Siguiente estudio', 'Calciuria', 'PTHrP, vitamina D, electroforesis']] },
+            say: 'El primer estudio es la PTH. Si está alta o inapropiadamente normal, es hiperparatiroidismo primario, la causa número uno en consulta, casi siempre por un adenoma único. Si está suprimida, piensa en cáncer, la causa número uno en hospitalizados: por péptido relacionado con PTH en el carcinoma epidermoide, por metástasis óseas o mieloma, o por calcitriol en linfomas. Ahí se piden PTHrP, niveles de vitamina D y electroforesis de proteínas.' },
+          { v: { k: 'list', t: 'Otras con PTH baja', items: ['Granulomatosas: sarcoidosis, TB (calcitriol)', 'Intoxicación por vitamina D', 'Tiazidas', 'Inmovilización', 'Síndrome de leche y alcalinos'] },
+            say: 'Otras causas con PTH baja: enfermedades granulomatosas como sarcoidosis y tuberculosis, cuyos macrófagos fabrican calcitriol; intoxicación por vitamina D; tiazidas; inmovilización prolongada; y el síndrome de leche y alcalinos.' },
+          { v: { k: 'tip', kind: 'trap', t: 'Calcio alto con PTH normal y calciuria MUY baja = hipercalcemia hipocalciúrica familiar. No se opera.' },
+            say: 'Trampa: calcio alto con PTH normal o algo alta y calcio en orina muy bajo. Es hipercalcemia hipocalciúrica familiar, por un receptor de calcio defectuoso. Es benigna y no se opera.' },
+          { v: { k: 'quiz', q: 'Fumador con masa pulmonar central, Ca 14.8, PTH suprimida. ¿Mecanismo?', opts: ['Adenoma paratiroideo', 'PTHrP por carcinoma epidermoide', 'Exceso de vitamina D'], a: 1 },
+            say: 'Pausa. Fumador con una masa pulmonar central, calcio de catorce punto ocho y PTH suprimida. ¿Cuál es el mecanismo?',
+            exp: 'Péptido relacionado con la PTH secretado por un carcinoma epidermoide. Imita a la PTH en hueso y riñón, pero la PTH real queda suprimida.' }
+        ] },
+        { ch: 'Tratar la hipercalcemia', sc: [
+          { v: { k: 'flow', t: 'Grave o sintomática', steps: ['Salina 0.9% 200 a 300 mL/h', 'Calcitonina: rápida, dura 48 h', 'Ácido zoledrónico IV: actúa en 2 a 4 días', 'ERC o refractaria: denosumab', 'Granulomatosa o linfoma: esteroide', 'Falla renal: hemodiálisis'] },
+            say: 'La hipercalcemia grave o sintomática se trata primero con salina, porque el paciente está deshidratado por la poliuria. Luego calcitonina, que baja el calcio en horas pero deja de funcionar a las cuarenta y ocho, y ácido zoledrónico intravenoso, que tarda dos a cuatro días pero dura. Denosumab si hay enfermedad renal. Esteroides si es granulomatosa o por linfoma. Y hemodiálisis si hay falla renal. El diurético de asa solo si hay sobrecarga.' },
+          { v: { k: 'list', t: 'Paratiroidectomía si', items: ['Síntomas', 'Ca más de 1 mg/dL sobre lo normal', 'Osteoporosis o fractura vertebral', 'TFG menor de 60 o litiasis', 'Menor de 50 años'] },
+            say: 'En el hiperparatiroidismo primario, la cirugía es para todos los sintomáticos, y en asintomáticos si el calcio está más de uno por encima de lo normal, hay osteoporosis o fractura vertebral, filtrado menor de sesenta, litiasis o edad menor de cincuenta. Si no se opera, cinacalcet, bisfosfonato y vigilancia.' }
         ] },
         { ch: 'Osteoporosis', sc: [
-          { v: { k: 'vs', a: 'T-score', b: 'Qué hacer', rows: [['Normal', 'Mayor de −1', 'Prevención'], ['Osteopenia', '−1 a −2.5', 'Calcular FRAX'], ['Osteoporosis', '−2.5 o menor', 'Tratar']] },
-            say: 'La osteoporosis se diagnostica con densitometría. Un T score de menos dos punto cinco o menor es osteoporosis. Y una fractura de cadera o vertebral por fragilidad es osteoporosis aunque la densitometría no llegue a ese número.' },
-          { v: { k: 'quiz', q: 'Mujer de 70 años con fractura de cadera por caída de su altura. ¿Qué das?', opts: ['Solo calcio y vitamina D', 'Bisfosfonato con calcio y vitamina D', 'Nada'], a: 1 },
-            say: 'Pausa. Mujer de setenta años que se fracturó la cadera al caerse de su propia altura. ¿Qué le das?',
-            exp: 'Bisfosfonato, como alendronato o ácido zoledrónico, con calcio y vitamina D. La fractura por fragilidad ya es osteoporosis.' },
-          { v: { k: 'mnemo', t: 'Huesos, piedras, quejas y gemidos', d: 'Dolor óseo, litiasis, síntomas abdominales y psiquiátricos: la hipercalcemia.' },
-            say: 'Llévate esto: PTH alta en el paciente ambulatorio, cáncer en el hospitalizado. Y para la osteoporosis, bisfosfonato, calcio y vitamina D.' }
+          { v: { k: 'list', t: 'Factores de riesgo', items: ['Edad, mujer, menopausia', 'Glucocorticoides 3 meses o más', 'Bajo peso, tabaco, alcohol', 'Fractura previa o de cadera en la madre', 'AR, hipertiroidismo, IBP, heparina'] },
+            say: 'Los factores de riesgo de osteoporosis son la edad, ser mujer y la menopausia, los glucocorticoides por tres meses o más, el bajo peso, el tabaco y el alcohol, una fractura previa o de cadera en la madre, la artritis reumatoide, el hipertiroidismo y fármacos como inhibidores de bomba y heparina.' },
+          { v: { k: 'vs', a: 'T-score', b: 'Diagnóstico', rows: [['Mayor de −1', 'Normal', '—'], ['−1 a −2.5', 'Osteopenia', 'Tratar si FRAX alto'], ['−2.5 o menos', 'Osteoporosis', 'Tratar'], ['Fractura por fragilidad', 'Osteoporosis', 'Sin importar el T-score']] },
+            say: 'Se diagnostica con densitometría de columna y cadera: T score mayor de menos uno es normal, de menos uno a menos dos punto cinco es osteopenia y de menos dos punto cinco o menos es osteoporosis. Una fractura de cadera o vertebral por fragilidad también es osteoporosis, sin importar el T score. Se tamiza a mujeres de sesenta y cinco años o más y a hombres de setenta o más.' },
+          { v: { k: 'flow', t: 'Tratamiento', steps: ['Calcio 1000 a 1200 mg y vitamina D 800 a 1000 UI', 'Ejercicio, evitar caídas, dejar de fumar', 'Bisfosfonato: alendronato o zoledronato', 'ERC: denosumab', 'Riesgo muy alto: teriparatida'] },
+            say: 'Todos reciben calcio y vitamina D, ejercicio y prevención de caídas. El fármaco de primera línea es un bisfosfonato: alendronato oral semanal en ayunas y de pie media hora, o ácido zoledrónico intravenoso anual, por tres a cinco años. En enfermedad renal avanzada, denosumab, que no se debe suspender sin cubrir. Y en riesgo muy alto, anabólicos como teriparatida.' },
+          { v: { k: 'quiz', q: 'Mujer con alendronato desde hace 6 años, dolor en el muslo al caminar. ¿Qué sospechas?', opts: ['Osteoartritis de cadera', 'Fractura atípica de fémur', 'Hipocalcemia'], a: 1 },
+            say: 'Pausa. Una mujer que toma alendronato desde hace seis años refiere dolor en el muslo al caminar. ¿Qué sospechas?',
+            exp: 'Fractura atípica de fémur, una complicación del uso prolongado de bisfosfonatos. Por eso, después de tres a cinco años se valoran unas vacaciones del fármaco. Pide radiografía de ambos fémures.' }
+        ] },
+        { ch: 'Cierre del caso', sc: [
+          { v: { k: 'list', t: 'Leticia: final del caso', items: ['Ca alto, PTH alta, P bajo: hiperparatiroidismo primario', 'Calciuria alta: no es HHF', 'Litiasis + osteoporosis: cirugía', 'Sestamibi: adenoma inferior derecho', 'Tras la cirugía: calcio normal; alendronato'] },
+            say: 'Leticia tiene hiperparatiroidismo primario, y su calcio en orina alto descarta la hipercalcemia hipocalciúrica familiar. Con litiasis y osteoporosis tiene indicación de cirugía. El gammagrama con sestamibi localiza un adenoma inferior derecho. Después de la cirugía, su calcio se normaliza, y para la osteoporosis recibe alendronato con calcio y vitamina D.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'El sestamibi o el USG NO diagnostican el hiperparatiroidismo: el diagnóstico es bioquímico. La imagen solo planea la cirugía.' },
+            say: 'Perla: el gammagrama con sestamibi y el ultrasonido no diagnostican el hiperparatiroidismo. El diagnóstico es con calcio y PTH; la imagen solo sirve para planear la cirugía.' },
+          { v: { k: 'mnemo', t: 'PTH alta en consulta · cáncer en hospital', d: 'Grave: salina → calcitonina → zoledronato. T ≤ −2.5 = osteoporosis: calcio, vitamina D y bisfosfonato.' },
+            say: 'Llévate esto: PTH alta en consulta, cáncer en hospital; salina, calcitonina y zoledronato en la grave; y en la osteoporosis, bisfosfonato con calcio y vitamina D. Ahora mueve el T score en el simulador del taller.' }
         ] }
       ],
       sections: [

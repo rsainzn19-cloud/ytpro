@@ -9,23 +9,55 @@ export default {
       hook: 'La TSH es el mejor tamizaje: alta con T4 libre baja es hipotiroidismo primario (casi siempre Hashimoto). Se trata con levotiroxina, y el coma mixedematoso es la urgencia: hidrocortisona antes que la hormona.',
       nn: [], yt: 'hypothyroidism Hashimoto myxedema coma levothyroxine',
       video: [
-        { ch: 'Diagnóstico', sc: [
+        { ch: 'La tiroide que se apaga', sc: [
           { v: { k: 'title', t: 'Hipotiroidismo', s: 'Semana 8 · Endocrinología' },
-            say: 'Semana ocho: la tiroides que se queda corta. El hipotiroidismo es frecuente, sobre todo en mujeres, y todo se vuelve lento: el metabolismo, el corazón, el intestino y hasta los reflejos.' },
-          { v: { k: 'case', t: 'Cansada y con frío', p: { name: 'Rosa', age: 46, sex: 'M', skin: '#E2B08A', hair: '#3A2A1E', gown: '#B48CFF' }, text: 'Fatiga, frío, estreñimiento, subió 5 kg, piel seca, menstruaciones abundantes. Reflejos con relajación lenta.', vit: { TSH: '28', T4L: '0.5' } },
-            say: 'Rosa tiene cuarenta y seis años. Está cansada, siempre tiene frío, está estreñida, subió cinco kilos y sus reglas son abundantes. Su TSH es de veintiocho y la T4 libre está baja.' },
-          { v: { k: 'vs', a: 'Primario', b: 'Central', rows: [['TSH', 'Alta', 'Baja o normal'], ['T4 libre', 'Baja', 'Baja'], ['Causa típica', 'Hashimoto', 'Hipófisis'], ['Se ajusta con', 'TSH', 'T4 libre']] },
-            say: 'Con TSH alta y T4 libre baja es hipotiroidismo primario: la glándula falla y la hipófisis grita. La causa más común es Hashimoto, con anticuerpos anti peroxidasa. Si la TSH está baja o normal con T4 baja, el problema es central, en la hipófisis.' },
-          { v: { k: 'list', t: 'Subclínico: TSH alta con T4 normal', items: ['Tratar si TSH 10 o más', 'Tratar si embarazo o busca embarazo', 'Considerar si síntomas o anti-TPO', 'Repetir en 6 a 12 semanas'] },
-            say: 'Si la TSH está alta pero la T4 libre es normal, es subclínico. Se trata si la TSH pasa de diez, si hay embarazo o se busca, y se considera con síntomas o anticuerpos positivos.' }
+            say: 'Semana ocho de Endocrinología: el hipotiroidismo. Es de las enfermedades más comunes de la consulta, sobre todo en mujeres. Vas a aprender a leer la TSH con la T cuatro libre, a dosificar la levotiroxina y a reconocer la urgencia: el coma mixedematoso.' },
+          { v: { k: 'case', t: 'Cansada y con frío', p: { name: 'Rosa', age: 46, sex: 'M', skin: '#E2B08A', hair: '#3A2A1E', gown: '#B48CFF' }, text: 'Seis meses con fatiga, frío, estreñimiento, subió 5 kg, piel seca y menstruaciones abundantes. Reflejos con relajación lenta.', vit: { FC: '56', TSH: '28', 'T4L': '0.5', LDL: '172' } },
+            say: 'Rosa tiene cuarenta y seis años y seis meses con cansancio, frío, estreñimiento, cinco kilos de más, piel seca y menstruaciones abundantes. Su frecuencia cardiaca es de cincuenta y seis y los reflejos tardan en relajarse. Su TSH es de veintiocho y la T cuatro libre está baja.' },
+          { v: { k: 'flow', t: 'El eje', steps: ['Hipotálamo: TRH', 'Hipófisis: TSH', 'Tiroides: T4 (y algo de T3)', 'Tejidos: T4 se convierte en T3 activa', 'T4 y T3 frenan TRH y TSH'] },
+            say: 'Recuerda el eje: el hipotálamo libera TRH, la hipófisis TSH y la tiroides T cuatro, que en los tejidos se convierte en T tres, la forma activa. Cuando la T cuatro baja, la hipófisis sube la TSH. Por eso, si la tiroides falla, la TSH sube: es el marcador más sensible.' },
+          { v: { k: 'list', t: 'Causas', items: ['Hashimoto: la #1 con yodo suficiente', 'Deficiencia de yodo: la #1 en el mundo', 'Tras tiroidectomía o yodo radiactivo', 'Amiodarona, litio, inmunoterapia', 'Central: tumor hipofisario, Sheehan'] },
+            say: 'La causa número uno donde hay suficiente yodo es la tiroiditis de Hashimoto, autoinmune, con anticuerpos contra la peroxidasa. En el mundo, la deficiencia de yodo. También después de tiroidectomía o yodo radiactivo, y por fármacos como amiodarona, litio e inmunoterapia. El central, por tumores hipofisarios o síndrome de Sheehan, es raro.' },
+          { v: { k: 'list', t: 'Clínica: todo va lento', items: ['Fatiga, frío, aumento de peso', 'Estreñimiento, piel seca, voz ronca', 'Menorragia, depresión', 'Bradicardia, reflejos lentos', 'Mixedema: edema sin fóvea'] },
+            say: 'La clínica se resume en que todo va lento: fatiga, intolerancia al frío, aumento de peso, estreñimiento, piel seca, voz ronca, menstruaciones abundantes, depresión, bradicardia y reflejos con relajación lenta. El mixedema es un edema que no deja fóvea.' },
+          { v: { k: 'list', t: 'Laboratorio que acompaña', items: ['Hiponatremia', 'LDL alto', 'CK alta', 'Anemia', 'Prolactina alta'] },
+            say: 'Y el laboratorio acompaña: hiponatremia, colesterol LDL alto, CK alta, anemia y prolactina alta. Por eso, ante una dislipidemia o hiponatremia nueva, se pide TSH.' }
         ] },
-        { ch: 'Tratamiento y urgencia', sc: [
-          { v: { k: 'big', h: 'Levotiroxina', t: '1.6 µg por kg', u: 'en ancianos o cardiópatas: 25 a 50 µg' },
-            say: 'El tratamiento es levotiroxina, alrededor de uno punto seis microgramos por kilo, en ayunas. En ancianos o cardiópatas se empieza con veinticinco a cincuenta y se sube despacio. La TSH se revisa a las seis u ocho semanas.' },
-          { v: { k: 'list', t: 'Coma mixedematoso', items: ['Hipotermia y estado mental alterado', 'Bradicardia, hipoventilación', 'Hiponatremia, hipoglucemia', 'Hidrocortisona primero', 'Levotiroxina IV'] },
-            say: 'La urgencia es el coma mixedematoso: hipotermia, alteración mental, bradicardia, hipoventilación, hiponatremia e hipoglucemia, casi siempre desencadenado por una infección o el frío. Primero hidrocortisona, porque puede haber insuficiencia suprarrenal, y después levotiroxina intravenosa.' },
-          { v: { k: 'mnemo', t: 'Todo se vuelve lento', d: 'Frío, peso, estreñimiento, bradicardia, reflejos lentos, piel seca, menorragia, depresión.' },
-            say: 'Para recordarlo: en el hipotiroidismo todo se vuelve lento. Y en la urgencia, hidrocortisona antes que la tiroides.' }
+        { ch: 'Diagnóstico', sc: [
+          { v: { k: 'vs', a: 'Patrón', b: 'TSH y T4 libre', rows: [['Primario', 'TSH alta', 'T4L baja'], ['Subclínico', 'TSH alta', 'T4L normal'], ['Central', 'TSH baja o normal', 'T4L baja'], ['Eutiroideo enfermo', 'Normal o baja', 'T3 baja, rT3 alta']] },
+            say: 'Los patrones: primario, TSH alta con T cuatro baja. Subclínico, TSH alta con T cuatro normal. Central, T cuatro baja con TSH baja o inapropiadamente normal. Y el síndrome del eutiroideo enfermo, en pacientes graves, con T tres baja y T tres reversa alta: no se trata.' },
+          { v: { k: 'tip', kind: 'trap', t: 'T4 libre baja con TSH normal NO descarta hipotiroidismo: es central. Busca la hipófisis.' },
+            say: 'Trampa: T cuatro libre baja con TSH normal no es normal. Es hipotiroidismo central, la hipófisis no responde. Estudia la hipófisis y el resto de sus ejes, sobre todo el suprarrenal.' },
+          { v: { k: 'quiz', q: 'TSH 7.2, T4 libre normal, sin síntomas, no busca embarazo. ¿Qué haces?', opts: ['Levotiroxina dosis plena', 'Repetir TSH en 6 a 12 semanas con anti-TPO', 'Yodo'], a: 1 },
+            say: 'Pausa. TSH de siete punto dos con T cuatro libre normal, sin síntomas y sin deseo de embarazo. ¿Qué haces?',
+            exp: 'Repetir la TSH en seis a doce semanas y pedir anticuerpos antiperoxidasa. Es subclínico. Se trata si la TSH llega a diez o más, en el embarazo o si busca embarazo, y se considera con síntomas o anticuerpos positivos.' }
+        ] },
+        { ch: 'Tratamiento', sc: [
+          { v: { k: 'big', h: 'Levotiroxina', t: '1.6 µg/kg/día', s: 'En ayunas, separada de calcio, hierro e IBP. Ancianos o cardiopatía isquémica: 25 a 50 µg y subir lento.' },
+            say: 'Se trata con levotiroxina a uno punto seis microgramos por kilo al día, en ayunas, separada del calcio, el hierro y los inhibidores de bomba. En ancianos o con cardiopatía isquémica se empieza con veinticinco a cincuenta microgramos y se sube despacio, para no provocar angina.' },
+          { v: { k: 'list', t: 'Seguimiento', items: ['TSH a las 6 a 8 semanas tras cada ajuste', 'Luego anual', 'Central: se ajusta con T4 libre, no TSH', 'Sobretratamiento: FA y osteoporosis'] },
+            say: 'Se revisa la TSH seis a ocho semanas después de cada cambio, y luego cada año. En el hipotiroidismo central no sirve la TSH: se ajusta con la T cuatro libre. Y cuidado con el sobretratamiento, que da fibrilación auricular y osteoporosis.' },
+          { v: { k: 'list', t: 'Embarazo', items: ['Subir la dosis 25 a 30% al confirmar', 'Meta TSH menor de 2.5 en el 1er trimestre', 'TSH cada 4 semanas en la 1a mitad', 'El feto depende de la T4 materna'] },
+            say: 'En el embarazo, en cuanto se confirma, se sube la dosis veinticinco a treinta por ciento, con meta de TSH menor de dos punto cinco en el primer trimestre, porque el cerebro del feto depende de la T cuatro de la madre.' },
+          { v: { k: 'quiz', q: 'Hombre de 74 años con angina estable y TSH de 40. ¿Cómo inicias?', opts: ['1.6 µg/kg de inmediato', '25 µg y subir cada 4 a 6 semanas', 'No tratar'], a: 1 },
+            say: 'Pausa. Hombre de setenta y cuatro años con angina estable y TSH de cuarenta. ¿Cómo inicias la levotiroxina?',
+            exp: 'Veinticinco microgramos y subir lento cada cuatro a seis semanas. Una dosis plena aumenta de golpe el consumo de oxígeno del miocardio y puede precipitar un infarto.' }
+        ] },
+        { ch: 'Tiroiditis y coma mixedematoso', sc: [
+          { v: { k: 'vs', a: 'Tiroiditis', b: 'Rasgo', rows: [['De Quervain (subaguda)', 'Dolorosa, tras virus', 'VSG alta, captación baja'], ['Posparto o silente', 'Indolora', 'Anti-TPO'], ['Hashimoto', 'Bocio, crónica', 'Riesgo de linfoma tiroideo'], ['Riedel', 'Dura como piedra', 'IgG4']] },
+            say: 'Las tiroiditis: De Quervain es dolorosa, sigue a una infección viral y tiene sedimentación alta. La posparto y la silente son indoloras. Las tres pasan por una fase de tirotoxicosis y luego una de hipotiroidismo. Hashimoto es crónica, con bocio y riesgo de linfoma. Y Riedel es fibrosa, dura como piedra.' },
+          { v: { k: 'list', t: 'Coma mixedematoso', items: ['Alteración mental e hipotermia', 'Bradicardia e hipotensión', 'Hipoventilación con hipercapnia', 'Hiponatremia e hipoglucemia', 'Desencadenante: infección, frío, sedantes'] },
+            say: 'El coma mixedematoso es el hipotiroidismo grave descompensado, casi siempre en una anciana en invierno, con infección o sedantes. Hay alteración mental, hipotermia, bradicardia, hipotensión, hipoventilación con CO2 alto, hiponatremia e hipoglucemia.' },
+          { v: { k: 'flow', t: 'Tratamiento en UCI', steps: ['Vía aérea y ventilación', 'Hidrocortisona IV PRIMERO', 'Luego levotiroxina IV', 'Calentamiento pasivo', 'Glucosa y tratar el desencadenante'] },
+            say: 'Se trata en terapia intensiva: vía aérea y ventilación, hidrocortisona intravenosa primero, porque puede coexistir una insuficiencia suprarrenal que la levotiroxina desenmascararía, y después levotiroxina intravenosa. Calentamiento pasivo, glucosa y tratar el desencadenante.' }
+        ] },
+        { ch: 'Cierre del caso', sc: [
+          { v: { k: 'list', t: 'Rosa: final del caso', items: ['Anti-TPO positivos: Hashimoto', 'Levotiroxina 100 µg en ayunas', 'TSH a las 6 semanas: 3.1', 'El LDL bajó a 128', 'TSH anual'] },
+            say: 'Los anticuerpos antiperoxidasa de Rosa salen positivos: Hashimoto. Inicia levotiroxina cien microgramos en ayunas. A las seis semanas su TSH es de tres punto uno, ya no tiene frío y el LDL bajó de ciento setenta y dos a ciento veintiocho sin estatina.' },
+          { v: { k: 'tip', kind: 'pearl', t: 'Coma mixedematoso: hidrocortisona ANTES de la levotiroxina para no precipitar una crisis suprarrenal.' },
+            say: 'Perla: en el coma mixedematoso, la hidrocortisona va antes que la levotiroxina, porque la hormona tiroidea acelera el metabolismo del cortisol y puede precipitar una crisis suprarrenal.' },
+          { v: { k: 'mnemo', t: 'TSH alta = primario · T4 baja con TSH normal = central', d: 'Levotiroxina 1.6 µg/kg; ancianos 25 µg. TSH a las 6–8 semanas. Embarazo: +25–30%. Coma: hidrocortisona primero.' },
+            say: 'Llévate esto: TSH alta, primario; T cuatro baja con TSH normal, central. Levotiroxina uno punto seis por kilo, empezando bajo en ancianos, y en el coma, hidrocortisona primero. Ahora mueve la TSH en el simulador del taller.' }
         ] }
       ],
       sections: [

@@ -11,21 +11,51 @@ export default {
       video: [
         { ch: 'Insuficiencia suprarrenal', sc: [
           { v: { k: 'title', t: 'Suprarrenal e hiponatremia', s: 'Semana 10 · Endocrinología' },
-            say: 'Semana diez: cuando falta el cortisol. La insuficiencia suprarrenal puede ser primaria, de la glándula, o secundaria, porque falta la ACTH, casi siempre por suspender esteroides de golpe.' },
-          { v: { k: 'vs', a: 'Primaria (Addison)', b: 'Secundaria', rows: [['ACTH', 'Alta', 'Baja'], ['Piel', 'Hiperpigmentada', 'Normal o pálida'], ['Aldosterona', 'Baja: K alto', 'Normal: K normal'], ['Causa típica', 'Autoinmune, TB', 'Esteroides suspendidos']] },
-            say: 'En la primaria, Addison, falta todo: cortisol y aldosterona. La ACTH sube y oscurece la piel, y la falta de aldosterona da potasio alto. En la secundaria falta la ACTH: no hay hiperpigmentación y la aldosterona funciona, así que el potasio es normal.' },
-          { v: { k: 'case', t: 'Choque que no cede', p: { name: 'Ramiro', age: 52, sex: 'H', skin: '#C98B62', hair: '#3A2A1E', gown: '#5BA7E0' }, text: 'Toma prednisona por asma y la suspendió hace 1 semana. Neumonía, PA 70/40 pese a 3 L y norepinefrina. Na 128, glucosa 60.', vit: { PA: '70/40', Na: '128' } },
-            say: 'Ramiro tomaba prednisona por años y la suspendió hace una semana. Ahora tiene neumonía y una presión de setenta sobre cuarenta que no sube con tres litros ni con norepinefrina. Sodio bajo y glucosa baja.' },
-          { v: { k: 'big', h: 'Crisis suprarrenal', t: 'Hidrocortisona 100 mg IV', u: 'ya, sin esperar el cortisol' },
-            say: 'Es una crisis suprarrenal. Se toma una muestra de cortisol y ACTH si se puede, pero no se espera: hidrocortisona cien miligramos intravenosos de inmediato, solución salina con glucosa, y buscar el desencadenante.' }
+            say: 'Semana diez: la insuficiencia suprarrenal y la hiponatremia, dos temas que tu guía junta porque se cruzan: a la falta de cortisol le sigue el sodio bajo. Vas a aprender a distinguir la forma primaria de la secundaria, a tratar la crisis sin esperar resultados y a abordar cualquier hiponatremia en tres preguntas.' },
+          { v: { k: 'case', t: 'Choque que no cede', p: { name: 'Ramiro', age: 52, sex: 'H', skin: '#C98B62', hair: '#3A2A1E', gown: '#5BA7E0' }, text: 'Tomó prednisona 20 mg por 6 meses por asma y la suspendió de golpe hace una semana. Ahora neumonía con choque que no responde a 3 L ni a norepinefrina.', vit: { PA: '70/40', Na: '126', Glu: '58' } },
+            say: 'Ramiro tiene cincuenta y dos años. Tomó prednisona veinte miligramos por seis meses por asma y la dejó de golpe hace una semana. Ahora tiene neumonía con choque que no responde a tres litros de solución ni a norepinefrina. Su sodio es de ciento veintiséis y la glucosa de cincuenta y ocho.' },
+          { v: { k: 'vs', a: 'Primaria (Addison)', b: 'Secundaria', rows: [['Falla', 'La corteza suprarrenal', 'La ACTH'], ['Falta', 'Cortisol y aldosterona', 'Solo cortisol'], ['ACTH', 'Alta', 'Baja o normal'], ['Hiperpigmentación', 'Sí', 'No'], ['Potasio', 'Alto', 'Normal']] },
+            say: 'En la primaria, o Addison, se destruye la corteza y faltan cortisol y aldosterona; la ACTH sube y, como comparte precursor con la hormona estimulante de melanocitos, la piel se oscurece; y por falta de aldosterona el potasio sube. En la secundaria falta la ACTH, así que solo falta cortisol: no hay hiperpigmentación y el potasio es normal. En ambas el sodio baja.' },
+          { v: { k: 'list', t: 'Causas', items: ['Primaria: autoinmune (la #1), TB', 'Hemorragia bilateral: anticoagulación, meningococo', 'VIH, metástasis', 'Secundaria: suspender esteroides de golpe (la #1 en general)', 'Tumor hipofisario, Sheehan'] },
+            say: 'La primaria es autoinmune en la mayoría, con anticuerpos contra la veintiuno hidroxilasa; en países en desarrollo, la tuberculosis. También hemorragia bilateral por anticoagulación o meningococo, VIH y metástasis. Pero la causa más común de insuficiencia suprarrenal en general es la secundaria por suspender de golpe un esteroide que se tomó por semanas, como Ramiro.' },
+          { v: { k: 'list', t: 'Clínica', items: ['Fatiga, pérdida de peso, anorexia', 'Náusea, dolor abdominal', 'Hipotensión ortostática', 'Hiponatremia, hipoglucemia, eosinofilia', 'Primaria: antojo de sal, piel oscura, K alto'] },
+            say: 'La clínica es inespecífica: fatiga, pérdida de peso, náusea, dolor abdominal e hipotensión ortostática, con hiponatremia, hipoglucemia y eosinofilia. En la primaria, además, antojo de sal, piel oscura en pliegues y mucosas, y potasio alto.' }
+        ] },
+        { ch: 'Diagnóstico y tratamiento', sc: [
+          { v: { k: 'flow', t: 'Diagnóstico', steps: ['Cortisol a las 8 am', 'Menor de 3 a 5: confirma', 'Mayor de 15 a 18: descarta', 'Intermedio: cosintropina 250 µg', 'ACTH: alta primaria, baja secundaria'] },
+            say: 'Se mide cortisol a las ocho de la mañana: menor de tres a cinco confirma, mayor de quince a dieciocho descarta. Si es intermedio, prueba de estimulación con cosintropina: un cortisol menor de dieciocho a los treinta o sesenta minutos confirma. Luego la ACTH separa la primaria, con ACTH alta, de la secundaria, con ACTH baja.' },
+          { v: { k: 'big', h: 'Crisis suprarrenal', t: 'Hidrocortisona 100 mg IV', s: 'En bolo, luego 200 mg al día. Salina 1 L en la 1a hora y glucosa. NO esperar resultados.' },
+            say: 'La crisis suprarrenal se trata con hidrocortisona cien miligramos intravenosa en bolo, luego doscientos miligramos al día, un litro de salina en la primera hora y glucosa. No se esperan los resultados: si puedes, toma una muestra de cortisol antes, pero el tratamiento no se retrasa.' },
+          { v: { k: 'quiz', q: 'Ramiro: choque refractario tras suspender prednisona. ¿Qué das ya?', opts: ['Esperar el cortisol de mañana', 'Hidrocortisona 100 mg IV', 'Fludrocortisona oral'], a: 1 },
+            say: 'Pausa. Ramiro tiene choque refractario y suspendió la prednisona hace una semana. ¿Qué das?',
+            exp: 'Hidrocortisona cien miligramos intravenosa de inmediato. A esa dosis también tiene efecto mineralocorticoide, así que no hace falta fludrocortisona en la crisis.' },
+          { v: { k: 'list', t: 'Tratamiento crónico', items: ['Hidrocortisona 15 a 25 mg al día, más en la mañana', 'Primaria: + fludrocortisona', 'Enfermedad o fiebre: duplicar o triplicar', 'Vómito: inyectable', 'Pulsera de identificación'] },
+            say: 'De por vida, hidrocortisona quince a veinticinco miligramos al día, la mayor parte en la mañana, y en la primaria se agrega fludrocortisona. Las reglas de enfermedad son clave: con fiebre se duplica o triplica la dosis, con vómito se aplica inyectable y antes de cirugía se dan dosis de estrés.' }
         ] },
         { ch: 'Hiponatremia en tres preguntas', sc: [
-          { v: { k: 'flow', t: 'Abordaje', steps: ['Osmolaridad plasmática', 'Volemia', 'Na y osm urinarios'] },
-            say: 'La hiponatremia se aborda con tres preguntas. Primero, la osmolaridad: si es normal o alta, no es una hiponatremia verdadera. Segundo, la volemia del paciente. Tercero, el sodio y la osmolaridad de la orina.' },
-          { v: { k: 'list', t: 'Hipotónica por volemia', items: ['Hipovolémica: pérdidas, diuréticos', 'Euvolémica: SIADH, hipotiroidismo, déficit de cortisol', 'Hipervolémica: IC, cirrosis, nefrótico, ERC'] },
-            say: 'Hipovolémica: diarrea, vómito o diuréticos. Euvolémica: SIADH, hipotiroidismo e insuficiencia suprarrenal. Hipervolémica, con edema: insuficiencia cardiaca, cirrosis o síndrome nefrótico.' },
-          { v: { k: 'mnemo', t: 'Sal, esteroide y azúcar', d: 'Crisis suprarrenal: salina 0.9 %, hidrocortisona 100 mg IV y glucosa.' },
-            say: 'Para la crisis recuerda: sal, esteroide y azúcar. Y para la hiponatremia, nunca subir más de ocho a diez puntos en un día.' }
+          { v: { k: 'flow', t: 'Tres preguntas', steps: ['1. ¿Osmolaridad plasmática baja? (menor de 275)', '2. ¿Osmolaridad urinaria mayor de 100? (ADH actuando)', '3. ¿Volemia y sodio urinario?'] },
+            say: 'Cualquier hiponatremia se aborda con tres preguntas. Primera: la osmolaridad plasmática, si es normal o alta, no es una hiponatremia verdadera: piensa en hiperglucemia o en lípidos altos. Segunda: la osmolaridad urinaria, si es menor de cien, el riñón está eliminando agua libre: polidipsia o dieta de té y pan. Tercera: la volemia y el sodio urinario.' },
+          { v: { k: 'vs', a: 'Volemia', b: 'Causas', rows: [['Hipovolémica, Na urinario menor de 30', 'Diarrea, vómito, sudor', '—'], ['Hipovolémica, Na urinario mayor de 30', 'Tiazidas, Addison', 'Pérdida cerebral de sal'], ['Euvolémica', 'SIADH', 'Hipotiroidismo, déficit de cortisol'], ['Hipervolémica', 'IC, cirrosis, nefrótico', 'ERC']] },
+            say: 'Hipovolémica con sodio urinario bajo, pérdidas fuera del riñón como diarrea o vómito. Hipovolémica con sodio urinario alto, tiazidas, Addison o pérdida cerebral de sal. Euvolémica, síndrome de secreción inapropiada de hormona antidiurética, hipotiroidismo o déficit de cortisol. Hipervolémica, insuficiencia cardiaca, cirrosis o síndrome nefrótico.' },
+          { v: { k: 'list', t: 'SIADH', items: ['Euvolémico, Osm urinaria mayor de 100', 'Na urinario mayor de 30', 'Con TSH y cortisol normales', 'Causas: cáncer de pulmón de células pequeñas, SNC, fármacos', 'Tratamiento: restricción de líquidos'] },
+            say: 'El síndrome de secreción inapropiada se diagnostica en un paciente euvolémico con orina concentrada y sodio urinario alto, después de descartar hipotiroidismo y déficit de cortisol. Lo causan el cáncer de pulmón de células pequeñas, enfermedades del sistema nervioso, neumonías y fármacos como los inhibidores de recaptura de serotonina. Se trata con restricción de líquidos.' }
+        ] },
+        { ch: 'Corregir sin dañar', sc: [
+          { v: { k: 'list', t: 'Hiponatremia grave sintomática', items: ['Convulsión, coma, vómito', 'Bolo de salina 3% 100 a 150 mL', 'Repetir hasta 2 a 3 veces', 'Meta: subir 4 a 6 mEq en horas'] },
+            say: 'Si la hiponatremia da síntomas graves, como convulsiones, coma o vómito, se da salina al tres por ciento en bolos de cien a ciento cincuenta mililitros, hasta dos o tres veces, buscando subir el sodio cuatro a seis puntos en las primeras horas. Con eso basta para quitar el riesgo de herniación.' },
+          { v: { k: 'big', h: 'Límite de corrección', t: '8 mEq en 24 h', s: 'Pasarse causa desmielinización osmótica. Más riesgo: alcohol, desnutrición, hipokalemia, sodio menor de 120 crónico.' },
+            say: 'Y el límite: no subir más de ocho miliequivalentes en veinticuatro horas, sobre todo en hiponatremia crónica. Corregir de más causa síndrome de desmielinización osmótica, con cuadriparesia y disartria días después. El riesgo es mayor en alcohólicos, desnutridos y con hipokalemia.' },
+          { v: { k: 'quiz', q: 'Sodio de 112 crónico en alcohólico. A las 12 h ya subió 9 mEq. ¿Qué haces?', opts: ['Seguir igual, va bien', 'Frenar y volver a bajar el sodio: agua libre y desmopresina', 'Más salina al 3%'], a: 1 },
+            say: 'Pausa. Un alcohólico con sodio crónico de ciento doce ya subió nueve miliequivalentes en doce horas. ¿Qué haces?',
+            exp: 'Frenar y volver a bajar un poco el sodio con agua libre y desmopresina. Ya rebasó el límite de ocho en veinticuatro horas, y por ser alcohólico tiene alto riesgo de desmielinización osmótica.' }
+        ] },
+        { ch: 'Cierre del caso', sc: [
+          { v: { k: 'list', t: 'Ramiro: final del caso', items: ['Hidrocortisona 100 mg IV: PA sube en 2 h', 'Salina, glucosa, antibiótico', 'Na sube 6 mEq en 24 h', 'Al egreso: hidrocortisona con reducción lenta', 'Reglas de enfermedad por escrito'] },
+            say: 'Con hidrocortisona, la presión de Ramiro sube en dos horas y ya no necesita norepinefrina. Recibe salina, glucosa y antibiótico, y su sodio sube seis puntos en veinticuatro horas. Egresa con hidrocortisona que se reducirá lentamente y con las reglas de enfermedad por escrito.' },
+          { v: { k: 'tip', kind: 'trap', t: 'Paciente que tomó esteroides por más de 3 semanas: nunca suspender de golpe. Reducir poco a poco.' },
+            say: 'Trampa: suspender de golpe un esteroide que el paciente tomó por más de tres semanas. El eje está dormido y no responde: se reduce poco a poco.' },
+          { v: { k: 'mnemo', t: 'Primaria: piel oscura y K alto · Crisis: hidrocortisona 100 ya', d: 'Hiponatremia: Osm plasmática → Osm urinaria → volemia y Na urinario. No más de 8 mEq en 24 h.' },
+            say: 'Llévate esto: primaria, piel oscura y potasio alto. Crisis, hidrocortisona cien sin esperar. Y la hiponatremia en tres preguntas, sin subir más de ocho en un día. Ahora mueve el sodio en el simulador del taller.' }
         ] }
       ],
       sections: [

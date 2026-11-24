@@ -12,8 +12,8 @@ export default {
         { ch: 'Qué es y qué no es', sc: [
           { v: { k: 'title', t: 'Fiebre de origen desconocido', s: 'Semana 4 · Infectología' },
             say: 'Semana cuatro: la fiebre de origen desconocido. Es el paciente que lleva semanas con fiebre y nadie sabe por qué. Aquí no gana quien pide más estudios, sino quien sigue un orden. Vamos con una paciente.' },
-          { v: { k: 'case', t: 'Cuatro semanas con fiebre', p: { name: 'Rosa', age: 68, sex: 'M', skin: '#E2B08A', hair: '#B0B0B0', gown: '#5EEAD4' }, text: 'Fiebre de 38.5 casi a diario por 4 semanas. Cansancio, bajó 4 kg, dolor de cabeza nuevo y le duele la mandíbula al masticar. Ya tomó dos antibióticos sin mejoría.', vit: { T: '38.5', VSG: '98' } },
-            say: 'Rosa tiene sesenta y ocho años y cuatro semanas con fiebre de treinta y ocho punto cinco casi diario. Está cansada, bajó cuatro kilos, tiene dolor de cabeza nuevo y le duele la mandíbula al masticar. Ya tomó dos antibióticos sin mejorar. Su velocidad de sedimentación es de noventa y ocho.' },
+          { v: { k: 'case', t: 'Cuatro semanas con fiebre', p: { name: 'Amparo', age: 68, sex: 'M', skin: '#E2B08A', hair: '#B0B0B0', gown: '#5EEAD4' }, text: 'Fiebre de 38.5 casi a diario por 4 semanas. Cansancio, bajó 4 kg, dolor de cabeza nuevo y le duele la mandíbula al masticar. Ya tomó dos antibióticos sin mejoría.', vit: { T: '38.5', VSG: '98' } },
+            say: 'Amparo tiene sesenta y ocho años y cuatro semanas con fiebre de treinta y ocho punto cinco casi diario. Está cansada, bajó cuatro kilos, tiene dolor de cabeza nuevo y le duele la mandíbula al masticar. Ya tomó dos antibióticos sin mejorar. Su velocidad de sedimentación es de noventa y ocho.' },
           { v: { k: 'big', h: 'Fiebre de origen desconocido clásica', t: '3 semanas', s: 'Fiebre >38.3 °C en varias ocasiones, por 3 semanas o más, sin diagnóstico tras un estudio inicial razonable.' },
             say: 'La definición clásica: fiebre de más de treinta y ocho punto tres en varias ocasiones, por tres semanas o más, sin diagnóstico después de un estudio inicial razonable, ya sea tres visitas, tres días de hospital o una semana de estudio dirigido.' },
           { v: { k: 'vs', a: 'Tipo', b: 'Qué pensar', rows: [['Nosocomial', 'C. difficile, catéter, fármacos', 'TEP, sinusitis'], ['Neutropénica', 'Menos de 500 neutrófilos', 'Antibiótico en 1 hora'], ['VIH', 'MAC, TB, CMV', 'Linfoma, criptococo'], ['Hipertermia', 'Golpe de calor, maligna', 'No responde a antipirético']] },
@@ -28,8 +28,8 @@ export default {
             say: 'Tercera, enfermedades inflamatorias. En mayores de cincuenta, la arteritis de células gigantes. En jóvenes, el Still del adulto, con fiebre en picos, exantema color salmón, artritis y ferritina altísima. También lupus, otras vasculitis, sarcoidosis y enfermedad inflamatoria intestinal.' },
           { v: { k: 'list', t: 'Otras', items: ['Fiebre por fármacos: betalactámicos, anticonvulsivos', 'TEP y TVP', 'Hipertiroidismo', 'Hematomas', 'Facticia'] },
             say: 'Cuarta, otras: fiebre por fármacos, que cede a las cuarenta y ocho o setenta y dos horas de suspenderlos; tromboembolia; hipertiroidismo; hematomas que se reabsorben; y fiebre facticia.' },
-          { v: { k: 'quiz', q: 'Rosa: 68 años, cefalea nueva, claudicación mandibular, VSG 98. ¿Qué sospechas?', opts: ['Linfoma', 'Arteritis de células gigantes', 'Endocarditis'], a: 1 },
-            say: 'Pausa. Con lo que sabes de Rosa, sesenta y ocho años, cefalea nueva, dolor de mandíbula al masticar y sedimentación de noventa y ocho, ¿qué sospechas?',
+          { v: { k: 'quiz', q: 'Amparo: 68 años, cefalea nueva, claudicación mandibular, VSG 98. ¿Qué sospechas?', opts: ['Linfoma', 'Arteritis de células gigantes', 'Endocarditis'], a: 1 },
+            say: 'Pausa. Con lo que sabes de Amparo, sesenta y ocho años, cefalea nueva, dolor de mandíbula al masticar y sedimentación de noventa y ocho, ¿qué sospechas?',
             exp: 'Arteritis de células gigantes. Es la causa inflamatoria más común de fiebre de origen desconocido en mayores de cincuenta. La claudicación mandibular es muy específica, y el riesgo es la ceguera por neuritis óptica isquémica.' }
         ] },
         { ch: 'El abordaje en orden', sc: [
@@ -44,8 +44,8 @@ export default {
             exp: 'PET CT con fluorodesoxiglucosa. Encuentra focos inflamatorios, infecciosos o tumorales que la tomografía no ve y guía la biopsia. Antibiótico o esteroide a ciegas solo esconderían el diagnóstico.' }
         ] },
         { ch: 'Cierre del caso', sc: [
-          { v: { k: 'list', t: 'Rosa: final del caso', items: ['Arteria temporal engrosada y dolorosa', 'Prednisona 40 a 60 mg HOY', 'Biopsia en las siguientes 2 semanas', 'Biopsia: arteritis granulomatosa', 'Fiebre cede en 48 h'] },
-            say: 'Al explorar a Rosa, su arteria temporal está engrosada y duele. Se inicia prednisona de cuarenta a sesenta miligramos el mismo día, sin esperar la biopsia, para proteger la visión. La biopsia, hecha en las siguientes dos semanas, muestra arteritis granulomatosa, y la fiebre cede en cuarenta y ocho horas.' },
+          { v: { k: 'list', t: 'Amparo: final del caso', items: ['Arteria temporal engrosada y dolorosa', 'Prednisona 40 a 60 mg HOY', 'Biopsia en las siguientes 2 semanas', 'Biopsia: arteritis granulomatosa', 'Fiebre cede en 48 h'] },
+            say: 'Al explorar a Amparo, su arteria temporal está engrosada y duele. Se inicia prednisona de cuarenta a sesenta miligramos el mismo día, sin esperar la biopsia, para proteger la visión. La biopsia, hecha en las siguientes dos semanas, muestra arteritis granulomatosa, y la fiebre cede en cuarenta y ocho horas.' },
           { v: { k: 'tip', kind: 'pearl', t: 'Arteritis de células gigantes con síntomas visuales o alta sospecha: esteroide antes de la biopsia. La biopsia sigue siendo útil hasta 2 semanas después.' },
             say: 'Perla: en la arteritis de células gigantes, el esteroide va antes que la biopsia. La biopsia sigue siendo útil hasta dos semanas después de iniciarlo, pero la ceguera no se recupera.' },
           { v: { k: 'mnemo', t: 'Infección · cáncer · inflamación · otras', d: '3 semanas, >38.3 °C. Historia repetida → laboratorio → TC → PET-CT → biopsia. Nada a ciegas si está estable.' },
