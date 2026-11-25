@@ -1,0 +1,37 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Resultados iPLUS (falso)</title></head><body>
+<div id="login" style="display:none">
+ <form method="post" action="/login"><label>Usuario <input name="usuario" type="text"></label>
+ <label>Contraseña <input name="pass" type="password"></label><button type="submit">Ingresar</button></form>
+</div>
+<div id="buscar" style="display:none">
+ <label for="n">Nombres</label><input id="n">
+ <label for="p">Apellido paterno</label><input id="p">
+ <label for="m">Apellido materno</label><input id="m">
+ <label for="fi">Fecha inicial</label><input id="fi" type="date">
+ <label for="ff">Fecha final</label><input id="ff" type="date">
+ <button id="b">Buscar</button>
+ <div id="res"></div>
+</div>
+<script>
+const enLogin = location.pathname.startsWith('/login');
+document.getElementById(enLogin ? 'login' : 'buscar').style.display = 'block';
+document.getElementById('b')?.addEventListener('click', async () => {
+  const q = new URLSearchParams({nombres: n.value, paterno: p.value, materno: m.value, desde: fi.value, hasta: ff.value});
+  const r = await (await fetch('/api/resultados?' + q)).json();
+  res.innerHTML = '';
+  r.forEach(e => {
+    const c = document.createElement('div'); c.className = 'card'; c.style.border = '1px solid #999'; c.style.margin = '6px';
+    c.innerHTML = `<div class="cab"><b>${e.codigo} - ${e.titulo}</b><br>Paciente: ${e.paciente}<br>
+      Fecha de creación: ${e.fecha}<br>${e.estatus}</div>`;
+    c.querySelector('.cab').onclick = () => {
+      const t = c.querySelector('table');
+      if (t) { t.remove(); return; }
+      const tb = document.createElement('table');
+      tb.innerHTML = '<tr><th>Prueba</th><th>Resultado</th><th>Interpretación</th></tr>' +
+        e.valores.map(v => `<tr><td>${v[0]}</td><td>${v[1]}</td><td>${v[2]}</td></tr>`).join('');
+      c.appendChild(tb);
+    };
+    res.appendChild(c);
+  });
+});
+</script></body></html>

@@ -1,0 +1,8 @@
+.env
+credentials.json
+token.json
+salida/
+descubrimiento/
+portal_sel.json
+__pycache__/
+.pytest_cache/
